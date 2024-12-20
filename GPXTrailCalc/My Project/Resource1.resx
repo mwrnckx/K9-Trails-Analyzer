@@ -169,7 +169,7 @@
     <value>Article</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
-    <value>Dog' s Speed</value>
+    <value>Dog's Speed</value>
   </data>
   <data name="outAverageDistance" xml:space="preserve">
     <value>Average length of trails</value>
@@ -218,5 +218,8 @@
   </data>
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>At the start of the trail, before you set off, and at the end, before you stop recording, \nthe GPS device often captures inaccurate or erroneous data. \nIf this option is enabled, the program will attempt to automatically remove these inaccuracies.</value>
+  </data>
+  <data name="rbDistances.Text1" xml:space="preserve">
+    <value />
   </data>
 </root>

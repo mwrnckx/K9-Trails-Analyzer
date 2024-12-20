@@ -379,14 +379,14 @@ Public Class GPXDistanceCalculator
         dateTo = endDate
 
         Form1.rtbOutput.Clear()
-        Form1.rtbOutput.SelectionFont = New Font("Consolas", 12, FontStyle.Underline Or FontStyle.Bold) ' Nastavit font
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Underline Or FontStyle.Bold) ' Nastavit font
         Form1.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
 
         Dim manySpaces As String = "                                                 "
-        Form1.rtbOutput.AppendText((My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 26))
-        Form1.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 10))
-        Form1.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 9))
-        Form1.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 7))
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 33))
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 14))
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
         Form1.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 20))
         Form1.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         Form1.rtbOutput.AppendText(vbCrLf)
@@ -444,7 +444,7 @@ Public Class GPXDistanceCalculator
 
                 ' Nastavení fontu a barvy textu
                 Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length ' Pozice na konec textu
-                Form1.rtbOutput.SelectionFont = New Font("Consolas", 10) ' Nastavit font
+                Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
 
                 Form1.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
                 Form1.rtbOutput.AppendText(fileShortName & "   ")
@@ -502,45 +502,45 @@ Public Class GPXDistanceCalculator
             Dim manydots As String = "...................................................................."
             Dim labelLength As Integer = 40
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 10) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Maroon
             Form1.rtbOutput.AppendText((My.Resources.Resource1.outTotalNumberOfGPXFiles & manydots).Substring(0, labelLength))
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 12, FontStyle.Bold) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Firebrick
             Form1.rtbOutput.AppendText(distances.Count & vbCrLf)
 
 
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 10) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Maroon
             Form1.rtbOutput.AppendText((My.Resources.Resource1.outTotalLength & manydots).Substring(0, labelLength))
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 12, FontStyle.Bold) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Firebrick
             Form1.rtbOutput.AppendText(totalDistance.ToString("F2") & " km" & vbCrLf)
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 10) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Maroon
             Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 12, FontStyle.Bold) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Firebrick
             Form1.rtbOutput.AppendText((1000 * AverageOf(distances)).ToString("F0") & " m" & vbCrLf)
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 10) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Maroon
             Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 12, FontStyle.Bold) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Firebrick
             Form1.rtbOutput.AppendText(AverageOf(AgeAsDouble).ToString("F0") & " min" & vbCrLf)
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 10) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Maroon
             Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
 
-            Form1.rtbOutput.SelectionFont = New Font("consolas", 12, FontStyle.Bold) ' Nastavit font
+            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
             Form1.rtbOutput.SelectionColor = Color.Firebrick
             Form1.rtbOutput.AppendText(AverageOf(speed).ToString("F2") & " km/h")
 
@@ -876,7 +876,7 @@ Public Class GPXDistanceCalculator
                     If Not link(i) Is Nothing Then
                         writer.WriteLine($"=HYPERTEXTOVÝ.ODKAZ(""{link(i)}"")")
                     End If
-
+                    writer.WriteLine()
 
                 Next
 

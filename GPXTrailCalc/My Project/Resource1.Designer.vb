@@ -236,7 +236,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Dog&apos; s Speed.
+        '''  Vyhledá lokalizovaný řetězec podobný Dog&apos;s Speed.
         '''</summary>
         Friend Shared ReadOnly Property outSpeed() As String
             Get
@@ -259,6 +259,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property outTotalNumberOfGPXFiles() As String
             Get
                 Return ResourceManager.GetString("outTotalNumberOfGPXFiles", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný .
+        '''</summary>
+        Friend Shared ReadOnly Property rbDistances_Text1() As String
+            Get
+                Return ResourceManager.GetString("rbDistances.Text1", resourceCulture)
             End Get
         End Property
         
