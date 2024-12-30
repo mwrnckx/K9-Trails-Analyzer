@@ -411,9 +411,10 @@ Public Class GPXDistanceCalculator
         descriptions.Clear()
         link.Clear()
 
-        Try
 
-            For i = 0 To gpxFiles.Count - 1
+
+        For i = 0 To gpxFiles.Count - 1
+            Try
                 Dim gpxfilePath As String = gpxFiles(i)
 
 
@@ -422,7 +423,7 @@ Public Class GPXDistanceCalculator
                 gpxReaders.Add(reader)
 
                 ' Start calculation using the values
-                RenamewptNodes(i, My.Resources.Resource1.article)
+                RenamewptNodes(i, My.Resources.Resource1.article) 'renaming wpt to "artickle"
                 layerStart.Add(GetLayerStart(gpxFiles(i), gpxReaders(i)))
                 SplitTrackIntoTwo(i) 'in gpx files, splits a track with two segments into two separate tracks
                 descriptions.Add(GetDescription(i)) 'musí být první - slouží k výpočtu age
@@ -440,7 +441,7 @@ Public Class GPXDistanceCalculator
                 SetCreatedModifiedDate(i)
 
                 ' Display results
-                Dim fileShortName As String = (Path.GetFileNameWithoutExtension(gpxFiles(i)) & "             ").Substring(0, 30)
+                Dim fileShortName As String = (Path.GetFileNameWithoutExtension(gpxFiles(i)) & "                                   ").Substring(0, 30)
 
                 ' Nastavení fontu a barvy textu
                 Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length ' Pozice na konec textu
@@ -485,11 +486,13 @@ Public Class GPXDistanceCalculator
 
                 ' Skrolování na aktuální pozici kurzoru
                 Form1.rtbOutput.ScrollToCaret()
+            Catch ex As Exception
+                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & Path.GetFileNameWithoutExtension(gpxFiles(i)) & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        Next i
 
-            Next i
 
-
-            totalDistance = totalDistances(gpxFiles.Count - 1)
+        totalDistance = totalDistances(gpxFiles.Count - 1)
             Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
 
             ' Nastavení fontu a barvy textu
@@ -549,10 +552,7 @@ Public Class GPXDistanceCalculator
 
             ' Skrolování na aktuální pozici kurzoru
             Form1.rtbOutput.ScrollToCaret()
-        Catch ex As Exception
-            MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-            Return False
-        End Try
+
 
 
         Return True
