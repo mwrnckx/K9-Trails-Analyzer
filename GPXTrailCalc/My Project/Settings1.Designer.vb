@@ -101,6 +101,18 @@ Namespace My
                 Me("TrimGPSnoise") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("5")>  _
+        Public Property maxAge() As Integer
+            Get
+                Return CType(Me("maxAge"),Integer)
+            End Get
+            Set
+                Me("maxAge") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

@@ -222,4 +222,7 @@
   <data name="rbDistances.Text1" xml:space="preserve">
     <value />
   </data>
+  <data name="Tooltip_mnuLinkingRoutes" xml:space="preserve">
+    <value>Set the maximum time difference (in hours) between two tracks to be considered related and merged (e.g., handler and dog tracks). A value of 0 disables automatic merging.</value>
+  </data>
 </root>

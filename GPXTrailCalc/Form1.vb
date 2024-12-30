@@ -15,9 +15,7 @@ Public Class Form1
         txtWarnings.Visible = True
         'zavři případné grafy
         CloseGrafs()
-
         Try
-
             'send directoryPath to gpxCalculator
             If gpxCalculator.ReadAndProcessData(dtpStartDate.Value, dtpEndDate.Value) Then
                 btnChartDistances.Visible = True
@@ -327,6 +325,8 @@ Public Class Form1
 
         AddHandler mnuTrimGPSNoise.MouseEnter, Sub() ShowLabelToolTip(mnuTrimGPSNoise, Resource1.Tooltip_mnuTrim)
         AddHandler mnuTrimGPSNoise.MouseLeave, Sub() HideLabelToolTip()
+        AddHandler mnuLinkingRoutes.MouseEnter, Sub() ShowLabelToolTip(mnuLinkingRoutes, Resource1.Tooltip_mnuLinkingRoutes)
+        AddHandler mnuLinkingRoutes.MouseLeave, Sub() HideLabelToolTip()
 
 
         ' Nastavení ToolTip pro jednotlivé ovládací prvky
@@ -405,6 +405,22 @@ Public Class Form1
         Return zacatek & "  ...  " & konec
     End Function
 
+    Private Sub mnuLinkingRoutes_Click(sender As Object, e As EventArgs) Handles mnuLinkingRoutes.Click
+        Dim message, title, defaultValue As String
+        Dim myValue As Object
+        ' Set prompt.
+        message = "Set the maximum time difference (in hours) to identify related GPX tracks for automatic merging i.e. tracks of a trail-layer (runner) and the dog. A value of 0 disables automatic merging."
+        ' Set title.
+        title = "Set the maximum time difference"
+        defaultValue = My.Settings.maxAge   ' Set default value.
+
+        ' Display message, title, and default value.
+        myValue = InputBox(message, title, defaultValue)
+        ' If user has clicked Cancel, set myValue to 0
+        If myValue Is "" Then myValue = 0
+        My.Settings.maxAge = myValue
+        My.Settings.Save()
+    End Sub
 End Class
 
 

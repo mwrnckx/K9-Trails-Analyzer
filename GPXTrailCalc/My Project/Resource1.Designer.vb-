@@ -317,15 +317,6 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Set the maximum time difference (in hours) between two tracks to be considered related and merged (e.g., handler and dog tracks). A value of 0 disables automatic merging..
-        '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuLinkingRoutes() As String
-            Get
-                Return ResourceManager.GetString("Tooltip_mnuLinkingRoutes", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Prepend date to file names during processing. Useful for sorting files etc..
         '''</summary>
         Friend Shared ReadOnly Property Tooltip_mnuPrependDate() As String

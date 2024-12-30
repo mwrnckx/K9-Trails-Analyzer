@@ -57,7 +57,7 @@ Public Class GpxReader
 
     End Function
 
-    ' Metoda pro výběr poduzlů z  uzlu Node
+    ' Metoda pro výběr poduzlů z uzlu Node
     Public Function SelectChildNodes(childName As String, node As XmlNode) As XmlNodeList
         Return node.SelectNodes(namespacePrefix & childName, namespaceManager)
     End Function
@@ -79,6 +79,10 @@ Public Class GpxReader
 
         Return parentNode
 
+    End Function
+
+    Public Function ImportNode(node As XmlNode, deepClone As Boolean)
+        Return xmlDoc.ImportNode(node, deepClone)
     End Function
 
     Public Sub Save(save As Boolean)

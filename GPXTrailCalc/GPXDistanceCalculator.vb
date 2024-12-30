@@ -1,8 +1,11 @@
 ﻿Imports System.Globalization
 Imports System.IO
+Imports System.Net.WebRequestMethods
 Imports System.Text.RegularExpressions
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
+Imports System.Linq
+Imports System.Runtime.CompilerServices.RuntimeHelpers
 'Imports System.Windows.Media
 
 Public Class GPXDistanceCalculator
@@ -22,6 +25,7 @@ Public Class GPXDistanceCalculator
     Private link As New List(Of String)
     Public speed As New List(Of Double)
     Private save As Boolean = False
+    Private maxAge As TimeSpan
 
 
     Dim totalDistance As Double
@@ -39,6 +43,9 @@ Public Class GPXDistanceCalculator
 
 
     Private _directoryPath As String
+
+
+
     Public Property DirectoryPath() As String
         Get
             Return _directoryPath
@@ -374,6 +381,7 @@ Public Class GPXDistanceCalculator
 
     Public Function ReadAndProcessData(startDate As DateTime, endDate As DateTime) As Boolean
         DirectoryPath = My.Settings.Directory
+        maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         Dim PrependDatetoFileName As Boolean = My.Settings.PrependDateToName
         dateFrom = startDate
         dateTo = endDate
@@ -441,7 +449,7 @@ Public Class GPXDistanceCalculator
                 SetCreatedModifiedDate(i)
 
                 ' Display results
-                Dim fileShortName As String = (Path.GetFileNameWithoutExtension(gpxFiles(i)) & "                                   ").Substring(0, 30)
+                Dim fileShortName As String = (Path.GetFileNameWithoutExtension(gpxFiles(i)) & manySpaces).Substring(0, 30)
 
                 ' Nastavení fontu a barvy textu
                 Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length ' Pozice na konec textu
@@ -493,68 +501,59 @@ Public Class GPXDistanceCalculator
 
 
         totalDistance = totalDistances(gpxFiles.Count - 1)
-            Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
+        Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
 
-            ' Nastavení fontu a barvy textu
-            Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length ' Pozice na konec textu
-            Form1.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
-            Form1.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & startDate.ToShortDateString & My.Resources.Resource1.outDo & endDate.ToShortDateString &
+        ' Nastavení fontu a barvy textu
+        Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length ' Pozice na konec textu
+        Form1.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
+        Form1.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & startDate.ToShortDateString & My.Resources.Resource1.outDo & endDate.ToShortDateString &
                 vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & DirectoryPath & vbCrLf & vbCrLf)
 
-            Dim manydots As String = "...................................................................."
-            Dim labelLength As Integer = 40
+        Dim manydots As String = "...................................................................."
+        Dim labelLength As Integer = 40
 
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Maroon
-            Form1.rtbOutput.AppendText((My.Resources.Resource1.outTotalNumberOfGPXFiles & manydots).Substring(0, labelLength))
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Maroon
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outTotalNumberOfGPXFiles & manydots).Substring(0, labelLength))
 
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Firebrick
-            Form1.rtbOutput.AppendText(distances.Count & vbCrLf)
-
-
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Maroon
-            Form1.rtbOutput.AppendText((My.Resources.Resource1.outTotalLength & manydots).Substring(0, labelLength))
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Firebrick
-            Form1.rtbOutput.AppendText(totalDistance.ToString("F2") & " km" & vbCrLf)
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Maroon
-            Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Firebrick
-            Form1.rtbOutput.AppendText((1000 * AverageOf(distances)).ToString("F0") & " m" & vbCrLf)
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Maroon
-            Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Firebrick
-            Form1.rtbOutput.AppendText(AverageOf(AgeAsDouble).ToString("F0") & " min" & vbCrLf)
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Maroon
-            Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
-
-            Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
-            Form1.rtbOutput.SelectionColor = Color.Firebrick
-            Form1.rtbOutput.AppendText(AverageOf(speed).ToString("F2") & " km/h")
-
-            ' Posunutí kurzoru na konec textu
-            Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length
-
-            ' Skrolování na aktuální pozici kurzoru
-            Form1.rtbOutput.ScrollToCaret()
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Firebrick
+        Form1.rtbOutput.AppendText(distances.Count & vbCrLf)
 
 
 
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Maroon
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outTotalLength & manydots).Substring(0, labelLength))
+
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Firebrick
+        Form1.rtbOutput.AppendText(totalDistance.ToString("F2") & " km" & vbCrLf)
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Maroon
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Firebrick
+        Form1.rtbOutput.AppendText((1000 * AverageOf(distances)).ToString("F0") & " m" & vbCrLf)
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Maroon
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Firebrick
+        Form1.rtbOutput.AppendText(AverageOf(AgeAsDouble).ToString("F0") & " min" & vbCrLf)
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Maroon
+        Form1.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
+        Form1.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Form1.rtbOutput.SelectionColor = Color.Firebrick
+        Form1.rtbOutput.AppendText(AverageOf(speed).ToString("F2") & " km/h")
+
+        ' Posunutí kurzoru na konec textu
+        Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length
+
+        ' Skrolování na aktuální pozici kurzoru
+        Form1.rtbOutput.ScrollToCaret()
         Return True
     End Function
 
@@ -639,10 +638,10 @@ Public Class GPXDistanceCalculator
                 ' Vytvoření kompletní cílové cesty
                 backupFilePath = Path.Combine(backupDirectory, fileName)
 
-                If Not File.Exists(backupFilePath) Then
+                If Not IO.File.Exists(backupFilePath) Then
                     ' Kopírování souboru
                     Try
-                        File.Copy(sourcefilePath, backupFilePath, False)
+                        IO.File.Copy(sourcefilePath, backupFilePath, False)
                     Catch ex As Exception
                         ' Zpracování jakýchkoli neočekávaných chyb
                         Debug.WriteLine($"Chyba při kopírování souboru {fileName}: {ex.Message}")
@@ -661,36 +660,133 @@ Public Class GPXDistanceCalculator
 
     End Sub
 
+    Structure SouborSDatem
+        Dim NazevSouboru As String
+        Dim Datum As DateTime
+        Dim reader As GpxReader
+    End Structure
+
+    Private Function MergeTwoGpxFiles(layer As SouborSDatem, dog As SouborSDatem) As Boolean
+        'do souboru layer vloží kompletní uzel  <trk> vyjmutý ze souboru dog
+        Try
+
+
+            ' Najdi první uzel <trk>
+            Dim layertrkNode As XmlNode = layer.reader.SelectSingleNode("trk")
+            Dim dogtrkNode As XmlNode = dog.reader.SelectSingleNode("trk")
+            If layertrkNode IsNot Nothing AndAlso dogtrkNode IsNot Nothing Then
+                Dim importedNode As XmlNode = layer.reader.ImportNode(dogtrkNode, True) ' Důležité: Import uzlu!
+                Dim layerGpxNode As XmlNode = layer.reader.SelectSingleNode("gpx")
+                layerGpxNode.AppendChild(importedNode) ' Přidání na konec <gpx>
+
+
+                'spojené trasy se uloží do souboru kladeče
+                layer.reader.Save(True)
+                IO.File.Delete(dog.NazevSouboru)
+                MessageBox.Show($"Tracks in files {Path.GetFileName(layer.NazevSouboru)} and {Path.GetFileName(dog.NazevSouboru)} were successfully merged.{vbCrLf}File {Path.GetFileName(layer.NazevSouboru)}  was deleted.")
+
+            End If
+            Return True
+        Catch ex As Exception
+            Return False
+        End Try
+
+    End Function
     ' Get a list of all GPX files in the specified directory and filters them according to the specified condition, i.e. the specified time interval
     Private Function GetGpxFiles(directorypath As String) As List(Of String)
         Try
 
             ' Načteme všechny GPX soubory
-            Dim _gpxFiles As List(Of String) = Directory.GetFiles(directorypath, "*.gpx").ToList()
-            BackupGpxFiles(_gpxFiles)
+            Dim gpxFilesAll As List(Of String) = Directory.GetFiles(directorypath, "*.gpx").ToList()
+            BackupGpxFiles(gpxFilesAll)
+            Dim gpxFilesWithinInterval As New List(Of String)
             ' Filtrujeme soubory podle podmínky
-            For i As Integer = 0 To _gpxFiles.Count - 1
+            For i As Integer = 0 To gpxFilesAll.Count - 1
 
-
-                Dim reader As New GpxReader(_gpxFiles(i))
-                Dim _layerStart As DateTime = GetLayerStart(_gpxFiles(i), reader)
+                Dim reader As New GpxReader(gpxFilesAll(i))
+                Dim _layerStart As DateTime = GetLayerStart(gpxFilesAll(i), reader)
                 If _layerStart >= dateFrom And _layerStart <= dateTo Then
-                    gpxFiles.Add(_gpxFiles(i))
+                    gpxFilesWithinInterval.Add(gpxFilesAll(i))
+                    layerStart.Add(_layerStart)
                     gpxReaders.Add(reader)
-
                 End If
             Next
 
             If My.Settings.PrependDateToName Then
-                For i = 0 To gpxFiles.Count - 1
+                For i = 0 To gpxFilesWithinInterval.Count - 1
                     'modifies the name to start with the date
                     PrependDateToFilename(i)
                 Next i
             End If
 
-            gpxFiles.Sort()
+            ' následuje setřídění podle data a pospojování tracků psa a kladeče
+            Dim SouborySDaty As New List(Of SouborSDatem)
 
-            Return gpxFiles
+            For i As Integer = 0 To gpxFilesWithinInterval.Count - 1
+                SouborySDaty.Add(New SouborSDatem With {.NazevSouboru = gpxFilesWithinInterval(i), .Datum = layerStart(i), .reader = gpxReaders(i)})
+            Next
+
+
+            SouborySDaty.Sort(Function(x, y) x.Datum.CompareTo(y.Datum)) ' Seřazení podle data
+            'vytváříme list gpx souborů seřazených podle LayerStart, první vložíme,
+            'další prohlídneme, zda se neliší o méně než maxAge - ty je pal možné spojit,
+            'protože se nejspíš jedná o záznam stopy kladeč a trasy psa, jen je každá zvlášť
+            Dim gpxFilesSortedByDate As New List(Of String) From {
+                SouborySDaty(0).NazevSouboru
+            }
+            'najdi všechny sousední soubory, které se liší o méně než MaxAge
+            Dim _add As Boolean = False
+            For i = 1 To SouborySDaty.Count - 1
+
+                ' Základní kontrola, zda rozdíl dat splňuje podmínku
+                If SouborySDaty(i).Datum - SouborySDaty(i - 1).Datum < maxAge Then
+                    ' Zjisti, zda oba soubory obsahují pouze jeden uzel <trkseg>
+                    Dim trksegNodes_i As XmlNodeList = SouborySDaty(i).reader.SelectNodes("trkseg")
+                    Dim trksegNodes_prev As XmlNodeList = SouborySDaty(i - 1).reader.SelectNodes("trkseg")
+
+                    If trksegNodes_i.Count = 1 AndAlso trksegNodes_prev.Count = 1 Then
+                        ' Zeptej se uživatele, zda chce soubory spojit
+                        Dim mergeFiles As DialogResult = MessageBox.Show(
+                        $"Should I merge these two files into one?{vbCrLf}" &
+                        $"Click yes if the first file is the track record of the layer(runner) and the second is the track record of the dog.{vbCrLf}{vbCrLf}" &
+                        $"{Path.GetFileName(SouborySDaty(i).NazevSouboru)}{vbCrLf}{vbCrLf}" &
+                        $"{Path.GetFileName(SouborySDaty(i - 1).NazevSouboru)}",
+                        "Merging two gpx files",
+                        MessageBoxButtons.YesNo)
+
+                        ' Pokud uživatel souhlasí, spoj soubory, jinak přidej
+                        If mergeFiles = DialogResult.Yes Then
+                            If Not MergeTwoGpxFiles(SouborySDaty(i - 1), SouborySDaty(i)) Then
+                                _add = True
+                            End If
+                        Else
+                            _add = True
+                        End If
+                    Else
+                        ' Pokud nemají oba soubory právě jeden uzel <trkseg>, přidej soubor
+                        _add = True
+                    End If
+                Else
+                    ' Pokud rozdíl dat nesplňuje podmínku, přidej soubor
+                    _add = True
+                End If
+
+                ' Přidání souboru do seznamu, pokud je _add True
+                If _add Then gpxFilesSortedByDate.Add(SouborySDaty(i).NazevSouboru)
+
+            Next i
+
+
+
+            ' Nyní máš v gpxFilesSortedByDate seřazené názvy souborů podle data v LayerStart
+            ' Původní seznam gpxFilesWithinInterval zůstane nezměněn.
+
+
+
+
+            'gpxFilesWithinInterval.Sort()
+
+            Return gpxFilesSortedByDate
         Catch ex As Exception
             ' Adding a more detailed exception message
             Debug.WriteLine("Error: " & ex.Message)
@@ -778,12 +874,12 @@ Public Class GPXDistanceCalculator
 
                     newFilePath = Path.Combine(DirectoryPath, newFileName & ".gpx")
 
-                    If File.Exists(newFilePath) Then
+                    If IO.File.Exists(newFilePath) Then
                         ' Handle existing files
                         Dim userInput As String = InputBox($"File {newFileName} already exists. Enter a new name:", newFileName)
                         If Not String.IsNullOrWhiteSpace(userInput) Then
                             newFilePath = Path.Combine(DirectoryPath, userInput & fileExtension)
-                            File.Move(gpxFiles(i), newFilePath)
+                            IO.File.Move(gpxFiles(i), newFilePath)
                             Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                             Debug.WriteLine($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
 
@@ -793,7 +889,7 @@ Public Class GPXDistanceCalculator
                         End If
 
                     Else
-                        File.Move(gpxFiles(i), newFilePath)
+                        IO.File.Move(gpxFiles(i), newFilePath)
                         gpxFiles(i) = newFilePath
                         Debug.WriteLine($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                         Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
@@ -808,12 +904,12 @@ Public Class GPXDistanceCalculator
                 newFileName = $"{_layerStart.Date.ToString("yyyy-MM-dd")}{fileName}{fileExtension}"
                 newFilePath = Path.Combine(DirectoryPath, newFileName)
 
-                If File.Exists(newFilePath) Then
+                If IO.File.Exists(newFilePath) Then
                     ' Handle existing files
                     Dim userInput As String = InputBox($"File {newFileName} already exists. Enter a new name:", newFileName)
                     If Not String.IsNullOrWhiteSpace(userInput) Then
                         newFilePath = Path.Combine(DirectoryPath, userInput & fileExtension)
-                        File.Move(gpxFiles(i), newFilePath)
+                        IO.File.Move(gpxFiles(i), newFilePath)
                         Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                         Debug.WriteLine($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
 
@@ -823,7 +919,7 @@ Public Class GPXDistanceCalculator
                     End If
 
                 Else
-                    File.Move(gpxFiles(i), newFilePath)
+                    IO.File.Move(gpxFiles(i), newFilePath)
                     gpxFiles(i) = newFilePath
                     Debug.WriteLine($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                     Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(gpxFiles(i))} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
@@ -845,9 +941,9 @@ Public Class GPXDistanceCalculator
     Sub SetCreatedModifiedDate(i)
         'change of attributes
         ' Setting the file creation date
-        File.SetCreationTime(gpxFiles(i), layerStart(i))
+        IO.File.SetCreationTime(gpxFiles(i), layerStart(i))
         ' Setting the last modified file date
-        File.SetLastWriteTime(gpxFiles(i), layerStart(i))
+        IO.File.SetLastWriteTime(gpxFiles(i), layerStart(i))
     End Sub
 
     Public Sub WriteCSVfile(csvFilePath As String)
@@ -897,9 +993,6 @@ Public Class GPXDistanceCalculator
 
     ' in gpx files, splits a track with two segments into two separate tracks
     Sub SplitTrackIntoTwo(i As Integer)
-
-
-
         ' Najdi první uzel <trk>
         Dim trkNode As XmlNode = gpxReaders(i).SelectSingleNode("trk")
 

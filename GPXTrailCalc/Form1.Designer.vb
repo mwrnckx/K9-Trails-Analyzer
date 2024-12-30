@@ -41,6 +41,7 @@ Partial Class Form1
         Me.mnuSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPrependDateToFileName = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuTrimGPSNoise = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuLinkingRoutes = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuEnglish = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuGerman = New System.Windows.Forms.ToolStripMenuItem()
@@ -141,7 +142,7 @@ Partial Class Form1
         '
         'mnuSettings
         '
-        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise})
+        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise, Me.mnuLinkingRoutes})
         resources.ApplyResources(Me.mnuSettings, "mnuSettings")
         Me.mnuSettings.Name = "mnuSettings"
         '
@@ -156,6 +157,11 @@ Partial Class Form1
         Me.mnuTrimGPSNoise.CheckOnClick = True
         Me.mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
         resources.ApplyResources(Me.mnuTrimGPSNoise, "mnuTrimGPSNoise")
+        '
+        'mnuLinkingRoutes
+        '
+        Me.mnuLinkingRoutes.Name = "mnuLinkingRoutes"
+        resources.ApplyResources(Me.mnuLinkingRoutes, "mnuLinkingRoutes")
         '
         'mnuLanguage
         '
@@ -367,5 +373,6 @@ Partial Class Form1
     Friend WithEvents mnuTrimGPSNoise As ToolStripMenuItem
     Friend WithEvents rtbOutput As RichTextBox
     Friend WithEvents mnuExportAs As ToolStripMenuItem
+    Friend WithEvents mnuLinkingRoutes As ToolStripMenuItem
 End Class
 
