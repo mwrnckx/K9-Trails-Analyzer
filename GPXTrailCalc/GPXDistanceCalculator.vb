@@ -1075,11 +1075,6 @@ Public Class GPXDistanceCalculator
         Catch ex As Exception
             Debug.WriteLine(ex.ToString)
         End Try
-
-
-
-
-
     End Sub
 
 
