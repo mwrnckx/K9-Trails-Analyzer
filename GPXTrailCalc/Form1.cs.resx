@@ -126,23 +126,27 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Vytvoř grafy</value>
   </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>Soubor</value>
-  </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Vyber adresář ve kterém jsou soubory gpx</value>
   </data>
   <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
     <value>Vyber adresář do kterého se mají zálohovat soubory gpx</value>
   </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>Zpracování GPX</value>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Soubor</value>
   </data>
   <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
     <value>Připni datum na začátek jména souboru GPX</value>
   </data>
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
     <value>Odstraň šum GPS na začátku a konci tras</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Zpracování GPX</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="mnuPolish.ImageScaling" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Jazyk</value>
@@ -210,5 +214,8 @@
   </data>
   <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
     <value>Odstranit šum GPS na začátku a konci tras</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Spáruj trasy kladeče a psa</value>
   </data>
 </root>

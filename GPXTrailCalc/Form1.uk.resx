@@ -123,23 +123,23 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Створити графік:</value>
   </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>Файл</value>
-  </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Виберіть директорію, де знаходяться gpx-файли</value>
   </data>
   <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
     <value>Виберіть каталог для резервного копіювання gpx-файлів</value>
   </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>Обробка GPX</value>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Файл</value>
   </data>
   <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
     <value>Додавання дати до імені gpx-файлу</value>
   </data>
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
     <value>Видалити шум GPS на початку та в кінці треків</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Обробка GPX</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Мова</value>
@@ -157,9 +157,6 @@
     <value>Пройдено за вибраний період</value>
   </data>
   <data name="rbDistances.Text" xml:space="preserve">
-    <value>Довжина окремих маршрутів</value>
-  </data>
-  <data name="rbDistances.Text1" xml:space="preserve">
     <value>Довжина окремих маршрутів</value>
   </data>
   <data name="rbAge.Text" xml:space="preserve">
@@ -194,5 +191,8 @@
   </data>
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>До:</value>
+  </data>
+  <data name="rbDistances.Text1" xml:space="preserve">
+    <value>Довжина окремих маршрутів</value>
   </data>
 </root>

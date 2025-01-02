@@ -219,7 +219,4 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>Am Anfang der Strecke, bevor Sie losgehen, und am Ende, bevor Sie die Aufzeichnung beenden, zeichnet das GPS-Gerät oft ungenaue oder fehlerhafte Daten auf. Wenn diese Option aktiviert ist, versucht das Programm, diese Ungenauigkeiten automatisch zu entfernen.</value>
   </data>
-  <data name="rbDistances.Text1" xml:space="preserve">
-    <value>Länge der einzelnen Strecken</value>
-  </data>
 </root>

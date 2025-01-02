@@ -325,8 +325,8 @@ Public Class Form1
 
         AddHandler mnuTrimGPSNoise.MouseEnter, Sub() ShowLabelToolTip(mnuTrimGPSNoise, Resource1.Tooltip_mnuTrim)
         AddHandler mnuTrimGPSNoise.MouseLeave, Sub() HideLabelToolTip()
-        AddHandler mnuLinkingRoutes.MouseEnter, Sub() ShowLabelToolTip(mnuLinkingRoutes, Resource1.Tooltip_mnuLinkingRoutes)
-        AddHandler mnuLinkingRoutes.MouseLeave, Sub() HideLabelToolTip()
+        AddHandler mnuMergingTracks.MouseEnter, Sub() ShowLabelToolTip(mnuMergingTracks, Resource1.Tooltip_mnuMergingTracks)
+        AddHandler mnuMergingTracks.MouseLeave, Sub() HideLabelToolTip()
 
 
         ' Nastavení ToolTip pro jednotlivé ovládací prvky
@@ -342,15 +342,11 @@ Public Class Form1
         dtpStartDate.CustomFormat = $"'{My.Resources.Resource1.lblFrom}'  {Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortDatePattern}"
         dtpEndDate.CustomFormat = $"'{My.Resources.Resource1.lblTo}'   {Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortDatePattern}"
 
-
-
-
     End Sub
 
 
     Private Sub chbTrimGpxFile(sender As Object, e As EventArgs) Handles mnuTrimGPSNoise.CheckedChanged
         My.Settings.TrimGPSnoise = mnuTrimGPSNoise.Checked
-
     End Sub
 
 
@@ -405,13 +401,13 @@ Public Class Form1
         Return zacatek & "  ...  " & konec
     End Function
 
-    Private Sub mnuLinkingRoutes_Click(sender As Object, e As EventArgs) Handles mnuLinkingRoutes.Click
+    Private Sub mnuMergingTracks_Click(sender As Object, e As EventArgs) Handles mnuMergingTracks.Click
         Dim message, title, defaultValue As String
         Dim myValue As Object
         ' Set prompt.
-        message = "Set the maximum time difference (in hours) to identify related GPX tracks for automatic merging i.e. tracks of a trail-layer (runner) and the dog. A value of 0 disables automatic merging."
+        message = My.Resources.Resource1.Tooltip_mnuMergingTracks '"Set the maximum time difference (i.e. age of trails in hours) to identify related GPX tracks for automatic merging i.e. tracks of a trail-layer (runner) and the dog. A value of 0 disables automatic merging."
         ' Set title.
-        title = "Set the maximum time difference"
+        title = My.Resources.Resource1.mBoxMergingTracksText
         defaultValue = My.Settings.maxAge   ' Set default value.
 
         ' Display message, title, and default value.
@@ -420,6 +416,13 @@ Public Class Form1
         If myValue Is "" Then myValue = 0
         My.Settings.maxAge = myValue
         My.Settings.Save()
+
+    End Sub
+
+    Private Sub FactoryResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FactoryResetToolStripMenuItem.Click
+        If MessageBox.Show("Are you sure you want to clear all your settings?", " ",
+        MessageBoxButtons.YesNo) = DialogResult.Yes Then My.Settings.Reset()
+
     End Sub
 End Class
 

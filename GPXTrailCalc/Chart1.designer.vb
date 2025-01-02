@@ -75,6 +75,7 @@ Partial Class DistanceChart
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(9.0!, 20.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.AutoSize = True
         Me.ClientSize = New System.Drawing.Size(900, 562)
         Me.Controls.Add(Me.chart1)
         Me.Controls.Add(Me.MenuStrip1)

@@ -74,11 +74,65 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Remember the &apos;No&apos; decision for this couple.
+        '''</summary>
+        Friend Shared ReadOnly Property chbRemembDecisQ() As String
+            Get
+                Return ResourceManager.GetString("chbRemembDecisQ", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný From: .
         '''</summary>
         Friend Shared ReadOnly Property lblFrom() As String
             Get
                 Return ResourceManager.GetString("lblFrom", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Is this the track of the layer.
+        '''</summary>
+        Friend Shared ReadOnly Property lblIsThisLayerQ() As String
+            Get
+                Return ResourceManager.GetString("lblIsThisLayerQ", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Is this the appropriate track of the dog.
+        '''</summary>
+        Friend Shared ReadOnly Property lblIsThisTrackOfTheDog() As String
+            Get
+                Return ResourceManager.GetString("lblIsThisTrackOfTheDog", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Merge GPX files?.
+        '''</summary>
+        Friend Shared ReadOnly Property lblMergeGPXtracksQ() As String
+            Get
+                Return ResourceManager.GetString("lblMergeGPXtracksQ", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Do you really want to merge these two files into one?.
+        '''</summary>
+        Friend Shared ReadOnly Property lblMergeTwoToOneQ() As String
+            Get
+                Return ResourceManager.GetString("lblMergeTwoToOneQ", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný By merging, you get one gpx file containing the tracks of both the trail-layer and the dog..
+        '''</summary>
+        Friend Shared ReadOnly Property lblMergingYouGet() As String
+            Get
+                Return ResourceManager.GetString("lblMergingYouGet", resourceCulture)
             End Get
         End Property
         
@@ -115,6 +169,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property mBoxErrorCreatingCSV() As String
             Get
                 Return ResourceManager.GetString("mBoxErrorCreatingCSV", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Set conditions for merging tracks.
+        '''</summary>
+        Friend Shared ReadOnly Property mBoxMergingTracksText() As String
+            Get
+                Return ResourceManager.GetString("mBoxMergingTracksText", resourceCulture)
             End Get
         End Property
         
@@ -263,11 +326,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný .
+        '''  Vyhledá lokalizovaný řetězec podobný Next time ask again.
         '''</summary>
-        Friend Shared ReadOnly Property rbDistances_Text1() As String
+        Friend Shared ReadOnly Property rbAskAgein() As String
             Get
-                Return ResourceManager.GetString("rbDistances.Text1", resourceCulture)
+                Return ResourceManager.GetString("rbAskAgein", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný For the other pairs, don&apos;t ask any more  and don&apos;t merge..
+        '''</summary>
+        Friend Shared ReadOnly Property rbDontAskDontMerge() As String
+            Get
+                Return ResourceManager.GetString("rbDontAskDontMerge", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný For the other pairs, don&apos;t ask any more  and join straight away (carefully!).
+        '''</summary>
+        Friend Shared ReadOnly Property rbDontAskMergeQ() As String
+            Get
+                Return ResourceManager.GetString("rbDontAskMergeQ", resourceCulture)
             End Get
         End Property
         
@@ -317,11 +398,11 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Set the maximum time difference (in hours) between two tracks to be considered related and merged (e.g., handler and dog tracks). A value of 0 disables automatic merging..
+        '''  Vyhledá lokalizovaný řetězec podobný Set the maximum time difference (in hours) between two track records that should be considered related and merged into one gpx file as a track of the layer and a track of the dog. The value therefore indicates the maximum age of the trail you are using. A value of 0 disables automatic merging..
         '''</summary>
-        Friend Shared ReadOnly Property Tooltip_mnuLinkingRoutes() As String
+        Friend Shared ReadOnly Property Tooltip_mnuMergingTracks() As String
             Get
-                Return ResourceManager.GetString("Tooltip_mnuLinkingRoutes", resourceCulture)
+                Return ResourceManager.GetString("Tooltip_mnuMergingTracks", resourceCulture)
             End Get
         End Property
         

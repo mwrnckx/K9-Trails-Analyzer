@@ -6,6 +6,7 @@ Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
 Imports System.Linq
 Imports System.Runtime.CompilerServices.RuntimeHelpers
+Imports Microsoft.VisualBasic.Logging
 'Imports System.Windows.Media
 
 Public Class GPXDistanceCalculator
@@ -400,34 +401,29 @@ Public Class GPXDistanceCalculator
         Form1.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         Form1.rtbOutput.AppendText(vbCrLf)
 
-        gpxFiles.Clear()
+        If Not ClearAllLists() Then
+            Return False
+        End If
+
+        If Not gpxFiles Is Nothing Then gpxFiles.Clear()
         gpxFiles = GetGpxFiles(DirectoryPath)
 
-        If gpxFiles.Count = 0 Then
+        If gpxFiles Is Nothing OrElse gpxFiles.Count = 0 Then
             MessageBox.Show(My.Resources.Resource1.mBoxNo_gpx_file_was_found)
             Return False
         End If
 
 
-        gpxReaders.Clear()
-        layerStart.Clear()
-        dogStart.Clear()
-        dogFinish.Clear()
-        distances.Clear()
-        totalDistances.Clear()
-        age.Clear()
-        speed.Clear()
-        descriptions.Clear()
-        link.Clear()
+
+        If Not ClearAllLists() Then
+            Return False
+        End If
 
 
 
         For i = 0 To gpxFiles.Count - 1
             Try
                 Dim gpxfilePath As String = gpxFiles(i)
-
-
-
                 Dim reader As New GpxReader(gpxFiles(i)) 'musí se načíst znovu kvůli files.sort
                 gpxReaders.Add(reader)
 
@@ -484,11 +480,7 @@ Public Class GPXDistanceCalculator
 
                 End If
 
-
-
                 Form1.rtbOutput.AppendText(vbCrLf)
-
-
 
                 ' Posunutí kurzoru na konec textu
                 Form1.rtbOutput.SelectionStart = Form1.rtbOutput.Text.Length
@@ -556,6 +548,26 @@ Public Class GPXDistanceCalculator
         ' Skrolování na aktuální pozici kurzoru
         Form1.rtbOutput.ScrollToCaret()
         Return True
+    End Function
+
+    Private Function ClearAllLists() As Boolean
+        Try
+            gpxReaders.Clear()
+            layerStart.Clear()
+            dogStart.Clear()
+            dogFinish.Clear()
+            distances.Clear()
+            totalDistances.Clear()
+            age.Clear()
+            speed.Clear()
+            descriptions.Clear()
+            link.Clear()
+            Return True
+        Catch ex As Exception
+            MessageBox.Show("Something went wrong")
+            Return False
+        End Try
+
     End Function
 
     Private Sub AppendHyperlink(rtb As RichTextBox, url As String, displayText As String)
@@ -680,7 +692,6 @@ Public Class GPXDistanceCalculator
                 Dim layerGpxNode As XmlNode = layer.reader.SelectSingleNode("gpx")
                 layerGpxNode.AppendChild(importedNode) ' Přidání na konec <gpx>
 
-
                 'spojené trasy se uloží do souboru kladeče
                 layer.reader.Save(True)
                 IO.File.Delete(dog.NazevSouboru)
@@ -744,14 +755,8 @@ Public Class GPXDistanceCalculator
                 End If
             Next i
 
-
-
             ' Nyní máš v gpxFilesSortedByDate seřazené názvy souborů podle data v LayerStart
             ' Původní seznam gpxFilesWithinInterval zůstane nezměněn.
-
-
-
-
 
 
             Return gpxFilesSortedByDate
@@ -768,15 +773,18 @@ Public Class GPXDistanceCalculator
 
         'najdi všechny sousední soubory, které se liší o méně než MaxAge
         ' Základní kontrola, zda rozdíl dat splňuje podmínku na max stáří
+
+
         If (soubor_i.Datum - soubor_prev.Datum < maxAge) AndAlso
-        (Not mergeCancel) Then
+        (Not mergeCancel) AndAlso (Not LoadMergeDecision(soubor_prev, soubor_i) = "No") Then
+
             ' Zjisti, zda oba soubory obsahují pouze jeden uzel <trkseg>
             Dim trksegNodes_i As XmlNodeList = soubor_i.reader.SelectNodes("trkseg")
             Dim trksegNodes_prev As XmlNodeList = soubor_prev.reader.SelectNodes("trkseg")
             If trksegNodes_i.Count = 1 AndAlso trksegNodes_prev.Count = 1 Then
                 ' Zeptej se uživatele, zda chce soubory spojit
                 Dim mergeFiles As DialogResult
-                If Not mergeNoAsk Then mergeFiles = DialogMergeFiles(soubor_i, soubor_prev)
+                If Not mergeNoAsk Then mergeFiles = DialogMergeFiles(soubor_prev, soubor_i)
                 ' Pokud uživatel souhlasí, spoj soubory, jinak přidej
                 If mergeNoAsk OrElse (mergeFiles = DialogResult.Yes) Then
                     If MergeTwoGpxFiles(soubor_prev, soubor_i) Then
@@ -785,15 +793,15 @@ Public Class GPXDistanceCalculator
                 End If
             End If
         End If
-        Return False
+        Return False 'ke spojení souborů nedošlo
     End Function
 
 
 
-    Private Function DialogMergeFiles(dog As SouborSDatem, runner As SouborSDatem) As DialogResult
+    Private Function DialogMergeFiles(runner As SouborSDatem, dog As SouborSDatem) As DialogResult
         ' Vytvoření instance formuláře (dialogu)
         Dim dialog As New Form()
-        dialog.Text = "Spojit GPX trasy?"
+        dialog.Text = My.Resources.Resource1.lblMergeGPXtracksQ ' "Spojit GPX trasy?"
         dialog.FormBorderStyle = FormBorderStyle.FixedDialog ' Zamezení změně velikosti
         dialog.StartPosition = FormStartPosition.CenterParent ' Vycentrování na rodičovské okno
         dialog.MinimizeBox = False
@@ -805,64 +813,75 @@ Public Class GPXDistanceCalculator
 
         ' Popisek s dotazem
         Dim lblDotaz As New Label()
-        lblDotaz.Text = "Chcete spojit tyto dva soubory do jednoho?"
+        lblDotaz.Text = My.Resources.Resource1.lblMergeTwoToOneQ '"Chcete spojit tyto dva soubory do jednoho?"
         lblDotaz.AutoSize = True
         lblDotaz.Location = New Point(10, 10)
+        lblDotaz.ForeColor = Color.Maroon
         dialog.Controls.Add(lblDotaz)
 
         ' Popis (volitelný, můžeš ho upravit podle potřeby)
         Dim lblPopis As New Label()
-        lblPopis.Text = "Spojením získáte soubor gpx obsahující trasu kladeče i psa." ' Příklad popisu
+        lblPopis.Text = My.Resources.Resource1.lblMergingYouGet ' "Spojením získáte jeden soubor gpx obsahující trasu kladeče i psa." ' Příklad popisu
         lblPopis.AutoSize = True
         lblPopis.Location = New Point(10, lblDotaz.Bottom + 5)
         dialog.Controls.Add(lblPopis)
 
         ' Popisky se jmény souborů
         Dim lblSoubor1 As New Label()
-        lblSoubor1.Text = $"Je toto trasa kladeče: {Path.GetFileName(runner.NazevSouboru)}?"
+        lblSoubor1.Text = $"{My.Resources.Resource1.lblIsThisLayerQ}: '{Path.GetFileName(runner.NazevSouboru)}' ?"
         lblSoubor1.AutoSize = True
         lblSoubor1.Location = New Point(10, lblPopis.Bottom + 10)
+        lblSoubor1.ForeColor = Color.Maroon
         dialog.Controls.Add(lblSoubor1)
 
         Dim lblSoubor2 As New Label()
-        lblSoubor2.Text = $"Je toto trasa psa: {Path.GetFileName(dog.NazevSouboru)}?"
+        lblSoubor2.Text = $"{My.Resources.Resource1.lblIsThisTrackOfTheDog}: '{Path.GetFileName(dog.NazevSouboru)}' ?"
         lblSoubor2.AutoSize = True
         lblSoubor2.Location = New Point(10, lblSoubor1.Bottom + 5)
+        lblSoubor2.ForeColor = Color.Maroon
         dialog.Controls.Add(lblSoubor2)
+
+        ' Zaškrtávací políčko pro zapamatování rozhodnutí
+        Dim chbRemembDecision As New CheckBox
+        chbRemembDecision.Text = My.Resources.Resource1.chbRemembDecisQ '"Zapamatovat rozhodnutí 'Ne' pro tuto dvojici"
+        chbRemembDecision.Location = New Point(10, lblSoubor2.Bottom + 10)
+        chbRemembDecision.AutoSize = True
+        chbRemembDecision.Checked = True
+        dialog.Controls.Add(chbRemembDecision)
 
         ' Tlačítka
         Dim btnAno As New Button()
-        btnAno.Text = "Ano"
+        btnAno.Text = "Yes"
         btnAno.DialogResult = DialogResult.Yes ' Nastavení výsledku dialogu
-        btnAno.Location = New Point(10, lblSoubor2.Bottom + 15)
+        btnAno.Location = New Point(10, chbRemembDecision.Bottom + 15)
         btnAno.AutoSize = True
         dialog.Controls.Add(btnAno)
 
         Dim btnNe As New Button()
-        btnNe.Text = "Ne"
+        btnNe.Text = "No"
         btnNe.DialogResult = DialogResult.No
-        btnNe.Location = New Point(btnAno.Right + 10, lblSoubor2.Bottom + 15)
+        btnNe.Location = New Point(btnAno.Right + 10, chbRemembDecision.Bottom + 15)
         btnNe.AutoSize = True
         dialog.Controls.Add(btnNe)
 
 
         ' Zaškrtávací políčko pro automatické spojování
         Dim rbNoAsk As New RadioButton()
-        rbNoAsk.Text = "Příště se už neptat a rovnou spojit"
+        rbNoAsk.Text = My.Resources.Resource1.rbDontAskMergeQ '"U dalších dvojic se už neptat a rovnou spojit (opatrně!)"
         rbNoAsk.Location = New Point(10, btnNe.Bottom + 15)
         rbNoAsk.AutoSize = True
         dialog.Controls.Add(rbNoAsk)
 
         ' Zaškrtávací políčko pro zrušení spojování
         Dim rbCancel As New RadioButton()
-        rbCancel.Text = "Příště se už neptat a nic nespojovat"
+        rbCancel.Text = My.Resources.Resource1.rbDontAskDontMerge ' "U dalších dvojic se už neptat a nic nespojovat"
         rbCancel.Location = New Point(10, rbNoAsk.Bottom + 7)
         rbCancel.AutoSize = True
         dialog.Controls.Add(rbCancel)
 
         ' Zaškrtávací políčko pro zrušení spojování
         Dim rbAsk As New RadioButton()
-        rbAsk.Text = "Příště se zase ptát"
+        rbAsk.Text = My.Resources.Resource1.rbAskAgein '"Příště se zase ptát"
         rbAsk.Location = New Point(10, rbCancel.Bottom + 7)
         rbAsk.AutoSize = True
         rbAsk.Checked = True
@@ -877,9 +896,51 @@ Public Class GPXDistanceCalculator
         Dim result As DialogResult = dialog.ShowDialog()
 
         ' Uložení stavu zaškrtávacího políčka do veřejné proměnné nebo do nastavení aplikace
+        If result = DialogResult.No AndAlso chbRemembDecision.Checked Then
+            SaveMergeDecision(runner, dog, DialogResult.No)
+        End If
+
         mergeNoAsk = rbNoAsk.Checked ' Uložení stavu pro použití v hlavní funkci
         mergeCancel = rbCancel.Checked
         Return result
+    End Function
+
+
+    Private Sub SaveMergeDecision(runner As SouborSDatem, dog As SouborSDatem, result As String)
+        Dim key As String = $"{runner.NazevSouboru}|{dog.NazevSouboru}" ' Vytvoření klíče
+        Dim settings As System.Collections.Specialized.StringCollection = My.Settings.MergeDecisions
+        ' Inicializace kolekce, pokud je Nothing
+        If settings Is Nothing Then
+            settings = New System.Collections.Specialized.StringCollection()
+            My.Settings.MergeDecisions = settings ' Důležité: Uložení inicializované kolekce zpět do nastavení!
+        End If
+        ' Odstranění starého rozhodnutí, pokud existuje
+
+        Dim existingIndex As Integer = -1
+        For i As Integer = 0 To settings.Count - 1
+            If settings(i).StartsWith($"{runner.NazevSouboru}|{dog.NazevSouboru}|") Then
+                existingIndex = i
+                Exit For
+            End If
+        Next
+        If existingIndex > -1 Then settings.RemoveAt(existingIndex)
+        settings.Add($"{key}|{result}") ' Uložení nového rozhodnutí
+        My.Settings.Save() ' Uložení změn do konfiguračního souboru
+
+    End Sub
+
+    ' Načtení rozhodnutí
+    Private Function LoadMergeDecision(runner As SouborSDatem, dog As SouborSDatem) As String
+        Dim key As String = $"{runner.NazevSouboru}|{dog.NazevSouboru}"
+        Dim settings As System.Collections.Specialized.StringCollection = My.Settings.MergeDecisions
+        If Not settings Is Nothing Then
+            For Each item As String In settings
+                If item.StartsWith($"{key}|") Then
+                    Return item.Split("|")(2) ' Vrácení rozhodnutí ("Yes", "No", "NoAsk", "Cancel")
+                End If
+            Next
+        End If
+        Return "" ' Vrácení prázdného řetězce, pokud rozhodnutí neexistuje
     End Function
 
     Public Sub PrependDateToFilename(i As Integer)

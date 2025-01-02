@@ -66,6 +66,7 @@ Partial Class DistanceChart
         ' Získání rozmìrù obrazovky
         Dim screenBounds As Rectangle = Screen.PrimaryScreen.Bounds
         Me.Size = New Size(screenBounds.Width / 2, screenBounds.Height / 2)
+
         Me.chart1.ChartAreas(0).AxisX.Minimum = startDate.ToOADate()
         Me.chart1.ChartAreas(0).AxisX.Maximum = endDate.ToOADate()
 

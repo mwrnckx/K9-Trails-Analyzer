@@ -126,23 +126,23 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Показать диаграммы</value>
   </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>Файл</value>
-  </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Выберите каталог, в котором находятся файлы gpx</value>
   </data>
   <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
     <value>Выберите каталог для резервного копирования файлов gpx</value>
   </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>Обработка GPX</value>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Файл</value>
   </data>
   <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
     <value>Добавление даты к имени файла gpx</value>
   </data>
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
     <value>Удалить шумы в начале и конце треков</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Обработка GPX</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Язык</value>

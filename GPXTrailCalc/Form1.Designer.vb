@@ -41,7 +41,7 @@ Partial Class Form1
         Me.mnuSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPrependDateToFileName = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuTrimGPSNoise = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuLinkingRoutes = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuMergingTracks = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuEnglish = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuGerman = New System.Windows.Forms.ToolStripMenuItem()
@@ -53,6 +53,8 @@ Partial Class Form1
         Me.gbPeriod = New System.Windows.Forms.GroupBox()
         Me.lblScentArtickle = New System.Windows.Forms.Label()
         Me.rtbOutput = New System.Windows.Forms.RichTextBox()
+        Me.SToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.FactoryResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -115,7 +117,7 @@ Partial Class Form1
         Me.MenuStrip1.BackColor = System.Drawing.Color.FromArgb(CType(CType(172, Byte), Integer), CType(CType(209, Byte), Integer), CType(CType(158, Byte), Integer))
         Me.MenuStrip1.GripMargin = New System.Windows.Forms.Padding(2, 2, 0, 2)
         Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(24, 24)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuSettings, Me.mnuLanguage})
+        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuSettings, Me.mnuLanguage, Me.SToolStripMenuItem})
         resources.ApplyResources(Me.MenuStrip1, "MenuStrip1")
         Me.MenuStrip1.Name = "MenuStrip1"
         '
@@ -142,7 +144,7 @@ Partial Class Form1
         '
         'mnuSettings
         '
-        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise, Me.mnuLinkingRoutes})
+        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise, Me.mnuMergingTracks})
         resources.ApplyResources(Me.mnuSettings, "mnuSettings")
         Me.mnuSettings.Name = "mnuSettings"
         '
@@ -158,10 +160,10 @@ Partial Class Form1
         Me.mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
         resources.ApplyResources(Me.mnuTrimGPSNoise, "mnuTrimGPSNoise")
         '
-        'mnuLinkingRoutes
+        'mnuMergingTracks
         '
-        Me.mnuLinkingRoutes.Name = "mnuLinkingRoutes"
-        resources.ApplyResources(Me.mnuLinkingRoutes, "mnuLinkingRoutes")
+        Me.mnuMergingTracks.Name = "mnuMergingTracks"
+        resources.ApplyResources(Me.mnuMergingTracks, "mnuMergingTracks")
         '
         'mnuLanguage
         '
@@ -239,6 +241,17 @@ Partial Class Form1
         Me.rtbOutput.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
         resources.ApplyResources(Me.rtbOutput, "rtbOutput")
         Me.rtbOutput.Name = "rtbOutput"
+        '
+        'SToolStripMenuItem
+        '
+        Me.SToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FactoryResetToolStripMenuItem})
+        resources.ApplyResources(Me.SToolStripMenuItem, "SToolStripMenuItem")
+        Me.SToolStripMenuItem.Name = "SToolStripMenuItem"
+        '
+        'FactoryResetToolStripMenuItem
+        '
+        Me.FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
+        resources.ApplyResources(Me.FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
         '
         'Form1
         '
@@ -373,6 +386,8 @@ Partial Class Form1
     Friend WithEvents mnuTrimGPSNoise As ToolStripMenuItem
     Friend WithEvents rtbOutput As RichTextBox
     Friend WithEvents mnuExportAs As ToolStripMenuItem
-    Friend WithEvents mnuLinkingRoutes As ToolStripMenuItem
+    Friend WithEvents mnuMergingTracks As ToolStripMenuItem
+    Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents FactoryResetToolStripMenuItem As ToolStripMenuItem
 End Class
 

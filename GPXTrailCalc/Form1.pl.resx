@@ -154,23 +154,23 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Pokaż wykresy</value>
   </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>Plik</value>
-  </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Wybierz katalog, w którym znajdują się pliki gpx</value>
   </data>
   <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
     <value>Wybierz katalog do utworzenia kopii zapasowej plików gpx</value>
   </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>Przetwarzanie GPX</value>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Plik</value>
   </data>
   <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
     <value>Dodaj datę do nazwy pliku gpx</value>
   </data>
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
     <value>Usuń szum GPS na początku i końcu trasy</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Przetwarzanie GPX</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Język</value>

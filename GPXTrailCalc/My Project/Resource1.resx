@@ -219,10 +219,37 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>At the start of the trail, before you set off, and at the end, before you stop recording, \nthe GPS device often captures inaccurate or erroneous data. \nIf this option is enabled, the program will attempt to automatically remove these inaccuracies.</value>
   </data>
-  <data name="rbDistances.Text1" xml:space="preserve">
-    <value />
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Set the maximum time difference (in hours) between two track records that should be considered related and merged into one gpx file as a track of the layer and a track of the dog. The value therefore indicates the maximum age of the trail you are using. A value of 0 disables automatic merging.</value>
   </data>
-  <data name="Tooltip_mnuLinkingRoutes" xml:space="preserve">
-    <value>Set the maximum time difference (in hours) between two tracks to be considered related and merged (e.g., handler and dog tracks). A value of 0 disables automatic merging.</value>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Set conditions for merging tracks</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>Merge GPX files?</value>
+  </data>
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Decide whether these two files are related as the track-layer and dog track.</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>By merging them, you will get a single gpx file that contains the tracks of both the trail-layer and the dog.</value>
+  </data>
+  <data name="lblIsThisLayerQ" xml:space="preserve">
+    <value>Is this the track of the layer</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Is this the appropriate track of the dog</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Remember the 'No' decision for this couple</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>For the other pairs, don't ask any more  and join straight away (carefully!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>For the other pairs, don't ask any more  and don't merge.</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>Next time ask again</value>
   </data>
 </root>

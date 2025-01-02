@@ -219,7 +219,4 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>На початку сліду, поки ви ще не почали рух, і в кінці, поки не вимкнули запис, GPS-пристрій може записувати неточні або помилкові дані. Якщо цю опцію увімкнено, програма спробує автоматично видалити ці помилки.</value>
   </data>
-  <data name="rbDistances.Text1" xml:space="preserve">
-    <value>Довжина окремих маршрутів</value>
-  </data>
 </root>

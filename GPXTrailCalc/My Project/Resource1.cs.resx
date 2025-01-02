@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -219,7 +219,37 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>Na začátku trasy, než se vydáte na cestu, a na konci, než vypnete záznam, GPS přístroj často zaznamenává nepřesné nebo chybné údaje. Pokud je toto tlačítko zaškrtnuté, program se pokusí tyto nepřesnosti automaticky odstranit.</value>
   </data>
-  <data name="rbDistances.Text1" xml:space="preserve">
-    <value>Délka jednotlivých trailů</value>
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Nastavte maximální časový rozdíl (v hodinách) mezi dvěma záznamy tras, které mají být považovány za související  a mají se sloučit do jednoho gpx souboru  jako trasa kladeče a trasa psa. Hodnota tedy udává maximální stáří trailů. Hodnota 0 zcela vypne slučování.</value>
+  </data>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Podmínky pro slučování  záznamů tras</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>Spojit GPX soubory?</value>
+  </data>
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Rozhodněte, zda tyto dva soubory patří k sobě jako trasa kladeče a trasa psa.</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>Spojením získáte jeden gpx soubor obsahující trasu kladeče i psa.</value>
+  </data>
+  <data name="lblIsThisLayerQ" xml:space="preserve">
+    <value>Je toto trasa kladeče</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Je toto odpovídající trasa psa</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Zapamatovat volbu pro tuto dvojici</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>U dalších dvojic se už neptat a rovnou spojit (opatrně!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>U dalších dvojic se už neptat a nic nespojovat</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>U příští dvojice se zase zeptat</value>
   </data>
 </root>
