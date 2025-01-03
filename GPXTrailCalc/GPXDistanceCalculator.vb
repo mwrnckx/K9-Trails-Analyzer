@@ -238,15 +238,11 @@ Public Class GPXDistanceCalculator
             Debug.WriteLine("Uzel <trkpt> nebyl nalezen.")
         End If
 
-        gpxReader.Save(save)
+        gpxReader.Save()
 
     End Sub
     ' Function to read the <link> description from the first <trk> node in the GPX file
     Private Function Getlink(i As Integer)
-
-
-
-
         ' Načtení více uzlů, např. <trkseg>
         Dim linkNodes As XmlNodeList = gpxReaders(i).SelectNodes("link")
 
@@ -263,33 +259,10 @@ Public Class GPXDistanceCalculator
         Return Nothing
     End Function
 
-    ' Function to read the <desc> description from the first <trk> node in the GPX file
-    Private Function GetDescription(i As Integer) As String
 
-
-        ' Find the first <trk> node and its <desc> subnode
-        ' Vyhledání uzlu <trk> v rámci hlavního namespace
-        Dim trkNode As XmlNode = gpxReaders(i).SelectSingleNode("trk")
-        If trkNode IsNot Nothing Then
-
-            Dim descNode As XmlNode = gpxReaders(i).SelectSingleChildNode("desc", trkNode)
-
-
-            If descNode IsNot Nothing Then
-                Return descNode.InnerText
-            Else
-                Return Nothing '"The <desc> node was not found."
-            End If
-        Else
-            Return Nothing
-        End If
-
-    End Function
 
     ' Function to set the <desc> description from the first <trk> node in the GPX file
     Private Function SetDescription(i As Integer, newDescription As String) As Boolean
-
-
         ' Find the first <trk> node and its <desc> subnode
         Dim trkNode As XmlNode = gpxReaders(i).SelectSingleNode("trk")
         Dim descNode As XmlNode = gpxReaders(i).SelectSingleChildNode("desc", trkNode)
@@ -308,11 +281,8 @@ Public Class GPXDistanceCalculator
                     ' Pokud <trk> nemá žádné poduzly, použijeme AppendChild
                     trkNode.AppendChild(descNode)
                 End If
-
-
                 ' Nastavíme hodnotu pro <desc> (můžete ji změnit podle potřeby)
                 descNode.InnerText = newDescription
-
                 ' Přidáme nový uzel <desc> do uzlu <trk>
                 'trkNode.AppendChild(descNode)
             End If
@@ -320,7 +290,6 @@ Public Class GPXDistanceCalculator
             descNode.InnerText = newDescription
         End If
         Return True
-
 
     End Function
 
@@ -401,6 +370,8 @@ Public Class GPXDistanceCalculator
         Form1.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         Form1.rtbOutput.AppendText(vbCrLf)
 
+
+
         If Not ClearAllLists() Then
             Return False
         End If
@@ -428,10 +399,10 @@ Public Class GPXDistanceCalculator
                 gpxReaders.Add(reader)
 
                 ' Start calculation using the values
-                RenamewptNodes(i, My.Resources.Resource1.article) 'renaming wpt to "artickle"
+                RenamewptNode(i, My.Resources.Resource1.article) 'renaming wpt to "artickle"
                 layerStart.Add(GetLayerStart(gpxFiles(i), gpxReaders(i)))
                 SplitTrackIntoTwo(i) 'in gpx files, splits a track with two segments into two separate tracks
-                descriptions.Add(GetDescription(i)) 'musí být první - slouží k výpočtu age
+                'descriptions.Add(GetDescription(i)) 'musí být první - slouží k výpočtu age
                 If My.Settings.TrimGPSnoise Then TrimGPSnoise(12, gpxReaders(i)) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                 distances.Add(CalculateFirstSegmentDistance(i))
                 If i = 0 Then totalDistances.Add(distances(i)) Else totalDistances.Add(totalDistances(i - 1) + distances(i))
@@ -441,7 +412,7 @@ Public Class GPXDistanceCalculator
                 speed.Add(CalculateSpeed(i))
                 link.Add(Getlink(i))
 
-                gpxReaders(i).Save(save) 'hlavně kvůli desc
+                gpxReaders(i).Save() 'hlavně kvůli desc
                 'a nakonec
                 SetCreatedModifiedDate(i)
 
@@ -693,7 +664,7 @@ Public Class GPXDistanceCalculator
                 layerGpxNode.AppendChild(importedNode) ' Přidání na konec <gpx>
 
                 'spojené trasy se uloží do souboru kladeče
-                layer.reader.Save(True)
+                layer.reader.Save()
                 IO.File.Delete(dog.NazevSouboru)
                 Form1.txtWarnings.AppendText($"Tracks in files {Path.GetFileName(layer.NazevSouboru)} and {Path.GetFileName(dog.NazevSouboru)} were successfully merged in file {Path.GetFileName(layer.NazevSouboru)} {vbCrLf}File {Path.GetFileName(dog.NazevSouboru)}  was deleted.{vbCrLf}")
 
@@ -1151,22 +1122,17 @@ Public Class GPXDistanceCalculator
 
                 ' Přidej nový <trk> do dokumentu hned po prvním
                 trkNode.ParentNode.InsertAfter(newTrkNode, trkNode)
-                gpxReaders(i).Save(True)
+                gpxReaders(i).Save()
                 Form1.txtWarnings.AppendText($"Track in file {gpxFiles(i)} was successfully split.")
             End If
         End If
     End Sub
 
 
-    Sub RenamewptNodes(i As Integer, newname As String)
-
-
+    Sub RenamewptNode(i As Integer, newname As String)
         ' traverses all <wpt> nodes in the GPX file and overwrites the value of <name> nodes to "-předmět":
         ' Find all <wpt> nodes using the namespace
         gpxReaders(i).Nodes = gpxReaders(i).SelectNodes("wpt")
-
-
-
         ' Go through each <wpt> node
         For Each wptNode As XmlNode In gpxReaders(i).Nodes
             ' Najdi uzel <name> uvnitř <wpt> s použitím namespace
@@ -1177,7 +1143,6 @@ Public Class GPXDistanceCalculator
                 nameNode.InnerText = newname
             End If
         Next
-
     End Sub
 
 
@@ -1206,7 +1171,7 @@ Public Class GPXDistanceCalculator
                         trksegNode.RemoveChild(point)
                         points.Remove(point)
                     Next
-                    gpxReader.Save(True)
+                    gpxReader.Save()
                 End If
 
                 Dim reversedPoints = points.AsEnumerable().Reverse().ToList()
@@ -1219,7 +1184,7 @@ Public Class GPXDistanceCalculator
                         Dim point = endCluster.Item(i)
                         trksegNode.RemoveChild(point)
                     Next
-                    gpxReader.Save(True)
+                    gpxReader.Save()
                 End If
             Next
         Next

@@ -1,23 +1,31 @@
 ﻿Imports System.ComponentModel
 Imports System.Globalization
 Imports System.Reflection
+Imports System.Runtime.InteropServices.ComTypes
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
+Imports System.Linq
 
 Public Class Form1
 
     Private gpxCalculator As GPXDistanceCalculator
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
+    Dim GPXFilesManager As New GpxFileManager()
 
     Private Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
         txtWarnings.Visible = True
         'zavři případné grafy
         CloseGrafs()
+        Dim _GPXFilesManager As New GpxFileManager()
+        'interval který se má zpracovat
+        _GPXFilesManager.dateFrom = dtpStartDate.Value
+        _GPXFilesManager.dateTo = dtpEndDate.Value
         Try
-            'send directoryPath to gpxCalculator
-            If gpxCalculator.ReadAndProcessData(dtpStartDate.Value, dtpEndDate.Value) Then
+            If _GPXFilesManager.Main() Then
+                Me.WriteRTBOutput(_GPXFilesManager)
+                Me.GPXFilesManager = _GPXFilesManager
                 btnChartDistances.Visible = True
             Else
                 MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
@@ -26,8 +34,171 @@ Public Class Form1
             MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
         End Try
 
-
+        'Try
+        '    'send directoryPath to gpxCalculator
+        '    If gpxCalculator.ReadAndProcessData(dtpStartDate.Value, dtpEndDate.Value) Then
+        '        btnChartDistances.Visible = True
+        '    Else
+        '        MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
+        '    End If
+        'Catch ex As Exception
+        '    MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
+        'End Try
     End Sub
+
+    Private Sub WriteRTBOutput(_gpxFilesManager As GpxFileManager)
+        Dim _gpxRecords As List(Of GPXRecord) = _gpxFilesManager.GpxRecords
+
+        Me.rtbOutput.Clear()
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Underline Or FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
+
+        Dim manySpaces As String = "                                                 "
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 33))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 14))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 20))
+        Me.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
+        Me.rtbOutput.AppendText(vbCrLf)
+
+        ' Display results
+        For Each _gpxRecord As GPXRecord In _gpxRecords
+            Try
+                Dim fileShortName As String = (IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.filePath) & manySpaces).Substring(0, 30)
+
+                ' Nastavení fontu a barvy textu
+                Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
+                Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+
+                Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
+                Me.rtbOutput.AppendText(fileShortName & "   ")
+
+                Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
+                Me.rtbOutput.AppendText(_gpxRecord.LayerStart.Date.ToShortDateString & "    ")
+                Me.rtbOutput.AppendText(_gpxRecord.Distance.ToString("F2") & " km" & "     ")
+                If _gpxRecord.TrailAge.TotalHours > 0 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
+                Else
+                    Me.rtbOutput.AppendText("         ")
+                End If
+                If _gpxRecord.DogSpeed > 0 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.DogSpeed.ToString("F1") & " km/h" & "   ")
+                Else
+                    Me.rtbOutput.AppendText("           ")
+                End If
+                If Not _gpxRecord.Description = Nothing Then
+                    Me.rtbOutput.AppendText(_gpxRecord.Description)
+                End If
+
+                If Not _gpxRecord.Link = Nothing Then
+
+                    Me.rtbOutput.AppendText("    Video: ")
+                    Me.rtbOutput.SelectionColor = Color.Blue ' Nastavit barvu
+                    Me.rtbOutput.AppendText(_gpxRecord.Link)
+
+                End If
+
+                Me.rtbOutput.AppendText(vbCrLf)
+
+                ' Posunutí kurzoru na konec textu
+                Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length
+
+                ' Skrolování na aktuální pozici kurzoru
+                Me.rtbOutput.ScrollToCaret()
+            Catch ex As Exception
+                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.filePath) & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End Try
+        Next _gpxRecord
+
+
+        Dim totalDistance As Double = _gpxRecords(_gpxRecords.Count - 1).TotalDistance
+        'Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
+
+        ' Nastavení fontu a barvy textu
+        Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
+        Me.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
+        Me.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
+                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & _gpxFilesManager.gpxDirectory & vbCrLf & vbCrLf)
+
+        Dim manydots As String = "...................................................................."
+        Dim labelLength As Integer = 40
+
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Maroon
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outTotalNumberOfGPXFiles & manydots).Substring(0, labelLength))
+
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Firebrick
+        Me.rtbOutput.AppendText(_gpxRecords.Count & vbCrLf)
+
+
+
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Maroon
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outTotalLength & manydots).Substring(0, labelLength))
+
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Firebrick
+        Me.rtbOutput.AppendText(totalDistance.ToString("F2") & " km" & vbCrLf)
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Maroon
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Firebrick
+        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.Distance)
+        Me.rtbOutput.AppendText((1000 * averageDistance).ToString("F0") & " m" & vbCrLf)
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Maroon
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Firebrick
+        Dim averageTrailAge As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailAge.TotalHours)
+        Me.rtbOutput.AppendText(averageTrailAge.ToString("F1") & " h " & vbCrLf)
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Maroon
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Firebrick
+        Dim averageDogSpeed As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.DogSpeed)
+        Me.rtbOutput.AppendText(averageDogSpeed.ToString("F2") & " km/h")
+
+        ' Posunutí kurzoru na konec textu
+        Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length
+
+        ' Skrolování na aktuální pozici kurzoru
+        Me.rtbOutput.ScrollToCaret()
+    End Sub
+
+    Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Double
+        If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
+            ' Ošetření pro typy Integer a Long a Double (můžeš rozšířit pro další typy)
+            If GetType(T) = GetType(Integer) OrElse GetType(T) = GetType(Long) Then
+                Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
+            ElseIf GetType(T) = GetType(Double) Then
+                Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
+            Else
+                Throw New ArgumentException("Typ T musí být numerický (Integer, Long, Double).")
+            End If
+        Else
+            Console.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
+            Return 0
+        End If
+    End Function
+
+    Private Function AverageOf(y As List(Of Double)) As Double
+        Dim suma As Double = 0
+        Dim n As Integer = 0
+        For Each number In y
+            If number > 0 Then
+                suma += number
+                n += 1
+            End If
+        Next
+        If n > 0 Then Return suma / n Else Return 0
+
+    End Function
 
 
     Private Sub SaveCSVFile(sender As Object, e As EventArgs)
@@ -126,36 +297,46 @@ Public Class Form1
         Dim GrafText As String = Resource1.Y_AxisLabelSpeed
 
         Dim distanceChart1 As New DistanceChart
+        Dim gpxrecords As List(Of GPXRecord) = GPXFilesManager.GpxRecords
+        ''Speed
+        ''    ' Načtení y-hodnot a filtrování hodnot, kde je y nulové
+        'If GPXFilesManager.GpxRecords IsNot Nothing AndAlso GPXFilesManager.GpxRecords.Any() Then
+        '    ' Použití LINQ pro filtrování a projekci
+        '    Dim filteredData = GPXFilesManager.GpxRecords.
+        'Where(Function(record) record.DogSpeed <> 0). ' Filtrování podle speed <> 0
+        'Select(Function(record) New With {.X = record.LayerStart, .Y = record.DogSpeed}) ' Projekce do anonymního typu
 
-        'Speed
-        ' Načtení y-hodnot a filtrování hodnot, kde je y nulové
-        yAxisData = gpxCalculator.speed.
-    Where(Function(ts, index) gpxCalculator.speed(index) <> 0). ' Podmínka pro filtrování y == 0
-    Select(Function(ts) ts).
-    ToArray()
-        ' Filtrování x-hodnot (časové značky) podle stejného indexu jako yAxisData
-        xAxisData = gpxCalculator.layerStart.
-    Where(Function(ts, index) gpxCalculator.speed(index) <> 0).
-    Select(Function(ts) ts).
-    ToArray()
+        '    ' Kontrola, zda po filtrování zbyly nějaké data
+        '    If filteredData.Any() Then
+        '        xAxisData = filteredData.Select(Function(item) item.X).ToArray()
+        '        yAxisData = filteredData.Select(Function(item) item.Y).ToArray()
+        '    Else
+        '        Console.WriteLine("Po filtrování nezůstala žádná data. Graf nebude zobrazen.")
+        '        xAxisData = New DateTime() {} 'Prázdné pole pro zamezení chyb
+        '        yAxisData = New Double() {} 'Prázdné pole pro zamezení chyb
+        '    End If
+        'Else
+        '    Console.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
+        '    xAxisData = New DateTime() {} 'Prázdné pole pro zamezení chyb
+        '    yAxisData = New Double() {} 'Prázdné pole pro zamezení chyb
+        'End If
 
+        ' Získání dat pro graf rychlosti
+        Dim speedData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxrecords, "DogSpeed")
+        xAxisData = speedData.Item1
+        yAxisData = speedData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelSpeed
         GrafText = Resource1.Y_AxisLabelSpeed
         distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
         distanceChart1.Display(GrafText)
         distanceCharts.Add(distanceChart1)
 
-        'Age
-        ' Filtrování y-hodnot (TotalHours) a x-hodnot (časové značky) pro body, kde TotalHours není nulová
-        yAxisData = gpxCalculator.age.
-    Where(Function(ts, index) ts.TotalHours <> 0). ' Podmínka pro filtrování TotalHours == 0
-    Select(Function(ts) ts.TotalHours).
-    ToArray()
-        ' Filtrování x-hodnot (časové značky) podle stejných indexů jako yAxisData
-        xAxisData = gpxCalculator.layerStart.
-    Where(Function(ts, index) gpxCalculator.age(index).TotalHours <> 0).
-    Select(Function(ts) ts).
-    ToArray()
+
+
+        ' Získání dat pro graf věku trasy
+        Dim trailAgeData As Tuple(Of DateTime(), TimeSpan()) = GetGraphData(Of TimeSpan)(gpxrecords, "TrailAge")
+        Dim xAxisTrailAge As DateTime() = trailAgeData.Item1
+        Dim yAxisTrailAge As TimeSpan() = trailAgeData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelAge
         GrafText = Resource1.Y_AxisLabelAge
         distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
@@ -164,29 +345,93 @@ Public Class Form1
 
 
 
+        '    'Age
+        '    ' Filtrování y-hodnot (TotalHours) a x-hodnot (časové značky) pro body, kde TotalHours není nulová
+        '    yAxisData = gpxCalculator.age.
+        'Where(Function(ts, index) ts.TotalHours <> 0). ' Podmínka pro filtrování TotalHours == 0
+        'Select(Function(ts) ts.TotalHours).
+        'ToArray()
+        '    ' Filtrování x-hodnot (časové značky) podle stejných indexů jako yAxisData
+        '    xAxisData = gpxCalculator.layerStart.
+        'Where(Function(ts, index) gpxCalculator.age(index).TotalHours <> 0).
+        'Select(Function(ts) ts).
+        'ToArray()
+        '    yAxisLabel = My.Resources.Resource1.Y_AxisLabelAge
+        '    GrafText = Resource1.Y_AxisLabelAge
+        '    distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
+        '    distanceChart1.Display(GrafText)
+        '    distanceCharts.Add(distanceChart1)
+
+
+
         'Distances
-        yAxisData = gpxCalculator.distances.Select(Function(ts) ts).ToArray()
+        ' Získání dat pro graf vzdálenosti
+        Dim distanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxrecords, "Distance")
+        xAxisData = distanceData.Item1
+        yAxisData = distanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelLength
-        xAxisData = gpxCalculator.layerStart.Select(Function(ts) ts).ToArray()
         GrafText = Resource1.Y_AxisLabelLength
         distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
         distanceChart1.Display(GrafText)
         distanceCharts.Add(distanceChart1)
 
         'TotDistance
-        yAxisData = gpxCalculator.totalDistances.Select(Function(ts) ts).ToArray()
+        Dim totTistanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxrecords, "TotalDistance")
+        xAxisData = distanceData.Item1
+        yAxisData = distanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelTotalLength
-        xAxisData = gpxCalculator.layerStart.Select(Function(ts) ts).ToArray()
         GrafText = Resource1.Y_AxisLabelTotalLength
         distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
         distanceChart1.Display(GrafText)
-
         distanceCharts.Add(distanceChart1)
 
 
         'Me.BringToFront()
 
     End Sub
+
+    Public Function GetGraphData(Of T)(gpxRecords As List(Of GPXRecord), propertyName As String) As Tuple(Of DateTime(), T())
+        If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
+            Dim propertyInfo As PropertyInfo = GetType(GPXRecord).GetProperty(propertyName)
+
+            If propertyInfo IsNot Nothing Then
+                Dim filteredData = gpxRecords.
+                Where(Function(record)
+                          Dim propertyValue = propertyInfo.GetValue(record)
+                          If propertyValue IsNot Nothing Then
+                              If GetType(T) = GetType(TimeSpan) Then
+                                  Return DirectCast(propertyValue, TimeSpan).TotalHours <> 0 ' Přímé porovnání TotalHours s 0
+                              ElseIf GetType(T) = GetType(Double) Then
+                                  Return CDbl(propertyValue) <> 0
+                              ElseIf GetType(T) = GetType(Integer) Then
+                                  Return CInt(propertyValue) <> 0
+                              ElseIf GetType(T) = GetType(Long) Then
+                                  Return CLng(propertyValue) <> 0
+                              ElseIf GetType(T) = GetType(Single) Then
+                                  Return CSng(propertyValue) <> 0
+                              Else
+                                  Throw New ArgumentException($"Typ T musí být numerický (Double, Integer, Long, Single).")
+                              End If
+                          Else
+                              Return False ' Ošetření pro null hodnoty
+                          End If
+                      End Function).
+                Select(Function(record) New With {.X = record.LayerStart, .Y = DirectCast(propertyInfo.GetValue(record), T)})
+
+                If filteredData.Any() Then
+                    Return New Tuple(Of DateTime(), T())(filteredData.Select(Function(item) item.X).ToArray(), filteredData.Select(Function(item) item.Y).ToArray())
+                Else
+                    Console.WriteLine($"Po filtrování pro vlastnost '{propertyName}' nezůstala žádná data. Graf nebude zobrazen.")
+                    Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
+                End If
+            Else
+                Throw New ArgumentException($"Vlastnost '{propertyName}' neexistuje ve třídě GPXRecord.")
+            End If
+        Else
+            Console.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
+            Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
+        End If
+    End Function
 
     Public Sub CloseGrafs()
         ' Zavření grafů
