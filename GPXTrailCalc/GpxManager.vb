@@ -22,6 +22,8 @@ Public Class GpxFileManager
 
     Public Property GpxRecords As New List(Of GPXRecord)
 
+    Public Event WarningOccurred(message As String)
+
     Public Sub New()
         gpxDirectory = My.Settings.Directory
         BackupDirectory = My.Settings.BackupDirectory
@@ -82,26 +84,29 @@ Public Class GpxFileManager
         ' Načteme všechny GPX soubory
         Dim gpxFilesAllPath As List(Of String) = Directory.GetFiles(gpxDirectory, "*.gpx").ToList()
 
+        Try
+            For Each gpxFilePath In gpxFilesAllPath
+                'Tady najde layerStart 
+                Dim _reader As New GpxReader(gpxFilePath) With {
+                    .FileName = Path.GetFileName(gpxFilePath)
+                    }
 
-        For Each gpxFilePath In gpxFilesAllPath
+                Dim _layerStart As DateTime = GetLayerStart(gpxFilePath, _reader)
+                If _layerStart >= dateFrom And _layerStart <= dateTo Then
+                    Dim _gpxRecord As New GPXRecord With {
+                        .Reader = _reader,
+                        .LayerStart = _layerStart
+                    }
+                    _gpxRecord.Backup()
+                    gpxFilesWithinInterval.Add(_gpxRecord)
 
-            'Tady najde layerStart 
-            Dim _reader As New GpxReader(gpxFilePath) With {
-                .FileName = Path.GetFileName(gpxFilePath)
-                }
-
-            Dim _layerStart As DateTime = GetLayerStart(gpxFilePath, _reader)
-            If _layerStart >= dateFrom And _layerStart <= dateTo Then
-                Dim _gpxRecord As New GPXRecord With {
-                    .Reader = _reader,
-                    .LayerStart = _layerStart
-                }
-                _gpxRecord.Backup()
-                gpxFilesWithinInterval.Add(_gpxRecord)
-
-            End If
-        Next
-
+                End If
+            Next
+            Debug.WriteLine($"Soubory gpx byly úspěšně zálohovány do: {BackupDirectory }")
+            RaiseEvent WarningOccurred($"{vbCrLf}{Resource1.logBackupOfFiles}   {BackupDirectory }{vbCrLf}")
+        Catch ex As Exception
+            Debug.WriteLine($"Chyba při zálohování souborů: {ex.Message}")
+        End Try
         ' Seřazení podle data
         gpxFilesWithinInterval.Sort(Function(x, y) x.LayerStart.CompareTo(y.LayerStart))
 
@@ -136,10 +141,10 @@ Public Class GpxFileManager
             ' Převedení nalezeného řetězce na DateTime
             layerStart = RecordedDateFromFileName
             AddTimeNodeToFirstTrkpt(reader, RecordedDateFromFileName.ToString("yyyy-MM-dd" & "T" & "hh:mm:ss" & "Z"))
-            Form1.txtWarnings.AppendText($" <time> node with Date from file name created: {RecordedDateFromFileName.ToString("yyyy-MM-dd")}" & $"in file: {filename}")
+            RaiseEvent WarningOccurred($" <time> node with Date from file name created: {RecordedDateFromFileName.ToString("yyyy-MM-dd")}" & $"in file: {filename}")
         Else
             ' If the node doesn't exist or isn't a valid date, return the default DateTime value
-            Form1.txtWarnings.AppendText($"GPX file: {filename} contains no date!")
+            RaiseEvent WarningOccurred($"GPX file: {filename} contains no date!")
         End If
 
         Return layerStart
@@ -249,11 +254,11 @@ Public Class GpxFileManager
                         If Not String.IsNullOrWhiteSpace(userInput) Then
                             newFilePath = Path.Combine(gpxDirectory, userInput & fileExtension)
                             IO.File.Move(_gpxFilePath, newFilePath)
-                            Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                            RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                             Debug.WriteLine($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
 
                         Else
-                            Form1.txtWarnings.AppendText($"New name for {newFilePath} was not provided.{Environment.NewLine}")
+                            RaiseEvent WarningOccurred($"New name for {newFilePath} was not provided.{Environment.NewLine}")
 
                         End If
 
@@ -261,7 +266,7 @@ Public Class GpxFileManager
                         IO.File.Move(_gpxFilePath, newFilePath)
                         _gpxFilePath = newFilePath
                         Debug.WriteLine($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
-                        Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                        RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                     End If
                     _gpxFilePath = newFilePath
                 End If
@@ -277,18 +282,18 @@ Public Class GpxFileManager
                     If Not String.IsNullOrWhiteSpace(userInput) Then
                         newFilePath = Path.Combine(gpxDirectory, userInput & fileExtension)
                         IO.File.Move(_gpxFilePath, newFilePath)
-                        Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                        RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                         Debug.WriteLine($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
 
                     Else
-                        Form1.txtWarnings.AppendText($"New name for {newFilePath} was not provided.{Environment.NewLine}")
+                        RaiseEvent WarningOccurred($"New name for {newFilePath} was not provided.{Environment.NewLine}")
 
                     End If
                 Else
                     IO.File.Move(_gpxFilePath, newFilePath)
                     _gpxFilePath = newFilePath
                     Debug.WriteLine($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
-                    Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                    RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(_gpxFilePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                 End If
             End If
 
@@ -325,9 +330,9 @@ Public Class GpxFileManager
         'najdi všechny sousední soubory, které se liší o méně než MaxAge
         ' Základní kontrola, zda rozdíl dat splňuje podmínku na max stáří
 
-
+        Dim mergeDecision As String = LoadMergeDecision(soubor_prev, soubor_i)
         If (soubor_i.LayerStart - soubor_prev.LayerStart < maxAge) AndAlso
-        (Not mergeCancel) AndAlso (Not LoadMergeDecision(soubor_prev, soubor_i) = "No") Then
+        (Not mergeCancel) AndAlso (Not mergeDecision = System.Windows.Forms.DialogResult.No.ToString) Then
 
             ' Zjisti, zda oba soubory obsahují pouze jeden uzel <trkseg>
             Dim trksegNodes_i As XmlNodeList = soubor_i.Reader.SelectNodes("trkseg")
@@ -446,13 +451,15 @@ Public Class GpxFileManager
 
         ' Uložení stavu zaškrtávacího políčka do veřejné proměnné nebo do nastavení aplikace
         If result = DialogResult.No AndAlso chbRemembDecision.Checked Then
-            SaveMergeDecision(runner, dog, DialogResult.No)
+            SaveMergeDecision(runner, dog, result.ToString)
         End If
 
         mergeNoAsk = rbNoAsk.Checked ' Uložení stavu pro použití v hlavní funkci
         mergeCancel = rbCancel.Checked
         Return result
     End Function
+
+
 
     Private Sub SaveMergeDecision(runner As GPXRecord, dog As GPXRecord, result As String)
         Dim key As String = $"{runner.Reader.filePath}|{dog.Reader.filePath}" ' Vytvoření klíče
@@ -494,8 +501,6 @@ Public Class GpxFileManager
     Private Function MergeTwoGpxFiles(layer As GPXRecord, dog As GPXRecord) As Boolean
         'do souboru layer vloží kompletní uzel  <trk> vyjmutý ze souboru dog
         Try
-
-
             ' Najdi první uzel <trk>
             Dim layertrkNode As XmlNode = layer.Reader.SelectSingleNode("trk")
             Dim dogtrkNode As XmlNode = dog.Reader.SelectSingleNode("trk")
@@ -507,7 +512,7 @@ Public Class GpxFileManager
                 'spojené trasy se uloží do souboru kladeče
                 layer.Reader.Save()
                 IO.File.Delete(dog.Reader.filePath)
-                Form1.txtWarnings.AppendText($"Tracks in files {Path.GetFileName(layer.Reader.filePath)} and {Path.GetFileName(dog.Reader.filePath)} were successfully merged in file {Path.GetFileName(layer.Reader.filePath)} {vbCrLf}File {Path.GetFileName(dog.Reader.filePath)}  was deleted.{vbCrLf}")
+                RaiseEvent WarningOccurred($"Tracks in files {Path.GetFileName(layer.Reader.filePath)} and {Path.GetFileName(dog.Reader.filePath)} were successfully merged in file {Path.GetFileName(layer.Reader.filePath)} {vbCrLf}File {Path.GetFileName(dog.Reader.filePath)}  was deleted.{vbCrLf}")
 
             End If
             Return True
@@ -552,6 +557,8 @@ Public Class GpxFileManager
 End Class
 
 Public Class GPXRecord
+
+    Public Event WarningOccurred(message As String)
 
     Public Sub New()
         gpxDirectory = My.Settings.Directory
@@ -790,12 +797,12 @@ Public Class GPXRecord
                     ' Adding a more detailed exception message
                     Debug.WriteLine("Error: " & ex.Message)
                     ' TODO: Replace direct access to Form1 with a better method for separating logic
-                    Form1.txtWarnings.AppendText("Error processing point: " & ex.Message & Environment.NewLine)
+                    RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine)
                 End Try
             Next
         Else
             ' TODO: Replace direct access to Form1 with a better method for separating logic
-            Form1.txtWarnings.AppendText("No tracks found in GPX file: " & Me.Reader.FileName & Environment.NewLine)
+            RaiseEvent WarningOccurred("No tracks found in GPX file: " & Me.Reader.FileName & Environment.NewLine)
         End If
 
         Return totalLengthOfFirst_trkseg ' Result in kilometers
@@ -843,7 +850,7 @@ Public Class GPXRecord
                 ' Přidej nový <trk> do dokumentu hned po prvním
                 trkNode.ParentNode.InsertAfter(newTrkNode, trkNode)
                 Me.Reader.Save()
-                Form1.txtWarnings.AppendText($"Track in file { Me.Reader.FileName} was successfully split.")
+                RaiseEvent WarningOccurred($"Track in file { Me.Reader.FileName} was successfully split.")
             End If
         End If
     End Sub
@@ -1085,10 +1092,10 @@ Public Class GPXRecord
                         If Not String.IsNullOrWhiteSpace(userInput) Then
                             newFilePath = Path.Combine(gpxDirectory, userInput & fileExtension)
                             IO.File.Move(Reader.filePath, newFilePath)
-                            Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                            RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                             Debug.WriteLine($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                         Else
-                            Form1.txtWarnings.AppendText($"New name for {newFilePath} was not provided.{Environment.NewLine}")
+                            RaiseEvent WarningOccurred($"New name for {newFilePath} was not provided.{Environment.NewLine}")
 
                         End If
 
@@ -1097,7 +1104,7 @@ Public Class GPXRecord
                         IO.File.Move(Reader.filePath, newFilePath)
                         Reader.filePath = newFilePath
                         Debug.WriteLine($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
-                        Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                        RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                     End If
                     Reader.filePath = newFilePath
                 End If
@@ -1113,18 +1120,18 @@ Public Class GPXRecord
                     If Not String.IsNullOrWhiteSpace(userInput) Then
                         newFilePath = Path.Combine(gpxDirectory, userInput & fileExtension)
                         IO.File.Move(Reader.filePath, newFilePath)
-                        Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                        RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                         Debug.WriteLine($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
 
                     Else
-                        Form1.txtWarnings.AppendText($"New name for {newFilePath} was not provided.{Environment.NewLine}")
+                        RaiseEvent WarningOccurred($"New name for {newFilePath} was not provided.{Environment.NewLine}")
 
                     End If
                 Else
                     IO.File.Move(Reader.filePath, newFilePath)
                     Reader.filePath = newFilePath
                     Debug.WriteLine($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
-                    Form1.txtWarnings.AppendText($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
+                    RaiseEvent WarningOccurred($"Renamed file: {Path.GetFileName(Reader.filePath)} to {Path.GetFileName(newFilePath)}.{Environment.NewLine}")
                 End If
             End If
 

@@ -252,4 +252,7 @@
   <data name="rbAskAgein" xml:space="preserve">
     <value>Next time ask again</value>
   </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Sniffed per month (km)</value>
+  </data>
 </root>

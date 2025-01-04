@@ -252,4 +252,7 @@
   <data name="rbAskAgein" xml:space="preserve">
     <value>U příští dvojice se zase zeptat</value>
   </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Načucháno měsíčně (km)</value>
+  </data>
 </root>

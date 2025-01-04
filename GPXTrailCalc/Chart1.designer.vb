@@ -83,7 +83,6 @@ Partial Class DistanceChart
         Me.MainMenuStrip = Me.MenuStrip1
         Me.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
         Me.Name = "DistanceChart"
-        Me.Text = "Distance Chart"
         CType(Me.chart1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.MenuStrip1.ResumeLayout(False)
         Me.MenuStrip1.PerformLayout()

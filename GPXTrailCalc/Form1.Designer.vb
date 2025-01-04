@@ -29,7 +29,7 @@ Partial Class Form1
         Me.dtpEndDate = New System.Windows.Forms.DateTimePicker()
         Me.btnReadGpxFiles = New System.Windows.Forms.Button()
         Me.txtWarnings = New System.Windows.Forms.TextBox()
-        Me.btnChartDistances = New System.Windows.Forms.Button()
+        Me.btnCharts = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
         Me.StatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
@@ -49,12 +49,12 @@ Partial Class Form1
         Me.mnuUkrainian = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuPolish = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuRussian = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.FactoryResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.gbPeriod = New System.Windows.Forms.GroupBox()
         Me.lblScentArtickle = New System.Windows.Forms.Label()
         Me.rtbOutput = New System.Windows.Forms.RichTextBox()
-        Me.SToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.FactoryResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -88,12 +88,12 @@ Partial Class Form1
         resources.ApplyResources(Me.txtWarnings, "txtWarnings")
         Me.txtWarnings.Name = "txtWarnings"
         '
-        'btnChartDistances
+        'btnCharts
         '
-        Me.btnChartDistances.BackColor = System.Drawing.Color.DarkGoldenrod
-        resources.ApplyResources(Me.btnChartDistances, "btnChartDistances")
-        Me.btnChartDistances.Name = "btnChartDistances"
-        Me.btnChartDistances.UseVisualStyleBackColor = False
+        Me.btnCharts.BackColor = System.Drawing.Color.DarkGoldenrod
+        resources.ApplyResources(Me.btnCharts, "btnCharts")
+        Me.btnCharts.Name = "btnCharts"
+        Me.btnCharts.UseVisualStyleBackColor = False
         '
         'ToolTip1
         '
@@ -213,6 +213,17 @@ Partial Class Form1
         Me.mnuRussian.Name = "mnuRussian"
         Me.mnuRussian.Tag = "ru"
         '
+        'SToolStripMenuItem
+        '
+        Me.SToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FactoryResetToolStripMenuItem})
+        resources.ApplyResources(Me.SToolStripMenuItem, "SToolStripMenuItem")
+        Me.SToolStripMenuItem.Name = "SToolStripMenuItem"
+        '
+        'FactoryResetToolStripMenuItem
+        '
+        Me.FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
+        resources.ApplyResources(Me.FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
+        '
         'PictureBox1
         '
         resources.ApplyResources(Me.PictureBox1, "PictureBox1")
@@ -242,17 +253,6 @@ Partial Class Form1
         resources.ApplyResources(Me.rtbOutput, "rtbOutput")
         Me.rtbOutput.Name = "rtbOutput"
         '
-        'SToolStripMenuItem
-        '
-        Me.SToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FactoryResetToolStripMenuItem})
-        resources.ApplyResources(Me.SToolStripMenuItem, "SToolStripMenuItem")
-        Me.SToolStripMenuItem.Name = "SToolStripMenuItem"
-        '
-        'FactoryResetToolStripMenuItem
-        '
-        Me.FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
-        resources.ApplyResources(Me.FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
-        '
         'Form1
         '
         resources.ApplyResources(Me, "$this")
@@ -261,7 +261,7 @@ Partial Class Form1
         Me.Controls.Add(Me.lblScentArtickle)
         Me.Controls.Add(Me.gbPeriod)
         Me.Controls.Add(Me.StatusStrip1)
-        Me.Controls.Add(Me.btnChartDistances)
+        Me.Controls.Add(Me.btnCharts)
         Me.Controls.Add(Me.txtWarnings)
         Me.Controls.Add(Me.btnReadGpxFiles)
         Me.Controls.Add(Me.MenuStrip1)
@@ -294,7 +294,9 @@ Partial Class Form1
         Me.txtWarnings.Text &= vbCrLf
     End Sub
 
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles Me.Load
+
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        CreateGpxFileManager()
 
         mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
@@ -306,7 +308,7 @@ Partial Class Form1
         If My.Settings.BackupDirectory = "" Then
             My.Settings.BackupDirectory = System.IO.Path.Combine(My.Settings.Directory, "gpxFilesBackup")
         End If
-        gpxCalculator = New GPXDistanceCalculator()
+        'gpxCalculator = New GPXDistanceCalculator()
         Me.dtpEndDate.Value = Now
         Me.dtpStartDate.Value = Me.dtpEndDate.Value.AddYears(-1)
 
@@ -324,15 +326,10 @@ Partial Class Form1
         mnuUkrainian.Image = resizeImage(My.Resources.uk_flag, Nothing, height)
         mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, height)
 
-        readHelp()
-
-
-
-
+        ReadHelp()
 
         ' Nastavení fontu a barvy textu
         Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
-
 
         Dim thisAssem As Assembly = GetType(Form1).Assembly
         Dim thisAssemName As AssemblyName = thisAssem.GetName()
@@ -363,7 +360,7 @@ Partial Class Form1
 
 
 
-    Friend WithEvents btnChartDistances As Button
+    Friend WithEvents btnCharts As Button
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents mnuFile As ToolStripMenuItem

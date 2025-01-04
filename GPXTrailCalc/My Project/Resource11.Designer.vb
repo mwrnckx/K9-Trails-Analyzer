@@ -119,7 +119,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Do you really want to merge these two files into one?.
+        '''  Vyhledá lokalizovaný řetězec podobný Decide whether these two files are related as the track-layer and dog track..
         '''</summary>
         Friend Shared ReadOnly Property lblMergeTwoToOneQ() As String
             Get
@@ -128,7 +128,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný By merging, you get one gpx file containing the tracks of both the trail-layer and the dog..
+        '''  Vyhledá lokalizovaný řetězec podobný By merging them, you will get a single gpx file that contains the tracks of both the trail-layer and the dog..
         '''</summary>
         Friend Shared ReadOnly Property lblMergingYouGet() As String
             Get
@@ -448,6 +448,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property Y_AxisLabelLength() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelLength", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Sniffed per month (km).
+        '''</summary>
+        Friend Shared ReadOnly Property Y_AxisLabelMonthly() As String
+            Get
+                Return ResourceManager.GetString("Y-AxisLabelMonthly", resourceCulture)
             End Get
         End Property
         

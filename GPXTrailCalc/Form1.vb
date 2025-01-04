@@ -9,24 +9,24 @@ Imports System.Linq
 
 Public Class Form1
 
-    Private gpxCalculator As GPXDistanceCalculator
+    'Private gpxCalculator As GPXDistanceCalculator
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
-    Dim GPXFilesManager As New GpxFileManager()
+    Private GPXFilesManager As GpxFileManager
 
     Private Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
-
+        CreateGpxFileManager() 'smaže vše ve staré instanci
         txtWarnings.Visible = True
         'zavři případné grafy
         CloseGrafs()
-        Dim _GPXFilesManager As New GpxFileManager()
+        'Dim _GPXFilesManager As New GpxFileManager()
         'interval který se má zpracovat
-        _GPXFilesManager.dateFrom = dtpStartDate.Value
-        _GPXFilesManager.dateTo = dtpEndDate.Value
+        GPXFilesManager.dateFrom = dtpStartDate.Value
+        GPXFilesManager.dateTo = dtpEndDate.Value
         Try
-            If _GPXFilesManager.Main() Then
-                Me.WriteRTBOutput(_GPXFilesManager)
-                Me.GPXFilesManager = _GPXFilesManager
-                btnChartDistances.Visible = True
+            If GPXFilesManager.Main() Then
+                Me.WriteRTBOutput(GPXFilesManager)
+                Me.GPXFilesManager = GPXFilesManager
+                btnCharts.Visible = True
             Else
                 MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
             End If
@@ -34,16 +34,22 @@ Public Class Form1
             MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
         End Try
 
-        'Try
-        '    'send directoryPath to gpxCalculator
-        '    If gpxCalculator.ReadAndProcessData(dtpStartDate.Value, dtpEndDate.Value) Then
-        '        btnChartDistances.Visible = True
-        '    Else
-        '        MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
-        '    End If
-        'Catch ex As Exception
-        '    MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
-        'End Try
+    End Sub
+
+    Private Sub CreateGpxFileManager()
+        ' Zrušení odběru událostí u staré instance (pokud existuje)
+        If GPXFilesManager IsNot Nothing Then
+            RemoveHandler GPXFilesManager.WarningOccurred, AddressOf GpxFileManager_WarningOccurred
+            GPXFilesManager = Nothing ' Uvolnění staré instance
+        End If
+
+        ' Vytvoření nové instance
+        GPXFilesManager = New GpxFileManager()
+        AddHandler GPXFilesManager.WarningOccurred, AddressOf GpxFileManager_WarningOccurred
+    End Sub
+
+    Private Sub GpxFileManager_WarningOccurred(message As String)
+        txtWarnings.AppendText(message & vbCrLf) ' Přidání odřádkování
     End Sub
 
     Private Sub WriteRTBOutput(_gpxFilesManager As GpxFileManager)
@@ -54,7 +60,7 @@ Public Class Form1
         Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
 
         Dim manySpaces As String = "                                                 "
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 33))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
         Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 14))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
@@ -63,16 +69,17 @@ Public Class Form1
         Me.rtbOutput.AppendText(vbCrLf)
 
         ' Display results
+        Dim i As Integer = 0
         For Each _gpxRecord As GPXRecord In _gpxRecords
             Try
                 Dim fileShortName As String = (IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.filePath) & manySpaces).Substring(0, 30)
-
+                i += 1
                 ' Nastavení fontu a barvy textu
                 Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
                 Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
 
                 Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
-                Me.rtbOutput.AppendText(fileShortName & "   ")
+                Me.rtbOutput.AppendText($"{i.ToString("D3")} {fileShortName} ")
 
                 Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
                 Me.rtbOutput.AppendText(_gpxRecord.LayerStart.Date.ToShortDateString & "    ")
@@ -202,7 +209,7 @@ Public Class Form1
 
 
     Private Sub SaveCSVFile(sender As Object, e As EventArgs)
-        If gpxCalculator.distances.Count < 1 Then
+        If GPXFilesManager.GpxRecords.Count < 1 Then
             MessageBox.Show(My.Resources.Resource1.mBoxMissingData)
             Return
         End If
@@ -222,7 +229,7 @@ Public Class Form1
                 Debug.WriteLine($"Selected file: {dialog.FileName}")
                 Dim csvFilePath As String = dialog.FileName
                 Try
-                    gpxCalculator.WriteCSVfile(csvFilePath)
+                    Me.WriteCSVfile(csvFilePath)
                 Catch ex As Exception
                     MessageBox.Show($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {csvFilePath} " & ex.Message & vbCrLf, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                 End Try
@@ -234,7 +241,7 @@ Public Class Form1
     End Sub
 
     Private Sub SaveRtfFile(sender As Object, e As EventArgs) Handles mnuExportAs.Click
-        If gpxCalculator.distances.Count < 1 Then
+        If GPXFilesManager.GpxRecords.Count < 1 Then
             MessageBox.Show(My.Resources.Resource1.mBoxMissingData)
             Return
         End If
@@ -258,8 +265,6 @@ Public Class Form1
                 Debug.WriteLine($"Selected file: {dialog.FileName}")
                 'Ulož upravený RTF text zpět do souboru
 
-
-
                 Try
                     Select Case dialog.FilterIndex
                         Case 1
@@ -268,7 +273,7 @@ Public Class Form1
                         Case 2
                             rtbOutput.SaveFile(dialog.FileName, RichTextBoxStreamType.PlainText)
                         Case 3
-                            gpxCalculator.WriteCSVfile(dialog.FileName)
+                            Me.WriteCSVfile(dialog.FileName)
                     End Select
 
 
@@ -277,15 +282,60 @@ Public Class Form1
                 End Try
             End If
         End Using
-
-
-
     End Sub
 
-    Private distanceCharts As New List(Of DistanceChart)
-    Private Sub btnOpenChart(sender As Object, e As EventArgs) Handles btnChartDistances.Click
+    Public Sub WriteCSVfile(csvFilePath As String)
+        Try
 
-        If gpxCalculator.distances Is Nothing Then
+            ' Create the CSV file and write headers
+            Using writer As New IO.StreamWriter(csvFilePath, False, System.Text.Encoding.UTF8)
+                writer.WriteLine("File Name;Date;Age/h;Length/km;speed;Total Length;Description;Video")
+
+                For Each _gpxRecord As GPXRecord In GPXFilesManager.GpxRecords
+                    With _gpxRecord
+                        Dim fileName As String = IO.Path.GetFileNameWithoutExtension(.Reader.filePath)
+
+                        Dim _age As String = ""
+                        If .TrailAge > TimeSpan.Zero Then
+                            _age = .TrailAge.TotalHours.ToString("F1")
+                        End If
+
+                        ' Write each row in the CSV file
+                        writer.Write($"{fileName};")
+                        writer.Write($"{ .LayerStart.ToString("yyyy-MM-dd")};")
+                        writer.Write($"{_age};")
+                        writer.Write($"{ .Distance:F2};")
+                        If Not .DogSpeed = 0 Then writer.Write($"{ .DogSpeed:F2};") Else writer.Write(";")
+                        writer.Write($"{ .TotalDistance:F2};")
+                        writer.Write($"{ .Description};")
+                        If Not .Link Is Nothing Then
+                            writer.WriteLine($"=HYPERTEXTOVÝ.ODKAZ(""{ .Link}"")")
+                        End If
+                    End With
+                    writer.WriteLine()
+
+                Next
+
+                ' Write the total distance at the end of the CSV file
+                writer.WriteLine($"Total;;; { GPXFilesManager.GpxRecords(GPXFilesManager.GpxRecords.Count - 1).TotalDistance:F2}")
+            End Using
+
+
+            Me.txtWarnings.AppendText($"{vbCrLf}CSV file created: {csvFilePath}.{Environment.NewLine}")
+        Catch ex As Exception
+            Me.txtWarnings.AppendText($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {ex.Message}{Environment.NewLine}")
+            MessageBox.Show($"Error creating CSV file: {ex.Message}")
+        End Try
+    End Sub
+
+
+    Private Charts As New List(Of DistanceChart)
+    Private Sub btnChartsClick(sender As Object, e As EventArgs) Handles btnCharts.Click
+        'zruší předchozí grafy
+        CloseGrafs()
+
+        Dim gpxRecords As List(Of GPXRecord) = GPXFilesManager.GpxRecords
+        If gpxRecords.Count < 2 Then
             MessageBox.Show("First you need to read the data from the gpx files!")
             Return
         End If
@@ -294,99 +344,78 @@ Public Class Form1
         Dim yAxisData() As Double
         Dim yAxisLabel As String
         Dim xAxisData As Date()
-        Dim GrafText As String = Resource1.Y_AxisLabelSpeed
+        Dim GrafText As String
 
-        Dim distanceChart1 As New DistanceChart
-        Dim gpxrecords As List(Of GPXRecord) = GPXFilesManager.GpxRecords
-        ''Speed
-        ''    ' Načtení y-hodnot a filtrování hodnot, kde je y nulové
-        'If GPXFilesManager.GpxRecords IsNot Nothing AndAlso GPXFilesManager.GpxRecords.Any() Then
-        '    ' Použití LINQ pro filtrování a projekci
-        '    Dim filteredData = GPXFilesManager.GpxRecords.
-        'Where(Function(record) record.DogSpeed <> 0). ' Filtrování podle speed <> 0
-        'Select(Function(record) New With {.X = record.LayerStart, .Y = record.DogSpeed}) ' Projekce do anonymního typu
-
-        '    ' Kontrola, zda po filtrování zbyly nějaké data
-        '    If filteredData.Any() Then
-        '        xAxisData = filteredData.Select(Function(item) item.X).ToArray()
-        '        yAxisData = filteredData.Select(Function(item) item.Y).ToArray()
-        '    Else
-        '        Console.WriteLine("Po filtrování nezůstala žádná data. Graf nebude zobrazen.")
-        '        xAxisData = New DateTime() {} 'Prázdné pole pro zamezení chyb
-        '        yAxisData = New Double() {} 'Prázdné pole pro zamezení chyb
-        '    End If
-        'Else
-        '    Console.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
-        '    xAxisData = New DateTime() {} 'Prázdné pole pro zamezení chyb
-        '    yAxisData = New Double() {} 'Prázdné pole pro zamezení chyb
-        'End If
+        Dim Chart1 As DistanceChart
 
         ' Získání dat pro graf rychlosti
-        Dim speedData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxrecords, "DogSpeed")
+        Dim speedData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "DogSpeed")
         xAxisData = speedData.Item1
         yAxisData = speedData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelSpeed
         GrafText = Resource1.Y_AxisLabelSpeed
-        distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
-        distanceChart1.Display(GrafText)
-        distanceCharts.Add(distanceChart1)
-
-
+        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        Chart1.Show()
+        Charts.Add(Chart1)
 
         ' Získání dat pro graf věku trasy
-        Dim trailAgeData As Tuple(Of DateTime(), TimeSpan()) = GetGraphData(Of TimeSpan)(gpxrecords, "TrailAge")
-        Dim xAxisTrailAge As DateTime() = trailAgeData.Item1
-        Dim yAxisTrailAge As TimeSpan() = trailAgeData.Item2
+        Dim trailAgeData As Tuple(Of DateTime(), TimeSpan()) = GetGraphData(Of TimeSpan)(gpxRecords, "TrailAge")
+        xAxisData = trailAgeData.Item1
+        ReDim yAxisData(trailAgeData.Item2.Length - 1)
+        For i As Integer = 0 To trailAgeData.Item2.Length - 1
+            ' Převod TimeSpan na Double (např. v hodinách)
+            yAxisData(i) = trailAgeData.Item2(i).TotalHours ' Nebo TotalMinutes, TotalSeconds, atd. podle potřeby
+        Next
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelAge
         GrafText = Resource1.Y_AxisLabelAge
-        distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
-        distanceChart1.Display(GrafText)
-        distanceCharts.Add(distanceChart1)
-
-
-
-        '    'Age
-        '    ' Filtrování y-hodnot (TotalHours) a x-hodnot (časové značky) pro body, kde TotalHours není nulová
-        '    yAxisData = gpxCalculator.age.
-        'Where(Function(ts, index) ts.TotalHours <> 0). ' Podmínka pro filtrování TotalHours == 0
-        'Select(Function(ts) ts.TotalHours).
-        'ToArray()
-        '    ' Filtrování x-hodnot (časové značky) podle stejných indexů jako yAxisData
-        '    xAxisData = gpxCalculator.layerStart.
-        'Where(Function(ts, index) gpxCalculator.age(index).TotalHours <> 0).
-        'Select(Function(ts) ts).
-        'ToArray()
-        '    yAxisLabel = My.Resources.Resource1.Y_AxisLabelAge
-        '    GrafText = Resource1.Y_AxisLabelAge
-        '    distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
-        '    distanceChart1.Display(GrafText)
-        '    distanceCharts.Add(distanceChart1)
-
-
+        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        Chart1.Show()
+        Charts.Add(Chart1)
 
         'Distances
         ' Získání dat pro graf vzdálenosti
-        Dim distanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxrecords, "Distance")
+        Dim distanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "Distance")
         xAxisData = distanceData.Item1
         yAxisData = distanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelLength
         GrafText = Resource1.Y_AxisLabelLength
-        distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
-        distanceChart1.Display(GrafText)
-        distanceCharts.Add(distanceChart1)
+        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        Chart1.Show()
+        Charts.Add(Chart1)
 
         'TotDistance
-        Dim totTistanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxrecords, "TotalDistance")
-        xAxisData = distanceData.Item1
-        yAxisData = distanceData.Item2
+        Dim totDistanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "TotalDistance")
+        xAxisData = totDistanceData.Item1
+        yAxisData = totDistanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelTotalLength
         GrafText = Resource1.Y_AxisLabelTotalLength
-        distanceChart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, currentCulture)
-        distanceChart1.Display(GrafText)
-        distanceCharts.Add(distanceChart1)
+        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
+        Chart1.Show()
+        Charts.Add(Chart1)
 
 
-        'Me.BringToFront()
+        ' Vygenerujeme seznam všech měsíců v daném období
+        Dim allMonths = Enumerable.Range(0, 12 * (dtpEndDate.Value.Year - dtpStartDate.Value.Year) + (dtpEndDate.Value.Month - dtpStartDate.Value.Month) + 1).
+                    Select(Function(offset) dtpStartDate.Value.AddMonths(offset)).
+                    Select(Function(d) New DateTime(d.Year, d.Month, 1))
+
+        ' Použijeme Left Join pro zahrnutí všech měsíců, i těch bez dat a použijeme LayerStart
+        Dim monthlySumsWithEmpty = From month In allMonths
+                                   Group Join ms In (From record In gpxRecords
+                                                     Group record By Month = New DateTime(record.LayerStart.Year, record.LayerStart.Month, 1) Into grp = Group
+                                                     Select New With {.Month = Month, .TotalDistance = grp.Sum(Function(r) r.Distance)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {.Month = month, .TotalDistance = 0.0})
+                                   Select subMs
+
+        ' Převedeme na pole pro graf
+        Dim monthlyXAxisDataWithEmpty As String() = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM", currentCulture)).ToArray()
+        Dim monthlyYAxisDataWithEmpty As Double() = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray()
+
+        Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y
+        Dim monthlyGrafText = Resource1.Y_AxisLabelMonthly ' Např. "Měsíční vzdálenost"
+        Dim MonthlyChart1 = New DistanceChart(monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
+        MonthlyChart1.Show()
+        Charts.Add(MonthlyChart1)
+
 
     End Sub
 
@@ -435,12 +464,12 @@ Public Class Form1
 
     Public Sub CloseGrafs()
         ' Zavření grafů
-        For Each grf In distanceCharts
-            grf.CloseChart()
+        For Each grf In Charts
+            grf.Close()
         Next grf
 
         ' Vyprázdnění seznamu
-        distanceCharts.Clear()
+        Charts.Clear()
     End Sub
 
 
