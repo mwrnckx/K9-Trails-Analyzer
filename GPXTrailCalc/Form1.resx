@@ -204,42 +204,6 @@
   <data name="&gt;&gt;btnReadGpxFiles.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="txtWarnings.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="txtWarnings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>330, 423</value>
-  </data>
-  <data name="txtWarnings.Multiline" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="txtWarnings.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
-    <value>Vertical</value>
-  </data>
-  <data name="txtWarnings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>950, 209</value>
-  </data>
-  <data name="txtWarnings.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="txtWarnings.Text" xml:space="preserve">
-    <value>Errors and Logs:</value>
-  </data>
-  <data name="txtWarnings.Visible" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="&gt;&gt;txtWarnings.Name" xml:space="preserve">
-    <value>txtWarnings</value>
-  </data>
-  <data name="&gt;&gt;txtWarnings.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;txtWarnings.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;txtWarnings.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
   <data name="btnCharts.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -271,7 +235,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnCharts.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
@@ -279,18 +243,6 @@
   <metadata name="StatusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>309, 17</value>
   </metadata>
-  <data name="StatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 25</value>
-  </data>
-  <data name="StatusLabel1.Text" xml:space="preserve">
-    <value>ToolStripkkkkkkkkkkel1</value>
-  </data>
-  <data name="StatusLabel1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
-    <value>Directories can be set in the "File" menu</value>
-  </data>
   <data name="StatusStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 812</value>
   </data>
@@ -316,11 +268,86 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;StatusStrip1.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
+  </data>
+  <data name="StatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>194, 25</value>
+  </data>
+  <data name="StatusLabel1.Text" xml:space="preserve">
+    <value>ToolStripkkkkkkkkkkel1</value>
+  </data>
+  <data name="StatusLabel1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Directories can be set in the "File" menu</value>
   </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>151, 17</value>
   </metadata>
+  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 29</value>
+  </data>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="mnuSettings.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="mnuSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 29</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Gpx processing</value>
+  </data>
+  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="mnuLanguage.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>109, 29</value>
+  </data>
+  <data name="mnuLanguage.Text" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI Semibold, 9pt, style=Bold</value>
+  </data>
+  <data name="SToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>126, 29</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1828, 36</value>
+  </data>
+  <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>MenuStrip1</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Name" xml:space="preserve">
+    <value>MenuStrip1</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
   <data name="mnuSelect_directory_gpx_files.Size" type="System.Drawing.Size, System.Drawing">
     <value>458, 34</value>
   </data>
@@ -342,15 +369,6 @@
   <data name="mnuExportAs.Text" xml:space="preserve">
     <value>Export as (rtf. txt, csv)</value>
   </data>
-  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 29</value>
-  </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>File</value>
-  </data>
   <data name="mnuPrependDateToFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>439, 34</value>
   </data>
@@ -368,15 +386,6 @@
   </data>
   <data name="mnuMergingTracks.Text" xml:space="preserve">
     <value>Match Runner and Dog Tracks</value>
-  </data>
-  <data name="mnuSettings.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="mnuSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 29</value>
-  </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>Gpx processing</value>
   </data>
   <data name="mnuEnglish.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
     <value>None</value>
@@ -432,56 +441,11 @@
   <data name="mnuRussian.Text" xml:space="preserve">
     <value>Русский</value>
   </data>
-  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="mnuLanguage.ImageScaling" type="System.Windows.Forms.ToolStripItemImageScaling, System.Windows.Forms">
-    <value>None</value>
-  </data>
-  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>109, 29</value>
-  </data>
-  <data name="mnuLanguage.Text" xml:space="preserve">
-    <value>Language</value>
-  </data>
   <data name="FactoryResetToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>221, 34</value>
   </data>
   <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
     <value>Factory reset</value>
-  </data>
-  <data name="SToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI Semibold, 9pt, style=Bold</value>
-  </data>
-  <data name="SToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>126, 29</value>
-  </data>
-  <data name="SToolStripMenuItem.Text" xml:space="preserve">
-    <value>Preferences</value>
-  </data>
-  <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1828, 33</value>
-  </data>
-  <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>27</value>
-  </data>
-  <data name="MenuStrip1.Text" xml:space="preserve">
-    <value>MenuStrip1</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Name" xml:space="preserve">
-    <value>MenuStrip1</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
-    <value>7</value>
   </data>
   <data name="PictureBox1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -538,7 +502,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;gbPeriod.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="lblScentArtickle.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -568,7 +532,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblScentArtickle.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="rtbOutput.Location" type="System.Drawing.Point, System.Drawing">
     <value>330, 51</value>
@@ -595,6 +559,33 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;rtbOutput.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="rtbWarnings.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
+  </data>
+  <data name="rtbWarnings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>330, 432</value>
+  </data>
+  <data name="rtbWarnings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>950, 209</value>
+  </data>
+  <data name="rtbWarnings.TabIndex" type="System.Int32, mscorlib">
+    <value>31</value>
+  </data>
+  <data name="rtbWarnings.Text" xml:space="preserve">
+    <value />
+  </data>
+  <data name="&gt;&gt;rtbWarnings.Name" xml:space="preserve">
+    <value>rtbWarnings</value>
+  </data>
+  <data name="&gt;&gt;rtbWarnings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rtbWarnings.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;rtbWarnings.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

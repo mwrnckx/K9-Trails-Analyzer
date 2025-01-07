@@ -134,6 +134,11 @@
       <DependentUpon>Application.myapp</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="My Project\Resource1.cs1.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.cs.resx</DependentUpon>
+    </Compile>
     <Compile Include="My Project\Resource1.de.Designer.vb">
       <DependentUpon>Resource1.de.resx</DependentUpon>
       <AutoGen>True</AutoGen>

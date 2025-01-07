@@ -8,18 +8,18 @@ Imports GPXTrailAnalyzer.My.Resources
 Imports System.Linq
 
 Public Class Form1
-
     'Private gpxCalculator As GPXDistanceCalculator
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
 
     Private Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
-        CreateGpxFileManager() 'smaže vše ve staré instanci
-        txtWarnings.Visible = True
+        CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
+
+        rtbWarnings.Visible = True
         'zavři případné grafy
         CloseGrafs()
-        'Dim _GPXFilesManager As New GpxFileManager()
-        'interval který se má zpracovat
+
+        'období, které se má zpracovat
         GPXFilesManager.dateFrom = dtpStartDate.Value
         GPXFilesManager.dateTo = dtpEndDate.Value
         Try
@@ -33,23 +33,29 @@ Public Class Form1
         Catch ex As Exception
             MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
         End Try
-
     End Sub
 
     Private Sub CreateGpxFileManager()
         ' Zrušení odběru událostí u staré instance (pokud existuje)
         If GPXFilesManager IsNot Nothing Then
-            RemoveHandler GPXFilesManager.WarningOccurred, AddressOf GpxFileManager_WarningOccurred
+            RemoveHandler GPXFilesManager.WarningOccurred, AddressOf WriteRTBWarning
+            For Each record In GPXFilesManager.GpxRecords
+                RemoveHandler record.WarningOccurred, AddressOf GPXFilesManager._writeRTBWarning
+            Next
             GPXFilesManager = Nothing ' Uvolnění staré instance
         End If
 
         ' Vytvoření nové instance
         GPXFilesManager = New GpxFileManager()
-        AddHandler GPXFilesManager.WarningOccurred, AddressOf GpxFileManager_WarningOccurred
+        AddHandler GPXFilesManager.WarningOccurred, AddressOf WriteRTBWarning
+
     End Sub
 
-    Private Sub GpxFileManager_WarningOccurred(message As String)
-        txtWarnings.AppendText(message & vbCrLf) ' Přidání odřádkování
+    Private Sub WriteRTBWarning(message As String, _color As Color)
+        Me.rtbWarnings.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
+        Me.rtbWarnings.SelectionColor = _color ' Nastavit barvu
+        Me.rtbWarnings.AppendText(message & vbCrLf) ' Přidání odřádkování
+        Me.rtbWarnings.ScrollToCaret() ' Pozice na konec textu
     End Sub
 
     Private Sub WriteRTBOutput(_gpxFilesManager As GpxFileManager)
@@ -60,7 +66,7 @@ Public Class Form1
         Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
 
         Dim manySpaces As String = "                                                 "
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
+        Me.rtbOutput.AppendText(("    " & My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
         Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 14))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
@@ -114,7 +120,7 @@ Public Class Form1
                 ' Skrolování na aktuální pozici kurzoru
                 Me.rtbOutput.ScrollToCaret()
             Catch ex As Exception
-                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.filePath) & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath) & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         Next _gpxRecord
 
@@ -321,9 +327,9 @@ Public Class Form1
             End Using
 
 
-            Me.txtWarnings.AppendText($"{vbCrLf}CSV file created: {csvFilePath}.{Environment.NewLine}")
+            WriteRTBWarning($"{vbCrLf}CSV file created: {csvFilePath}.{Environment.NewLine}", Color.DarkGreen)
         Catch ex As Exception
-            Me.txtWarnings.AppendText($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {ex.Message}{Environment.NewLine}")
+            Me.WriteRTBWarning($"{My.Resources.Resource1.mBoxErrorCreatingCSV}: {ex.Message}{Environment.NewLine}", Color.DarkGreen)
             MessageBox.Show($"Error creating CSV file: {ex.Message}")
         End Try
     End Sub
@@ -698,6 +704,14 @@ Public Class Form1
         MessageBoxButtons.YesNo) = DialogResult.Yes Then My.Settings.Reset()
 
     End Sub
+
+    Private Sub dtpStartDate_ValueChanged(sender As Object, e As EventArgs) Handles dtpStartDate.ValueChanged, dtpEndDate.ValueChanged
+        CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
+        'zavři případné grafy
+        CloseGrafs()
+    End Sub
+
+
 End Class
 
 

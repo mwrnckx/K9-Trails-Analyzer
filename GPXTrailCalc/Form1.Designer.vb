@@ -28,7 +28,6 @@ Partial Class Form1
         Me.dtpStartDate = New System.Windows.Forms.DateTimePicker()
         Me.dtpEndDate = New System.Windows.Forms.DateTimePicker()
         Me.btnReadGpxFiles = New System.Windows.Forms.Button()
-        Me.txtWarnings = New System.Windows.Forms.TextBox()
         Me.btnCharts = New System.Windows.Forms.Button()
         Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
         Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
@@ -55,6 +54,7 @@ Partial Class Form1
         Me.gbPeriod = New System.Windows.Forms.GroupBox()
         Me.lblScentArtickle = New System.Windows.Forms.Label()
         Me.rtbOutput = New System.Windows.Forms.RichTextBox()
+        Me.rtbWarnings = New System.Windows.Forms.RichTextBox()
         Me.StatusStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -81,12 +81,6 @@ Partial Class Form1
         resources.ApplyResources(Me.btnReadGpxFiles, "btnReadGpxFiles")
         Me.btnReadGpxFiles.Name = "btnReadGpxFiles"
         Me.btnReadGpxFiles.UseVisualStyleBackColor = False
-        '
-        'txtWarnings
-        '
-        Me.txtWarnings.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        resources.ApplyResources(Me.txtWarnings, "txtWarnings")
-        Me.txtWarnings.Name = "txtWarnings"
         '
         'btnCharts
         '
@@ -253,16 +247,22 @@ Partial Class Form1
         resources.ApplyResources(Me.rtbOutput, "rtbOutput")
         Me.rtbOutput.Name = "rtbOutput"
         '
+        'rtbWarnings
+        '
+        Me.rtbWarnings.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
+        resources.ApplyResources(Me.rtbWarnings, "rtbWarnings")
+        Me.rtbWarnings.Name = "rtbWarnings"
+        '
         'Form1
         '
         resources.ApplyResources(Me, "$this")
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
+        Me.Controls.Add(Me.rtbWarnings)
         Me.Controls.Add(Me.rtbOutput)
         Me.Controls.Add(Me.lblScentArtickle)
         Me.Controls.Add(Me.gbPeriod)
         Me.Controls.Add(Me.StatusStrip1)
         Me.Controls.Add(Me.btnCharts)
-        Me.Controls.Add(Me.txtWarnings)
         Me.Controls.Add(Me.btnReadGpxFiles)
         Me.Controls.Add(Me.MenuStrip1)
         Me.Controls.Add(Me.PictureBox1)
@@ -281,21 +281,17 @@ Partial Class Form1
     Friend WithEvents dtpStartDate As DateTimePicker
     Friend WithEvents dtpEndDate As DateTimePicker
     Friend WithEvents btnReadGpxFiles As Button
-    Friend WithEvents txtWarnings As TextBox
 
 
     Public Sub New()
         ' Toto volání je vyžadované návrhářem.
         InitializeComponent()
-
         ' Přidejte libovolnou inicializaci po volání InitializeComponent().
-
-
-        Me.txtWarnings.Text &= vbCrLf
     End Sub
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        WriteRTBWarning("Logs:", Color.Maroon)
         CreateGpxFileManager()
 
         mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
@@ -386,5 +382,6 @@ Partial Class Form1
     Friend WithEvents mnuMergingTracks As ToolStripMenuItem
     Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents FactoryResetToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents rtbWarnings As RichTextBox
 End Class
 
