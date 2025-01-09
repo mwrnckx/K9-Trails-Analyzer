@@ -1,6 +1,7 @@
 ﻿Imports System.Diagnostics.Eventing
 Imports System.Globalization
 Imports System.IO
+Imports System.Runtime.CompilerServices.RuntimeHelpers
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms.LinkLabel
 Imports System.Xml
@@ -90,7 +91,7 @@ Public Class GpxFileManager
                     'Tady najde layerStart 
                     Dim _reader As New GpxReader(gpxFilePath)
                     Dim _gpxRecord As New GPXRecord With {.Reader = _reader}
-                    _gpxRecord.GetLayerStart()
+                    '_gpxRecord.GetLayerStart()
                     If _gpxRecord.LayerStart >= dateFrom And _gpxRecord.LayerStart <= dateTo Then
 
                         AddHandler _gpxRecord.WarningOccurred, AddressOf _writeRTBWarning
@@ -179,22 +180,22 @@ Be carefull with this!!!!!"
                     SaveMergeDecision(file_prev, file_i, result.ToString)
                 End If
             End If
-                ' Zjisti, zda oba soubory obsahují pouze jeden uzel <trkseg>
-                Dim trksegNodes_i As XmlNodeList = file_i.Reader.SelectNodes("trkseg")
-                Dim trksegNodes_prev As XmlNodeList = file_prev.Reader.SelectNodes("trkseg")
-                If trksegNodes_i.Count = 1 AndAlso trksegNodes_prev.Count = 1 Then
-                    ' Zeptej se uživatele, zda chce soubory spojit
-                    Dim mergeFiles As DialogResult
-                    If Not mergeNoAsk Then mergeFiles = DialogMergeFiles(file_prev, file_i)
-                    ' Pokud uživatel souhlasí, spoj soubory, jinak přidej
-                    If mergeNoAsk OrElse (mergeFiles = DialogResult.Yes) Then
-                        If file_prev.MergeDogToMe(file_i) Then
-                            Return True
-                        End If
+            ' Zjisti, zda oba soubory obsahují pouze jeden uzel <trkseg>
+            Dim trksegNodes_i As XmlNodeList = file_i.Reader.SelectNodes("trkseg")
+            Dim trksegNodes_prev As XmlNodeList = file_prev.Reader.SelectNodes("trkseg")
+            If trksegNodes_i.Count = 1 AndAlso trksegNodes_prev.Count = 1 Then
+                ' Zeptej se uživatele, zda chce soubory spojit
+                Dim mergeFiles As DialogResult
+                If Not mergeNoAsk Then mergeFiles = DialogMergeFiles(file_prev, file_i)
+                ' Pokud uživatel souhlasí, spoj soubory, jinak přidej
+                If mergeNoAsk OrElse (mergeFiles = DialogResult.Yes) Then
+                    If file_prev.MergeDogToMe(file_i) Then
+                        Return True
                     End If
                 End If
             End If
-            Return False 'ke spojení souborů nedošlo
+        End If
+        Return False 'ke spojení souborů nedošlo
     End Function
 
     Private Function DialogMergeFiles(runner As GPXRecord, dog As GPXRecord) As DialogResult
@@ -382,7 +383,7 @@ End Class
 
 
 Public Class GPXRecord
-
+    Private _LayerStart As Date
     Public Event WarningOccurred(_message As String, _color As Color)
 
     Public Sub New()
@@ -393,9 +394,18 @@ Public Class GPXRecord
         End If
     End Sub
 
-    'Public Property FilePath As String
-    'Public Property FileName As String
     Public Property LayerStart As DateTime
+        Get
+            If _LayerStart = Date.MinValue Then
+                _LayerStart = GetLayerStart()
+            End If
+            Return _LayerStart
+        End Get
+        Set
+            _LayerStart = Value
+        End Set
+    End Property
+
     Public Property DogStart As DateTime
     Public Property DogFinish As DateTime
     Public Property TrailAge As TimeSpan
@@ -562,19 +572,70 @@ Public Class GPXRecord
         Return TimeSpan.Zero
     End Function
 
-    Public Function GetRemoveDateFromName() As (DateTime?, String)
 
-        Dim Separator As String = "\s*(?:_|-|\.)\s*" ' Pomlčka, podtržítko nebo tečka
+
+    Public Function OdstranDataACasZNazvuSouboru(fileName As String) As String
+        ' Regex pro data v různých formátech (nyní s ne-zachytávajícími skupinami pro lepší chování)
+        Dim Separator As String = "\s*(?:\.|_|-|,|\._)\s*" ' Pomlčka, podtržítko nebo tečka
         Dim isoSeparator As String = "\s*(?:[-/_]|\.)\s*" ' Více separátorů
-
+        'Separator = "\._"
         ' Definice regulárního výrazu s pojmenovanými skupinami
         Dim pattern As String =
+        $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}(?!\w)))|" &
+        $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}(?!\w)))|" &
+        $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01](?!\w)))"
+
+        ' Regex pro čas v různých formátech
+        Dim timeRegex As String = "(?:0?[0-9]|1[0-9]|2[0-3])[:\.](?:[0-5][0-9])(?:[:\.](?:[0-5][0-9]))?"
+
+        ' Kombinace obou regexů a nahrazení prázdným řetězcem
+        Dim result As String = Regex.Replace(fileName, "(" & pattern & "|" & timeRegex & ")", " ").Trim()
+
+        ' Odstranění vícenásobných mezer
+        result = Regex.Replace(result, "\s+", " ")
+
+        Return result
+    End Function
+
+    Sub Main()
+        Dim testovaciRetezec As String = "2025-01-04_K_mlýnu_Samo01-01-2025 3._4._2025_Čim._Údolí_Samo.gpx 03._04._2025 12:30:00 12.30 12.30.15"
+        Dim ocekavanyVysledek As String = "K_mlýnu_Samo Čim._Údolí_Samo.gpx"
+        Dim vysledek As String = OdstranDataACasZNazvuSouboru(testovaciRetezec)
+
+        Console.WriteLine($"Původní řetězec: {testovaciRetezec}")
+        Console.WriteLine($"Výsledek:        {vysledek}")
+        Console.WriteLine($"Očekávaný výsledek: {ocekavanyVysledek}")
+        Console.WriteLine($"Shoda: {vysledek = ocekavanyVysledek}")
+
+        testovaciRetezec = "Soubor_bez_data.txt"
+        ocekavanyVysledek = "Soubor_bez_data.txt"
+        vysledek = OdstranDataACasZNazvuSouboru(testovaciRetezec)
+
+        Console.WriteLine($"Původní řetězec: {testovaciRetezec}")
+        Console.WriteLine($"Výsledek:        {vysledek}")
+        Console.WriteLine($"Očekávaný výsledek: {ocekavanyVysledek}")
+        Console.WriteLine($"Shoda: {vysledek = ocekavanyVysledek}")
+
+
+    End Sub
+
+    Public Function GetRemoveDateFromName() As (DateTime, String)
+
+        Dim Separator As String = "\s*(?:\.|_|-|,|\._)\s*" ' Pomlčka, podtržítko nebo tečka
+        Dim isoSeparator As String = "\s*(?:[-/_]|\.)\s*" ' Více separátorů
+        'Separator = "\._"
+        ' Definice regulárního výrazu s pojmenovanými skupinami
+        Dim datePattern1 As String =
         $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}))|" &
         $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))|" &
         $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))"
 
-        Dim myRegex As New Regex(pattern)
+        Dim datePattern2 As String = $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
+        ' Regex pro čas v různých formátech
+        Dim timeRegex As String = "(?:0?[0-9]|1[0-9]|2[0-3])[:\.](?:[0-5][0-9])(?:[:\.](?:[0-5][0-9]))?"
+        Dim myRegex As New Regex(datePattern1 & "|" & datePattern2 & "|" & timeRegex)
         Dim fileName As String = Me.Reader.FileName
+
         Dim match As Match = myRegex.Match(fileName)
         If match.Success Then
             Dim dateTimeFromFileName As Date = New DateTime
@@ -584,7 +645,7 @@ Public Class GPXRecord
                 Dim _month As Integer = Integer.Parse(match.Groups("month").Value)
                 Dim _day As Integer = Integer.Parse(match.Groups("day").Value)
 
-                If match.Groups("eu").Success And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("d") Then
+                If (match.Groups("eu").Success Or match.Groups("eu2").Success) And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("d") Then
                     ' Evropský formát
                     dateTimeFromFileName = New DateTime(_year, _month, _day)
                 ElseIf match.Groups("us").Success And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("M") Then
@@ -599,6 +660,8 @@ Public Class GPXRecord
 
                 ' Odstranění nalezeného datového řetězce z názvu souboru
                 Dim modifiedFileName As String = myRegex.Replace(fileName, "").Trim()
+                ' Kombinace obou regexů a nahrazení prázdným řetězcem
+
                 'odstraní znaky na začátku a konci
                 Dim charsToTrim As Char() = {"_", "-", ".", " "}
                 modifiedFileName = modifiedFileName.TrimStart(charsToTrim).TrimEnd(charsToTrim)
@@ -606,11 +669,11 @@ Public Class GPXRecord
                 ' Vrácení data i upraveného názvu souboru
                 Return (dateTimeFromFileName, modifiedFileName)
             Catch ex As Exception
-                Console.WriteLine($"{fileName} - Chybný formát datumu")
+                Console.WriteLine($"{fileName} - Error in date format")
                 Return (Nothing, fileName)
             End Try
         Else
-            Console.WriteLine($"{fileName} - Datum nenalezeno")
+            Console.WriteLine($"{fileName} - Date not found")
             Return (Nothing, fileName)
         End If
 
@@ -620,30 +683,25 @@ Public Class GPXRecord
     ' Function to read the time from the first <time> node in the GPX file
     ' If <time> node doesnt exist tries to read date from file name and creates <time> node
     Public Function GetLayerStart() As DateTime
-        Dim layerStart As DateTime
 
         ' Načtení jednoho uzlu <time>
         Dim LayerStartTimeNode As XmlNode = Me.Reader.SelectSingleNode("time")
-
-        Dim RecordedDateFromFileName As DateTime? = Me.GetRemoveDateFromName.Item1
-
-
-        ' Check if the <time> node exists and has a valid value
-        If LayerStartTimeNode IsNot Nothing AndAlso DateTime.TryParse(LayerStartTimeNode.InnerText, layerStart) Then
-
-            'keeps value from file
-        ElseIf RecordedDateFromFileName IsNot Nothing Then
+        If LayerStartTimeNode IsNot Nothing AndAlso Not DateTime.TryParse(LayerStartTimeNode.InnerText, _LayerStart) Then
+            ' if the <time> node doesn't exists or has an  invalid value:
             'pokusí se odečíst datum z názvu souboru a vytvořit uzel <time>
             ' Převedení nalezeného řetězce na DateTime
-            layerStart = RecordedDateFromFileName
-            AddTimeNodeToFirstTrkpt(RecordedDateFromFileName.ToString("yyyy-MM-dd" & "T" & "hh:mm:ss" & "Z"))
-            RaiseEvent WarningOccurred($" <time> node with Date from file name created: {RecordedDateFromFileName.ToString("yyyy-MM-dd")}" & $"in file: {Reader.FileName}", Color.DarkGreen)
-        Else
-            ' If the node doesn't exist or isn't a valid date, return the default DateTime value
-            RaiseEvent WarningOccurred($"GPX file: {Me.Reader.FileName} contains no date!", Color.Red)
+            Dim RecordedDateFromFileName As DateTime = Me.GetRemoveDateFromName.Item1
+            If RecordedDateFromFileName <> Date.MinValue Then
+                LayerStart = RecordedDateFromFileName
+                AddTimeNodeToFirstTrkpt(RecordedDateFromFileName.ToString("yyyy-MM-dd" & "T" & "hh:mm:ss" & "Z"))
+                RaiseEvent WarningOccurred($" <time> node with Date from file name created: {RecordedDateFromFileName.ToString("yyyy-MM-dd")}" & $"in file: {Reader.FileName}", Color.DarkGreen)
+            Else
+                ' If the node doesn't exist or isn't a valid date, return the default DateTime value
+                RaiseEvent WarningOccurred($"GPX file: {Me.Reader.FileName} contains no date!", Color.Red)
+            End If
         End If
-        Me.LayerStart = layerStart
-        Return layerStart
+
+        Return LayerStart
     End Function
 
 
@@ -800,10 +858,15 @@ Public Class GPXRecord
         'do souboru me vloží kompletní uzel  <trk> vyjmutý ze souboru dog
         Try
             ' Najdi první uzel <trk>
-            Dim metrkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
-            Dim dogtrkNode As XmlNode = dog.Reader.SelectSingleNode("trk")
-            If metrkNode IsNot Nothing AndAlso dogtrkNode IsNot Nothing Then
-                Dim importedNode As XmlNode = Me.Reader.ImportNode(dogtrkNode, True) ' Důležité: Import uzlu!
+            Dim meTrkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
+            'přidá node typu:
+            Dim newTypeNode_layer As XmlNode = Me.Reader.CreateElement(meTrkNode, "type", "trailLayer", False)
+            Dim dogTrkNode As XmlNode = dog.Reader.SelectSingleNode("trk")
+            'přidá node typu:
+            Dim newTypeNode_dog As XmlNode = Me.Reader.CreateElement(dogTrkNode, "type", "dog", False)
+
+            If meTrkNode IsNot Nothing AndAlso dogTrkNode IsNot Nothing Then
+                Dim importedNode As XmlNode = Me.Reader.ImportNode(dogTrkNode, True) ' Důležité: Import uzlu!
                 Dim meGpxNode As XmlNode = Me.Reader.SelectSingleNode("gpx")
                 meGpxNode.AppendChild(importedNode) ' Přidání na konec <gpx>
 
@@ -828,6 +891,7 @@ Public Class GPXRecord
     Public Sub SplitTrackIntoTwo()
         ' Najdi první uzel <trk>
         Dim trkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
+        Dim newTypeNode_layer As XmlNode = Me.Reader.CreateElement(trkNode, "type", "trailLayer", False)
 
         If trkNode IsNot Nothing Then
             ' Najdi všechny <trkseg> uvnitř <trk>
@@ -836,7 +900,7 @@ Public Class GPXRecord
             If trkSegNodes.Count > 1 Then
                 ' Vytvoř nový uzel <trk>
                 Dim newTrkNode As XmlNode = Me.Reader.CreateElement("trk")
-
+                Dim newTypeNode_dog As XmlNode = Me.Reader.CreateElement(newTrkNode, "type", "dog", False)
                 ' Přesuň druhý <trkseg> do nového <trk>
                 Dim secondTrkSeg As XmlNode = trkSegNodes(1)
                 trkNode.RemoveChild(secondTrkSeg)
@@ -995,7 +1059,7 @@ Public Class GPXRecord
         Dim save As Boolean = False
 
         If firstTrkptNode IsNot Nothing Then
-            Me.Reader.CreateElement(firstTrkptNode, "time", timeValue)
+            Me.Reader.CreateElement(firstTrkptNode, "time", timeValue, True)
             save = True
             Debug.WriteLine("Časový uzel byl úspěšně přidán.")
         Else
@@ -1040,11 +1104,11 @@ Public Class GPXRecord
             ' Smaže datum v názvu souboru (to kvůli převodu na iso formát):
             Dim result As (DateTime?, String) = GetRemoveDateFromName()
             Dim modifiedFileName As String = result.Item2
-            newFileName = $"{LayerStart.Date:yyyy-MM-dd} {modifiedFileName}"
+            newFileName = $"{LayerStart:yyyy-MM-dd} {modifiedFileName}"
         Catch ex As Exception
             Debug.WriteLine(ex.ToString())
             'ponechá původní jméno, ale přidá datum
-            newFileName = $"{LayerStart.Date:yyyy-MM-dd} {Reader.FileName}"
+            newFileName = $"{LayerStart:yyyy-MM-dd} {Reader.FileName}"
         End Try
 
         Return newFileName
@@ -1084,11 +1148,12 @@ Public Class GPXRecord
             Debug.WriteLine($"Renamed file to {newFileName}.{Environment.NewLine}")
             RaiseEvent WarningOccurred($"File {Reader.FileName} was renamed to {newFileName}.{Environment.NewLine}", Color.DarkGreen)
             Reader.FilePath = newFilePath
-            Reader.FileName = Path.GetFileName(newFilePath)
+
             Return True
         Catch ex As Exception
             Debug.WriteLine(ex.ToString())
             RaiseEvent WarningOccurred($"Error renaming file: {ex.Message}{Environment.NewLine}", Color.Red)
+
             Return False
         End Try
     End Function
@@ -1113,15 +1178,21 @@ Public Class GPXRecord
         Return result.ToString()
     End Function
 
-
 End Class
+
+
 
 Public Class GpxReader
     Private xmlDoc As XmlDocument
     Private namespaceManager As XmlNamespaceManager
     Public Property FilePath As String
     Private namespacePrefix As String
-    Public Property FileName As String
+
+    Public ReadOnly Property FileName As String
+        Get
+            Return Path.GetFileName(FilePath)
+        End Get
+    End Property
 
     Public Property Nodes As XmlNodeList
 
@@ -1129,7 +1200,6 @@ Public Class GpxReader
     ' Konstruktor načte XML dokument a nastaví XmlNamespaceManager
     Public Sub New(_filePath As String)
         Try
-            FileName = Path.GetFileName(_filePath)
             xmlDoc = New XmlDocument()
             xmlDoc.Load(_filePath)
             FilePath = _filePath
@@ -1150,13 +1220,13 @@ Public Class GpxReader
             End If
         Catch ex As FileNotFoundException
             ' Soubor nebyl nalezen
-            Throw New ArgumentException($"File '{_FileName}' has not been found.", ex) ' Vytvořit novou výjimku s kontextem
+            Throw New ArgumentException($"File '{FileName}' has not been found.", ex) ' Vytvořit novou výjimku s kontextem
         Catch ex As XmlException
             ' Chyba v XML formátu
-            Throw New XmlException($"Error in XML '{_FileName}': {ex.Message}", ex) ' Vytvořit novou výjimku s kontextem
+            Throw New XmlException($"Error in XML '{FileName}': {ex.Message}", ex) ' Vytvořit novou výjimku s kontextem
         Catch ex As Exception
             ' Obecná chyba
-            Throw New Exception($"Error loading file '{_FileName}': {ex.Message}", ex) ' Vytvořit novou výjimku s kontextem
+            Throw New Exception($"Error loading file '{FileName}': {ex.Message}", ex) ' Vytvořit novou výjimku s kontextem
         End Try
     End Sub
 
@@ -1166,22 +1236,17 @@ Public Class GpxReader
             Return Node.SelectSingleNode(namespacePrefix & childname, namespaceManager)
         Else Return Nothing
         End If
-
-
     End Function
 
     ' Metoda pro získání seznamu uzlů na základě XPath
     Public Function SelectNodes(nodeName As String) As XmlNodeList
-
         Nodes = xmlDoc.SelectNodes("//" & namespacePrefix & nodeName, namespaceManager)
-
         Return Nodes
     End Function
 
     ' Metoda pro výběr jednoho uzlu na základě názvu
     Public Function SelectSingleNode(nodename As String) As XmlNode
         Return xmlDoc.SelectSingleNode("//" & namespacePrefix & nodename, namespaceManager)
-
     End Function
 
     ' Metoda pro výběr poduzlů z uzlu Node
@@ -1198,11 +1263,21 @@ Public Class GpxReader
         Return xmlDoc.CreateElement(nodename, "http://www.topografix.com/GPX/1/1")
     End Function
 
-    Public Function CreateElement(parentNode As XmlElement, childNodeName As String, value As String) As XmlElement
+    Public Function CreateElement(parentNode As XmlElement, childNodeName As String, value As String, insertAfter As Boolean) As XmlElement
         Dim childNode As XmlElement = CreateElement(childNodeName)
         childNode.InnerText = value
-        ' Přidání uzlu <childNodeName> do prvního <parentNode>
-        parentNode.AppendChild(childNode)
+
+        ' Získání prvního podřízeného uzlu (pokud existuje). Pokud neexistuje, bude to Nothing.
+        Dim firstChild As XmlNode = parentNode.FirstChild
+
+        If insertAfter Or firstChild Is Nothing Then
+            ' Pokud uzel nemá žádné podřízené uzly, jednoduše ho přidáme jako poslední (AppendChild)
+            parentNode.AppendChild(childNode)
+        Else
+            ' Pokud podřízené uzly existují, vložíme nový uzel PŘED prvního podřízeného
+            parentNode.InsertBefore(childNode, firstChild)
+        End If
+
 
         Return parentNode
 
@@ -1213,7 +1288,7 @@ Public Class GpxReader
     End Function
 
     Public Sub Save()
-        xmlDoc.Save(_filePath)
+        xmlDoc.Save(FilePath)
     End Sub
 End Class
 
