@@ -292,7 +292,7 @@ Partial Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         WriteRTBWarning("Logs:", Color.Maroon)
-        CreateGpxFileManager()
+
 
         mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
@@ -304,6 +304,8 @@ Partial Class Form1
         If My.Settings.BackupDirectory = "" Then
             My.Settings.BackupDirectory = System.IO.Path.Combine(My.Settings.Directory, "gpxFilesBackup")
         End If
+        My.Settings.Save()
+        CreateGpxFileManager()
         'gpxCalculator = New GPXDistanceCalculator()
         Me.dtpEndDate.Value = Now
         Me.dtpStartDate.Value = Me.dtpEndDate.Value.AddYears(-1)

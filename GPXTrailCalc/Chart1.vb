@@ -109,6 +109,9 @@ Partial Class DistanceChart
         chart1.ChartAreas(0).AxisX.LabelStyle.IsStaggered = True
         chart1.ChartAreas(0).AxisX.LabelStyle.Angle = -45 ' Nastavení úhlu
 
+
+
+
         ' Nastavení vlastností pro osu Y
         Me.chart1.ChartAreas(0).AxisY.Title = yAxisLabel
         ' Pokud chceme zobrazit møížku

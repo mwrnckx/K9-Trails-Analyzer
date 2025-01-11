@@ -29,7 +29,12 @@ Public Class GpxFileManager
         gpxDirectory = My.Settings.Directory
         BackupDirectory = My.Settings.BackupDirectory
         If Not Directory.Exists(BackupDirectory) Then
-            Directory.CreateDirectory(BackupDirectory)
+            Try
+                Directory.CreateDirectory(BackupDirectory)
+            Catch ex As Exception
+
+            End Try
+
         End If
         maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
@@ -380,6 +385,12 @@ Be carefull with this!!!!!"
 End Class
 
 
+Public Class TrackTypes
+    Public Const Dog As String = "Dog"
+    Public Const TrailLayer As String = "TrailLayer"
+End Class
+
+
 
 
 Public Class GPXRecord
@@ -462,35 +473,9 @@ Public Class GPXRecord
         If Not String.IsNullOrWhiteSpace(Me.Description) Then ageFromComments = FindTheAgeinComments(Me.Description)
 
 
-        'Add age to comments
+        'Write age to comments
         If ageFromComments = TimeSpan.Zero And Not ageFromTime.TotalMinutes <= 0 Then
-
-            Dim newDescription As String
-            If Me.Description Is Nothing Then
-                newDescription = "Trail: " & ageFromTime.TotalHours.ToString("F1") & " hod"
-            Else ' Najde řetězec "Trail:" a nahradí ho řetězcem "Trail:" & AgeFromTime
-                Dim searchText As String = "trail" ' Hledaný text (malými písmeny)
-                Dim index As Integer = Me.Description.IndexOf(searchText, StringComparison.OrdinalIgnoreCase)
-
-                If index >= 0 Then ' Pokud byl text nalezen
-                    ' Získání textu před a za nalezeným slovem
-                    Dim prefix As String = Me.Description.Substring(0, index)
-                    Dim suffix As String = Me.Description.Substring(index + searchText.Length)
-
-                    ' Odstranění případných mezer a dvojtečky za slovem "trail"
-                    suffix = suffix.TrimStart(" ", "", ":")
-                    ' Sestavení nového popisu
-                    newDescription = $"{prefix}Trail: {ageFromTime.TotalHours.ToString("F1")} h {suffix}"
-                Else
-                    ' když tam Trail není vytvoří ho a doplní do desc
-                    newDescription = "Trail: " & ageFromTime.TotalHours.ToString("F1") & " h " & Me.Description
-                End If
-
-            End If
-
-            If Not String.IsNullOrWhiteSpace(newDescription) Then
-                WriteDescription(newDescription)
-            End If
+            WriteDescription(ageFromTime)
         End If
 
         If ageFromTime.TotalMinutes > 0 Then
@@ -505,34 +490,63 @@ Public Class GPXRecord
     End Function
 
     ' Function to set the <desc> description from the first <trk> node in the GPX file
-    Public Sub WriteDescription(newDescription As String)
-        ' Find the first <trk> node and its <desc> subnode
-        Dim trkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
-        Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode("desc", trkNode)
-        ' Pokud uzel <desc> neexistuje, vytvoříme jej a přidáme do <trk>
-        If descNode Is Nothing Then
-            ' Najdeme první uzel <trk>
-            'Dim trkNode As XmlNode = xmlDoc.SelectSingleNode("/gpx:gpx/gpx:trk[1]", namespaceManager)
-            descNode = Me.Reader.CreateElement("desc")
-            If trkNode IsNot Nothing Then
-                ' Vytvoříme nový uzel <desc>
-                ' Přidání <desc> jako prvního potomka v uzlu <trk>
-                If trkNode.HasChildNodes Then
-                    ' Vloží <desc> před první existující poduzel
-                    trkNode.InsertBefore(descNode, trkNode.FirstChild)
-                Else
-                    ' Pokud <trk> nemá žádné poduzly, použijeme AppendChild
-                    trkNode.AppendChild(descNode)
-                End If
-                ' Nastavíme hodnotu pro <desc> (můžete ji změnit podle potřeby)
-                descNode.InnerText = newDescription
-                ' Přidáme nový uzel <desc> do uzlu <trk>
-                'trkNode.AppendChild(descNode)
+    Public Sub WriteDescription(agefromTime As TimeSpan)
+        Dim newDescription As String
+        If Me.Description Is Nothing Then
+            newDescription = "Trail: " & agefromTime.TotalHours.ToString("F1") & " h"
+        Else ' Najde řetězec "Trail:" a nahradí ho řetězcem "Trail:" & AgeFromTime
+            Dim searchText As String = "trail" ' Hledaný text (malými písmeny)
+            Dim index As Integer = Me.Description.IndexOf(searchText, StringComparison.OrdinalIgnoreCase)
+
+            If index >= 0 Then ' Pokud byl text nalezen
+                ' Získání textu před a za nalezeným slovem
+                Dim prefix As String = Me.Description.Substring(0, index)
+                Dim suffix As String = Me.Description.Substring(index + searchText.Length)
+
+                ' Odstranění případných mezer a dvojtečky za slovem "trail"
+                suffix = suffix.TrimStart(" ", "", ":")
+                ' Sestavení nového popisu
+                newDescription = $"{prefix}Trail: {agefromTime.TotalHours.ToString("F1")} h {suffix}"
+            Else
+                ' když tam Trail není vytvoří ho a doplní do desc
+                newDescription = "Trail: " & agefromTime.TotalHours.ToString("F1") & " h " & Me.Description
             End If
-        Else
-            descNode.InnerText = newDescription
+
         End If
-        Me.Description = newDescription
+
+        If Not String.IsNullOrWhiteSpace(newDescription) Then
+            ' Find the first <trk> node and its <desc> subnode
+            Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
+            Dim descNodeLayer As XmlNode = Me.Reader.SelectSingleChildNode("desc", trkNodes(0))
+            ' Pokud uzel <desc> neexistuje, vytvoříme jej a přidáme do <trk>
+            If descNodeLayer Is Nothing Then
+                descNodeLayer = Me.Reader.CreateElement("desc")
+                If trkNodes(0) IsNot Nothing Then
+                    ' Vytvoříme nový uzel <desc>
+                    ' Přidání <desc> jako prvního potomka v uzlu <trk>
+                    If trkNodes(0).HasChildNodes Then
+                        ' Vloží <desc> před první existující poduzel
+                        trkNodes(0).InsertBefore(descNodeLayer, trkNodes(0).FirstChild)
+                    Else
+                        ' Pokud <trk> nemá žádné poduzly, použijeme AppendChild
+                        trkNodes(0).AppendChild(descNodeLayer)
+                    End If
+                End If
+            End If
+            'najdeme poznámku u psa
+            Dim descNodeDog As XmlNode = Me.Reader.SelectSingleChildNode("desc", trkNodes(1))
+            Dim DogsDesc As String = ""
+            If descNodeDog IsNot Nothing Then
+                'najde text poznámky u psa
+                DogsDesc = descNodeDog.InnerText
+            End If
+
+            ' Nastavíme hodnotu pro <desc> spojením s poznámkou u psa
+            newDescription = newDescription & " " & DogsDesc
+            descNodeLayer.InnerText = newDescription
+
+            Me.Description = newDescription
+        End If
     End Sub
 
     Public Function CalculateSpeed() As Double 'km/h
@@ -860,10 +874,10 @@ Public Class GPXRecord
             ' Najdi první uzel <trk>
             Dim meTrkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
             'přidá node typu:
-            Dim newTypeNode_layer As XmlNode = Me.Reader.CreateElement(meTrkNode, "type", "trailLayer", False)
+            Dim newTypeNode_layer As XmlNode = Me.Reader.CreateElement(meTrkNode, "type", TrackTypes.TrailLayer, False)
             Dim dogTrkNode As XmlNode = dog.Reader.SelectSingleNode("trk")
             'přidá node typu:
-            Dim newTypeNode_dog As XmlNode = Me.Reader.CreateElement(dogTrkNode, "type", "dog", False)
+            Dim newTypeNode_dog As XmlNode = dog.Reader.CreateElement(dogTrkNode, "type", TrackTypes.Dog, False)
 
             If meTrkNode IsNot Nothing AndAlso dogTrkNode IsNot Nothing Then
                 Dim importedNode As XmlNode = Me.Reader.ImportNode(dogTrkNode, True) ' Důležité: Import uzlu!
@@ -881,26 +895,31 @@ Public Class GPXRecord
             End If
             Return True
         Catch ex As Exception
-            RaiseEvent WarningOccurred($"Merging tracks of the me  {Me.Reader.FileName} and the dog {dog.Reader.FileName} failed!", Color.Red)
+            RaiseEvent WarningOccurred($"Merging tracks of the me  {Me.Reader.FileName} and the dog {dog.Reader.FileName} failed!" & vbCrLf & ex.Message, Color.Red)
             Return False
         End Try
 
     End Function
 
+
+
+
     ' in gpx files, splits a track with two segments into two separate tracks
     Public Sub SplitTrackIntoTwo()
         ' Najdi první uzel <trk>
         Dim trkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
-        Dim newTypeNode_layer As XmlNode = Me.Reader.CreateElement(trkNode, "type", "trailLayer", False)
+
 
         If trkNode IsNot Nothing Then
             ' Najdi všechny <trkseg> uvnitř <trk>
             Dim trkSegNodes As XmlNodeList = Me.Reader.SelectChildNodes("trkseg", trkNode)
 
             If trkSegNodes.Count > 1 Then
+                Dim newTypeNode_trailLayer As XmlNode = Me.Reader.CreateElement(trkNode, "type", TrackTypes.TrailLayer, False)
+
                 ' Vytvoř nový uzel <trk>
                 Dim newTrkNode As XmlNode = Me.Reader.CreateElement("trk")
-                Dim newTypeNode_dog As XmlNode = Me.Reader.CreateElement(newTrkNode, "type", "dog", False)
+                Dim newTypeNode_dog As XmlNode = Me.Reader.CreateElement(newTrkNode, "type", TrackTypes.Dog, False)
                 ' Přesuň druhý <trkseg> do nového <trk>
                 Dim secondTrkSeg As XmlNode = trkSegNodes(1)
                 trkNode.RemoveChild(secondTrkSeg)
@@ -1267,21 +1286,33 @@ Public Class GpxReader
         Dim childNode As XmlElement = CreateElement(childNodeName)
         childNode.InnerText = value
 
-        ' Získání prvního podřízeného uzlu (pokud existuje). Pokud neexistuje, bude to Nothing.
-        Dim firstChild As XmlNode = parentNode.FirstChild
-
-        If insertAfter Or firstChild Is Nothing Then
-            ' Pokud uzel nemá žádné podřízené uzly, jednoduše ho přidáme jako poslední (AppendChild)
+        Dim childNodes As XmlNodeList = Me.SelectAllChildNodes(childNodeName, parentNode)
+        ' Kontrola, zda existuje alespoň jeden uzel <childnodename>
+        If childNodes.Count = 0 Then
+            ' Uzel <childnodename> neexistuje, můžeme ho vytvořit a vložit
+            ' Pokud parent nemá žádné podřízené uzly, jednoduše ho přidáme jako poslední (AppendChild)
             parentNode.AppendChild(childNode)
         Else
-            ' Pokud podřízené uzly existují, vložíme nový uzel PŘED prvního podřízeného
-            parentNode.InsertBefore(childNode, firstChild)
+            'kontrola duplicity:
+            For Each node As XmlNode In childNodes
+                If node.InnerText.Contains(value, StringComparer.OrdinalIgnoreCase) Then
+                    Console.WriteLine($"Uzel {childNodeName} s textem {value} již existuje, nepřidávám nový.")
+                Else
+                    Console.WriteLine($"Uzel {childNodeName} s jiným textem již existuje, přidávám nový.")
+                    If insertAfter Then
+                        parentNode.AppendChild(childNode)
+                    Else
+                        'vložíme nový uzel PŘED prvního podřízeného
+                        parentNode.InsertBefore(childNode, childNodes(0))
+                    End If
+                End If
+            Next
         End If
-
 
         Return parentNode
 
     End Function
+
 
     Public Function ImportNode(node As XmlNode, deepClone As Boolean)
         Return xmlDoc.ImportNode(node, deepClone)

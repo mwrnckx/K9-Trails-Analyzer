@@ -413,7 +413,7 @@ Public Class Form1
                                    Select subMs
 
         ' Převedeme na pole pro graf
-        Dim monthlyXAxisDataWithEmpty As String() = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM", currentCulture)).ToArray()
+        Dim monthlyXAxisDataWithEmpty As String() = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM yy", currentCulture)).ToArray()
         Dim monthlyYAxisDataWithEmpty As Double() = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray()
 
         Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y

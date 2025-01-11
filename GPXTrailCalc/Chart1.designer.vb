@@ -35,13 +35,13 @@ Partial Class DistanceChart
         'chart1
         '
         Me.chart1.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        ChartArea1.AxisX.LabelStyle.Font = New System.Drawing.Font("Arial", 14.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisX.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
         ChartArea1.AxisX.LabelStyle.Format = "MMMM yy"
-        ChartArea1.AxisX.Title = Global.GPXTrailAnalyzer.My.Resources.Resource1.X_AxisLabel
-        ChartArea1.AxisX.TitleFont = New System.Drawing.Font("Arial", 14.0!, System.Drawing.FontStyle.Bold)
-        ChartArea1.AxisY.LabelStyle.Font = New System.Drawing.Font("Arial", 14.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisX.Title = "" 'Global.GPXTrailAnalyzer.My.Resources.Resource1.X_AxisLabel
+        ChartArea1.AxisX.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisY.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
         ChartArea1.AxisY.Minimum = 0R
-        ChartArea1.AxisY.TitleFont = New System.Drawing.Font("Arial", 14.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisY.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
         ChartArea1.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
         ChartArea1.Name = "ChartArea1"
         Me.chart1.ChartAreas.Add(ChartArea1)
