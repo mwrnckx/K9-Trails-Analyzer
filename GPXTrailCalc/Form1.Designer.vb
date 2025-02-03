@@ -55,6 +55,7 @@ Partial Class Form1
         Me.lblScentArtickle = New System.Windows.Forms.Label()
         Me.rtbOutput = New System.Windows.Forms.RichTextBox()
         Me.rtbWarnings = New System.Windows.Forms.RichTextBox()
+        Me.mnuDogName = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -209,7 +210,7 @@ Partial Class Form1
         '
         'SToolStripMenuItem
         '
-        Me.SToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FactoryResetToolStripMenuItem})
+        Me.SToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FactoryResetToolStripMenuItem, Me.mnuDogName})
         resources.ApplyResources(Me.SToolStripMenuItem, "SToolStripMenuItem")
         Me.SToolStripMenuItem.Name = "SToolStripMenuItem"
         '
@@ -252,6 +253,11 @@ Partial Class Form1
         Me.rtbWarnings.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
         resources.ApplyResources(Me.rtbWarnings, "rtbWarnings")
         Me.rtbWarnings.Name = "rtbWarnings"
+        '
+        'mnuDogName
+        '
+        Me.mnuDogName.Name = "mnuDogName"
+        resources.ApplyResources(Me.mnuDogName, "mnuDogName")
         '
         'Form1
         '
@@ -309,6 +315,7 @@ Partial Class Form1
         'gpxCalculator = New GPXDistanceCalculator()
         Me.dtpEndDate.Value = Now
         Me.dtpStartDate.Value = Me.dtpEndDate.Value.AddYears(-1)
+        Me.dtpStartDate.Value = Me.dtpStartDate.Value.AddDays(1)
 
 
         Me.StatusLabel1.Text = $"Directory: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Backup Directory: {ZkratCestu(My.Settings.BackupDirectory, 130)}"
@@ -331,7 +338,7 @@ Partial Class Form1
 
         Dim thisAssem As Assembly = GetType(Form1).Assembly
         Dim thisAssemName As AssemblyName = thisAssem.GetName()
-        'verze se nastaví v AssamblyInfo.vb!!!!!!!!!!!!!!!!
+        'verze se nastaví v AssamblyInfo.vb nebo v My Project -> Aplikace -> Informace o sestavení!!!!!!!!!!!!!!!!
         Me.Text = thisAssemName.Name & "   " & thisAssemName.Version.ToString
 
 
@@ -385,5 +392,6 @@ Partial Class Form1
     Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents FactoryResetToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
+    Friend WithEvents mnuDogName As ToolStripMenuItem
 End Class
 

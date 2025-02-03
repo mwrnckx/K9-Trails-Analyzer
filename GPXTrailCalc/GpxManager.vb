@@ -1,6 +1,7 @@
 ﻿Imports System.Diagnostics.Eventing
 Imports System.Globalization
 Imports System.IO
+Imports System.Net.WebRequestMethods
 Imports System.Runtime.CompilerServices.RuntimeHelpers
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms.LinkLabel
@@ -95,16 +96,25 @@ Public Class GpxFileManager
                 Try
                     'Tady najde layerStart 
                     Dim _reader As New GpxReader(gpxFilePath)
-                    Dim _gpxRecord As New GPXRecord With {.Reader = _reader}
-                    '_gpxRecord.GetLayerStart()
-                    If _gpxRecord.LayerStart >= dateFrom And _gpxRecord.LayerStart <= dateTo Then
+                    Dim trksegNodes As XmlNodeList = _reader.SelectNodes("trkseg")
+                    Dim trkNodes As XmlNodeList = _reader.SelectNodes("trk")
 
-                        AddHandler _gpxRecord.WarningOccurred, AddressOf _writeRTBWarning
-                        Dim _backup As Boolean = _gpxRecord.Backup()
-                        'kvůli výpisu, pokud se žádný soubor nezazálohuje, výpis se nedělá:
-                        If Not backup Then backup = _backup
-                        gpxFilesWithinInterval.Add(_gpxRecord)
+                    ' Zjisti, zda  soubor obsahuje max. dva  uzly <trkseg> nebo <trk>
+                    If trksegNodes.Count <= 2 AndAlso trkNodes.Count <= 2 Then
+                        Dim _gpxRecord As New GPXRecord With {.Reader = _reader}
 
+                        If _gpxRecord.LayerStart >= dateFrom And _gpxRecord.LayerStart <= dateTo Then
+
+                            AddHandler _gpxRecord.WarningOccurred, AddressOf _writeRTBWarning
+                            Dim _backup As Boolean = _gpxRecord.Backup()
+                            'kvůli výpisu, pokud se žádný soubor nezazálohuje, výpis se nedělá:
+                            If Not backup Then backup = _backup
+                            gpxFilesWithinInterval.Add(_gpxRecord)
+
+                        End If
+                    Else 'more than 2 segmets ot tracks
+                        RaiseEvent WarningOccurred($"Trail record {Path.GetFileName(gpxFilePath)}
+is invalid, there are more than two tracks recorded! Not included in the stats.", Color.Red)
                     End If
                 Catch ex As ArgumentException
                     RaiseEvent WarningOccurred(ex.Message, Color.Red)
@@ -115,6 +125,7 @@ Public Class GpxFileManager
                 Catch ex As Exception
                     RaiseEvent WarningOccurred(ex.Message, Color.Red)
                     Debug.WriteLine(ex.ToString())
+
                 End Try
             Next
             If backup Then
@@ -137,21 +148,58 @@ Public Class GpxFileManager
     End Sub
 
 
+    'Public Function MergeLayerAndDogOld(_gpxRecords As List(Of GPXRecord)) As List(Of GPXRecord)
+    '    'vytváříme list gpx souborů gpxFilesMerged, první vložíme,
+    '    'orvní náslehující prohlídneme, zda se neliší o méně než maxAge - ty je pak možné spojit,
+    '    'protože se nejspíš jedná o záznam stopy kladeč a trasy psa, jen je každá zvlášť
+    '    'pokud se první následující liší o více než maxAge nebo se ke spojení nedojde z jiného důvodu
+    '    ''(např. z rozhodnutí uživatele), tak se gpx přidá do listu, pokud ke spojení dojde tak se přidává,
+    '    'ale smaže se.
+
+    '    Dim gpxFilesMerged As New List(Of GPXRecord) From {_gpxRecords(0)}
+    '    Dim lastAddedIndex As Integer = 0
+    '    If _gpxRecords.Count = 0 Then Return gpxFilesMerged 'ošetření prázdného listu
+
+
+    '    For i = 1 To _gpxRecords.Count - 1
+    '        If Not TryMerge(_gpxRecords(i), _gpxRecords(lastAddedIndex)) Then
+    '            ' Přidání souboru do seznamu, pokud ke spojení nedošlo
+    '            gpxFilesMerged.Add(_gpxRecords(i))
+    '            lastAddedIndex = i
+    '        End If
+    '    Next i
+    '    Return gpxFilesMerged
+    'End Function
+
     Public Function MergeLayerAndDog(_gpxRecords As List(Of GPXRecord)) As List(Of GPXRecord)
-        'vytváříme list gpx souborů seřazených podle LayerStart, první vložíme,
-        'další prohlídneme, zda se neliší o méně než maxAge - ty je pak možné spojit,
-        'protože se nejspíš jedná o záznam stopy kladeč a trasy psa, jen je každá zvlášť
+        Dim gpxFilesMerged As New List(Of GPXRecord)
+        If _gpxRecords.Count = 0 Then Return gpxFilesMerged 'ošetření prázdného listu
 
-        Dim gpxFilesMerged As New List(Of GPXRecord) From {_gpxRecords(0)}
-        Dim lastAddedIndex As Integer = 0
+        Dim usedIndexes As New List(Of Integer) ' Seznam indexů, které už byly použity pro spojení
 
-        For i = 1 To _gpxRecords.Count - 1
-            If Not TryMerge(_gpxRecords(i), _gpxRecords(lastAddedIndex)) Then
-                ' Přidání souboru do seznamu, pokud ke spojení nedošlo
-                gpxFilesMerged.Add(_gpxRecords(i))
-                lastAddedIndex = i
-            End If
+        For i As Integer = 0 To _gpxRecords.Count - 1
+            If usedIndexes.Contains(i) Then Continue For ' Přeskočíme již spojené prvky
+
+            gpxFilesMerged.Add(_gpxRecords(i)) ' Přidáme aktuální prvek do merged listu
+            Dim lastAddedIndex As Integer = gpxFilesMerged.Count - 1 ' Index posledního přidaného prvku
+
+            ' Vnitřní cyklus se pokouší spojit POSLEDNĚ PŘIDANÝ prvek s NÁSLEDUJÍCÍMI
+            Dim j As Integer = i + 1
+            While j < _gpxRecords.Count
+                If Not usedIndexes.Contains(j) AndAlso (_gpxRecords(j).LayerStart - _gpxRecords(lastAddedIndex).LayerStart <= maxAge) Then
+                    If TryMerge(_gpxRecords(j), gpxFilesMerged(lastAddedIndex)) Then
+                        ' Spojení proběhlo úspěšně. Aktualizujeme spojený prvek v gpxFilesMerged.
+                        'gpxFilesMerged(lastAddedIndex) = _gpxRecords(j)
+                        ' Přidáme index j do seznamu použitých indexů
+                        usedIndexes.Add(j)
+                        ' Ukončíme vnitřní cyklus, protože jsme našli spárování
+                        Exit While
+                    End If
+                End If
+                j += 1
+            End While
         Next i
+
         Return gpxFilesMerged
     End Function
 
@@ -161,8 +209,7 @@ Public Class GpxFileManager
         ' Základní kontrola, zda rozdíl dat splňuje podmínku na max stáří
 
         Dim mergeDecision As String = LoadMergeDecision(file_prev, file_i)
-        If (file_i.LayerStart - file_prev.LayerStart < maxAge) AndAlso
-        (Not mergeCancel) AndAlso (Not mergeDecision = System.Windows.Forms.DialogResult.No.ToString) Then
+        If Not mergeCancel AndAlso (Not mergeDecision = System.Windows.Forms.DialogResult.No.ToString) Then
 
             'kontrola duplicit: když je rozdíl menší než jedna sekunda, je to nejspíš stejný track
             If (file_i.LayerStart - file_prev.LayerStart < New TimeSpan(0, 0, 1)) Then
@@ -539,6 +586,8 @@ Public Class GPXRecord
             If descNodeDog IsNot Nothing Then
                 'najde text poznámky u psa
                 DogsDesc = descNodeDog.InnerText
+                'node  descNodeDog smažu jinak se načítá opakovaně
+                descNodeDog.ParentNode.RemoveChild(descNodeDog)
             End If
 
             ' Nastavíme hodnotu pro <desc> spojením s poznámkou u psa
@@ -611,27 +660,7 @@ Public Class GPXRecord
         Return result
     End Function
 
-    Sub Main()
-        Dim testovaciRetezec As String = "2025-01-04_K_mlýnu_Samo01-01-2025 3._4._2025_Čim._Údolí_Samo.gpx 03._04._2025 12:30:00 12.30 12.30.15"
-        Dim ocekavanyVysledek As String = "K_mlýnu_Samo Čim._Údolí_Samo.gpx"
-        Dim vysledek As String = OdstranDataACasZNazvuSouboru(testovaciRetezec)
 
-        Console.WriteLine($"Původní řetězec: {testovaciRetezec}")
-        Console.WriteLine($"Výsledek:        {vysledek}")
-        Console.WriteLine($"Očekávaný výsledek: {ocekavanyVysledek}")
-        Console.WriteLine($"Shoda: {vysledek = ocekavanyVysledek}")
-
-        testovaciRetezec = "Soubor_bez_data.txt"
-        ocekavanyVysledek = "Soubor_bez_data.txt"
-        vysledek = OdstranDataACasZNazvuSouboru(testovaciRetezec)
-
-        Console.WriteLine($"Původní řetězec: {testovaciRetezec}")
-        Console.WriteLine($"Výsledek:        {vysledek}")
-        Console.WriteLine($"Očekávaný výsledek: {ocekavanyVysledek}")
-        Console.WriteLine($"Shoda: {vysledek = ocekavanyVysledek}")
-
-
-    End Sub
 
     Public Function GetRemoveDateFromName() As (DateTime, String)
 
@@ -1154,7 +1183,7 @@ Public Class GPXRecord
             'End Using
             'neptá se přejmenuje automaticky
             Dim romanNumeralIndex As Integer = 1
-            While File.Exists(newFilePath)
+            While IO.File.Exists(newFilePath)
                 Dim nameWithoutExtension As String = Path.GetFileNameWithoutExtension(newFilePath)
                 Dim romanNumeral As String = ToRoman(romanNumeralIndex)
                 newFileName = $"{nameWithoutExtension}_{romanNumeral}{extension}"
@@ -1162,7 +1191,7 @@ Public Class GPXRecord
                 newFilePath = Path.Combine(gpxDirectory, newFileName)
             End While
 
-            File.Move(Reader.FilePath, newFilePath)
+            IO.File.Move(Reader.FilePath, newFilePath)
 
             Debug.WriteLine($"Renamed file to {newFileName}.{Environment.NewLine}")
             RaiseEvent WarningOccurred($"File {Reader.FileName} was renamed to {newFileName}.{Environment.NewLine}", Color.DarkGreen)
@@ -1295,7 +1324,8 @@ Public Class GpxReader
         Else
             'kontrola duplicity:
             For Each node As XmlNode In childNodes
-                If node.InnerText.Contains(value, StringComparer.OrdinalIgnoreCase) Then
+                'zkontroluje zda node s hodnotou 'value' už neexistuje:
+                If node.InnerText.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0 Then
                     Console.WriteLine($"Uzel {childNodeName} s textem {value} již existuje, nepřidávám nový.")
                 Else
                     Console.WriteLine($"Uzel {childNodeName} s jiným textem již existuje, přidávám nový.")

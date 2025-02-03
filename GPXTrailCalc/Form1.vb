@@ -359,7 +359,7 @@ Public Class Form1
         xAxisData = speedData.Item1
         yAxisData = speedData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelSpeed
-        GrafText = Resource1.Y_AxisLabelSpeed
+        GrafText = Application.ProductName
         Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         Chart1.Show()
         Charts.Add(Chart1)
@@ -384,7 +384,7 @@ Public Class Form1
         xAxisData = distanceData.Item1
         yAxisData = distanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelLength
-        GrafText = Resource1.Y_AxisLabelLength
+        GrafText = Application.ProductName
         Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         Chart1.Show()
         Charts.Add(Chart1)
@@ -394,7 +394,7 @@ Public Class Form1
         xAxisData = totDistanceData.Item1
         yAxisData = totDistanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelTotalLength
-        GrafText = Resource1.Y_AxisLabelTotalLength
+        GrafText = Application.ProductName
         Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
         Chart1.Show()
         Charts.Add(Chart1)
@@ -417,7 +417,7 @@ Public Class Form1
         Dim monthlyYAxisDataWithEmpty As Double() = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray()
 
         Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y
-        Dim monthlyGrafText = Resource1.Y_AxisLabelMonthly ' Např. "Měsíční vzdálenost"
+        Dim monthlyGrafText = Application.ProductName ' Např. "Měsíční vzdálenost"
         Dim MonthlyChart1 = New DistanceChart(monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
@@ -711,7 +711,10 @@ Public Class Form1
         CloseGrafs()
     End Sub
 
-
+    Private Sub mnuDogName_Click(sender As Object, e As EventArgs) Handles mnuDogName.Click
+        My.Settings.DogName = InputBox("Set name of the dog:", Application.ProductName, My.Settings.DogName)
+        My.Settings.Save()
+    End Sub
 End Class
 
 

@@ -25,6 +25,7 @@ Partial Class DistanceChart
     ' Required by the Windows Form Designer
     Private Sub InitializeComponent()
         Dim ChartArea1 As System.Windows.Forms.DataVisualization.Charting.ChartArea = New System.Windows.Forms.DataVisualization.Charting.ChartArea()
+        Dim title1 As Title = New Title(My.Settings.DogName)
         Me.chart1 = New System.Windows.Forms.DataVisualization.Charting.Chart()
         Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
         Me.SaveAsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -35,16 +36,18 @@ Partial Class DistanceChart
         'chart1
         '
         Me.chart1.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        ChartArea1.AxisX.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisX.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
         ChartArea1.AxisX.LabelStyle.Format = "MMMM yy"
         ChartArea1.AxisX.Title = "" 'Global.GPXTrailAnalyzer.My.Resources.Resource1.X_AxisLabel
-        ChartArea1.AxisX.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
-        ChartArea1.AxisY.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisX.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
+        ChartArea1.AxisY.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
         ChartArea1.AxisY.Minimum = 0R
-        ChartArea1.AxisY.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 10.0!, System.Drawing.FontStyle.Bold)
+        ChartArea1.AxisY.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
         ChartArea1.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
         ChartArea1.Name = "ChartArea1"
         Me.chart1.ChartAreas.Add(ChartArea1)
+        title1.Font = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
+        Me.chart1.Titles.Add(title1)
         Me.chart1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.chart1.Location = New System.Drawing.Point(0, 33)
         Me.chart1.Margin = New System.Windows.Forms.Padding(3, 4, 3, 4)
@@ -89,6 +92,10 @@ Partial Class DistanceChart
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
+    End Sub
+
+    Protected Overrides Sub Finalize()
+        MyBase.Finalize()
     End Sub
 
     ' Declare the Chart control

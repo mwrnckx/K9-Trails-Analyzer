@@ -7,10 +7,10 @@ Imports System.Runtime.InteropServices
 
 ' Zkontrolujte hodnoty atributů sestavení.
 
-<Assembly: AssemblyTitle("GPXTrailCalc")>
+<Assembly: AssemblyTitle("K9 Trails Analyzer")>
 <Assembly: AssemblyDescription("")>
 <Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("GPXTrailCalc")>
+<Assembly: AssemblyProduct("K9 Trails Analyzer")>
 <Assembly: AssemblyCopyright("")>
 <Assembly: AssemblyTrademark("")>
 
@@ -30,5 +30,5 @@ Imports System.Runtime.InteropServices
 ' pomocí zástupného znaku * takto:
 ' <Assembly: AssemblyVersion("1.0.*")>
 
-<Assembly: AssemblyVersion("0.1.0.0")>
-<Assembly: AssemblyFileVersion("0.1.0.0")>
+<Assembly: AssemblyVersion("0.2.0.0")>
+<Assembly: AssemblyFileVersion("0.2.0.0")>
