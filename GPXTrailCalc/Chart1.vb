@@ -113,6 +113,7 @@ Partial Class DistanceChart
 
         ' Nastavení vlastností pro osu Y
         Me.chart1.ChartAreas(0).AxisY.Title = yAxisLabel
+
         ' Pokud chceme zobrazit møížku
         chart1.ChartAreas(0).AxisX.MajorGrid.Enabled = True
         chart1.ChartAreas(0).AxisY.MajorGrid.Enabled = True
@@ -181,6 +182,12 @@ Partial Class DistanceChart
             'set minimum at the middle
             Me.chart1.ChartAreas(0).AxisX.Minimum = interval / 2D
             series1.Color = Color.Chocolate
+
+            ' Povolení zobrazení hodnot nad sloupci
+            series1.IsValueShownAsLabel = True
+            series1.LabelFormat = "N1" ' Zobrazí èísla s dvìma desetinnými místy
+
+
 
             For i As Integer = 0 To Y_Data.Length - 1
                 series1.Points.AddXY(X_DataString(i), Y_Data(i))

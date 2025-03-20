@@ -154,7 +154,7 @@ Public Class Form1
 
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Me.rtbOutput.AppendText(totalDistance.ToString("F2") & " km" & vbCrLf)
+        Me.rtbOutput.AppendText(totalDistance.ToString("F1") & " km" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
@@ -168,14 +168,14 @@ Public Class Form1
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
         Dim averageTrailAge As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailAge.TotalHours)
-        Me.rtbOutput.AppendText(averageTrailAge.ToString("F1") & " h " & vbCrLf)
+        Me.rtbOutput.AppendText(averageTrailAge.ToString("F2") & " h " & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
         Dim averageDogSpeed As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.DogSpeed)
-        Me.rtbOutput.AppendText(averageDogSpeed.ToString("F2") & " km/h")
+        Me.rtbOutput.AppendText(averageDogSpeed.ToString("F1") & " km/h")
 
         ' Posunutí kurzoru na konec textu
         Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length

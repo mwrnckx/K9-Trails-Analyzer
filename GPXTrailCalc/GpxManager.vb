@@ -1294,7 +1294,12 @@ Public Class GpxReader
 
     ' Metoda pro výběr jednoho uzlu na základě názvu
     Public Function SelectSingleNode(nodename As String) As XmlNode
-        Return xmlDoc.SelectSingleNode("//" & namespacePrefix & nodename, namespaceManager)
+        Try
+            Return xmlDoc.SelectSingleNode("//" & namespacePrefix & nodename, namespaceManager)
+        Catch ex As Exception
+            Return Nothing
+        End Try
+
     End Function
 
     ' Metoda pro výběr poduzlů z uzlu Node
