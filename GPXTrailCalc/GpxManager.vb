@@ -4,10 +4,13 @@ Imports System.IO
 Imports System.Net.WebRequestMethods
 Imports System.Runtime.CompilerServices.RuntimeHelpers
 Imports System.Text.RegularExpressions
+Imports System.Windows.Controls
 Imports System.Windows.Forms.LinkLabel
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
 Imports Microsoft.VisualBasic.Logging
+Imports System.Windows.Forms
+
 Public Class GpxFileManager
     'obsahuje seznam souborů typu gpxRecord a funkce na jejich vytvoření a zpracování
     Public ReadOnly Property gpxDirectory As String
@@ -55,10 +58,10 @@ Public Class GpxFileManager
 
                 _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
                 If prependDateToName Then _gpxRecord.PrependDateToFilename()
-                If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12)
+                If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                 _gpxRecord.SplitTrackIntoTwo() 'in gpx files, splits a track with two segments into two separate tracks
                 _gpxRecord.Description = _gpxRecord.GetDescription() 'musí být první - slouží k výpočtu age
-                If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
+                'If trimGPS_Noise Then _gpxRecord.SmoothTrail()
                 _gpxRecord.Distance = _gpxRecord.CalculateFirstSegmentDistance()
                 totalDist += _gpxRecord.Distance
                 _gpxRecord.TotalDistance = totalDist
@@ -262,9 +265,8 @@ Be carefull with this!!!!!"
         dialog.Font = New Font("Cascadia Code Semibold", 10, FontStyle.Bold)
         dialog.ForeColor = Color.DarkGreen ' Nastavit barvu
 
-
         ' Popisek s dotazem
-        Dim lblDotaz As New Label()
+        Dim lblDotaz As New System.Windows.Forms.Label()
         lblDotaz.Text = My.Resources.Resource1.lblMergeTwoToOneQ '"Chcete spojit tyto dva soubory do jednoho?"
         lblDotaz.AutoSize = True
         lblDotaz.Location = New Point(10, 10)
@@ -272,21 +274,21 @@ Be carefull with this!!!!!"
         dialog.Controls.Add(lblDotaz)
 
         ' Popis (volitelný, můžeš ho upravit podle potřeby)
-        Dim lblPopis As New Label()
+        Dim lblPopis As New System.Windows.Forms.Label()
         lblPopis.Text = My.Resources.Resource1.lblMergingYouGet ' "Spojením získáte jeden soubor gpx obsahující trasu kladeče i psa." ' Příklad popisu
         lblPopis.AutoSize = True
         lblPopis.Location = New Point(10, lblDotaz.Bottom + 5)
         dialog.Controls.Add(lblPopis)
 
         ' Popisky se jmény souborů
-        Dim lblSoubor1 As New Label()
+        Dim lblSoubor1 As New System.Windows.Forms.Label()
         lblSoubor1.Text = $"{My.Resources.Resource1.lblIsThisLayerQ}: '{Path.GetFileName(runner.Reader.FilePath)}' ?"
         lblSoubor1.AutoSize = True
         lblSoubor1.Location = New Point(10, lblPopis.Bottom + 10)
         lblSoubor1.ForeColor = Color.Maroon
         dialog.Controls.Add(lblSoubor1)
 
-        Dim lblSoubor2 As New Label()
+        Dim lblSoubor2 As New System.Windows.Forms.Label()
         lblSoubor2.Text = $"{My.Resources.Resource1.lblIsThisTrackOfTheDog}: '{Path.GetFileName(dog.Reader.FilePath)}' ?"
         lblSoubor2.AutoSize = True
         lblSoubor2.Location = New Point(10, lblSoubor1.Bottom + 5)
@@ -294,7 +296,7 @@ Be carefull with this!!!!!"
         dialog.Controls.Add(lblSoubor2)
 
         ' Zaškrtávací políčko pro zapamatování rozhodnutí
-        Dim chbRemembDecision As New CheckBox
+        Dim chbRemembDecision As New System.Windows.Forms.CheckBox
         chbRemembDecision.Text = My.Resources.Resource1.chbRemembDecisQ '"Zapamatovat rozhodnutí 'Ne' pro tuto dvojici"
         chbRemembDecision.Location = New Point(10, lblSoubor2.Bottom + 10)
         chbRemembDecision.AutoSize = True
@@ -302,43 +304,41 @@ Be carefull with this!!!!!"
         dialog.Controls.Add(chbRemembDecision)
 
         ' Tlačítka
-        Dim btnAno As New Button()
+        Dim btnAno As New System.Windows.Forms.Button()
         btnAno.Text = "Yes"
         btnAno.DialogResult = DialogResult.Yes ' Nastavení výsledku dialogu
         btnAno.Location = New Point(10, chbRemembDecision.Bottom + 15)
         btnAno.AutoSize = True
         dialog.Controls.Add(btnAno)
 
-        Dim btnNe As New Button()
+        Dim btnNe As New System.Windows.Forms.Button()
         btnNe.Text = "No"
         btnNe.DialogResult = DialogResult.No
         btnNe.Location = New Point(btnAno.Right + 10, chbRemembDecision.Bottom + 15)
         btnNe.AutoSize = True
         dialog.Controls.Add(btnNe)
 
-
         ' Zaškrtávací políčko pro automatické spojování
-        Dim rbNoAsk As New RadioButton()
+        Dim rbNoAsk As New System.Windows.Forms.RadioButton()
         rbNoAsk.Text = My.Resources.Resource1.rbDontAskMergeQ '"U dalších dvojic se už neptat a rovnou spojit (opatrně!)"
         rbNoAsk.Location = New Point(10, btnNe.Bottom + 15)
         rbNoAsk.AutoSize = True
         dialog.Controls.Add(rbNoAsk)
 
         ' Zaškrtávací políčko pro zrušení spojování
-        Dim rbCancel As New RadioButton()
+        Dim rbCancel As New System.Windows.Forms.RadioButton()
         rbCancel.Text = My.Resources.Resource1.rbDontAskDontMerge ' "U dalších dvojic se už neptat a nic nespojovat"
         rbCancel.Location = New Point(10, rbNoAsk.Bottom + 7)
         rbCancel.AutoSize = True
         dialog.Controls.Add(rbCancel)
 
         ' Zaškrtávací políčko pro zrušení spojování
-        Dim rbAsk As New RadioButton()
+        Dim rbAsk As New System.Windows.Forms.RadioButton()
         rbAsk.Text = My.Resources.Resource1.rbAskAgein '"Příště se zase ptát"
         rbAsk.Location = New Point(10, rbCancel.Bottom + 7)
         rbAsk.AutoSize = True
         rbAsk.Checked = True
         dialog.Controls.Add(rbAsk)
-
 
         ' Nastavení velikosti dialogu (automaticky podle obsahu)
         dialog.AutoSize = True
@@ -429,6 +429,29 @@ Be carefull with this!!!!!"
     End Sub
 
 
+End Class
+
+' Struktura pro trackpoint
+Public Class TrackPoint
+    Public Property Latitude As Double
+    Public Property Longitude As Double
+    Public Property Accuracy As Double
+    Public Property Time As Double
+    Public Property Elevation As Double
+
+    Public Sub New(lat As Double, lon As Double, acc As Double, tim As Double, ele As Double)
+        Latitude = lat
+        Longitude = lon
+        Accuracy = acc
+        Time = tim
+        Elevation = ele
+    End Sub
+    Public Sub New(lat As Double, lon As Double, acc As Double)
+        Latitude = lat
+        Longitude = lon
+        Accuracy = acc
+
+    End Sub
 End Class
 
 
@@ -725,25 +748,46 @@ Public Class GPXRecord
 
     ' Function to read the time from the first <time> node in the GPX file
     ' If <time> node doesnt exist tries to read date from file name and creates <time> node
+    Private _isGettingLayerStart As Boolean = False
     Public Function GetLayerStart() As DateTime
 
-        ' Načtení jednoho uzlu <time>
-        Dim LayerStartTimeNode As XmlNode = Me.Reader.SelectSingleNode("time")
-        If LayerStartTimeNode IsNot Nothing AndAlso Not DateTime.TryParse(LayerStartTimeNode.InnerText, _LayerStart) Then
-            ' if the <time> node doesn't exists or has an  invalid value:
-            'pokusí se odečíst datum z názvu souboru a vytvořit uzel <time>
-            ' Převedení nalezeného řetězce na DateTime
-            Dim RecordedDateFromFileName As DateTime = Me.GetRemoveDateFromName.Item1
-            If RecordedDateFromFileName <> Date.MinValue Then
-                LayerStart = RecordedDateFromFileName
-                AddTimeNodeToFirstTrkpt(RecordedDateFromFileName.ToString("yyyy-MM-dd" & "T" & "hh:mm:ss" & "Z"))
-                RaiseEvent WarningOccurred($" <time> node with Date from file name created: {RecordedDateFromFileName.ToString("yyyy-MM-dd")}" & $"in file: {Reader.FileName}", Color.DarkGreen)
-            Else
-                ' If the node doesn't exist or isn't a valid date, return the default DateTime value
-                RaiseEvent WarningOccurred($"GPX file: {Me.Reader.FileName} contains no date!", Color.Red)
-            End If
+        If _isGettingLayerStart Then
+            Debug.WriteLine("Ochrana: GetLayerStart již běží.")
+            Return LayerStart
         End If
+        _isGettingLayerStart = True
 
+        Try
+            'Načtení času z prvního  uzlu <trkpt>
+            Dim timeNode As XmlNode = Nothing
+            Dim trkptNode As XmlNode = Me.Reader.SelectSingleNode("trkpt")
+            If trkptNode IsNot Nothing Then
+                timeNode = Me.Reader.SelectSingleChildNode("time", trkptNode)
+            End If
+
+            Dim LayerStartTimeNode As XmlNode = timeNode ' Me.Reader.SelectSingleNode("time")
+            If LayerStartTimeNode Is Nothing OrElse Not DateTime.TryParse(LayerStartTimeNode.InnerText, _LayerStart) Then
+                Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
+                ' ... logika vytvoření nového <time> uzlu ...
+
+                ' if the <time> node doesn't exists or has an  invalid value:
+                'pokusí se odečíst datum z názvu souboru a vytvořit uzel <time>
+                ' Převedení nalezeného řetězce na DateTime
+                Dim RecordedDateFromFileName As DateTime = Me.GetRemoveDateFromName.Item1
+                If RecordedDateFromFileName <> Date.MinValue Then
+                    LayerStart = RecordedDateFromFileName
+                    AddTimeNodeToFirstTrkpt(RecordedDateFromFileName.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")
+    )
+                    RaiseEvent WarningOccurred($" <time> node with Date from file name created: {RecordedDateFromFileName.ToString("yyyy-MM-dd")}" & $"in file: {Reader.FileName}", Color.DarkGreen)
+                Else
+                    ' If the node doesn't exist or isn't a valid date, return the default DateTime value
+                    RaiseEvent WarningOccurred($"GPX file: {Me.Reader.FileName} contains no date!", Color.Red)
+                End If
+            End If
+
+        Finally
+            _isGettingLayerStart = False
+        End Try
         Return LayerStart
     End Function
 
@@ -999,7 +1043,7 @@ Public Class GPXRecord
                 Dim trackPoints = Me.Reader.SelectChildNodes("trkpt", trksegNode)
                 ' Převod XmlNodeList na seznam pro snadnou manipulaci
                 Dim points = trackPoints.Cast(Of XmlNode).ToList()
-                Dim startCluster = Cluster(points, Me.Reader, minDistance)
+                Dim startCluster = Cluster(points, minDistance)
                 ' Odeber body z clusteru
                 If startCluster.Count > 5 Then
                     For i = 0 To startCluster.Count - 2 'poslední ponechá, neb je nahrazen centroidem
@@ -1010,7 +1054,7 @@ Public Class GPXRecord
                 End If
 
                 Dim reversedPoints = points.AsEnumerable().Reverse().ToList()
-                Dim endCluster = Cluster(reversedPoints, Me.Reader, minDistance)
+                Dim endCluster = Cluster(reversedPoints, minDistance)
 
                 ' Odeber body z endCluster
                 If endCluster.Count > 5 Then
@@ -1024,7 +1068,7 @@ Public Class GPXRecord
         Me.Reader.Save()
     End Sub
 
-    Private Function Cluster(points As List(Of XmlNode), gpxReader As GpxReader, minDistance As Double) As List(Of XmlNode)
+    Private Function Cluster(points As List(Of XmlNode), minDistance As Double) As List(Of XmlNode)
         Dim cluster_ As New List(Of XmlNode)
         Dim centroidLat, centroidLon As Double
 
@@ -1077,6 +1121,99 @@ Public Class GPXRecord
         Next
         Return cluster_
     End Function
+
+    'Public Sub SmoothTrail()
+    '    'Vyhladí track pomocí Beziér splinů.
+    '    ' Získání všech uzlů <trk>
+    '    Dim trackNodes = Me.Reader.SelectNodes("trk")
+    '    For Each trkNode As XmlNode In trackNodes
+    '        ' Získání všech <trkseg> uvnitř <trk>
+    '        Dim trackSegments = Me.Reader.SelectChildNodes("trkseg", trkNode)
+    '        For Each trksegNode As XmlNode In trackSegments
+    '            ' Získání všech <trkpt> uvnitř <trkseg>
+    '            Dim trackPoints = Me.Reader.SelectChildNodes("trkpt", trksegNode)
+    '            ' Převod XmlNodeList na seznam pro snadnou manipulaci
+    '            Dim points = trackPoints.Cast(Of XmlNode).ToList()
+    '            Dim smoothedPoints As New List(Of TrackPoint)
+
+    '            ' Načíst body s přesností
+    '            For Each trkpt As XmlNode In trackPoints
+    '                Dim lat As Double = Double.Parse(trkpt.Attributes("lat").Value, CultureInfo.InvariantCulture)
+    '                Dim lon As Double = Double.Parse(trkpt.Attributes("lon").Value, CultureInfo.InvariantCulture)
+    '                Dim accuracy As Double = 5.0 ' Výchozí přesnost
+
+    '                Dim accNode As XmlNode = Me.Reader.SelectSingleChildNode("extensions/gpxtpx:TrackPointExtension/opentracks:accuracy_horizontal", trkpt)
+    '                If accNode IsNot Nothing Then
+    '                    accuracy = Double.Parse(accNode.InnerText, CultureInfo.InvariantCulture)
+    '                End If
+
+    '                smoothedPoints.Add(New TrackPoint(lat, lon, accuracy))
+    '            Next
+
+    '            ' Použít Bézierovy křivky
+    '            Dim bezierTrack As List(Of TrackPoint) = ApplyBezierSmoothing(smoothedPoints)
+
+    '            ' Aktualizace GPX
+    '            Dim i As Integer = 0
+    '            For Each trkpt As XmlNode In trackPoints
+    '                If i < bezierTrack.Count Then
+    '                    trkpt.Attributes("lat").Value = bezierTrack(i).Latitude.ToString(CultureInfo.InvariantCulture)
+    '                    trkpt.Attributes("lon").Value = bezierTrack(i).Longitude.ToString(CultureInfo.InvariantCulture)
+    '                    i += 1
+    '                End If
+    '            Next
+
+
+
+    '        Next trksegNode
+    '    Next trkNode
+
+
+
+    '    ' Uložit výstupní soubor
+
+    '    Me.Reader.Save("d:\OneDrive - České vysoké učení technické v Praze\Dokumenty\Visual Studio 2022\K9-Trails-Analyzer\GPXTrailCalc\bin\Debug\smmosed.gpx")
+
+    'End Sub
+
+
+    ' Bézierovy křivky s více body
+    'Function ApplyBezierSmoothing(points As List(Of TrackPoint)) As List(Of TrackPoint)
+    '    Dim smoothed As New List(Of TrackPoint)
+
+    '    ' Přidáme první bod, aby trasa nezačínala později
+    '    smoothed.Add(points(0))
+
+    '    For i As Integer = 1 To points.Count - 2
+    '        Dim p0 As TrackPoint = points(i - 1)
+    '        Dim p1 As TrackPoint = points(i)
+    '        Dim p2 As TrackPoint = points(i + 1)
+
+    '        ' Určíme váhu podle přesnosti (čím vyšší přesnost, tím méně se mění)
+    '        Dim weight As Double = 1.0 / Math.Max(1, p1.Accuracy) ' Ochrana proti dělení nulou
+
+    '        ' Vytvoříme řídicí bod pro Bézierovu křivku
+    '        Dim controlLat As Double = (p0.Latitude + p2.Latitude) / 2 + (p1.Latitude - (p0.Latitude + p2.Latitude) / 2) * weight
+    '        Dim controlLon As Double = (p0.Longitude + p2.Longitude) / 2 + (p1.Longitude - (p0.Longitude + p2.Longitude) / 2) * weight
+
+    '        ' Přidáme původní bod
+    '        smoothed.Add(p1)
+
+    '        ' Přidáme více bodů pro lepší interpolaci
+    '        Dim steps As Integer = 5 ' Počet bodů mezi uzly pro hladší průběh
+    '        For j As Integer = 1 To steps
+    '            Dim t As Double = j / (steps + 1)
+    '            Dim midLat As Double = (1 - t) * (1 - t) * p1.Latitude + 2 * (1 - t) * t * controlLat + t * t * p2.Latitude
+    '            Dim midLon As Double = (1 - t) * (1 - t) * p1.Longitude + 2 * (1 - t) * t * controlLon + t * t * p2.Longitude
+    '            smoothed.Add(New TrackPoint(midLat, midLon, p1.Accuracy))
+    '        Next
+    '    Next
+
+    '    ' Přidáme poslední bod, aby trasa nekončila předčasně
+    '    smoothed.Add(points(points.Count - 1))
+
+    '    Return smoothed
+    'End Function
 
 
     Public Function Backup() As Boolean
@@ -1262,6 +1399,9 @@ Public Class GpxReader
             If Not String.IsNullOrEmpty(namespaceUri) Then
                 namespaceManager.AddNamespace("gpx", namespaceUri) ' Použijeme lokální prefix "gpx"
                 namespacePrefix = "gpx:"
+                namespaceManager.AddNamespace("opentracks", "http://opentracksapp.com/xmlschemas/v1")
+                namespaceManager.AddNamespace("gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v2")
+                namespaceManager.AddNamespace("gpxtrkx", "http://www.garmin.com/xmlschemas/TrackStatsExtension/v1")
             Else
                 namespaceManager.AddNamespace("", namespaceUri) ' Použijeme lokální prefix "gpx"
                 namespacePrefix = ""
@@ -1355,6 +1495,9 @@ Public Class GpxReader
 
     Public Sub Save()
         xmlDoc.Save(FilePath)
+    End Sub
+    Public Sub Save(_FilePath As String)
+        xmlDoc.Save(_FilePath)
     End Sub
 End Class
 
