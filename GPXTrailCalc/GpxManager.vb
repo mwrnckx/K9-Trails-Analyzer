@@ -1403,7 +1403,7 @@ Public Class GpxReader
                 namespaceManager.AddNamespace("gpxtpx", "http://www.garmin.com/xmlschemas/TrackPointExtension/v2")
                 namespaceManager.AddNamespace("gpxtrkx", "http://www.garmin.com/xmlschemas/TrackStatsExtension/v1")
             Else
-                namespaceManager.AddNamespace("", namespaceUri) ' Použijeme lokální prefix "gpx"
+                namespaceManager.AddNamespace("", namespaceUri) ' nepoužijeme lokální prefix "gpx"
                 namespacePrefix = ""
             End If
         Catch ex As FileNotFoundException
