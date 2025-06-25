@@ -120,6 +120,12 @@
     <Compile Include="Chart1.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CrossTracksSelector.Designer.vb">
+      <DependentUpon>CrossTracksSelector.vb</DependentUpon>
+    </Compile>
+    <Compile Include="CrossTracksSelector.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GpxManager.vb" />
     <Compile Include="Form1.Designer.vb">
       <DependentUpon>Form1.vb</DependentUpon>
@@ -178,6 +184,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Chart1.resx">
       <DependentUpon>Chart1.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CrossTracksSelector.resx">
+      <DependentUpon>CrossTracksSelector.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Form1.cs.resx">
       <DependentUpon>Form1.vb</DependentUpon>
