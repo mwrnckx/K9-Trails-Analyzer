@@ -174,7 +174,7 @@ Public Class Form1
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDogSpeed As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.DogSpeed)
+        Dim averageDogSpeed As Double = GetAverage(_gpxRecords, Function(r) r.DogSpeed, ignoreZeros:=True)
         Me.rtbOutput.AppendText(averageDogSpeed.ToString("F1") & " km/h")
 
         ' Posunutí kurzoru na konec textu
@@ -184,21 +184,47 @@ Public Class Form1
         Me.rtbOutput.ScrollToCaret()
     End Sub
 
-    Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Double
-        If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
-            ' Ošetření pro typy Integer a Long a Double (můžeš rozšířit pro další typy)
-            If GetType(T) = GetType(Integer) OrElse GetType(T) = GetType(Long) Then
-                Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
-            ElseIf GetType(T) = GetType(Double) Then
-                Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
-            Else
-                Throw New ArgumentException("Typ T musí být numerický (Integer, Long, Double).")
-            End If
-        Else
+    'Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Double
+    '    If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
+    '        ' Ošetření pro typy Integer a Long a Double (můžeš rozšířit pro další typy)
+    '        If GetType(T) = GetType(Integer) OrElse GetType(T) = GetType(Long) Then
+    '            Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
+    '        ElseIf GetType(T) = GetType(Double) Then
+    '            Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
+    '        Else
+    '            Throw New ArgumentException("Typ T musí být numerický (Integer, Long, Double).")
+    '        End If
+    '    Else
+    '        Console.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
+    '        Return 0
+    '    End If
+    'End Function
+
+    Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord),
+                                 selector As Func(Of GPXRecord, T),
+                                 Optional ignoreZeros As Boolean = False) As Double
+
+        If gpxRecords Is Nothing OrElse Not gpxRecords.Any() Then
             Console.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
             Return 0
         End If
+
+        ' Vyber hodnoty a převedeme je na Double
+        Dim values As IEnumerable(Of Double) =
+        gpxRecords.Select(Function(r) Convert.ToDouble(selector(r)))
+
+        If ignoreZeros Then
+            values = values.Where(Function(v) v <> 0)
+        End If
+
+        If Not values.Any() Then
+            Console.WriteLine("Nejsou žádné nenulové hodnoty k průměrování.")
+            Return 0
+        End If
+
+        Return values.Average()
     End Function
+
 
     Private Function AverageOf(y As List(Of Double)) As Double
         Dim suma As Double = 0

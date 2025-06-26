@@ -55,7 +55,7 @@ Public Class GpxFileManager
 
         For Each _gpxRecord As GPXRecord In _gpxFilesMerged
             Try
-                _gpxRecord.writeProcessed
+                _gpxRecord.WriteProcessed()
                 _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
                 If prependDateToName Then _gpxRecord.PrependDateToFilename()
                 If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
@@ -150,28 +150,6 @@ Public Class GpxFileManager
     End Sub
 
 
-    'Public Function MergeLayerAndDogOld(_gpxRecords As List(Of GPXRecord)) As List(Of GPXRecord)
-    '    'vytváříme list gpx souborů gpxFilesMerged, první vložíme,
-    '    'orvní náslehující prohlídneme, zda se neliší o méně než maxAge - ty je pak možné spojit,
-    '    'protože se nejspíš jedná o záznam stopy kladeč a trasy psa, jen je každá zvlášť
-    '    'pokud se první následující liší o více než maxAge nebo se ke spojení nedojde z jiného důvodu
-    '    ''(např. z rozhodnutí uživatele), tak se gpx přidá do listu, pokud ke spojení dojde tak se přidává,
-    '    'ale smaže se.
-
-    '    Dim gpxFilesMerged As New List(Of GPXRecord) From {_gpxRecords(0)}
-    '    Dim lastAddedIndex As Integer = 0
-    '    If _gpxRecords.Count = 0 Then Return gpxFilesMerged 'ošetření prázdného listu
-
-
-    '    For i = 1 To _gpxRecords.Count - 1
-    '        If Not TryMerge(_gpxRecords(i), _gpxRecords(lastAddedIndex)) Then
-    '            ' Přidání souboru do seznamu, pokud ke spojení nedošlo
-    '            gpxFilesMerged.Add(_gpxRecords(i))
-    '            lastAddedIndex = i
-    '        End If
-    '    Next i
-    '    Return gpxFilesMerged
-    'End Function
 
     Public Function MergeLayerAndDog(_gpxRecords As List(Of GPXRecord)) As List(Of GPXRecord)
         Dim gpxFilesMerged As New List(Of GPXRecord)

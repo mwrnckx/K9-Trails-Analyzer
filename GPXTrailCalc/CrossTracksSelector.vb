@@ -2,30 +2,45 @@
     Inherits System.Windows.Forms.Form
 
     Public Property CrossTrailIndices As List(Of Integer)
+    Public Property TrackDescriptions As List(Of String)
 
-    Public Sub New(trackDescriptions As List(Of String), filename As String)
+    Public Sub New(_trackDescriptions As List(Of String), filename As String)
         InitializeComponent()
+        Me.TrackDescriptions = _trackDescriptions
+        Me.Text = "Select Cross-Tracks "
+        Me.txtInfo.Text =
+    $"GPX record {filename}" & vbCrLf & $"contains {TrackDescriptions.Count} tracks." & vbCrLf &
+    "The last track is assumed to be the dog's track." & vbCrLf &
+    "Among the remaining tracks, one is probably the layer's track, and the rest may be cross-tracks." & vbCrLf &
+    "Please check the tracks that are cross-tracks below."
 
-        Me.Text = "Select Cross - Tracks "
-        Me.lblFileName.Text = filename
-
-        For i = 0 To trackDescriptions.Count - 1
-            ListBox1.Items.Add($"{trackDescriptions(i)}")
+        ' Přidej popisy do zaškrtávacího seznamu
+        For i = 0 To TrackDescriptions.Count - 1
+            chkListTracks.Items.Add($"{TrackDescriptions(i)}")
         Next
-
 
     End Sub
 
     Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
         Try
-            'vybrané indexy zmenší o 1 - aby byly zero based
-            CrossTrailIndices = txtIndexes.Text.Split(","c).Select(Function(s) Integer.Parse(s.Trim() - 1)).ToList()
+            ' Vyber indexy zaškrtnutých položek, vracej zero-based
+            CrossTrailIndices = chkListTracks.CheckedIndices.Cast(Of Integer).ToList()
+
+            ' Zkontroluj, že zůstaly právě dvě nezaškrtnuté trasy
+            If (TrackDescriptions.Count - CrossTrailIndices.Count) <> 2 Then
+                Dim unchecked = TrackDescriptions.Count - CrossTrailIndices.Count
+                MessageBox.Show($"Exactly two tracks must remain unchecked: one for the layer, and one for the dog, but {unchecked} were found.")
+                Return ' Zabrání uzavření formuláře
+            End If
+
             Me.DialogResult = DialogResult.OK
             Me.Close()
+
         Catch
-            MessageBox.Show("Neplatný vstup – použij jen čísla oddělená čárkami.")
+            MessageBox.Show("Selection processing error.")
         End Try
     End Sub
+
 End Class
 
 
