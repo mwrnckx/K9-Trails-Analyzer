@@ -92,7 +92,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Is this the track of the layer.
+        '''  Vyhledá lokalizovaný řetězec podobný First file.
         '''</summary>
         Friend Shared ReadOnly Property lblIsThisLayerQ() As String
             Get
@@ -101,7 +101,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Is this the appropriate track of the dog.
+        '''  Vyhledá lokalizovaný řetězec podobný Second file.
         '''</summary>
         Friend Shared ReadOnly Property lblIsThisTrackOfTheDog() As String
             Get
@@ -353,6 +353,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Goal:.
+        '''</summary>
+        Friend Shared ReadOnly Property strGoal() As String
+            Get
+                Return ResourceManager.GetString("strGoal", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný This is the end of the period within which the trails are to be processed..
         '''</summary>
         Friend Shared ReadOnly Property Tooltip_dtpEnd() As String
@@ -421,6 +430,33 @@ Namespace My.Resources
         Friend Shared ReadOnly Property Tooltip_mnuTrim() As String
             Get
                 Return ResourceManager.GetString("Tooltip_mnuTrim", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog:.
+        '''</summary>
+        Friend Shared ReadOnly Property txtDogLabel() As String
+            Get
+                Return ResourceManager.GetString("txtDogLabel", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Goal:.
+        '''</summary>
+        Friend Shared ReadOnly Property txtGoalLabel() As String
+            Get
+                Return ResourceManager.GetString("txtGoalLabel", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Trail:.
+        '''</summary>
+        Friend Shared ReadOnly Property txtTrailLabel() As String
+            Get
+                Return ResourceManager.GetString("txtTrailLabel", resourceCulture)
             End Get
         End Property
         

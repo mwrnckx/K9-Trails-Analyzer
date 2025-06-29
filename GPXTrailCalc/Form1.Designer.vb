@@ -41,6 +41,8 @@ Partial Class Form1
         Me.mnuPrependDateToFileName = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuTrimGPSNoise = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuMergingTracks = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuProcessProcessed = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuAskForVideo = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuEnglish = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuGerman = New System.Windows.Forms.ToolStripMenuItem()
@@ -50,12 +52,12 @@ Partial Class Form1
         Me.mnuRussian = New System.Windows.Forms.ToolStripMenuItem()
         Me.SToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.FactoryResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuDogName = New System.Windows.Forms.ToolStripMenuItem()
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
         Me.gbPeriod = New System.Windows.Forms.GroupBox()
         Me.lblScentArtickle = New System.Windows.Forms.Label()
         Me.rtbOutput = New System.Windows.Forms.RichTextBox()
         Me.rtbWarnings = New System.Windows.Forms.RichTextBox()
-        Me.mnuDogName = New System.Windows.Forms.ToolStripMenuItem()
         Me.StatusStrip1.SuspendLayout()
         Me.MenuStrip1.SuspendLayout()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -139,7 +141,7 @@ Partial Class Form1
         '
         'mnuSettings
         '
-        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise, Me.mnuMergingTracks})
+        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise, Me.mnuMergingTracks, Me.mnuProcessProcessed, Me.mnuAskForVideo})
         resources.ApplyResources(Me.mnuSettings, "mnuSettings")
         Me.mnuSettings.Name = "mnuSettings"
         '
@@ -159,6 +161,18 @@ Partial Class Form1
         '
         Me.mnuMergingTracks.Name = "mnuMergingTracks"
         resources.ApplyResources(Me.mnuMergingTracks, "mnuMergingTracks")
+        '
+        'mnuProcessProcessed
+        '
+        Me.mnuProcessProcessed.CheckOnClick = True
+        Me.mnuProcessProcessed.Name = "mnuProcessProcessed"
+        resources.ApplyResources(Me.mnuProcessProcessed, "mnuProcessProcessed")
+        '
+        'mnuAskForVideo
+        '
+        Me.mnuAskForVideo.CheckOnClick = True
+        Me.mnuAskForVideo.Name = "mnuAskForVideo"
+        resources.ApplyResources(Me.mnuAskForVideo, "mnuAskForVideo")
         '
         'mnuLanguage
         '
@@ -219,6 +233,11 @@ Partial Class Form1
         Me.FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
         resources.ApplyResources(Me.FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
         '
+        'mnuDogName
+        '
+        Me.mnuDogName.Name = "mnuDogName"
+        resources.ApplyResources(Me.mnuDogName, "mnuDogName")
+        '
         'PictureBox1
         '
         resources.ApplyResources(Me.PictureBox1, "PictureBox1")
@@ -253,11 +272,6 @@ Partial Class Form1
         Me.rtbWarnings.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
         resources.ApplyResources(Me.rtbWarnings, "rtbWarnings")
         Me.rtbWarnings.Name = "rtbWarnings"
-        '
-        'mnuDogName
-        '
-        Me.mnuDogName.Name = "mnuDogName"
-        resources.ApplyResources(Me.mnuDogName, "mnuDogName")
         '
         'Form1
         '
@@ -302,6 +316,7 @@ Partial Class Form1
 
         mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
+        mnuAskForVideo.Checked = My.Settings.AskForVideo
 
         If My.Settings.Directory = "" Then
             My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
@@ -393,5 +408,7 @@ Partial Class Form1
     Friend WithEvents FactoryResetToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
     Friend WithEvents mnuDogName As ToolStripMenuItem
+    Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
+    Friend WithEvents mnuAskForVideo As ToolStripMenuItem
 End Class
 

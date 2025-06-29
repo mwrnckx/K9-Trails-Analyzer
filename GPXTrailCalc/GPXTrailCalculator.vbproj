@@ -126,6 +126,19 @@
     <Compile Include="CrossTracksSelector.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="FfMpegHelper.vb" />
+    <Compile Include="frmEditDesc.Designer.vb">
+      <DependentUpon>frmEditDesc.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmEditDesc.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmVideoDone.Designer.vb">
+      <DependentUpon>frmVideoDone.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmVideoDone.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GpxManager.vb" />
     <Compile Include="Form1.Designer.vb">
       <DependentUpon>Form1.vb</DependentUpon>
@@ -180,6 +193,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Settings.vb" />
+    <Compile Include="VideoCreator.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Chart1.resx">
@@ -210,6 +224,12 @@
     <EmbeddedResource Include="Form1.uk.resx">
       <DependentUpon>Form1.vb</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmEditDesc.resx">
+      <DependentUpon>frmEditDesc.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmVideoDone.resx">
+      <DependentUpon>frmVideoDone.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resource1.de.resx">
       <Generator>ResXFileCodeGenerator</Generator>

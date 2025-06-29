@@ -17,14 +17,14 @@
     <Setting Name="maxAge" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>
-    <Setting Name="MergeDecisions" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
     <Setting Name="DogName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="CrossDecisions" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)" />
+    <Setting Name="AskForVideo" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="FfmpegPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ffmpeg.exe</Value>
     </Setting>
   </Settings>
 </SettingsFile>

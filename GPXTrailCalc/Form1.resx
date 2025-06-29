@@ -244,7 +244,7 @@
     <value>309, 17</value>
   </metadata>
   <data name="StatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>194, 25</value>
+    <value>200, 25</value>
   </data>
   <data name="StatusLabel1.Text" xml:space="preserve">
     <value>ToolStripkkkkkkkkkkel1</value>
@@ -316,22 +316,37 @@
     <value>File</value>
   </data>
   <data name="mnuPrependDateToFileName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>439, 34</value>
+    <value>676, 34</value>
   </data>
   <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
     <value>Prepend date to gpx file name</value>
   </data>
   <data name="mnuTrimGPSNoise.Size" type="System.Drawing.Size, System.Drawing">
-    <value>439, 34</value>
+    <value>676, 34</value>
   </data>
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
     <value>Trim GPS noise at track's start and end.</value>
   </data>
   <data name="mnuMergingTracks.Size" type="System.Drawing.Size, System.Drawing">
-    <value>439, 34</value>
+    <value>676, 34</value>
   </data>
   <data name="mnuMergingTracks.Text" xml:space="preserve">
     <value>Match Runner and Dog Tracks</value>
+  </data>
+  <data name="mnuProcessProcessed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>676, 34</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Process already processed files</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Process files that have already been processed</value>
+  </data>
+  <data name="mnuAskForVideo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>676, 34</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Ask if a video for  „picture-in-picture track map“  should be created.</value>
   </data>
   <data name="mnuSettings.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI Semibold, 9pt, style=Bold</value>
@@ -409,13 +424,13 @@
     <value>Language</value>
   </data>
   <data name="FactoryResetToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>270, 34</value>
+    <value>221, 34</value>
   </data>
   <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
     <value>Factory reset</value>
   </data>
   <data name="mnuDogName.Size" type="System.Drawing.Size, System.Drawing">
-    <value>270, 34</value>
+    <value>221, 34</value>
   </data>
   <data name="mnuDogName.Text" xml:space="preserve">
     <value>Dog name</value>
@@ -7873,6 +7888,18 @@
     <value>mnuMergingTracks</value>
   </data>
   <data name="&gt;&gt;mnuMergingTracks.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuProcessProcessed.Name" xml:space="preserve">
+    <value>mnuProcessProcessed</value>
+  </data>
+  <data name="&gt;&gt;mnuProcessProcessed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuAskForVideo.Name" xml:space="preserve">
+    <value>mnuAskForVideo</value>
+  </data>
+  <data name="&gt;&gt;mnuAskForVideo.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuLanguage.Name" xml:space="preserve">

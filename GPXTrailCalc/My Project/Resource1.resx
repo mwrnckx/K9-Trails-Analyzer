@@ -235,10 +235,10 @@
     <value>By merging them, you will get a single gpx file that contains the tracks of both the trail-layer and the dog.</value>
   </data>
   <data name="lblIsThisLayerQ" xml:space="preserve">
-    <value>Is this the track of the layer</value>
+    <value>First file</value>
   </data>
   <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
-    <value>Is this the appropriate track of the dog</value>
+    <value>Second file</value>
   </data>
   <data name="chbRemembDecisQ" xml:space="preserve">
     <value>Remember the 'No' decision for this couple</value>
@@ -254,5 +254,17 @@
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
     <value>Sniffed per month (km)</value>
+  </data>
+  <data name="strGoal" xml:space="preserve">
+    <value>Goal:</value>
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Goal:</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>Trail:</value>
+  </data>
+  <data name="txtDogLabel" xml:space="preserve">
+    <value>Dog:</value>
   </data>
 </root>

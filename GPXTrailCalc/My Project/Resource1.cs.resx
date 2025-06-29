@@ -229,16 +229,16 @@
     <value>Spojit GPX soubory?</value>
   </data>
   <data name="lblMergeTwoToOneQ" xml:space="preserve">
-    <value>Rozhodněte, zda tyto dva soubory patří k sobě jako trasa kladeče a trasa psa.</value>
+    <value>Rozhodněte, zda tyto dva soubory patří k sobě (jako trasa kladeče, trasa psa, případně křížení)</value>
   </data>
   <data name="lblMergingYouGet" xml:space="preserve">
-    <value>Spojením získáte jeden gpx soubor obsahující trasu kladeče i psa.</value>
+    <value>Spojením získáte jeden gpx soubor obsahující sobě odpovídající trasy</value>
   </data>
   <data name="lblIsThisLayerQ" xml:space="preserve">
-    <value>Je toto trasa kladeče</value>
+    <value>První soubor</value>
   </data>
   <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
-    <value>Je toto odpovídající trasa psa</value>
+    <value>Druhý soubor</value>
   </data>
   <data name="chbRemembDecisQ" xml:space="preserve">
     <value>Zapamatovat volbu pro tuto dvojici</value>
@@ -254,5 +254,17 @@
   </data>
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
     <value>Načucháno měsíčně (km)</value>
+  </data>
+  <data name="strGoal" xml:space="preserve">
+    <value />
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Cíl:</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="txtDogLabel" xml:space="preserve">
+    <value>Pes:</value>
   </data>
 </root>

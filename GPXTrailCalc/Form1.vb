@@ -13,6 +13,7 @@ Public Class Form1
     Private GPXFilesManager As GpxFileManager
 
     Private Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
+
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
 
         rtbWarnings.Visible = True
@@ -40,13 +41,14 @@ Public Class Form1
         If GPXFilesManager IsNot Nothing Then
             RemoveHandler GPXFilesManager.WarningOccurred, AddressOf WriteRTBWarning
             For Each record In GPXFilesManager.GpxRecords
-                RemoveHandler record.WarningOccurred, AddressOf GPXFilesManager._writeRTBWarning
+                RemoveHandler record.WarningOccurred, AddressOf GPXFilesManager.WriteRTBWarning
             Next
             GPXFilesManager = Nothing ' Uvolnění staré instance
         End If
 
         ' Vytvoření nové instance
         GPXFilesManager = New GpxFileManager()
+        GPXFilesManager.ProcesseProcessed = Me.mnuProcessProcessed.Checked
         AddHandler GPXFilesManager.WarningOccurred, AddressOf WriteRTBWarning
 
     End Sub
@@ -741,6 +743,13 @@ Public Class Form1
         My.Settings.DogName = InputBox("Set name of the dog:", Application.ProductName, My.Settings.DogName)
         My.Settings.Save()
     End Sub
+
+    Private Sub mnuAskForVideo_CheckedChanged(sender As Object, e As EventArgs) Handles mnuAskForVideo.CheckedChanged
+        My.Settings.AskForVideo = mnuAskForVideo.Checked
+        My.Settings.Save()
+    End Sub
+
+
 End Class
 
 
