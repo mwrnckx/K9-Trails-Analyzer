@@ -48,7 +48,7 @@ Public Class Form1
 
         ' Vytvoření nové instance
         GPXFilesManager = New GpxFileManager()
-        GPXFilesManager.ProcesseProcessed = Me.mnuProcessProcessed.Checked
+        GPXFilesManager.ForceProcess = Me.mnuProcessProcessed.Checked
         AddHandler GPXFilesManager.WarningOccurred, AddressOf WriteRTBWarning
 
     End Sub

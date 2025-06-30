@@ -219,16 +219,5 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>В начале следа, пока вы еще не начали движение, и в конце, пока не выключили запись, GPS-устройство может записывать неточные или ошибочные данные. Если эта опция включена, программа попытается автоматически удалить такие ошибки.</value>
   </data>
-  <data name="strGoal" xml:space="preserve">
-    <value />
-  </data>
-  <data name="txtGoalLabel" xml:space="preserve">
-    <value />
-  </data>
-  <data name="txtTrailLabel" xml:space="preserve">
-    <value />
-  </data>
-  <data name="txtDogLabel" xml:space="preserve">
-    <value />
-  </data>
+ 
 </root>

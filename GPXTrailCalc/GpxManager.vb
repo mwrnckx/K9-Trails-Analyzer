@@ -23,7 +23,7 @@ Public Class GpxFileManager
     Private ReadOnly Property BackupDirectory As String
     Public dateFrom As Date
     Public dateTo As Date
-    Public Property ProcesseProcessed As Boolean = False
+    Public Property ForceProcess As Boolean = False ' 'pokud je True, zpracuje všechny soubory, i ty, které už byly zpracovány (přepíše popis a další věci)
     Private ReadOnly maxAge As TimeSpan
     Private ReadOnly prependDateToName As Boolean
     Private ReadOnly trimGPS_Noise As Boolean
@@ -62,18 +62,18 @@ Public Class GpxFileManager
 
         For Each _gpxRecord As GPXRecord In _gpxFilesMerged
             Try
-                If Me.ProcesseProcessed Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+                If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
                     If prependDateToName Then _gpxRecord.PrependDateToFilename()
                     If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                 End If
-                _gpxRecord.Description = _gpxRecord.BuildSummaryDescription(Me.ProcesseProcessed) 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
+                _gpxRecord.Description = _gpxRecord.BuildSummaryDescription(Me.ForceProcess) 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
                 _gpxRecord.Distance = _gpxRecord.CalculateLayerTrailDistance()
                 totalDist += _gpxRecord.Distance
                 _gpxRecord.TotalDistance = totalDist
                 _gpxRecord.TrailAge = _gpxRecord.GetAge
 
-                If Me.ProcesseProcessed Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+                If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku TrailLayer
                     If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
                         If MessageBox.Show($"Má se vytvořit video pohybu psa ze souboru {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
@@ -85,7 +85,7 @@ Public Class GpxFileManager
                 _gpxRecord.DogSpeed = _gpxRecord.CalculateSpeed
                 _gpxRecord.Link = _gpxRecord.Getlink
                 _gpxRecord.WriteProcessed()
-                _gpxRecord.Save() 'hlavně kvůli desc
+                _gpxRecord.Save(Me.ForceProcess) 'hlavně kvůli desc
 
                 'a nakonec
                 _gpxRecord.SetCreatedModifiedDate()
@@ -117,7 +117,7 @@ Public Class GpxFileManager
                     Dim _reader As New GpxReader(gpxFilePath)
 
                     Dim _gpxRecord As New GPXRecord(_reader)
-                    If Me.ProcesseProcessed Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+                    If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                         _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
                         _gpxRecord.SortTracksByTime() 'seřadí trk podle stáří od nejstaršího (layer) po nejmladší (dog)
                     End If
@@ -175,7 +175,7 @@ Public Class GpxFileManager
         For i As Integer = 0 To _gpxRecords.Count - 1
             If usedIndexes.Contains(i) Then Continue For ' Přeskočíme již spojené prvky, ty jsou smazány, do listu se tedy nepřidávají
             gpxFilesMerged.Add(_gpxRecords(i)) ' Přidáme aktuální prvek do merged listu
-            If Me.ProcesseProcessed Or _gpxRecords(i).IsAlreadyProcessed Then Continue For  'možno přeskočit, už to proběhlo...
+            If Me.ForceProcess Or _gpxRecords(i).IsAlreadyProcessed Then Continue For  'možno přeskočit, už to proběhlo...
 
             Dim lastAddedIndex As Integer = gpxFilesMerged.Count - 1 ' Index posledního přidaného prvku
 
@@ -640,10 +640,12 @@ FoundTrailLayerTrk:
             End If
 
 
+            ' Vytvoříme nový CDATA uzel
+            Dim cdata As XmlCDataSection = Me.Reader.xmlDoc.CreateCDataSection(Me.Description)
+            descNodeLayer.RemoveAll()
+            ' Přidáme do descNode
+            descNodeLayer.AppendChild(cdata)
 
-            descNodeLayer.InnerXml = Me.Description
-
-            Me.Description = Me.Description
         End If
     End Sub
 
@@ -927,11 +929,11 @@ FoundTrailLayerTrk:
         ' Pes: ...
         ' S HTML zalomením řádků jako <br>
 
-        Dim crlf As String = "&lt;br&gt;"
-        Dim styleGreenBold As String = "&lt;span style='color:green; font-weight:bold;'&gt;"
-        Dim styleBlueBold As String = "&lt;span style='color:blue; font-weight:bold;'&gt;"
-        Dim styleRedBold As String = "&lt;span style='color:red; font-weight:bold;'&gt;"
-        Dim styleend As String = "&lt;/span&gt;"
+        Dim crlf As String = "<br>"
+        Dim styleGreenBold As String = "<span style='color:green; font-weight:bold;'>"
+        Dim styleBlueBold As String = "<span style='color:blue; font-weight:bold;'>"
+        Dim styleRedBold As String = "<span style='color:red; font-weight:bold;'>"
+        Dim styleend As String = "</span>"
 
         ' 🔧 Lokálně nastav labely (můžeš je později číst z lokalizačního souboru):
         Dim goalLabel As String = My.Resources.Resource1.txtGoalLabel 'cíl
@@ -949,8 +951,9 @@ FoundTrailLayerTrk:
         Dim trailRegex As New Regex(Regex.Escape(trailLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
         Dim dogRegex As New Regex(Regex.Escape(dogLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(dogLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|$))", RegexOptions.Singleline)
 
-        ' ✂ Odstraníme případná <br> z původního textu (aby nebyly dvakrát)
-        Dim cleanDescription = originalDescription.Replace(crlf, "").Replace("<br>", "").Replace(styleBlueBold, "").Replace(styleRedBold, "").Replace(styleGreenBold, "").Replace(styleend, "").Trim()
+        ' ✂ Odstraníme případné html tagy (jako <br>, <span...> a </span>) z původního textu
+        'Dim cleanDescription = originalDescription.Replace(crlf, "").Replace("<br>", "").Replace(styleBlueBold, "").Replace(styleRedBold, "").Replace(styleGreenBold, "").Replace(styleend, "").Trim()
+        Dim cleanDescription = Regex.Replace(originalDescription, "<.*?>", "").Trim()
 
 
         ' 🔍 Extrahujeme části popisu
@@ -968,7 +971,10 @@ FoundTrailLayerTrk:
 
         Dim mDog = dogRegex.Match(textNormClean)
         If mDog.Success Then dogPart = ExtractOriginalText(cleanDescription, mDog.Groups(1).Value)
-
+        If Not (mGoal.Success Or mTrail.Success Or mDog.Success) Then
+            'když popis neobsahuje žádný předdefinovaný popis uloží se popis jako Trail
+            trailPart &= cleanDescription
+        End If
         ' 🕰 Trail part – doplníme čas, pokud tam není
         Dim ageFromTime As TimeSpan = GetAgeFromTime()
         If trailPart <> "" Then
@@ -986,11 +992,11 @@ FoundTrailLayerTrk:
 
 
     Private Function BuildDescription(goalPart As String, trailPart As String, dogPart As String) As String
-        Dim crlf As String = "&lt;br&gt;"
-        Dim styleGreenBold As String = "&lt;span style='color:green; font-weight:bold;'&gt;"
-        Dim styleBlueBold As String = "&lt;span style='color:blue; font-weight:bold;'&gt;"
-        Dim styleRedBold As String = "&lt;span style='color:red; font-weight:bold;'&gt;"
-        Dim styleend As String = "&lt;/span&gt;"
+        Dim crlf As String = "<br>"
+        Dim styleGreenBold As String = "<span style='color:green; font-weight:bold;'>"
+        Dim styleBlueBold As String = "<span style='color:blue; font-weight:bold;'>"
+        Dim styleRedBold As String = "<span style='color:red; font-weight:bold;'>"
+        Dim styleend As String = "</span>"
 
         ' 🔧 Lokálně nastav labely (můžeš je později číst z lokalizačního souboru):
         Dim goalLabel As String = My.Resources.Resource1.txtGoalLabel 'cíl
@@ -1020,29 +1026,32 @@ FoundTrailLayerTrk:
             Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode("type", trkNode)
             Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode("desc", trkNode)
 
-            SummaryDescription &= descNode?.InnerXml.Trim() & " " ' Získání textu z <desc> uzlu, pokud existuje
+            SummaryDescription &= descNode?.InnerText.Trim() & " " ' Získání textu z <desc> uzlu, pokud existuje
         Next
 
         'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
-        If Me.IsAlreadyProcessed Then Return SummaryDescription
+        If Process Or Not Me.IsAlreadyProcessed Then
 
-        Dim goalPart As String = "", trailPart As String = "", dogPart As String = ""
-        ExtractDescriptionParts(SummaryDescription, goalPart, trailPart, dogPart)
+            Dim goalPart As String = "", trailPart As String = "", dogPart As String = ""
+            ExtractDescriptionParts(SummaryDescription, goalPart, trailPart, dogPart)
 
-        ' Otevřeš okno k editaci:
-        Dim frm As New frmEditComments With {
-    .GoalPart = goalPart,
-    .TrailPart = trailPart,
-    .DogPart = dogPart,
-    .GpxFileName = Me.Reader.FileName
-      }
-        Dim newDescription As String = ""
-        If frm.ShowDialog() = DialogResult.OK Then
-            newDescription = BuildDescription(frm.GoalPart, frm.TrailPart, frm.DogPart)
-            ' ... tady nový popis použiješ
+            ' Otevřeš okno k editaci:
+            Dim frm As New frmEditComments With {
+                           .GoalPart = goalPart,
+                           .TrailPart = trailPart,
+                           .DogPart = dogPart,
+                           .GpxFileName = Me.Reader.FileName
+                            }
+            Dim newDescription As String = ""
+            If frm.ShowDialog() = DialogResult.OK Then
+                newDescription = BuildDescription(frm.GoalPart, frm.TrailPart, frm.DogPart)
+                ' ... tady nový popis použiješ
+            End If
+            Return newDescription.ToString().Trim()
+        Else
+            Return SummaryDescription.ToString().Trim()
         End If
 
-        Return newDescription.ToString().Trim()
     End Function
 
 
@@ -1583,8 +1592,8 @@ FoundTrailLayerTrk:
     End Function
 
 
-    Public Function Save() As Boolean
-        If Me.IsAlreadyProcessed Then
+    Public Function Save(Optional forceProcess As Boolean = True) As Boolean
+        If (Not forceProcess And Me.IsAlreadyProcessed) Then
             RaiseEvent WarningOccurred($"File {Me.Reader.FileName} has already been processed.", Color.DarkOrange)
             Return False
         End If
@@ -1597,7 +1606,7 @@ End Class
 
 
 Public Class GpxReader
-    Private xmlDoc As XmlDocument
+    Public xmlDoc As XmlDocument
     Private namespaceManager As XmlNamespaceManager
     Public Property FilePath As String
     Private namespacePrefix As String

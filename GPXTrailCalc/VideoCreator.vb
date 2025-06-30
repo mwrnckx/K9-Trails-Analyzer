@@ -53,72 +53,33 @@ Friend Class VideoCreator
         Dim startTime = dogTimes.First()
         Dim endTime = dogTimes.Last()
         Dim durationSeconds = (endTime - startTime).TotalSeconds
-        Dim frameInterval = 4 ' durationSeconds 
+        Dim frameInterval = durationSeconds '4
         'frameInterval napevno na 4 sekundy kvůli snazšímu zpracování v Shotcutu: '
         'rychlost se v Shotcutu dá nastavit na 0.25,  
         'takže délka videa bude přesně odpovídat reálné době pohybu psa
-        'For i = 0 To dogTimes.Count - 2
-        '    'hledá minimální rozdíl kvůli maximální plynulosti
-        '    frameInterval = Math.Min(frameInterval, (dogTimes(i + 1) - dogTimes(i)).TotalSeconds)
-        '    Debug.WriteLine($"{i} {(dogTimes(i + 1) - dogTimes(i)).TotalSeconds}")
-        'Next
+        For i = 0 To dogTimes.Count - 2
+            'hledám minimální rozdíl kvůli maximální plynulosti
+            frameInterval = Math.Min(frameInterval, (dogTimes(i + 1) - dogTimes(i)).TotalSeconds)
+            Debug.WriteLine($"{i} {(dogTimes(i + 1) - dogTimes(i)).TotalSeconds}")
+        Next
         Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval))
         Dim fps As Double = 1 / frameInterval 'video framerate
-        'Dim frameIndex As Integer = 0
 
-        '' Framerate 0.3 fps = 1 snímek za 3 vteřiny
-        '' Kolik snímků: tolik, kolik máme GPS bodů psa, nebo podle délky videa
-        'Dim _dogTrail As New List(Of PointF) From {dogPoints(0)}
-        'For i As Integer = 0 To frameCount - 1
-
-        '    Using bmp As New Bitmap(imgWidth, imgHeight, PixelFormat.Format32bppArgb)
-        '        Using g As Graphics = Graphics.FromImage(bmp)
-        '            g.Clear(Color.Transparent)
-
-        '            ' Nakresli trasu kladeče
-        '            If layerPoints.Count > 1 Then
-        '                g.DrawLines(New Pen(Color.Blue, 5), layerPoints.ToArray())
-        '            End If
-        '            'dog
-
-        '            Dim frameTime = startTime.AddSeconds(frameIndex * frameInterval)
-        '            ' Nakresli trasu psa od startu do aktuálního bodu
-        '            Dim p As PointF = InterpolatedDogPosition(frameTime)
-        '            _dogTrail.Add(p)
-        '            If i >= 1 Then
-        '                g.DrawLines(New Pen(Color.Red, 4), _dogTrail.ToArray)
-        '            End If
-
-        '            ' Nakresli aktuální bod psa (červený)
-
-        '            Dim radius As Single = 15
-        '            g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
-        '        End Using
-
-        '        Dim filename = System.IO.Path.Combine(pngDirectory, $"frame_{frameIndex:D4}.png")
-        '        bmp.Save(filename, ImageFormat.Png)
-
-        '        frameIndex += 1
-        '    End Using
-        'Next
         CreatePNGs(pngDirectory, frameCount, frameInterval)
 
         Console.WriteLine("Hotovo! Vygenerováno " & frameCount & " snímků.")
         Dim videoFilename = System.IO.Path.Combine(Me.directory, "overlay")
+
         CreateVideoWithFfmpeg(videoFilename, pngDirectory, fps)
 
     End Sub
 
     Private Sub CreatePNGs(pngDirectory As String, framecount As Integer, frameinterval As Double)
         ' Vytvoř obrázky pro každý časový záznam
-        ' Vygeneruj obrázky
-
-
 
         Dim frameIndex As Integer = 0
 
-        ' Framerate 0.3 fps = 1 snímek za 3 vteřiny
-        ' Kolik snímků: tolik, kolik máme GPS bodů psa, nebo podle délky videa
+        ' Kolik snímků: tolik, kolik máme GPS bodů psa
         Dim _dogTrail As New List(Of PointF) From {dogPoints(0)}
         For i As Integer = 0 To framecount - 1
 
@@ -130,11 +91,17 @@ Friend Class VideoCreator
                     If layerPoints.Count > 1 Then
                         g.DrawLines(New Pen(Color.Blue, 5), layerPoints.ToArray())
                     End If
-                    'dog
 
+                    'nakresli polohu kladeče:
+                    Dim radius As Single = 15
+                    Dim p As PointF = layerPoints.Last
+                    g.FillEllipse(Brushes.Blue, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+
+
+                    'dog
                     Dim frameTime = dogTimes.First().AddSeconds(frameIndex * frameinterval)
                     ' Nakresli trasu psa od startu do aktuálního bodu
-                    Dim p As PointF = InterpolatedDogPosition(frameTime)
+                    p = InterpolatedDogPosition(frameTime)
                     _dogTrail.Add(p)
                     If i >= 1 Then
                         g.DrawLines(New Pen(Color.Red, 4), _dogTrail.ToArray)
@@ -142,7 +109,7 @@ Friend Class VideoCreator
 
                     ' Nakresli aktuální bod psa (červený)
 
-                    Dim radius As Single = 15
+                    radius = 15
                     g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                 End Using
 
