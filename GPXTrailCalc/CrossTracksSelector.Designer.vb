@@ -22,7 +22,6 @@ Partial Class CrossTrailSelector
     'Neupravovat pomocí editoru kódu
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(CrossTrailSelector))
         Me.label = New System.Windows.Forms.Label()
         Me.btnOK = New System.Windows.Forms.Button()
         Me.txtInfo = New System.Windows.Forms.TextBox()
@@ -55,7 +54,6 @@ Partial Class CrossTrailSelector
         Me.txtInfo.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
         Me.txtInfo.Size = New System.Drawing.Size(1108, 313)
         Me.txtInfo.TabIndex = 6
-        Me.txtInfo.Text = resources.GetString("txtInfo.Text")
         '
         'chkListTracks
         '

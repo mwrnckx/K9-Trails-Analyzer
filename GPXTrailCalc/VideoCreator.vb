@@ -1,21 +1,29 @@
 ﻿Imports System.Drawing.Imaging
 Imports System.Xml
 Imports System.Diagnostics
+Imports System.Windows.Media.TextFormatting
 
 Friend Class VideoCreator
     Private _gpxRecord As GPXRecord
     Private dogNodes As XmlNodeList
     Private layerNodes As XmlNodeList
-    Private crossTrackNodes As XmlNodeList
+    Private crossTracks As List(Of XmlNodeList)
     Private directory As String
     Private bgPNG As Bitmap
     Public Event WarningOccurred(message As String, _color As Color)
 
-    Public Sub Main(record As GPXRecord, dogNodes As XmlNodeList, layerNodes As XmlNodeList, crossTrackNodes As XmlNodeList)
-        Me._gpxRecord = record
+    Public Sub New(record As GPXRecord,
+                   dogNodes As XmlNodeList,
+                   layerNodes As XmlNodeList,
+                   crossTracks As List(Of XmlNodeList))
+        _gpxRecord = record
         Me.dogNodes = dogNodes
         Me.layerNodes = layerNodes
-        Me.crossTrackNodes = crossTrackNodes
+        Me.crossTracks = crossTracks
+    End Sub
+
+    Public Sub Main()
+
         ' Zjisti cestu k adresáři, kde je GPX soubor
         Dim gpxDir = System.IO.Path.GetDirectoryName(_gpxRecord.Reader.FilePath)
         ' Zjisti název souboru bez přípony
@@ -44,10 +52,13 @@ Friend Class VideoCreator
         Me.layerPoints = GetTimesAndPoints(layerNodes).Points
 
         ' Pokud jsou křížové body, přepočítej je na body
-        If crossTrackNodes IsNot Nothing Then
-            Dim crossTrackResult = GetTimesAndPoints(crossTrackNodes)
-            Me.layerPoints.AddRange(crossTrackResult.Points)
-        End If
+        For Each crossTrackNodes In crossTracks
+            If crossTrackNodes IsNot Nothing AndAlso crossTrackNodes.Count > 0 Then
+                Dim crossTrackPoints = GetTimesAndPoints(crossTrackNodes).Points
+                Me.crossTrackPointsList.Add(crossTrackPoints)
+            End If
+        Next
+
         ' Vytvoř obrázky pro každý časový záznam
         ' Vygeneruj obrázky
         Dim startTime = dogTimes.First()
@@ -59,15 +70,18 @@ Friend Class VideoCreator
         'takže délka videa bude přesně odpovídat reálné době pohybu psa
         For i = 0 To dogTimes.Count - 2
             'hledám minimální rozdíl kvůli maximální plynulosti
+            frameInterval = Math.Max(0.1, frameInterval) 'minimální interval 0.1 sekundy
             frameInterval = Math.Min(frameInterval, (dogTimes(i + 1) - dogTimes(i)).TotalSeconds)
             Debug.WriteLine($"{i} {(dogTimes(i + 1) - dogTimes(i)).TotalSeconds}")
         Next
+        frameInterval = Math.Max(3, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
+
         Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval))
         Dim fps As Double = 1 / frameInterval 'video framerate
 
         CreatePNGs(pngDirectory, frameCount, frameInterval)
 
-        Console.WriteLine("Hotovo! Vygenerováno " & frameCount & " snímků.")
+        Debug.WriteLine("Hotovo! Vygenerováno " & frameCount & " snímků.")
         Dim videoFilename = System.IO.Path.Combine(Me.directory, "overlay")
 
         CreateVideoWithFfmpeg(videoFilename, pngDirectory, fps)
@@ -92,11 +106,26 @@ Friend Class VideoCreator
                         g.DrawLines(New Pen(Color.Blue, 5), layerPoints.ToArray())
                     End If
 
-                    'nakresli polohu kladeče:
-                    Dim radius As Single = 15
-                    Dim p As PointF = layerPoints.Last
-                    g.FillEllipse(Brushes.Blue, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                    ' Nakresli trasy křížení
+                    For Each crossTrackPoints In crossTrackPointsList
+                        If crossTrackPoints.Count > 1 Then
+                            g.DrawLines(New Pen(Color.Green, 5), crossTrackPoints.ToArray())
+                        End If
+                    Next
 
+
+                    'nakresli polohu kladeče:
+                    Dim font As New Font("Cascadia Code", 12, FontStyle.Bold)
+                    Dim popis As String = TrackTypes.TrailLayer ' "TrailLayer" 'tady bude popis kladeče, zatím "Layer"
+                    Dim textSize = g.MeasureString(popis, font)
+                    Dim radius As Single = 15 'in pixels
+                    Dim p As PointF = layerPoints.Last
+                    Dim _color As Color = Color.Blue 'tady bude barva kladeče, zatím modrá
+                    Dim contrastColor As Color = GetContrastColor(_color)
+                    g.FillEllipse(Brushes.Blue, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                    'g.DrawString(popis, font, Brushes.White, p.X - textSize.Width - radius, p.Y - textSize.Height / 2)
+
+                    DrawTextWithOutline(g, popis, font, _color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
 
                     'dog
                     Dim frameTime = dogTimes.First().AddSeconds(frameIndex * frameinterval)
@@ -163,6 +192,35 @@ Friend Class VideoCreator
         Return dogPoints.Last()
     End Function
 
+    ''' <summary>
+    ''' Nakreslí text s obrysem (stínem) okolo.
+    ''' </summary>
+    ''' <param name="g">Graphics objekt, na který se kreslí.</param>
+    ''' <param name="text">Text k vykreslení.</param>
+    ''' <param name="font">Font textu.</param>
+    ''' <param name="mainColor">Hlavní barva textu.</param>
+    ''' <param name="outlineColor">Barva obrysu.</param>
+    ''' <param name="pos">Pozice (levý horní roh) textu.</param>
+    ''' <param name="outlineSize">Velikost obrysu v pixelech.</param>
+    Public Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
+        Using mainBrush As New SolidBrush(mainColor)
+            Using outlineBrush As New SolidBrush(outlineColor)
+                ' Kresli obrys – cyklem dokola podle outlineSize
+                For dx As Integer = -outlineSize To outlineSize
+                    For dy As Integer = -outlineSize To outlineSize
+                        ' Kreslit jen body okolo, ne střed (jinak by byl outline moc silný)
+                        If dx <> 0 OrElse dy <> 0 Then
+                            g.DrawString(text, font, outlineBrush, pos.X + dx, pos.Y + dy)
+                        End If
+                    Next
+                Next
+                ' Nakonec hlavní text přesně na pozici
+                g.DrawString(text, font, mainBrush, pos)
+            End Using
+        End Using
+    End Sub
+
+
 
     Private Function GetTimesAndPoints(trkptnodes As XmlNodeList) As (Times As List(Of DateTime), Points As List(Of PointF))
 
@@ -177,8 +235,8 @@ Friend Class VideoCreator
             times.Add(time)
 
 
-            Dim x = CSng((lon - minLon) * scale)
-            Dim y = CSng((maxLat - lat) * scale) ' Y osa obrácená
+            Dim x = CSng((lon - minLon) * lonDistancePerDegree * scale)
+            Dim y = CSng((maxLat - lat) * latDistancePerDegree * scale) ' Y osa obrácená
             points.Add(New PointF(x, y))
         Next
         Return (times, points)
@@ -186,12 +244,15 @@ Friend Class VideoCreator
 
 
     ' Nastav velikost obrázku
-    Dim imgWidth As Integer = 800
+    Dim imgWidth As Integer = 600
     Dim imgHeight As Integer = 600
-    Dim scale As Double = Me.imgWidth / (maxLon - minLon) ' Výchozí měřítko, bude přepočítáno v FindCoordinateAndImgRange
+    Dim scale As Double '
     Dim dogTimes As New List(Of DateTime) ' Časové značky pro psy   
     Dim dogPoints As New List(Of PointF) ' Body pro psy
     Dim layerPoints As New List(Of PointF) ' Body pro kladeče
+    Dim crossTrackPointsList As New List(Of List(Of PointF)) ' Body pro křížení 
+    ReadOnly latDistancePerDegree As Double = 111_320.0 ' průměrně ~111,3 km na jeden stupeň latitude
+    Dim lonDistancePerDegree As Double
 
     Dim minLat As Double = Double.MaxValue, maxLat As Double = Double.MinValue
     Dim minLon As Double = Double.MaxValue, maxLon As Double = Double.MinValue
@@ -216,21 +277,42 @@ Friend Class VideoCreator
             minLon = Math.Min(minLon, lon)
             maxLon = Math.Max(maxLon, lon)
         Next
-        If crossTrackNodes IsNot Nothing Then
-            For Each node As XmlNode In crossTrackNodes
-                Dim lat = Double.Parse(node.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-                Dim lon = Double.Parse(node.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-                minLat = Math.Min(minLat, lat)
-                maxLat = Math.Max(maxLat, lat)
-                minLon = Math.Min(minLon, lon)
-                maxLon = Math.Max(maxLon, lon)
-            Next
-        End If
-        Dim scaleX As Double = imgWidth / (maxLon - minLon)
-        Dim scaleY As Double = imgHeight / (maxLat - minLat)
-        scale = Math.Min(scaleX, scaleY)
-        imgWidth = CInt((maxLon - minLon) * scale)
-        imgHeight = CInt((maxLat - minLat) * scale)
+        For Each crossTrackNodes In crossTracks
+            ' Pokud jsou křížové body, přepočítej je na body
+            If crossTrackNodes IsNot Nothing AndAlso crossTrackNodes.Count > 0 Then
+                For Each node As XmlNode In crossTrackNodes
+                    Dim lat = Double.Parse(node.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+                    Dim lon = Double.Parse(node.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+                    minLat = Math.Min(minLat, lat)
+                    maxLat = Math.Max(maxLat, lat)
+                    minLon = Math.Min(minLon, lon)
+                    maxLon = Math.Max(maxLon, lon)
+                Next
+            End If
+        Next
+
+        'na každou stranu přidáme 5 % jako margins:
+        maxLon += (maxLon - minLon) * 0.05
+        minLon -= (maxLon - minLon) * 0.05
+        maxLat += (maxLat - minLat) * 0.05
+        minLat -= (maxLat - minLat) * 0.05
+
+
+        ' Vypočítej šířku a výšku obrázku v metrech
+        Dim centerLat As Double = (minLat + maxLat) / 2
+        lonDistancePerDegree = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
+        Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
+        Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
+        ' Nastav velikost obrázku na základě rozsahu souřadnic
+        ' Vypočítej šířku a výšku obrázku v pixelech, tak aby se vešly do zadané velikosti 600x600
+        Dim maxImgWidth As Integer = 600
+        Dim maxImgHeight As Integer = 600
+
+        Dim scaleX As Double = maxImgWidth / widthInMeters
+        Dim scaleY As Double = maxImgHeight / heightInMeters
+        scale = Math.Min(scaleX, scaleY) 'in pixels per metre
+        imgWidth = CInt(widthInMeters * scale) 'in pixels
+        imgHeight = CInt(heightInMeters * scale)
     End Sub
 
 
@@ -287,7 +369,7 @@ Friend Class VideoCreator
         Else
             'úklid:
             System.IO.File.Delete((outputFile & "_fast.mov"))
-            Console.WriteLine("Hotovo! Video vygenerováno.")
+            Debug.WriteLine("Hotovo! Video vygenerováno.")
             RaiseEvent WarningOccurred($"Overlayvideo has been created and saved to {outputFile}.mov", Color.Green)
             Dim form As New frmVideoDone(outputFile & ".mov", Me.bgPNG)
             form.ShowDialog()
@@ -295,8 +377,23 @@ Friend Class VideoCreator
         End If
     End Sub
 
+    Public Function GetContrastColor(bgColor As Color) As Color
+        Dim luminance As Double = 0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B
+        If luminance < 128 Then
+            Return Color.White
+        Else
+            Return Color.Black
+        End If
+    End Function
 
-    Public Sub New()
 
-    End Sub
 End Class
+
+
+Public Class TrackData
+    Public Property Label As String
+    Public Property Points As List(Of PointF)
+    Public Property Times As New List(Of DateTime) ' Časové značky pro psy   
+    Public Property Color As Color
+End Class
+

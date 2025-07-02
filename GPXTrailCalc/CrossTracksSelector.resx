@@ -117,8 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="txtInfo.Text" xml:space="preserve">
-    <value>This GPX file contains more than two tracks. One is probably the layer's track, another the dog's. The rest may be cross-tracks.
- Please enter the indexes of the cross-tracks, separated by commas (e.g., 1,3,5):</value>
-  </data>
 </root>

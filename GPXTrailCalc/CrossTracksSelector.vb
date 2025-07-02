@@ -4,7 +4,7 @@
     Public Property CrossTrailIndices As List(Of Integer)
     Public Property TrackDescriptions As List(Of String)
 
-    Public Sub New(_trackDescriptions As List(Of String), filename As String)
+    Public Sub New(_trackDescriptions As List(Of String), tracktypesList As List(Of String), filename As String)
         InitializeComponent()
         Me.TrackDescriptions = _trackDescriptions
         Me.Text = "Select Cross-Tracks "
@@ -16,7 +16,8 @@
 
         ' Přidej popisy do zaškrtávacího seznamu
         For i = 0 To TrackDescriptions.Count - 1
-            chkListTracks.Items.Add($"{TrackDescriptions(i)}")
+            Dim isChecked As Boolean = tracktypesList(i)?.Contains(TrackTypes.CrossTrack.Trim().ToLower())
+            chkListTracks.Items.Add($"{TrackDescriptions(i)}", isChecked)
         Next
 
     End Sub

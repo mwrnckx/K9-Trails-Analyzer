@@ -76,7 +76,7 @@ Public Class GpxFileManager
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku TrailLayer
                     If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
-                        If MessageBox.Show($"Má se vytvořit video pohybu psa ze souboru {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) = DialogResult.Yes Then
+                        If MessageBox.Show($"Má se vytvořit video pohybu psa ze souboru {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
                             _gpxRecord.CreateVideoFromDogTrack()
                         End If
 
@@ -85,7 +85,9 @@ Public Class GpxFileManager
                 _gpxRecord.DogSpeed = _gpxRecord.CalculateSpeed
                 _gpxRecord.Link = _gpxRecord.Getlink
                 _gpxRecord.WriteProcessed()
-                _gpxRecord.Save(Me.ForceProcess) 'hlavně kvůli desc
+                If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then
+                    _gpxRecord.Save() 'hlavně kvůli desc
+                End If
 
                 'a nakonec
                 _gpxRecord.SetCreatedModifiedDate()
@@ -116,8 +118,13 @@ Public Class GpxFileManager
                     'Tady najde layerStart 
                     Dim _reader As New GpxReader(gpxFilePath)
 
-                    Dim _gpxRecord As New GPXRecord(_reader)
+                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
+
                     If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+                        If (_gpxRecord.IsAlreadyProcessed) Then
+                            'pokud je forceProcess, tak se zpracuje i již zpracovaný soubor
+                            RaiseEvent WarningOccurred($"File {_gpxRecord.Reader.FileName} has already been processed, but will be processed again.", Color.DarkOrange)
+                        End If
                         _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
                         _gpxRecord.SortTracksByTime() 'seřadí trk podle stáří od nejstaršího (layer) po nejmladší (dog)
                     End If
@@ -175,7 +182,7 @@ Public Class GpxFileManager
         For i As Integer = 0 To _gpxRecords.Count - 1
             If usedIndexes.Contains(i) Then Continue For ' Přeskočíme již spojené prvky, ty jsou smazány, do listu se tedy nepřidávají
             gpxFilesMerged.Add(_gpxRecords(i)) ' Přidáme aktuální prvek do merged listu
-            If Me.ForceProcess Or _gpxRecords(i).IsAlreadyProcessed Then Continue For  'možno přeskočit, už to proběhlo...
+            If Not Me.ForceProcess And _gpxRecords(i).IsAlreadyProcessed Then Continue For  'možno přeskočit, už to proběhlo...
 
             Dim lastAddedIndex As Integer = gpxFilesMerged.Count - 1 ' Index posledního přidaného prvku
 
@@ -353,44 +360,6 @@ Be carefull with this!!!!!"
     End Function
 
 
-
-    'Private Sub SaveMergeDecision(runner As GPXRecord, dog As GPXRecord, result As String)
-    '    Dim key As String = $"{runner.Reader.FilePath}|{dog.Reader.FilePath}" ' Vytvoření klíče
-    '    Dim settings As System.Collections.Specialized.StringCollection = My.Settings.MergeDecisions
-    '    ' Inicializace kolekce, pokud je Nothing
-    '    If settings Is Nothing Then
-    '        settings = New System.Collections.Specialized.StringCollection()
-    '        My.Settings.MergeDecisions = settings ' Důležité: Uložení inicializované kolekce zpět do nastavení!
-    '    End If
-    '    ' Odstranění starého rozhodnutí, pokud existuje
-
-    '    Dim existingIndex As Integer = -1
-    '    For i As Integer = 0 To settings.Count - 1
-    '        If settings(i).StartsWith($"{runner.Reader.FilePath}|{dog.Reader.FilePath}|") Then
-    '            existingIndex = i
-    '            Exit For
-    '        End If
-    '    Next
-    '    If existingIndex > -1 Then settings.RemoveAt(existingIndex)
-    '    settings.Add($"{key}|{result}") ' Uložení nového rozhodnutí
-    '    My.Settings.Save() ' Uložení změn do konfiguračního souboru
-
-    'End Sub
-
-    '' Načtení rozhodnutí
-    'Private Function LoadMergeDecision(runner As GPXRecord, dog As GPXRecord) As String
-    '    Dim key As String = $"{runner.Reader.FilePath}|{dog.Reader.FilePath}"
-    '    Dim settings As System.Collections.Specialized.StringCollection = My.Settings.MergeDecisions
-    '    If Not settings Is Nothing Then
-    '        For Each item As String In settings
-    '            If item.StartsWith($"{key}|") Then
-    '                Return item.Split("|")(2) ' Vrácení rozhodnutí ("Yes", "No", "NoAsk", "Cancel")
-    '            End If
-    '        Next
-    '    End If
-    '    Return "" ' Vrácení prázdného řetězce, pokud rozhodnutí neexistuje
-    'End Function
-
 End Class
 
 ' Struktura pro trackpoint
@@ -429,7 +398,7 @@ Public Class GPXRecord
 
     Public Event WarningOccurred(_message As String, _color As Color)
 
-    Public Sub New(_reader As GpxReader)
+    Public Sub New(_reader As GpxReader, forceProcess As Boolean)
         gpxDirectory = My.Settings.Directory
         BackupDirectory = My.Settings.BackupDirectory
 
@@ -438,6 +407,7 @@ Public Class GPXRecord
         End If
         Me.Reader = _reader
         IsAlreadyProcessed = IsProcessed()
+
     End Sub
 
     Private _LayerStart As Date
@@ -498,7 +468,8 @@ Public Class GPXRecord
     End Sub
 
     Public Sub CreateVideoFromDogTrack()
-        Dim layerNodes, dogNodes, crossTrackNodes As XmlNodeList
+        Dim layerNodes, dogNodes As XmlNodeList
+        Dim crossTracks As New List(Of XmlNodeList)
         For Each trkNode In Me.Reader.SelectNodes("trk")
 
             Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes("type", trkNode)
@@ -510,7 +481,7 @@ Public Class GPXRecord
                     Case TrackTypes.Dog.Trim().ToLower()
                         dogNodes = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
                     Case TrackTypes.CrossTrack.Trim().ToLower()
-                        crossTrackNodes = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
+                        crossTracks.add(Me.Reader.SelectAllChildNodes("trkpt", trkNode))
                 End Select
             Next existingtype
         Next trkNode
@@ -523,9 +494,9 @@ Public Class GPXRecord
             Return
         End If
         ' Create a video from the dog track
-        Dim _videoCreator As New VideoCreator()
+        Dim _videoCreator As New VideoCreator(Me, dogNodes, layerNodes, crossTracks)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
-        _videoCreator.Main(Me, dogNodes, layerNodes, crossTrackNodes)
+        _videoCreator.Main()
 
     End Sub
 
@@ -596,6 +567,7 @@ Public Class GPXRecord
 
         Dim processedNode As XmlNode = Me.Reader.SelectSingleChildNode("K9-Trails-Analyzer-processed", extensionsNode)
         If processedNode Is Nothing Then Return False ' neexistuje záznam
+
 
         Return (processedNode.InnerText.Trim().ToLower().Contains("true"))
     End Function
@@ -764,11 +736,11 @@ FoundTrailLayerTrk:
                 ' Vrácení data i upraveného názvu souboru
                 Return (dateTimeFromFileName, modifiedFileName)
             Catch ex As Exception
-                Console.WriteLine($"{fileName} - Error in date format")
+                Debug.WriteLine($"{fileName} - Error in date format")
                 Return (Nothing, fileName)
             End Try
         Else
-            Console.WriteLine($"{fileName} - Date not found")
+            Debug.WriteLine($"{fileName} - Date not found")
             Return (Nothing, fileName)
         End If
 
@@ -813,9 +785,9 @@ FoundTrailLayerTrk:
                 If startTimeNode IsNot Nothing Then
                     ' Zjisti  typ tracku:
                     Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode("type", trkNode)
-                    If typeNode.InnerText.Trim().ToLower().Contains(TrackTypes.TrailLayer.Trim().ToLower()) Then
+                    If typeNode?.InnerText.Trim().ToLower().Contains(TrackTypes.TrailLayer.Trim().ToLower()) Then
                         If startTimeNode Is Nothing OrElse Not DateTime.TryParse(startTimeNode.InnerText, LayerStart) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
-                    ElseIf typeNode.InnerText.Trim().ToLower().Contains(TrackTypes.Dog.Trim().ToLower()) Then
+                    ElseIf typeNode?.InnerText.Trim().ToLower().Contains(TrackTypes.Dog.Trim().ToLower()) Then
                         If startTimeNode Is Nothing OrElse Not DateTime.TryParse(startTimeNode.InnerText, DogStart) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
                         If finishTimeNode Is Nothing OrElse Not DateTime.TryParse(finishTimeNode.InnerText, DogFinish) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
                     End If
@@ -929,11 +901,6 @@ FoundTrailLayerTrk:
         ' Pes: ...
         ' S HTML zalomením řádků jako <br>
 
-        Dim crlf As String = "<br>"
-        Dim styleGreenBold As String = "<span style='color:green; font-weight:bold;'>"
-        Dim styleBlueBold As String = "<span style='color:blue; font-weight:bold;'>"
-        Dim styleRedBold As String = "<span style='color:red; font-weight:bold;'>"
-        Dim styleend As String = "</span>"
 
         ' 🔧 Lokálně nastav labely (můžeš je později číst z lokalizačního souboru):
         Dim goalLabel As String = My.Resources.Resource1.txtGoalLabel 'cíl
@@ -982,10 +949,11 @@ FoundTrailLayerTrk:
             If ageFromComments = TimeSpan.Zero Then
                 ' Odebereme případný starý čas z trailPart (např. "1.2 h něco")
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*h\s*", "", RegexOptions.IgnoreCase).Trim()
-                trailPart = ageFromTime.TotalHours.ToString("F1") & " h " & trailPart
+                trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění vícenásobných mezer
+                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h " & trailPart
             End If
         Else
-            trailPart = ageFromTime.TotalHours.ToString("F1") & " h"
+            trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h"
         End If
         Return True ' Vrátíme True, pokud se podařilo rozdělit popis
     End Function
@@ -993,12 +961,12 @@ FoundTrailLayerTrk:
 
     Private Function BuildDescription(goalPart As String, trailPart As String, dogPart As String) As String
         Dim crlf As String = "<br>"
-        Dim styleGreenBold As String = "<span style='color:green; font-weight:bold;'>"
+        Dim styleGreenBold As String = "<span style='color:darkgreen; font-weight:bold;'>"
         Dim styleBlueBold As String = "<span style='color:blue; font-weight:bold;'>"
         Dim styleRedBold As String = "<span style='color:red; font-weight:bold;'>"
         Dim styleend As String = "</span>"
 
-        ' 🔧 Lokálně nastav labely (můžeš je později číst z lokalizačního souboru):
+        ' 🔧 Lokálně nastav labely 
         Dim goalLabel As String = My.Resources.Resource1.txtGoalLabel 'cíl
         Dim trailLabel As String = My.Resources.Resource1.txtTrailLabel '"Trail:"
         Dim dogLabel As String = My.Resources.Resource1.txtDogLabel '"Pes:"
@@ -1108,27 +1076,26 @@ FoundTrailLayerTrk:
         'do souboru Me vloží kompletní uzel  <trk> vyjmutý ze souboru dog
         Try
             ' Najdi první uzel <trk>
-            Dim meTrkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
-            Dim dogTrkNode As XmlNode = dog.Reader.SelectSingleNode("trk")
+            'Dim meTrkNode As XmlNode = Me.Reader.SelectSingleNode("trk")
+            Dim dogTrkNodes As XmlNodeList = dog.Reader.SelectNodes("trk")
 
-            If meTrkNode IsNot Nothing AndAlso dogTrkNode IsNot Nothing Then
+            For Each dogTrkNode In dogTrkNodes
                 Dim importedNode As XmlNode = Me.Reader.ImportNode(dogTrkNode, True) ' Důležité: Import uzlu!
                 Dim meGpxNode As XmlNode = Me.Reader.SelectSingleNode("gpx")
                 meGpxNode.AppendChild(importedNode) ' Přidání na konec <gpx>
+            Next
+            Me.SortTracksByTime() 'seřadí trk podle stáří od nejstaršího (layer?) po nejmladší (dog)
+            Me.RefreshLayerDogStartFinish() ' načte časy startů
 
-                Me.SortTracksByTime() 'seřadí trk podle stáří od nejstaršího (layer?) po nejmladší (dog)
-                Me.RefreshLayerDogStartFinish() ' načte časy startů
+            'spojené trasy se uloží do souboru kladeče
+            'když je nové jméno stejné jako jméno kladeče nepřejmenovává se
+            If Me.Reader.FileName = newName OrElse RenameFile(newName) Then
+                Me.Save()
+                IO.File.Delete(dog.Reader.FilePath) 'pes se smaže
+                RaiseEvent WarningOccurred($"Tracks in files {Me.Reader.FileName} and {dog.Reader.FileName} were successfully merged in file {Me.Reader.FileName} {vbCrLf}File {dog.Reader.FileName}  was deleted.{vbCrLf}", Color.DarkGreen)
+            End If
 
 
-                'spojené trasy se uloží do souboru kladeče
-                'když je nové jméno stejné jako jméno kladeče nepřejmenovává se
-                If Me.Reader.FileName = newName OrElse RenameFile(newName) Then
-                    Me.Save()
-                    IO.File.Delete(dog.Reader.FilePath) 'pes se smaže
-                        RaiseEvent WarningOccurred($"Tracks in files {Me.Reader.FileName} and {dog.Reader.FileName} were successfully merged in file {Me.Reader.FileName} {vbCrLf}File {dog.Reader.FileName}  was deleted.{vbCrLf}", Color.DarkGreen)
-                    End If
-
-                End If
             Return True
         Catch ex As Exception
             RaiseEvent WarningOccurred($"Merging tracks of the me  {Me.Reader.FileName} and the dog {dog.Reader.FileName} failed!" & vbCrLf & ex.Message, Color.Red)
@@ -1161,7 +1128,7 @@ FoundTrailLayerTrk:
             End If
         Next
 
-        Me.Save()
+        'Me.Save()
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were split.", Color.DarkGreen)
     End Sub
 
@@ -1171,9 +1138,12 @@ FoundTrailLayerTrk:
         If parentNode Is Nothing Then Exit Sub
 
         ' Seznam tuple (trkNode, čas)
-        Dim trkList As New List(Of Tuple(Of XmlNode, DateTime))()
+        Dim trkList As New List(Of Tuple(Of XmlNode, DateTime, String))()
 
-        For Each trkNode As XmlNode In trkNodes
+
+        For i As Integer = 0 To trkNodes.Count - 1
+            Dim trkNode As XmlNode = trkNodes(i)
+            'najde první <trkseg> v něm první <trkpt> a v něm načte <time>
             Dim trkseg As XmlNode = Me.Reader.SelectSingleChildNode("trkseg", trkNode)
             Dim trkpt As XmlNode = Me.Reader.SelectSingleChildNode("trkpt", trkseg)
             Dim timeNode As XmlNode = Me.Reader.SelectSingleChildNode("time", trkpt)
@@ -1182,8 +1152,13 @@ FoundTrailLayerTrk:
             If timeNode IsNot Nothing Then
                 DateTime.TryParse(timeNode.InnerText, dt)
             End If
+            ' Zjisti  typ tracku:
+            Dim trkType As String = Me.Reader.SelectSingleChildNode("type", trkNode)?.InnerText
+            If trkType Is Nothing Then
+                trkType = "?" ' pokud není typ, nastavíme na Unknown
+            End If
+            trkList.Add(Tuple.Create(trkNode, dt, trkType))
 
-            trkList.Add(Tuple.Create(trkNode, dt))
         Next
 
         ' Seřadit podle času
@@ -1197,12 +1172,18 @@ FoundTrailLayerTrk:
         ' --- Doplnění <type> ---
         If trkList.Count = 1 Then
             AddTypeToTrk(trkList(0).Item1, TrackTypes.TrailLayer)
+            trkList(0) = Tuple.Create(trkList(0).Item1, trkList(0).Item2, TrackTypes.TrailLayer) ' aktualizace typu
         ElseIf trkList.Count = 2 Then
             AddTypeToTrk(trkList(0).Item1, TrackTypes.TrailLayer)
+            trkList(0) = Tuple.Create(trkList(0).Item1, trkList(0).Item2, TrackTypes.TrailLayer) ' aktualizace typu
             AddTypeToTrk(trkList(1).Item1, TrackTypes.Dog)
+            trkList(1) = Tuple.Create(trkList(1).Item1, trkList(1).Item2, TrackTypes.Dog) ' aktualizace typu
         ElseIf trkList.Count > 2 Then
+            trkList(trkNodes.Count - 1) = Tuple.Create(trkList(trkNodes.Count - 1).Item1, trkList(trkNodes.Count - 1).Item2, TrackTypes.Dog) ' aktualizace typu (poslední je dog)
+
             ' Zde volání nějaké funkce, která vrátí indexy CrossTrail trků
-            Dim crossTrailIndices As List(Of Integer) = AskUserWhichTracksAreCrossTrail(trkList)
+            Dim crossTrailIndices As New List(Of Integer)
+            crossTrailIndices = AskUserWhichTracksAreCrossTrail(trkList)
             Dim layerFound As Boolean = False
             Dim dogFound As Boolean = False
             For i As Integer = 0 To trkList.Count - 1
@@ -1226,15 +1207,20 @@ FoundTrailLayerTrk:
             parentNode.AppendChild(t.Item1)
         Next
 
-        Me.Save()
+        'Me.Save()
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
     End Sub
 
-    Private Sub AddTypeToTrk(trkNode As XmlNode, trackTypeValue As String)
+    Private Function AddTypeToTrk(trkNode As XmlNode, trackTypeValue As String) As Boolean
         ' Zkontroluj, jestli už <type> existuje
         Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes("type", trkNode)
+        Dim isTheSameType As Boolean = False
         For Each existingtype As XmlNode In existingTypes
             Select Case existingtype.InnerText.Trim().ToLower()
+                Case trackTypeValue.Trim().ToLower()
+                    ' pokud už existuje
+                    isTheSameType = True
+                    trkNode.RemoveChild(existingtype)
                 Case TrackTypes.TrailLayer.Trim().ToLower(), TrackTypes.Dog.Trim().ToLower(), TrackTypes.CrossTrack.Trim().ToLower()
                     ' všechny starší zápisy smazat
                     trkNode.RemoveChild(existingtype)
@@ -1245,16 +1231,19 @@ FoundTrailLayerTrk:
         Next
 
         Me.Reader.CreateAndAddElement(trkNode, "type", trackTypeValue, False)
-    End Sub
+        Return isTheSameType
+    End Function
 
-    Private Function AskUserWhichTracksAreCrossTrail(trkList As List(Of Tuple(Of XmlNode, DateTime))) As List(Of Integer)
+    Private Function AskUserWhichTracksAreCrossTrail(trkList As List(Of Tuple(Of XmlNode, DateTime, String))) As List(Of Integer)
         ' Připrav popis pro každý trk – můžeš doplnit třeba čas
-        Dim descriptions As New List(Of String)()
+        Dim descriptionsList As New List(Of String)()
+        Dim trackTypesList As New List(Of String)
         For i As Integer = 1 To trkList.Count
-            descriptions.Add($"{i}: Track No. {i} Start: {trkList(i - 1).Item2.ToLocalTime}")
+            descriptionsList.Add($"Track No. {i} Start: {trkList(i - 1).Item2.ToLocalTime} Type: {trkList(i - 1)?.Item3.ToLower}? ")
+            trackTypesList.Add(trkList(i - 1)?.Item3.ToLower)
         Next
 
-        Using dlg As New CrossTrailSelector(descriptions, Me.Reader.FileName)
+        Using dlg As New CrossTrailSelector(descriptionsList, trackTypesList, Me.Reader.FileName)
             If dlg.ShowDialog = DialogResult.OK Then
                 Return dlg.CrossTrailIndices
             End If
@@ -1323,7 +1312,7 @@ FoundTrailLayerTrk:
                 End If
             Next trksegNode
         Next trkNode
-        Me.Save()
+        'Me.Save()
     End Sub
 
     Private Function Cluster(points As List(Of XmlNode), minDistance As Double) As List(Of XmlNode)
@@ -1592,11 +1581,7 @@ FoundTrailLayerTrk:
     End Function
 
 
-    Public Function Save(Optional forceProcess As Boolean = True) As Boolean
-        If (Not forceProcess And Me.IsAlreadyProcessed) Then
-            RaiseEvent WarningOccurred($"File {Me.Reader.FileName} has already been processed.", Color.DarkOrange)
-            Return False
-        End If
+    Public Function Save() As Boolean
         Me.Reader.Save()
         RaiseEvent WarningOccurred($"File {Me.Reader.FileName} has been saved successfully.", Color.DarkGreen)
         Return True
@@ -1712,9 +1697,9 @@ Public Class GpxReader
             For Each node As XmlNode In childNodes
                 'zkontroluje zda node s hodnotou 'value' už neexistuje:
                 If node.InnerText.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0 Then
-                    Console.WriteLine($"Uzel {childNodeName} s textem {value} již existuje, nepřidávám nový.")
+                    Debug.WriteLine($"Uzel {childNodeName} s textem {value} již existuje, nepřidávám nový.")
                 Else
-                    Console.WriteLine($"Uzel {childNodeName} s jiným textem již existuje, přidávám nový.")
+                    Debug.WriteLine($"Uzel {childNodeName} s jiným textem již existuje, přidávám nový.")
                     If insertAfter Then
                         parentNode.AppendChild(childNode)
                     Else
@@ -1731,6 +1716,8 @@ Public Class GpxReader
     Public Function ImportNode(node As XmlNode, deepClone As Boolean)
         Return xmlDoc.ImportNode(node, deepClone)
     End Function
+
+
 
     Public Sub Save()
         xmlDoc.Save(FilePath)

@@ -197,7 +197,7 @@ Public Class Form1
     '            Throw New ArgumentException("Typ T musí být numerický (Integer, Long, Double).")
     '        End If
     '    Else
-    '        Console.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
+    '        Debug.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
     '        Return 0
     '    End If
     'End Function
@@ -207,7 +207,7 @@ Public Class Form1
                                  Optional ignoreZeros As Boolean = False) As Double
 
         If gpxRecords Is Nothing OrElse Not gpxRecords.Any() Then
-            Console.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
+            Debug.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
             Return 0
         End If
 
@@ -220,7 +220,7 @@ Public Class Form1
         End If
 
         If Not values.Any() Then
-            Console.WriteLine("Nejsou žádné nenulové hodnoty k průměrování.")
+            Debug.WriteLine("Nejsou žádné nenulové hodnoty k průměrování.")
             Return 0
         End If
 
@@ -327,7 +327,7 @@ Public Class Form1
 
                 For Each _gpxRecord As GPXRecord In GPXFilesManager.GpxRecords
                     With _gpxRecord
-                        Dim fileName As String = IO.Path.GetFileNameWithoutExtension(.Reader.filePath)
+                        Dim fileName As String = IO.Path.GetFileNameWithoutExtension(.Reader.FilePath)
 
                         Dim _age As String = ""
                         If .TrailAge > TimeSpan.Zero Then
@@ -484,14 +484,14 @@ Public Class Form1
                 If filteredData.Any() Then
                     Return New Tuple(Of DateTime(), T())(filteredData.Select(Function(item) item.X).ToArray(), filteredData.Select(Function(item) item.Y).ToArray())
                 Else
-                    Console.WriteLine($"Po filtrování pro vlastnost '{propertyName}' nezůstala žádná data. Graf nebude zobrazen.")
+                    Debug.WriteLine($"Po filtrování pro vlastnost '{propertyName}' nezůstala žádná data. Graf nebude zobrazen.")
                     Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
                 End If
             Else
                 Throw New ArgumentException($"Vlastnost '{propertyName}' neexistuje ve třídě GPXRecord.")
             End If
         Else
-            Console.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
+            Debug.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
             Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
         End If
     End Function
