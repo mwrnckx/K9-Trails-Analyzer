@@ -362,29 +362,6 @@ Be carefull with this!!!!!"
 
 End Class
 
-' Struktura pro trackpoint
-Public Class TrackPoint
-    Public Property Latitude As Double
-    Public Property Longitude As Double
-    Public Property Accuracy As Double
-    Public Property Time As Double
-    Public Property Elevation As Double
-
-    Public Sub New(lat As Double, lon As Double, acc As Double, tim As Double, ele As Double)
-        Latitude = lat
-        Longitude = lon
-        Accuracy = acc
-        Time = tim
-        Elevation = ele
-    End Sub
-    Public Sub New(lat As Double, lon As Double, acc As Double)
-        Latitude = lat
-        Longitude = lon
-        Accuracy = acc
-
-    End Sub
-End Class
-
 
 Public Class TrackTypes
     Public Const Dog As String = "Dog"
@@ -468,35 +445,46 @@ Public Class GPXRecord
     End Sub
 
     Public Sub CreateVideoFromDogTrack()
-        Dim layerNodes, dogNodes As XmlNodeList
-        Dim crossTracks As New List(Of XmlNodeList)
-        For Each trkNode In Me.Reader.SelectNodes("trk")
+        'Dim layerNodes, dogNodes As XmlNodeList
+        Dim allTracks As New List(Of TrackAsTrkPts)
+        For Each trkNode As XmlNode In Me.Reader.SelectNodes("trk")
+            Dim TrackAsTrkptsList As XmlNodeList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
 
-            Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes("type", trkNode)
-            For Each existingtype As XmlNode In existingTypes
-                Select Case existingtype.InnerText.Trim().ToLower()
-                    Case TrackTypes.TrailLayer.Trim().ToLower()
-                        ' kladeč
-                        layerNodes = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
-                    Case TrackTypes.Dog.Trim().ToLower()
-                        dogNodes = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
-                    Case TrackTypes.CrossTrack.Trim().ToLower()
-                        crossTracks.add(Me.Reader.SelectAllChildNodes("trkpt", trkNode))
-                End Select
-            Next existingtype
+            Dim isMoving As Boolean = False 'defaultně pro ostatní trasy
+            Dim trackColor As Color = Color.Green ' Default color for other tracks
+            Dim trkType As String = Me.GetTrkType(trkNode)
+            If trkType.Trim().ToLower() = TrackTypes.Dog.Trim().ToLower() Then
+                isMoving = True
+                trackColor = Color.Red
+            ElseIf trkType.Trim().ToLower() = TrackTypes.TrailLayer.Trim().ToLower() Then
+                trackColor = Color.Blue
+            End If
+
+
+            TrackAsTrkptsList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
+            allTracks.Add(New TrackAsTrkPts With {
+                .Label = GetTrkType(trkNode),
+                .Color = trackColor,
+                .IsMoving = isMoving,
+                .TrackPoints = TrackAsTrkptsList
+                            })
         Next trkNode
-        If dogNodes Is Nothing OrElse dogNodes.Count = 0 Then
-            RaiseEvent WarningOccurred("No dog track found in the GPX file.", Color.Red)
-            Return
-        End If
-        If layerNodes Is Nothing OrElse layerNodes.Count = 0 Then
-            RaiseEvent WarningOccurred("No layer track found in the GPX file.", Color.Red)
-            Return
-        End If
+
         ' Create a video from the dog track
-        Dim _videoCreator As New VideoCreator(Me, dogNodes, layerNodes, crossTracks)
+        ' Zjisti cestu k adresáři, kde je GPX soubor
+        Dim gpxDir = System.IO.Path.GetDirectoryName(Me.Reader.FilePath)
+        ' Zjisti název souboru bez přípony
+        Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(Me.Reader.FilePath)
+        ' Sestav cestu k novému adresáři
+        Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(gpxDir, gpxName))
+        ' Pokud adresář neexistuje, vytvoř ho
+        If Not directory.Exists Then directory.Create()
+
+        Dim _videoCreator As New VideoCreator(directory, 600)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
-        _videoCreator.Main()
+
+        ' Vytvoř video z trk bodů
+        _videoCreator.CreateVideoFromTrkPts(allTracks)
 
     End Sub
 
@@ -1224,7 +1212,6 @@ FoundTrailLayerTrk:
                 Case TrackTypes.TrailLayer.Trim().ToLower(), TrackTypes.Dog.Trim().ToLower(), TrackTypes.CrossTrack.Trim().ToLower()
                     ' všechny starší zápisy smazat
                     trkNode.RemoveChild(existingtype)
-
                 Case Else
                     ' záznam jiných aplikací nemazat
             End Select
@@ -1232,6 +1219,24 @@ FoundTrailLayerTrk:
 
         Me.Reader.CreateAndAddElement(trkNode, "type", trackTypeValue, False)
         Return isTheSameType
+    End Function
+
+    Private Function GetTrkType(trkNode As XmlNode) As String
+        ' Zkontroluj, jestli už <type> existuje
+        Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes("type", trkNode)
+        Dim isTheSameType As Boolean = False
+        For Each existingtype As XmlNode In existingTypes
+            Select Case existingtype.InnerText.Trim().ToLower()
+                Case TrackTypes.TrailLayer.Trim().ToLower(), TrackTypes.Dog.Trim().ToLower(), TrackTypes.CrossTrack.Trim().ToLower()
+                    ' vrátí první nalezený typ
+                    Return existingtype.InnerText.Trim().ToLower()
+                Case Else
+                    ' záznam jiných aplikací nemazat
+            End Select
+        Next
+
+        'když nic nenajde, vrátí Unknown
+        Return Nothing
     End Function
 
     Private Function AskUserWhichTracksAreCrossTrail(trkList As List(Of Tuple(Of XmlNode, DateTime, String))) As List(Of Integer)
@@ -1592,7 +1597,7 @@ End Class
 
 Public Class GpxReader
     Public xmlDoc As XmlDocument
-    Private namespaceManager As XmlNamespaceManager
+    Public namespaceManager As XmlNamespaceManager
     Public Property FilePath As String
     Private namespacePrefix As String
 

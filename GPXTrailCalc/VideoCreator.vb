@@ -2,77 +2,137 @@
 Imports System.Xml
 Imports System.Diagnostics
 Imports System.Windows.Media.TextFormatting
+Imports System.IO
+Imports System.Windows.Media.Media3D
+Imports Microsoft.VisualBasic.Logging
+Imports System.DirectoryServices.ActiveDirectory
+Imports System.Windows.Controls.Primitives
 
 Friend Class VideoCreator
-    Private _gpxRecord As GPXRecord
-    Private dogNodes As XmlNodeList
-    Private layerNodes As XmlNodeList
-    Private crossTracks As List(Of XmlNodeList)
-    Private directory As String
-    Private bgPNG As Bitmap
+
+    'pro všechny vstupy:
+    Private directory As IO.DirectoryInfo
+    Public bgPNG As Bitmap 'pozadí pro závěrečný Formulář, bude nastaveno na prostřední snímek
+    Public Property minVideoSize As Single = 300 'minimální velikost obrázku v pixelech, pokud je menší, zvětší se na tuto hodnotu
+
+
+    'přetížení vstupu dat:
+    Public Property TracksAsTrkPts As List(Of TrackAsTrkPts)
+    Public Property TracksAsPointsF As List(Of TrackAsPointsF)
+    Public Property TracksAsGeoPoints As List(Of TrackAsGeoPoints)
+    Public Property TracksAsTrkNode As List(Of TrackAsTrkNode)
+    'Private _gpxRecord As GPXRecord
+    Private Property nsmgr As XmlNamespaceManager 'pro trkNode, pokud je potřeba
+    'Private TrkNodes As List(Of XmlNodeList)
+
+    Dim imgWidth As Integer = 600
+    Dim imgHeight As Integer = 600
+    Dim PNGTimes As New List(Of DateTime) ' Časové značky pro PNG obrázky, pokud nejsou, vytvoří se z GPS bodů psa)
+    Dim pngDirectory As DirectoryInfo ' Adresář pro PNG obrázky
+    Dim pixelsPerMetre As Double = 1.0 'přepočet z GPS na pixely, defaultně 1 pixel = 1 metr
+
+
+    'Dim TrackTimesList As New List(Of List(Of DateTime)) ' ' Časové značky pro všechny trasy (včetně psa, kladeče a křížení)
+    'Dim TrackPointsList As New List(Of List(Of PointF)) ' Body všech tras (včetně psa, kladeče a křížení) 
+    ReadOnly latDistancePerDegree As Double = 111_320.0 ' průměrně ~111,3 km na jeden stupeň latitude
+    Dim lonDistancePerDegree As Double
+
+    Dim minLat As Double = Double.MaxValue, maxLat As Double = Double.MinValue
+    Dim minLon As Double = Double.MaxValue, maxLon As Double = Double.MinValue
+
     Public Event WarningOccurred(message As String, _color As Color)
 
-    Public Sub New(record As GPXRecord,
-                   dogNodes As XmlNodeList,
-                   layerNodes As XmlNodeList,
-                   crossTracks As List(Of XmlNodeList))
-        _gpxRecord = record
-        Me.dogNodes = dogNodes
-        Me.layerNodes = layerNodes
-        Me.crossTracks = crossTracks
+    Public Sub New(videoPath As IO.DirectoryInfo, _minVideoSize As Single)
+        ' Nastav cestu k adresáři, kde se budou ukládat obrázky a video
+        Me.directory = videoPath
+        'pomocný adresář pro PNG obrázky
+        ' Pokud adresář neexistuje, vytvoř ho
+        pngDirectory = Me.directory.CreateSubdirectory("png")
+        minVideoSize = _minVideoSize
+
     End Sub
 
-    Public Sub Main()
-
-        ' Zjisti cestu k adresáři, kde je GPX soubor
-        Dim gpxDir = System.IO.Path.GetDirectoryName(_gpxRecord.Reader.FilePath)
-        ' Zjisti název souboru bez přípony
-        Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath)
-        ' Sestav cestu k novému adresáři
-        Me.directory = System.IO.Path.Combine(gpxDir, gpxName)
-        ' Pokud adresář neexistuje, vytvoř ho
-        If Not System.IO.Directory.Exists(Me.directory) Then
-            System.IO.Directory.CreateDirectory(Me.directory)
-        End If
-        Dim pngDirectory = System.IO.Path.Combine(Me.directory, "png")
-        ' Pokud adresář neexistuje, vytvoř ho
-        If Not System.IO.Directory.Exists(pngDirectory) Then
-            System.IO.Directory.CreateDirectory(pngDirectory)
-        End If
 
 
-        ' Kód, co generuje obrázky
-        FindCoordinateAndImgRange()
 
-        Dim result = GetTimesAndPoints(dogNodes)
-        Me.dogTimes = result.Times
-        Me.dogPoints = result.Points
 
-        ' Přepočítej kladeče na body
-        Me.layerPoints = GetTimesAndPoints(layerNodes).Points
 
-        ' Pokud jsou křížové body, přepočítej je na body
-        For Each crossTrackNodes In crossTracks
-            If crossTrackNodes IsNot Nothing AndAlso crossTrackNodes.Count > 0 Then
-                Dim crossTrackPoints = GetTimesAndPoints(crossTrackNodes).Points
-                Me.crossTrackPointsList.Add(crossTrackPoints)
-            End If
+    Public Sub CreateVideoFromGeoPoints(_tracksAsGeoPoints As List(Of TrackAsGeoPoints))
+        TracksAsGeoPoints = _tracksAsGeoPoints
+        For Each Track In _tracksAsGeoPoints
+
+            For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
+                minLat = Math.Min(minLat, geoPoint.Location.Lat)
+                maxLat = Math.Max(maxLat, geoPoint.Location.Lat)
+                minLon = Math.Min(minLon, geoPoint.Location.Lon)
+                maxLon = Math.Max(maxLon, geoPoint.Location.Lon)
+            Next
         Next
 
+        maxLat += (maxLat - minLat) * 0.05  'přidáme 10% na okraje
+        minLat -= (maxLat - minLat) * 0.05  'přidáme 10% na okraje
+        maxLon += (maxLon - minLon) * 0.05  'přidáme 10% na okraje
+        minLon -= (maxLon - minLon) * 0.05  'přidáme 10% na okraje
+
+        ' Vypočítej šířku a výšku obrázku v metrech
+        Dim centerLat As Double = (minLat + maxLat) / 2
+        lonDistancePerDegree = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
+        Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
+        Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
+        pixelsPerMetre = Math.Min(minVideoSize / widthInMeters, minVideoSize / heightInMeters) 'přepočet z GPS na pixely, defaultně 1 pixel = 1 metr
+        Me.imgWidth = widthInMeters * pixelsPerMetre
+        Me.imgHeight = heightInMeters * pixelsPerMetre
+
+        'přepočítá trasy na body a uloží do TrackAsPointsF
+        Dim _TracksAsPointsF As List(Of TrackAsPointsF) = ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints) 'přepočítá trasy na body a uloží do TrackAsPointsF
+
+        CreateVideoFromPointsF(_TracksAsPointsF)
+
+    End Sub
+
+
+
+    Public Sub CreateVideoFromTrkNode(_tracksAsTrkNode As List(Of TrackAsTrkNode))
+        TracksAsTrkNode = _tracksAsTrkNode
+        Dim tracksAsTrkPts As New List(Of TrackAsTrkPts)
+        For Each track In TracksAsTrkNode
+            Dim trkptNodes As XmlNodeList = SelectTrkptNodes(track.TrkNode)
+            Dim _TrackAsTrkPts As New TrackAsTrkPts With {
+                .Label = track.Label,
+                .Color = track.Color,
+                .IsMoving = track.IsMoving,
+                .TrackPoints = trkptNodes
+            }
+            tracksAsTrkPts.Add(_TrackAsTrkPts)
+        Next
+        CreateVideoFromTrkPts(tracksAsTrkPts)
+
+    End Sub
+
+
+    Public Sub CreateVideoFromTrkPts(_tracksAsTrkPts As List(Of TrackAsTrkPts))
+
+        TracksAsTrkPts = _tracksAsTrkPts
+        Dim _tracksAsGeoPoints As List(Of TrackAsGeoPoints) = ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts) 'přepočítá trasy na body a uloží do TrackAsGeoPoints
+        CreateVideoFromGeoPoints(_tracksAsGeoPoints)
+
+    End Sub
+
+
+
+    Public Sub CreateVideoFromPointsF(_tracksAsPointsF As List(Of TrackAsPointsF))
+        TracksAsPointsF = _tracksAsPointsF
         ' Vytvoř obrázky pro každý časový záznam
         ' Vygeneruj obrázky
-        Dim startTime = dogTimes.First()
-        Dim endTime = dogTimes.Last()
+        Dim startTime = PNGTimes.First()
+        Dim endTime = PNGTimes.Last()
         Dim durationSeconds = (endTime - startTime).TotalSeconds
-        Dim frameInterval = durationSeconds '4
-        'frameInterval napevno na 4 sekundy kvůli snazšímu zpracování v Shotcutu: '
-        'rychlost se v Shotcutu dá nastavit na 0.25,  
-        'takže délka videa bude přesně odpovídat reálné době pohybu psa
-        For i = 0 To dogTimes.Count - 2
+        Dim frameInterval = durationSeconds 'výchozí hodnota, skutečná hodnota bude nalezena v cyklu
+        For i = 0 To PNGTimes.Count - 2
             'hledám minimální rozdíl kvůli maximální plynulosti
             frameInterval = Math.Max(0.1, frameInterval) 'minimální interval 0.1 sekundy
-            frameInterval = Math.Min(frameInterval, (dogTimes(i + 1) - dogTimes(i)).TotalSeconds)
-            Debug.WriteLine($"{i} {(dogTimes(i + 1) - dogTimes(i)).TotalSeconds}")
+            frameInterval = Math.Min(frameInterval, (PNGTimes(i + 1) - PNGTimes(i)).TotalSeconds)
+            Debug.WriteLine($"{i} {(PNGTimes(i + 1) - PNGTimes(i)).TotalSeconds}")
         Next
         frameInterval = Math.Max(3, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
 
@@ -81,100 +141,98 @@ Friend Class VideoCreator
 
         CreatePNGs(pngDirectory, frameCount, frameInterval)
 
-        Debug.WriteLine("Hotovo! Vygenerováno " & frameCount & " snímků.")
-        Dim videoFilename = System.IO.Path.Combine(Me.directory, "overlay")
+        Debug.WriteLine("Vygenerováno " & frameCount & " snímků.")
+        Dim videoFilename = IO.Path.Combine(Me.directory.FullName, "overlay")
 
-        CreateVideoWithFfmpeg(videoFilename, pngDirectory, fps)
+        CreateVideoWithFfmpeg(videoFilename, pngDirectory.FullName, fps)
 
     End Sub
+    Private Sub createPNGs(pngDirectory As IO.DirectoryInfo, framecount As Integer, frameinterval As Double)
+        Dim radius As Single = 0.025 * Math.Max(imgWidth, imgHeight) ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+        Dim penWidth As Single = 0.01 * Math.Max(imgWidth, imgHeight)  ' šířka pera pro kreslení čar, 1% šířky obrázku
+        Dim emSize As Single = 0.03 * Math.Max(imgWidth, imgHeight)  '
 
-    Private Sub CreatePNGs(pngDirectory As String, framecount As Integer, frameinterval As Double)
-        ' Vytvoř obrázky pro každý časový záznam
+        ' Předem vytvoř statickou bitmapu
+        Dim staticBmp As New Bitmap(imgWidth, imgHeight, PixelFormat.Format32bppArgb)
+        Using g As Graphics = Graphics.FromImage(staticBmp)
+            g.Clear(Color.Transparent)
+            For Each track As TrackAsPointsF In Me.TracksAsPointsF
+                If track.TrackPointsF.Count = 0 Then Continue For
+                If Not track.IsMoving Then
+                    Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+                    g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
+                    ' popis, poslední bod atd.
+                    Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
+                    Dim popis As String = track.Label
+                    Dim textSize = g.MeasureString(popis, font)
+                    Dim p As PointF = TrackPoints.Last
+                    Dim contrastColor As Color = GetContrastColor(track.Color)
+                    g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
+                End If
+            Next
+        End Using
 
         Dim frameIndex As Integer = 0
-
-        ' Kolik snímků: tolik, kolik máme GPS bodů psa
-        Dim _dogTrail As New List(Of PointF) From {dogPoints(0)}
+        Dim _dogTrail As New List(Of PointF)
         For i As Integer = 0 To framecount - 1
-
             Using bmp As New Bitmap(imgWidth, imgHeight, PixelFormat.Format32bppArgb)
                 Using g As Graphics = Graphics.FromImage(bmp)
                     g.Clear(Color.Transparent)
 
-                    ' Nakresli trasu kladeče
-                    If layerPoints.Count > 1 Then
-                        g.DrawLines(New Pen(Color.Blue, 5), layerPoints.ToArray())
-                    End If
+                    ' Přidej předpřipravený statický podklad
+                    g.DrawImage(staticBmp, Point.Empty)
 
-                    ' Nakresli trasy křížení
-                    For Each crossTrackPoints In crossTrackPointsList
-                        If crossTrackPoints.Count > 1 Then
-                            g.DrawLines(New Pen(Color.Green, 5), crossTrackPoints.ToArray())
+                    For Each track As TrackAsPointsF In Me.TracksAsPointsF
+                        If track.TrackPointsF.Count = 0 Then Continue For
+                        If track.IsMoving Then
+                            Dim frameTime = PNGTimes.First().AddSeconds(frameIndex * frameinterval)
+
+                            Dim p As PointF = InterpolatedDogPosition(track, frameTime)
+                            _dogTrail.Add(p)
+
+                            If _dogTrail.Count > 1 Then g.DrawLines(New Pen(track.Color, penWidth), _dogTrail.ToArray)
+                            g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                         End If
                     Next
-
-
-                    'nakresli polohu kladeče:
-                    Dim font As New Font("Cascadia Code", 12, FontStyle.Bold)
-                    Dim popis As String = TrackTypes.TrailLayer ' "TrailLayer" 'tady bude popis kladeče, zatím "Layer"
-                    Dim textSize = g.MeasureString(popis, font)
-                    Dim radius As Single = 15 'in pixels
-                    Dim p As PointF = layerPoints.Last
-                    Dim _color As Color = Color.Blue 'tady bude barva kladeče, zatím modrá
-                    Dim contrastColor As Color = GetContrastColor(_color)
-                    g.FillEllipse(Brushes.Blue, p.X - radius / 2, p.Y - radius / 2, radius, radius)
-                    'g.DrawString(popis, font, Brushes.White, p.X - textSize.Width - radius, p.Y - textSize.Height / 2)
-
-                    DrawTextWithOutline(g, popis, font, _color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
-
-                    'dog
-                    Dim frameTime = dogTimes.First().AddSeconds(frameIndex * frameinterval)
-                    ' Nakresli trasu psa od startu do aktuálního bodu
-                    p = InterpolatedDogPosition(frameTime)
-                    _dogTrail.Add(p)
-                    If i >= 1 Then
-                        g.DrawLines(New Pen(Color.Red, 4), _dogTrail.ToArray)
-                    End If
-
-                    ' Nakresli aktuální bod psa (červený)
-
-                    radius = 15
-                    g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                 End Using
 
-                Dim filename = System.IO.Path.Combine(pngDirectory, $"frame_{frameIndex:D4}.png")
+                Dim filename = IO.Path.Combine(pngDirectory.FullName, $"frame_{frameIndex:D4}.png")
                 bmp.Save(filename, ImageFormat.Png)
-                If frameIndex = CInt(framecount / 2) Then Me.bgPNG = New Bitmap(bmp) ' vytvoří novou instanci bitmapy
+                If frameIndex = CInt(framecount / 2) Then Me.bgPNG = New Bitmap(bmp)
                 frameIndex += 1
             End Using
         Next
 
+
     End Sub
 
-    ''' <summary>
-    ''' Vrátí interpolovanou pozici psa pro zadaný čas.
-    ''' </summary>
-    ''' <param name="frameTime">Čas, pro který hledáš polohu</param>
-    ''' <returns>Interpolovaná pozice psa</returns>
-    Private Function InterpolatedDogPosition(frameTime As DateTime) As PointF
+
+
+
+    Private Function InterpolatedDogPosition(track As TrackAsPointsF, frameTime As DateTime) As PointF
+
+        Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+        Dim TrackTimes As List(Of DateTime) = track.TrackPointsF.Select(Function(tp) tp.Time).ToList()
+
         ' Pokud je frameTime před prvním časem, vrať první bod
-        If frameTime <= dogTimes.First() Then
-            Return dogPoints.First()
+        If frameTime <= TrackTimes.First() Then
+            Return TrackPoints.First()
         End If
 
         ' Pokud je frameTime po posledním čase, vrať poslední bod
-        If frameTime >= dogTimes.Last() Then
-            Return dogPoints.Last()
+        If frameTime >= TrackTimes.Last() Then
+            Return TrackPoints.Last()
         End If
 
         ' Najdi dva sousední body mezi kterými frameTime leží
-        For i As Integer = 0 To dogTimes.Count - 2
-            Dim t1 = dogTimes(i)
-            Dim t2 = dogTimes(i + 1)
+        For i As Integer = 0 To TrackTimes.Count - 2
+            Dim t1 = TrackTimes(i)
+            Dim t2 = TrackTimes(i + 1)
 
             If frameTime >= t1 AndAlso frameTime <= t2 Then
-                Dim p1 = dogPoints(i)
-                Dim p2 = dogPoints(i + 1)
+                Dim p1 = TrackPoints(i)
+                Dim p2 = TrackPoints(i + 1)
 
                 Dim totalSeconds = (t2 - t1).TotalSeconds
                 Dim elapsedSeconds = (frameTime - t1).TotalSeconds
@@ -188,20 +246,13 @@ Friend Class VideoCreator
             End If
         Next
 
-        ' Teoreticky by to sem nemělo dojít
-        Return dogPoints.Last()
+        ' Teoreticky by to sem nemělo dojít, ale fallback:
+        Return TrackPoints.Last()
     End Function
 
-    ''' <summary>
-    ''' Nakreslí text s obrysem (stínem) okolo.
-    ''' </summary>
-    ''' <param name="g">Graphics objekt, na který se kreslí.</param>
-    ''' <param name="text">Text k vykreslení.</param>
-    ''' <param name="font">Font textu.</param>
-    ''' <param name="mainColor">Hlavní barva textu.</param>
-    ''' <param name="outlineColor">Barva obrysu.</param>
-    ''' <param name="pos">Pozice (levý horní roh) textu.</param>
-    ''' <param name="outlineSize">Velikost obrysu v pixelech.</param>
+
+
+
     Public Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
         Using mainBrush As New SolidBrush(mainColor)
             Using outlineBrush As New SolidBrush(outlineColor)
@@ -222,98 +273,79 @@ Friend Class VideoCreator
 
 
 
-    Private Function GetTimesAndPoints(trkptnodes As XmlNodeList) As (Times As List(Of DateTime), Points As List(Of PointF))
 
-        ' Získá časy pro psy z dogtrkpts
-        Dim times As New List(Of DateTime)
-        Dim points As New List(Of PointF)
-        For Each trkpt As XmlNode In trkptnodes
-            Dim lat = Double.Parse(trkpt.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-            Dim lon = Double.Parse(trkpt.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-            Dim timetrkpt = _gpxRecord.Reader.SelectSingleChildNode("time", trkpt)
-            Dim time As DateTime = DateTime.Parse(timetrkpt.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
-            times.Add(time)
+    Private Function ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints As List(Of TrackAsGeoPoints))
 
+        Dim _tracksAsPointsF As New List(Of TrackAsPointsF)
+        For Each Track In _tracksAsGeoPoints
+            Dim _TrackAsPointsF As New TrackAsPointsF With {
+                .Label = Track.Label,
+                .Color = Track.Color,
+                .IsMoving = Track.IsMoving,
+                .TrackPointsF = New List(Of TrackPointF)
+            }
+            Dim createPNGTimes As Boolean = False 'pokud Track.IsMoving a Me.PNGTimes je Nothing, vytvoříme PNGTimes
+            If Track.IsMoving And Me.PNGTimes.Count = 0 Then createPNGTimes = True
+            For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
+                Dim x = CSng(((geoPoint.Location.Lon - minLon)) * lonDistancePerDegree * pixelsPerMetre) 'pozice X osa, přepočítaná na pixely
+                Dim y = CSng(((maxLat - geoPoint.Location.Lat)) * latDistancePerDegree * pixelsPerMetre) ' Y osa obrácená
 
-            Dim x = CSng((lon - minLon) * lonDistancePerDegree * scale)
-            Dim y = CSng((maxLat - lat) * latDistancePerDegree * scale) ' Y osa obrácená
-            points.Add(New PointF(x, y))
+                Dim _trackpointF As New TrackPointF With {
+                        .Location = New PointF With {.X = x, .Y = y},
+                        .Time = geoPoint.Time
+                    }
+                If createPNGTimes Then
+                    'pokud Track.IsMoving a Me.PNGTimes je Nothing, vytvoříme PNGTimes
+                    If Not Me.PNGTimes.Contains(geoPoint.Time) Then
+                        Me.PNGTimes.Add(geoPoint.Time)
+                    End If
+                End If
+                _TrackAsPointsF.TrackPointsF.Add(_trackpointF)
+            Next
+            _tracksAsPointsF.Add(_TrackAsPointsF)
         Next
-        Return (times, points)
+        Return _tracksAsPointsF
+
     End Function
 
 
-    ' Nastav velikost obrázku
-    Dim imgWidth As Integer = 600
-    Dim imgHeight As Integer = 600
-    Dim scale As Double '
-    Dim dogTimes As New List(Of DateTime) ' Časové značky pro psy   
-    Dim dogPoints As New List(Of PointF) ' Body pro psy
-    Dim layerPoints As New List(Of PointF) ' Body pro kladeče
-    Dim crossTrackPointsList As New List(Of List(Of PointF)) ' Body pro křížení 
-    ReadOnly latDistancePerDegree As Double = 111_320.0 ' průměrně ~111,3 km na jeden stupeň latitude
-    Dim lonDistancePerDegree As Double
 
-    Dim minLat As Double = Double.MaxValue, maxLat As Double = Double.MinValue
-    Dim minLon As Double = Double.MaxValue, maxLon As Double = Double.MinValue
-    Private Sub FindCoordinateAndImgRange()
+    Private Function ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts As List(Of TrackAsTrkPts)) As List(Of TrackAsGeoPoints)
         ' Najdi rozsah souřadnic
+        Dim tracksAsGeoPoint As New List(Of TrackAsGeoPoints)
+        For Each Track In _tracksAsTrkPts
+            Dim _TrackAsGeoPoints As New TrackAsGeoPoints With {
+                .Label = Track.Label,
+                .Color = Track.Color,
+                .IsMoving = Track.IsMoving,
+                .TrackGeoPoints = New List(Of TrackGeoPoint)
+            }
+            For Each trkptnode As XmlNode In Track.TrackPoints
+                Dim lat = Double.Parse(trkptnode.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+                Dim lon = Double.Parse(trkptnode.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+                Dim timenode = SelectSingleChildNode("time", trkptnode)
+                Dim time As DateTime
+                If timenode IsNot Nothing Then
+                    time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
+                Else
+                    Throw New Exception("Čas nebyl nalezen v trkpt.")
+                End If
 
 
-        For Each node As XmlNode In layerNodes
-            Dim lat = Double.Parse(node.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-            Dim lon = Double.Parse(node.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-            minLat = Math.Min(minLat, lat)
-            maxLat = Math.Max(maxLat, lat)
-            minLon = Math.Min(minLon, lon)
-            maxLon = Math.Max(maxLon, lon)
+                Dim geopoint As New TrackGeoPoint With {
+                        .Location = New Coordinates With {.Lat = lat, .Lon = lon},
+                        .Time = time
+                    }
+                'nebo asi lépe (uvidíme):
+                _TrackAsGeoPoints.TrackGeoPoints.Add(geopoint)
+            Next
+            tracksAsGeoPoint.Add(_TrackAsGeoPoints)
         Next
+        Return tracksAsGeoPoint
 
-        For Each node As XmlNode In dogNodes
-            Dim lat = Double.Parse(node.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-            Dim lon = Double.Parse(node.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-            minLat = Math.Min(minLat, lat)
-            maxLat = Math.Max(maxLat, lat)
-            minLon = Math.Min(minLon, lon)
-            maxLon = Math.Max(maxLon, lon)
-        Next
-        For Each crossTrackNodes In crossTracks
-            ' Pokud jsou křížové body, přepočítej je na body
-            If crossTrackNodes IsNot Nothing AndAlso crossTrackNodes.Count > 0 Then
-                For Each node As XmlNode In crossTrackNodes
-                    Dim lat = Double.Parse(node.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-                    Dim lon = Double.Parse(node.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-                    minLat = Math.Min(minLat, lat)
-                    maxLat = Math.Max(maxLat, lat)
-                    minLon = Math.Min(minLon, lon)
-                    maxLon = Math.Max(maxLon, lon)
-                Next
-            End If
-        Next
-
-        'na každou stranu přidáme 5 % jako margins:
-        maxLon += (maxLon - minLon) * 0.05
-        minLon -= (maxLon - minLon) * 0.05
-        maxLat += (maxLat - minLat) * 0.05
-        minLat -= (maxLat - minLat) * 0.05
+    End Function
 
 
-        ' Vypočítej šířku a výšku obrázku v metrech
-        Dim centerLat As Double = (minLat + maxLat) / 2
-        lonDistancePerDegree = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
-        Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
-        Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
-        ' Nastav velikost obrázku na základě rozsahu souřadnic
-        ' Vypočítej šířku a výšku obrázku v pixelech, tak aby se vešly do zadané velikosti 600x600
-        Dim maxImgWidth As Integer = 600
-        Dim maxImgHeight As Integer = 600
-
-        Dim scaleX As Double = maxImgWidth / widthInMeters
-        Dim scaleY As Double = maxImgHeight / heightInMeters
-        scale = Math.Min(scaleX, scaleY) 'in pixels per metre
-        imgWidth = CInt(widthInMeters * scale) 'in pixels
-        imgHeight = CInt(heightInMeters * scale)
-    End Sub
 
 
 
@@ -386,14 +418,76 @@ Friend Class VideoCreator
         End If
     End Function
 
+    ''' <summary>
+    ''' Najde poduzel se zadaným názvem, v GPX namespace.
+    ''' </summary>
+    ''' <param name="childName">např. "time"</param>
+    ''' <param name="parent">nadřazený XmlNode (např. trkpt)</param>
+    ''' <returns>XmlNode nebo Nothing</returns>
+    Function SelectSingleChildNode(childName As String, parent As XmlNode) As XmlNode
+        Dim nsmgr As New XmlNamespaceManager(parent.OwnerDocument.NameTable)
+        nsmgr.AddNamespace("gpx", "http://www.topografix.com/GPX/1/0")
+        Return parent.SelectSingleNode($"gpx:{childName}", nsmgr)
+    End Function
+
+    Function SelectTrkptNodes(trkNode As XmlNode) As XmlNodeList
+        Dim nsmgr As New XmlNamespaceManager(trkNode.OwnerDocument.NameTable)
+        nsmgr.AddNamespace("gpx", "http://www.topografix.com/GPX/1/0")
+        ' V GPX je to: trk > trkseg > trkpt
+        Return trkNode.SelectNodes(".//gpx:trkpt", nsmgr)
+    End Function
+
+
 
 End Class
 
 
-Public Class TrackData
+Public Class TrackPointF
+    Public Property Location As PointF
+    Public Property Time As DateTime
+End Class
+
+
+Public Class TrackGeoPoint
+    Public Property Location As Coordinates
+    Public Property Time As DateTime
+End Class
+
+Public Class Coordinates
+    Public Property Lat As Double
+    Public Property Lon As Double
+End Class
+
+Public Class TrackAsGeoPoints
     Public Property Label As String
-    Public Property Points As List(Of PointF)
-    Public Property Times As New List(Of DateTime) ' Časové značky pro psy   
     Public Property Color As Color
+    Public Property IsMoving As Boolean = False
+    Public Property TrackGeoPoints As List(Of TrackGeoPoint)
 End Class
+
+Public Class TrackAsPointsF
+    Public Property Label As String
+    Public Property Color As Color
+    Public Property IsMoving As Boolean = False
+    Public Property TrackPointsF As List(Of TrackPointF)
+End Class
+
+Public Class TrackAsTrkPts 'track as trackPoints
+    Public Property Label As String
+    Public Property Color As Color
+    Public Property IsMoving As Boolean = False
+    Public Property TrackPoints As XmlNodeList 'List obsahuje trkpt uzly
+End Class
+
+Public Class TrackAsTrkNode 'track as trkNode
+    Public Property Label As String
+    Public Property Color As Color
+    Public Property IsMoving As Boolean = False
+    Public Property TrkNode As XmlNode '
+End Class
+
+
+
+
+
 
