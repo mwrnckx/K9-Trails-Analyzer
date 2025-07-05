@@ -1,28 +1,35 @@
 ﻿Imports System.Drawing.Imaging
 Imports System.Xml
 Imports System.Diagnostics
-Imports System.Windows.Media.TextFormatting
 Imports System.IO
 Imports System.Windows.Media.Media3D
-Imports Microsoft.VisualBasic.Logging
-Imports System.DirectoryServices.ActiveDirectory
-Imports System.Windows.Controls.Primitives
 
+''' <summary>
+''' Creates a video from GPS tracks by converting them to images and encoding them into a video file.
+''' Supports multiple input formats: GeoPoints, PointsF, trkpt XmlNodes, and full trk XmlNode.
+''' Designed especialy for K9 handlers, visualizing dog's dynamic track on background of static trail-layer's track. Cross tracks can be shown too.
+''' </summary>
+''' <remarks>
+''' The generated video shows both static and moving tracks, with customizable colors and labels.
+''' Internally uses ffmpeg for video encoding.
+''' </remarks>
+''' <example>
+''' Dim creator As New VideoCreator(videoFolder, 500)
+''' creator.CreateVideoFromGeoPoints(listOfTracks)
+''' </example>
 Friend Class VideoCreator
-
     'pro všechny vstupy:
     Private directory As IO.DirectoryInfo
-    Public bgPNG As Bitmap 'pozadí pro závěrečný Formulář, bude nastaveno na prostřední snímek
-    Public Property minVideoSize As Single = 300 'minimální velikost obrázku v pixelech, pokud je menší, zvětší se na tuto hodnotu
-
+    Dim bgPNG As Bitmap 'pozadí pro závěrečný Formulář, bude nastaveno na prostřední snímek
+    Private Property minVideoSize As Single = 300 'minimální velikost obrázku v pixelech, pokud je menší, zvětší se na tuto hodnotu
+    Const minFrameInterval As Double = 3.0 'minimální interval mezi snímky v sekundách, aby video nebylo moc velké a rychlé, defaultně 3 sekundy
 
     'přetížení vstupu dat:
-    Public Property TracksAsTrkPts As List(Of TrackAsTrkPts)
-    Public Property TracksAsPointsF As List(Of TrackAsPointsF)
-    Public Property TracksAsGeoPoints As List(Of TrackAsGeoPoints)
-    Public Property TracksAsTrkNode As List(Of TrackAsTrkNode)
-    'Private _gpxRecord As GPXRecord
-    Private Property nsmgr As XmlNamespaceManager 'pro trkNode, pokud je potřeba
+    Private Property TracksAsTrkPts As List(Of TrackAsTrkPts)
+    Private Property TracksAsPointsF As List(Of TrackAsPointsF)
+    Private Property TracksAsGeoPoints As List(Of TrackAsGeoPoints)
+    Private Property TracksAsTrkNode As List(Of TrackAsTrkNode)
+
     'Private TrkNodes As List(Of XmlNodeList)
 
     Dim imgWidth As Integer = 600
@@ -42,6 +49,11 @@ Friend Class VideoCreator
 
     Public Event WarningOccurred(message As String, _color As Color)
 
+    ''' <summary>
+    ''' Initializes a new instance of the VideoCreator class.
+    ''' </summary>
+    ''' <param name="videoPath">Directory where images and the video will be saved.</param>
+    ''' <param name="_minVideoSize">Minimum size of the output video in pixels.</param>
     Public Sub New(videoPath As IO.DirectoryInfo, _minVideoSize As Single)
         ' Nastav cestu k adresáři, kde se budou ukládat obrázky a video
         Me.directory = videoPath
@@ -49,14 +61,12 @@ Friend Class VideoCreator
         ' Pokud adresář neexistuje, vytvoř ho
         pngDirectory = Me.directory.CreateSubdirectory("png")
         minVideoSize = _minVideoSize
-
     End Sub
 
-
-
-
-
-
+    ''' <summary>
+    ''' Creates a video from tracks represented as geo points (latitude/longitude coordinates).
+    ''' </summary>
+    ''' <param name="_tracksAsGeoPoints">List of tracks containing geo points.</param>
     Public Sub CreateVideoFromGeoPoints(_tracksAsGeoPoints As List(Of TrackAsGeoPoints))
         TracksAsGeoPoints = _tracksAsGeoPoints
         For Each Track In _tracksAsGeoPoints
@@ -87,11 +97,13 @@ Friend Class VideoCreator
         Dim _TracksAsPointsF As List(Of TrackAsPointsF) = ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints) 'přepočítá trasy na body a uloží do TrackAsPointsF
 
         CreateVideoFromPointsF(_TracksAsPointsF)
-
     End Sub
 
 
-
+    ''' <summary>
+    ''' Creates a video from tracks represented as trkNode XML nodes.
+    ''' </summary>
+    ''' <param name="_tracksAsTrkNode">List of tracks containing trkNode elements.</param>
     Public Sub CreateVideoFromTrkNode(_tracksAsTrkNode As List(Of TrackAsTrkNode))
         TracksAsTrkNode = _tracksAsTrkNode
         Dim tracksAsTrkPts As New List(Of TrackAsTrkPts)
@@ -106,20 +118,23 @@ Friend Class VideoCreator
             tracksAsTrkPts.Add(_TrackAsTrkPts)
         Next
         CreateVideoFromTrkPts(tracksAsTrkPts)
-
     End Sub
 
-
+    ''' <summary>
+    ''' Creates a video from tracks represented as lists of trkpt XML nodes.
+    ''' </summary>
+    ''' <param name="_tracksAsTrkPts">List of tracks containing trkpt XML nodes.</param>
     Public Sub CreateVideoFromTrkPts(_tracksAsTrkPts As List(Of TrackAsTrkPts))
-
         TracksAsTrkPts = _tracksAsTrkPts
         Dim _tracksAsGeoPoints As List(Of TrackAsGeoPoints) = ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts) 'přepočítá trasy na body a uloží do TrackAsGeoPoints
         CreateVideoFromGeoPoints(_tracksAsGeoPoints)
-
     End Sub
 
 
-
+    ''' <summary>
+    ''' Creates a video from tracks converted to 2D points with timestamps.
+    ''' </summary>
+    ''' <param name="_tracksAsPointsF">List of tracks containing 2D points and times.</param>
     Public Sub CreateVideoFromPointsF(_tracksAsPointsF As List(Of TrackAsPointsF))
         TracksAsPointsF = _tracksAsPointsF
         ' Vytvoř obrázky pro každý časový záznam
@@ -134,19 +149,25 @@ Friend Class VideoCreator
             frameInterval = Math.Min(frameInterval, (PNGTimes(i + 1) - PNGTimes(i)).TotalSeconds)
             Debug.WriteLine($"{i} {(PNGTimes(i + 1) - PNGTimes(i)).TotalSeconds}")
         Next
-        frameInterval = Math.Max(3, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
+        frameInterval = Math.Max(minFrameInterval, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
 
         Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval))
         Dim fps As Double = 1 / frameInterval 'video framerate
 
-        CreatePNGs(pngDirectory, frameCount, frameInterval)
+        createPNGs(pngDirectory, frameCount, frameInterval)
 
         Debug.WriteLine("Vygenerováno " & frameCount & " snímků.")
         Dim videoFilename = IO.Path.Combine(Me.directory.FullName, "overlay")
 
         CreateVideoWithFfmpeg(videoFilename, pngDirectory.FullName, fps)
-
     End Sub
+
+    ''' <summary>
+    ''' Creates PNG images for each frame of the video.
+    ''' </summary>
+    ''' <param name="pngDirectory">Directory where PNG images will be saved.</param>
+    ''' <param name="framecount">Total number of frames to create.</param>
+    ''' <param name="frameinterval">Time interval between frames in seconds.</param>
     Private Sub createPNGs(pngDirectory As IO.DirectoryInfo, framecount As Integer, frameinterval As Double)
         Dim radius As Single = 0.025 * Math.Max(imgWidth, imgHeight) ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Dim penWidth As Single = 0.01 * Math.Max(imgWidth, imgHeight)  ' šířka pera pro kreslení čar, 1% šířky obrázku
@@ -203,8 +224,6 @@ Friend Class VideoCreator
                 frameIndex += 1
             End Using
         Next
-
-
     End Sub
 
 
@@ -251,9 +270,7 @@ Friend Class VideoCreator
     End Function
 
 
-
-
-    Public Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
+    Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
         Using mainBrush As New SolidBrush(mainColor)
             Using outlineBrush As New SolidBrush(outlineColor)
                 ' Kresli obrys – cyklem dokola podle outlineSize
@@ -285,6 +302,7 @@ Friend Class VideoCreator
                 .TrackPointsF = New List(Of TrackPointF)
             }
             Dim createPNGTimes As Boolean = False 'pokud Track.IsMoving a Me.PNGTimes je Nothing, vytvoříme PNGTimes
+            'PNGTimes se tvoří pouze z prvního pohyblivého tracku.
             If Track.IsMoving And Me.PNGTimes.Count = 0 Then createPNGTimes = True
             For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
                 Dim x = CSng(((geoPoint.Location.Lon - minLon)) * lonDistancePerDegree * pixelsPerMetre) 'pozice X osa, přepočítaná na pixely
@@ -409,7 +427,7 @@ Friend Class VideoCreator
         End If
     End Sub
 
-    Public Function GetContrastColor(bgColor As Color) As Color
+    Function GetContrastColor(bgColor As Color) As Color
         Dim luminance As Double = 0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B
         If luminance < 128 Then
             Return Color.White
@@ -449,7 +467,13 @@ End Class
 
 
 Public Class TrackGeoPoint
+    ''' <summary>
+    ''' The geographic coordinates (latitude and longitude).
+    ''' </summary>
     Public Property Location As Coordinates
+    ''' <summary>
+    ''' The timestamp corresponding to this geo point.
+    ''' </summary>
     Public Property Time As DateTime
 End Class
 
@@ -459,31 +483,95 @@ Public Class Coordinates
 End Class
 
 Public Class TrackAsGeoPoints
+    ''' <summary>
+    ''' Label describing the track (e.g., dog, handler).
+    ''' </summary>
     Public Property Label As String
+
+    ''' <summary>
+    ''' Color used to draw the track.
+    ''' </summary>
     Public Property Color As Color
+
+    ''' <summary>
+    ''' Indicates if this track represents a moving object.
+    ''' </summary>
     Public Property IsMoving As Boolean = False
+
+    ''' <summary>
+    ''' List of geo points (latitude, longitude, timestamp) for the track.
+    ''' </summary>
     Public Property TrackGeoPoints As List(Of TrackGeoPoint)
+
 End Class
 
 Public Class TrackAsPointsF
+    ''' <summary>
+    ''' Label describing the track.
+    ''' </summary>
     Public Property Label As String
+
+    ''' <summary>
+    ''' Color used to draw the track.
+    ''' </summary>
     Public Property Color As Color
+
+    ''' <summary>
+    ''' Indicates if this track represents a moving object.
+    ''' </summary>
     Public Property IsMoving As Boolean = False
+
+    ''' <summary>
+    ''' List of 2D points (pixel coordinates and timestamps) for the track.
+    ''' </summary>
     Public Property TrackPointsF As List(Of TrackPointF)
+
 End Class
 
 Public Class TrackAsTrkPts 'track as trackPoints
+    ''' <summary>
+    ''' Label describing the track.
+    ''' </summary>
     Public Property Label As String
+
+    ''' <summary>
+    ''' Color used to draw the track.
+    ''' </summary>
     Public Property Color As Color
+
+    ''' <summary>
+    ''' Indicates if this track represents a moving object.
+    ''' </summary>
     Public Property IsMoving As Boolean = False
-    Public Property TrackPoints As XmlNodeList 'List obsahuje trkpt uzly
+
+    ''' <summary>
+    ''' XmlNodeList containing all trkpt elements in the track.
+    ''' </summary>
+    Public Property TrackPoints As XmlNodeList
+
 End Class
 
 Public Class TrackAsTrkNode 'track as trkNode
+    ''' <summary>
+    ''' Label describing the track.
+    ''' </summary>
     Public Property Label As String
+
+    ''' <summary>
+    ''' Color used to draw the track.
+    ''' </summary>
     Public Property Color As Color
+
+    ''' <summary>
+    ''' Indicates if this track represents a moving object.
+    ''' </summary>
     Public Property IsMoving As Boolean = False
-    Public Property TrkNode As XmlNode '
+
+    ''' <summary>
+    ''' The XmlNode representing the trk element of the track.
+    ''' </summary>
+    Public Property TrkNode As XmlNode
+
 End Class
 
 
