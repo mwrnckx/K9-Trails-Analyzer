@@ -75,12 +75,6 @@ Public Class GpxFileManager
 
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku TrailLayer
-                    If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
-                        If MessageBox.Show($"Má se vytvořit video pohybu psa ze souboru {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
-                            _gpxRecord.CreateVideoFromDogTrack()
-                        End If
-
-                    End If
                 End If
                 _gpxRecord.DogSpeed = _gpxRecord.CalculateSpeed
                 _gpxRecord.Link = _gpxRecord.Getlink
@@ -91,6 +85,19 @@ Public Class GpxFileManager
 
                 'a nakonec
                 _gpxRecord.SetCreatedModifiedDate()
+
+                If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+                    If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
+                        If MessageBox.Show($"Should a video of the dog's movement be created from the file: {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
+                            Try
+                                _gpxRecord.CreateVideoFromDogTrack()
+                            Catch ex As Exception
+                                MessageBox.Show($"Creating a video from a file {_gpxRecord.Reader.FileName} failed." & vbCrLf & $"Message: {ex}")
+                            End Try
+
+                        End If
+                    End If
+                End If
             Catch ex As Exception
                 MessageBox.Show($"Reading or processing of the file {_gpxRecord.Reader.FileName} failed.")
             End Try
@@ -990,7 +997,6 @@ FoundTrailLayerTrk:
 
             Dim goalPart As String = "", trailPart As String = "", dogPart As String = ""
             ExtractDescriptionParts(SummaryDescription, goalPart, trailPart, dogPart)
-
             ' Otevřeš okno k editaci:
             Dim frm As New frmEditComments With {
                            .GoalPart = goalPart,

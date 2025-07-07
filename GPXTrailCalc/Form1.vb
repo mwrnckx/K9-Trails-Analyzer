@@ -7,6 +7,7 @@ Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
 Imports System.Linq
 
+
 Public Class Form1
     'Private gpxCalculator As GPXDistanceCalculator
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture

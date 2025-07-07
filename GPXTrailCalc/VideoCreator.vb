@@ -3,6 +3,8 @@ Imports System.Xml
 Imports System.Diagnostics
 Imports System.IO
 Imports System.Windows.Media.Media3D
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox
+Imports System.Windows.Media.TextFormatting
 
 ''' <summary>
 ''' Creates a video from GPS tracks by converting them to images and encoding them into a video file.
@@ -69,6 +71,7 @@ Friend Class VideoCreator
     ''' <param name="_tracksAsGeoPoints">List of tracks containing geo points.</param>
     Public Sub CreateVideoFromGeoPoints(_tracksAsGeoPoints As List(Of TrackAsGeoPoints))
         TracksAsGeoPoints = _tracksAsGeoPoints
+        Dim textSize As Single = 0
         For Each Track In _tracksAsGeoPoints
 
             For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
@@ -82,7 +85,7 @@ Friend Class VideoCreator
         maxLat += (maxLat - minLat) * 0.05  'přidáme 10% na okraje
         minLat -= (maxLat - minLat) * 0.05  'přidáme 10% na okraje
         maxLon += (maxLon - minLon) * 0.05  'přidáme 10% na okraje
-        minLon -= (maxLon - minLon) * 0.05  'přidáme 10% na okraje
+        minLon -= (maxLon - minLon) * 0.05  'přidáme 10% na okraje 
 
         ' Vypočítej šířku a výšku obrázku v metrech
         Dim centerLat As Double = (minLat + maxLat) / 2
@@ -171,7 +174,7 @@ Friend Class VideoCreator
     Private Sub createPNGs(pngDirectory As IO.DirectoryInfo, framecount As Integer, frameinterval As Double)
         Dim radius As Single = 0.025 * Math.Max(imgWidth, imgHeight) ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
         Dim penWidth As Single = 0.01 * Math.Max(imgWidth, imgHeight)  ' šířka pera pro kreslení čar, 1% šířky obrázku
-        Dim emSize As Single = 0.03 * Math.Max(imgWidth, imgHeight)  '
+        Dim emSize As Single = 0.015 * Math.Max(imgWidth, imgHeight) '
 
         ' Předem vytvoř statickou bitmapu
         Dim staticBmp As New Bitmap(imgWidth, imgHeight, PixelFormat.Format32bppArgb)
@@ -183,13 +186,25 @@ Friend Class VideoCreator
                     Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
                     g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
                     ' popis, poslední bod atd.
+                    Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
                     Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
-                    Dim popis As String = track.Label
+                    Dim popis As String = track.Label & " " & time
                     Dim textSize = g.MeasureString(popis, font)
-                    Dim p As PointF = TrackPoints.Last
                     Dim contrastColor As Color = GetContrastColor(track.Color)
+                    Dim p As PointF = TrackPoints.Last
                     g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
-                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
+                    Dim offsetX As Single
+                    If p.X - textSize.Width - radius < 0 Then
+                        ' není místo vlevo, napiš text vpravo od elipsy
+                        offsetX = radius
+                    Else
+                        ' je místo, napiš text vlevo
+                        offsetX = -textSize.Width - radius
+                    End If
+                    Dim textPos As New PointF(p.X + offsetX, p.Y - textSize.Height / 2)
+                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
+
+                    'DrawTextWithOutline(g, popis, font, track.Color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
                 End If
             Next
         End Using
@@ -214,19 +229,35 @@ Friend Class VideoCreator
 
                             If _dogTrail.Count > 1 Then g.DrawLines(New Pen(track.Color, penWidth), _dogTrail.ToArray)
                             g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+                            ' popis, poslední bod atd.
+
+                            Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
+                            Dim popis As String = frameTime.ToString("HH:mm:ss")
+                            Dim textSize = g.MeasureString(popis, font)
+                            Dim offsetX As Single
+                            If p.X - textSize.Width - radius < 0 Then
+                                ' není místo vlevo, napiš text vpravo od elipsy
+                                offsetX = radius
+                            Else
+                                ' je místo, napiš text vlevo
+                                offsetX = -textSize.Width - radius
+                            End If
+                            Dim textPos As New PointF(p.X + offsetX, p.Y - textSize.Height / 2)
+                            Dim contrastColor As Color = GetContrastColor(track.Color)
+
+                            'Dim textPos As New PointF(imgWidth - textSize.Width, 0)'alternativně vpravo nahoře
+                            DrawTextWithOutline(g, popis, Font, track.Color, contrastColor, textPos, 2)
                         End If
                     Next
                 End Using
 
                 Dim filename = IO.Path.Combine(pngDirectory.FullName, $"frame_{frameIndex:D4}.png")
                 bmp.Save(filename, ImageFormat.Png)
-                If frameIndex = CInt(framecount / 2) Then Me.bgPNG = New Bitmap(bmp)
+                If frameIndex = CInt(2 * framecount / 3) Then Me.bgPNG = New Bitmap(bmp)
                 frameIndex += 1
             End Using
         Next
     End Sub
-
-
 
 
     Private Function InterpolatedDogPosition(track As TrackAsPointsF, frameTime As DateTime) As PointF
@@ -391,8 +422,9 @@ Friend Class VideoCreator
             RaiseEvent WarningOccurred("Failed to create video from images.", Color.Red)
             Return
         Else
-            'úklid:
-            IO.Directory.GetFiles(pngDir).ToList().ForEach(Sub(f) System.IO.File.Delete(f))
+            ''úklid:
+            'IO.Directory.GetFiles(pngDir).ToList().ForEach(Sub(f) System.IO.File.Delete(f))
+            'IO.Directory.Delete(pngDir, True) 'smazat adresář s PNG obrázky
         End If
         ' Vytvoř pomalou verzi videa (aby čas odpovídal reálné délce práce psa):
 
@@ -417,13 +449,25 @@ Friend Class VideoCreator
             RaiseEvent WarningOccurred($"Failed to create video {outputFile}.mov.", Color.Red)
             Return
         Else
-            'úklid:
-            System.IO.File.Delete((outputFile & "_fast.mov"))
+
             Debug.WriteLine("Hotovo! Video vygenerováno.")
             RaiseEvent WarningOccurred($"Overlayvideo has been created and saved to {outputFile}.mov", Color.Green)
             Dim form As New frmVideoDone(outputFile & ".mov", Me.bgPNG)
             form.ShowDialog()
+            If Me.bgPNG IsNot Nothing Then
+                Me.bgPNG.Dispose()
+                Me.bgPNG = Nothing
+            End If
+            'úklid:
+            'IO.Directory.GetFiles(pngDir).ToList().ForEach(Sub(f) System.IO.File.Delete(f))
+            Try
+                IO.Directory.Delete(pngDir, True) 'smazat adresář s PNG obrázky
+            Catch ex As Exception
+                RaiseEvent WarningOccurred("Failed to delete PNG directory: " & ex.Message, Color.Red)
+                'když selže smazání adresáře, např. když je otevřený v jiném programu, jede se dál
+            End Try
 
+            IO.File.Delete((outputFile & "_fast.mov"))
         End If
     End Sub
 
@@ -444,18 +488,19 @@ Friend Class VideoCreator
     ''' <returns>XmlNode nebo Nothing</returns>
     Function SelectSingleChildNode(childName As String, parent As XmlNode) As XmlNode
         Dim nsmgr As New XmlNamespaceManager(parent.OwnerDocument.NameTable)
-        nsmgr.AddNamespace("gpx", "http://www.topografix.com/GPX/1/0")
+        Dim ns As String = parent.GetNamespaceOfPrefix("") ' získá default namespace parent uzlu
+        nsmgr.AddNamespace("gpx", ns)
         Return parent.SelectSingleNode($"gpx:{childName}", nsmgr)
     End Function
 
+
     Function SelectTrkptNodes(trkNode As XmlNode) As XmlNodeList
         Dim nsmgr As New XmlNamespaceManager(trkNode.OwnerDocument.NameTable)
-        nsmgr.AddNamespace("gpx", "http://www.topografix.com/GPX/1/0")
+        Dim ns As String = trkNode.GetNamespaceOfPrefix("") ' získá default namespace parent uzlu
+        nsmgr.AddNamespace("gpx", ns)
         ' V GPX je to: trk > trkseg > trkpt
         Return trkNode.SelectNodes(".//gpx:trkpt", nsmgr)
     End Function
-
-
 
 End Class
 

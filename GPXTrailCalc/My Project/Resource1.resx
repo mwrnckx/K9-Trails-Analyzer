@@ -255,9 +255,6 @@
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
     <value>Sniffed per month (km)</value>
   </data>
-  <data name="strGoal" xml:space="preserve">
-    <value>Goal:</value>
-  </data>
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Goal:</value>
   </data>

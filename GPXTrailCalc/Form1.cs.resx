@@ -218,4 +218,31 @@
   <data name="mnuMergingTracks.Text" xml:space="preserve">
     <value>Spáruj trasy kladeče a psa</value>
   </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Mělo by být natočeno video pro mapu „Mapa trasy obrázku?</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Adresáře lze nastavit v nabídce „Soubor“</value>
+  </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Zobrazit grafy</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Adresáře lze nastavit v nabídce „Soubor“</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Proces již zpracované soubory</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Procesní soubory, které již byly zpracovány</value>
+  </data>
+  <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
+    <value>Tovární resetování</value>
+  </data>
+  <data name="mnuDogName.Text" xml:space="preserve">
+    <value>Jméno psa</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Preference</value>
+  </data>
 </root>
