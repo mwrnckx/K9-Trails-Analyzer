@@ -264,4 +264,10 @@
   <data name="txtDogLabel" xml:space="preserve">
     <value>Dog:</value>
   </data>
+  <data name="txtTrailLayer" xml:space="preserve">
+    <value>runner</value>
+  </data>
+  <data name="txtCrossTrack" xml:space="preserve">
+    <value>cross-track</value>
+  </data>
 </root>

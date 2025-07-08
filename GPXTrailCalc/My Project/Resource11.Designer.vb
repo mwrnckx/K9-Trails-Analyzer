@@ -353,15 +353,6 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Goal:.
-        '''</summary>
-        Friend Shared ReadOnly Property strGoal() As String
-            Get
-                Return ResourceManager.GetString("strGoal", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný This is the end of the period within which the trails are to be processed..
         '''</summary>
         Friend Shared ReadOnly Property Tooltip_dtpEnd() As String
@@ -434,6 +425,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný cross-track.
+        '''</summary>
+        Friend Shared ReadOnly Property txtCrossTrack() As String
+            Get
+                Return ResourceManager.GetString("txtCrossTrack", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Dog:.
         '''</summary>
         Friend Shared ReadOnly Property txtDogLabel() As String
@@ -457,6 +457,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property txtTrailLabel() As String
             Get
                 Return ResourceManager.GetString("txtTrailLabel", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný runner.
+        '''</summary>
+        Friend Shared ReadOnly Property txtTrailLayer() As String
+            Get
+                Return ResourceManager.GetString("txtTrailLayer", resourceCulture)
             End Get
         End Property
         

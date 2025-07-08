@@ -255,12 +255,16 @@
   <data name="Y-AxisLabelMonthly" xml:space="preserve">
     <value>Načucháno měsíčně (km)</value>
   </data>
-
   <data name="txtGoalLabel" xml:space="preserve">
     <value>Cíl:</value>
   </data>
- 
   <data name="txtDogLabel" xml:space="preserve">
     <value>Pes:</value>
+  </data>
+  <data name="txtTrailLayer" xml:space="preserve">
+    <value>kladeč</value>
+  </data>
+  <data name="txtCrossTrack" xml:space="preserve">
+    <value>křížení</value>
   </data>
 </root>

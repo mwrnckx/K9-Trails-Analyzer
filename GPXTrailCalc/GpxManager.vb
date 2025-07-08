@@ -12,9 +12,11 @@ Imports Microsoft.VisualBasic.Logging
 Imports System.Windows.Forms
 Imports System.Drawing.Text
 Imports System.Windows.Documents
+Imports System.Text.Json
 
 Imports System.Drawing
 Imports System.Drawing.Imaging
+Imports System.Net.Http
 
 
 Public Class GpxFileManager
@@ -59,6 +61,8 @@ Public Class GpxFileManager
         Dim _gpxFilesMerged As List(Of GPXRecord) = MergeGpxFiles(_gpxFilesSortedAndFiltered)
 
         Dim totalDist As Double = 0
+
+        GetWheather() 'získá počasí, ale zatím nevyužívá, jen pro testování
 
         For Each _gpxRecord As GPXRecord In _gpxFilesMerged
             Try
@@ -112,6 +116,23 @@ Public Class GpxFileManager
     End Function
 
 
+    Private Async Sub GetWheather()
+        Dim client As New HttpClient()
+        Dim url As String = "https://archive-api.open-meteo.com/v1/archive?latitude=50.0755&longitude=14.4378&start_date=2025-07-01&end_date=2025-07-01&hourly=temperature_2m"
+
+        Dim response As HttpResponseMessage = Await client.GetAsync(url)
+        Dim content As String = Await response.Content.ReadAsStringAsync()
+        If Not response.IsSuccessStatusCode Then
+            RaiseEvent WarningOccurred($"Failed to fetch weather data: {response.ReasonPhrase}", Color.Red)
+            Return
+        End If
+        'Dim json As System.Text.Json.JsonDocument = JsonDocument.Parse(content)
+        'Dim tempArray = json.RootElement.GetProperty("hourly").GetProperty("temperature_2m")
+        'For Each temp In tempArray.EnumerateArray()
+        '    Console.WriteLine(temp.ToString())
+        'Next
+
+    End Sub
 
 
     Public Function GetGPXFilesWithinInterval() As List(Of GPXRecord)
@@ -459,18 +480,17 @@ Public Class GPXRecord
 
             Dim isMoving As Boolean = False 'defaultně pro ostatní trasy
             Dim trackColor As Color = Color.Green ' Default color for other tracks
-            Dim trkType As String = Me.GetTrkType(trkNode)
+            Dim label As String = Me.GetTrkType(trkNode).label
+            Dim trkType As String = Me.GetTrkType(trkNode).typ
             If trkType.Trim().ToLower() = TrackTypes.Dog.Trim().ToLower() Then
                 isMoving = True
                 trackColor = Color.Red
             ElseIf trkType.Trim().ToLower() = TrackTypes.TrailLayer.Trim().ToLower() Then
                 trackColor = Color.Blue
             End If
-
-
             TrackAsTrkptsList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
             allTracks.Add(New TrackAsTrkPts With {
-                .Label = GetTrkType(trkNode),
+                .Label = label,
                 .Color = trackColor,
                 .IsMoving = isMoving,
                 .TrackPoints = TrackAsTrkptsList
@@ -1227,15 +1247,25 @@ FoundTrailLayerTrk:
         Return isTheSameType
     End Function
 
-    Private Function GetTrkType(trkNode As XmlNode) As String
+    Private Function GetTrkType(trkNode As XmlNode) As (typ As String, label As String)
         ' Zkontroluj, jestli už <type> existuje
         Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes("type", trkNode)
         Dim isTheSameType As Boolean = False
         For Each existingtype As XmlNode In existingTypes
             Select Case existingtype.InnerText.Trim().ToLower()
-                Case TrackTypes.TrailLayer.Trim().ToLower(), TrackTypes.Dog.Trim().ToLower(), TrackTypes.CrossTrack.Trim().ToLower()
+                Case TrackTypes.TrailLayer.Trim().ToLower()
                     ' vrátí první nalezený typ
-                    Return existingtype.InnerText.Trim().ToLower()
+                    Dim _typ As String = existingtype.InnerText.Trim().ToLower()
+                    Dim _label As String = My.Resources.Resource1.txtTrailLayer
+                    Return (_typ, _label)
+                Case TrackTypes.Dog.Trim().ToLower()
+                    Dim _typ As String = existingtype.InnerText.Trim().ToLower()
+                    Dim _label As String = My.Resources.Resource1.txtDogLabel
+                    Return (_typ, _label)
+                Case TrackTypes.CrossTrack.Trim().ToLower()
+                    Dim _typ As String = existingtype.InnerText.Trim().ToLower()
+                    Dim _label As String = My.Resources.Resource1.txtCrossTrack
+                    Return (_typ, _label)
                 Case Else
                     ' záznam jiných aplikací nemazat
             End Select

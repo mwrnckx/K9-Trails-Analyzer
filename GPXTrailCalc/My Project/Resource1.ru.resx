@@ -219,5 +219,49 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>В начале следа, пока вы еще не начали движение, и в конце, пока не выключили запись, GPS-устройство может записывать неточные или ошибочные данные. Если эта опция включена, программа попытается автоматически удалить такие ошибки.</value>
   </data>
- 
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Решите, связаны ли эти два файла как трек-слой и собачий трек.</value>
+  </data>
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Установите максимальную разницу во времени (в часах) между двумя записями треков, которые должны считаться связанными и объединенными в один файл gpx как трек слоя и трек собаки. Таким образом, значение указывает максимальный возраст трассы, которую вы используете. Значение 0 отключает автоматическое слияние.!</value>
+  </data>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Установить условия для слияния треков</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>Слияние файлов GPX?</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>Объединяя их, вы получите один файл gpx, который содержит треки как трассового слоя, так и собаки.</value>
+  </data>
+  <data name="lblIsThisLayerQ" xml:space="preserve">
+    <value>Первый файл</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Второй файл</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Помните решение «нет» для этой пары</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>Для других пар не спрашивайте больше и сразу же присоединяйтесь (осторожно!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>Для других пар не спрашивайте больше и не сливайтесь.</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>В следующий раз спросите еще раз</value>
+  </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Понюхал в месяц (км)</value>
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Цель:</value>
+  </data>
+  <data name="txtDogLabel" xml:space="preserve">
+    <value>Собака:</value>
+  </data>
+  <data name="txtCrossTrack" xml:space="preserve">
+    <value>кросс-трек</value>
+  </data>
 </root>
