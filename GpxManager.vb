@@ -384,18 +384,6 @@ Public Class GPXRecord
 
     Public Event WarningOccurred(_message As String, _color As Color)
 
-    Public Sub New(_reader As GpxReader, forceProcess As Boolean)
-        gpxDirectory = My.Settings.Directory
-        BackupDirectory = My.Settings.BackupDirectory
-
-        If Not Directory.Exists(BackupDirectory) Then
-            Directory.CreateDirectory(BackupDirectory)
-        End If
-        Me.Reader = _reader
-        IsAlreadyProcessed = IsProcessed()
-
-    End Sub
-
     Private _LayerStart As Date
     Public Property LayerStart As DateTime
         Get
@@ -428,8 +416,6 @@ Public Class GPXRecord
         End Set
     End Property
 
-
-
     Public Property TrailAge As TimeSpan
     Public Property Distance As Double
     Public Property TotalDistance As Double
@@ -438,10 +424,23 @@ Public Class GPXRecord
     Public Property DogSpeed As Double
     Public Property Reader As GpxReader
     Public Property IsAlreadyProcessed As Boolean
+    Private Property WindDirection As Double = 0.0 ' Směr větru v stupních
 
 
     Private ReadOnly Property gpxDirectory As String
     Private ReadOnly Property BackupDirectory As String
+
+    Public Sub New(_reader As GpxReader, forceProcess As Boolean)
+        gpxDirectory = My.Settings.Directory
+        BackupDirectory = My.Settings.BackupDirectory
+
+        If Not Directory.Exists(BackupDirectory) Then
+            Directory.CreateDirectory(BackupDirectory)
+        End If
+        Me.Reader = _reader
+        IsAlreadyProcessed = IsProcessed()
+
+    End Sub
 
     Friend Sub SetCreatedModifiedDate()
         'change of attributes
@@ -490,7 +489,7 @@ Public Class GPXRecord
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
 
-        Dim _videoCreator As New VideoCreator(directory, 600)
+        Dim _videoCreator As New VideoCreator(directory, 800, WindDirection)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         ' Vytvoř video z trk bodů
@@ -989,7 +988,7 @@ FoundTrailLayerTrk:
         If dogPart <> "" Then sb.Append(styleRedBold & dogLabel & " " & dogPart & styleend)
 
         ' 🌧🌦☀ Počasí
-        GetWheather() 'získá počasí, ale zatím nevyužívá, jen pro testování
+        Wheather() 'získá počasí, ale zatím nevyužívá, jen pro testování
 
 
         Return sb.ToString().Trim()
@@ -1629,10 +1628,10 @@ FoundTrailLayerTrk:
     End Function
 
     ' ☀🌦🌧  Počasí
-    Private Async Sub GetWheather()
+    Private Async Sub Wheather()
         Dim client As New HttpClient()
         Dim datum As String = $"{trailStart.Time:yyyy-MM-dd}"
-        Dim url As String = $"https://archive-api.open-meteo.com/v1/archive?latitude={trailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={trailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0cm,rain,wind_direction_10m"
+        Dim url As String = $"https://api.open-meteo.com/v1/forecast?latitude={trailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={trailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0cm,wind_direction_10m,cloud_cover,precipitation&wind_speed_unit=ms"
 
         Dim response As HttpResponseMessage = Await client.GetAsync(url)
         Dim content As String = Await response.Content.ReadAsStringAsync()
@@ -1641,22 +1640,21 @@ FoundTrailLayerTrk:
             Return
         End If
         Dim json As JsonDocument = JsonDocument.Parse(content)
-        Dim tempArray = json.RootElement.GetProperty("hourly").GetProperty("temperature_2m")
-        For Each temp In tempArray.EnumerateArray()
-            Debug.WriteLine(temp.ToString())
-        Next
 
         ' Získej kořenový element
         Dim root = json.RootElement
 
         ' Najdi pole časů
         Dim times = root.GetProperty("hourly").GetProperty("time")
-        Dim hledanyCas As String = "2025-07-06T10:00"
+
+        Dim localTime As DateTime = LayerStart ' ten načtený čas
+        Dim utcTime As DateTime = trailStart.Time.ToUniversalTime()
+        Dim hledanyCasUTC As String = $"{utcTime:yyyy-MM-ddThh:00}"
 
         ' Teď projdeme všechny časy a najdeme index, kde čas == hledaný čas
         Dim index As Integer = -1
         For i As Integer = 0 To times.GetArrayLength() - 1
-            If times(i).GetString() = hledanyCas Then
+            If times(i).GetString() = hledanyCasUTC Then
                 index = i
                 Exit For
             End If
@@ -1669,16 +1667,22 @@ FoundTrailLayerTrk:
             Dim temps = root.GetProperty("hourly").GetProperty("temperature_2m")
             Dim windSpeeds = root.GetProperty("hourly").GetProperty("wind_speed_10m")
             Dim windDirs = root.GetProperty("hourly").GetProperty("wind_direction_10m")
+            Dim rains = root.GetProperty("hourly").GetProperty("precipitation")
+            Dim cloud_covers = root.GetProperty("hourly").GetProperty("cloud_cover")
 
             ' Vytáhni hodnoty
             Dim teplota = temps(index).GetDouble()
             Dim rychlostVetru = windSpeeds(index).GetDouble()
-            Dim smerVetru = windDirs(index).GetDouble()
+            WindDirection = windDirs(index).GetDouble()
+            Dim precipitation = rains(index).GetDouble
+            Dim cloude_cover = cloud_covers(index).GetDouble
 
-            Debug.Write("Pro čas " & hledanyCas & ":")
+            Debug.Write("Pro čas " & hledanyCasUTC & ": ")
             Debug.Write("Teplota: " & teplota.ToString())
-            Debug.Write("Vítr (km/h): " & rychlostVetru.ToString())
-            Debug.WriteLine("Směr větru: " & SmerVetraNaText(smerVetru))
+            Debug.Write(" Oblačnost:  " & cloude_cover.ToString())
+            Debug.Write(" Srážky (mm/h):  " & precipitation.ToString())
+            Debug.Write(" Vítr (m/s): " & rychlostVetru.ToString())
+            Debug.WriteLine(" Vítr: " & SmerVetraNaText(WindDirection))
 
 
         End If

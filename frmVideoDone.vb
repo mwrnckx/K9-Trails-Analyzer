@@ -24,10 +24,8 @@
     Private Sub btnPlayVideo_Click(sender As Object, e As EventArgs) Handles btnPlayVideo.Click
         Dim psi As New ProcessStartInfo(outputFile) With {
     .UseShellExecute = True
-}
+        }
         Process.Start(psi)
-
-        'Process.Start(outputFile)
     End Sub
 
     Private Sub btnClose_Click(sender As Object, e As EventArgs) Handles btnClose.Click
