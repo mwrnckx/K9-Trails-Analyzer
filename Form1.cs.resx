@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Načti data ze souborů gpx</value>
+  </data>
+  <data name="txtWarnings.Text" xml:space="preserve">
+    <value>Chyby a logy:</value>
+  </data>
+  <data name="btnChartDistances.Text" xml:space="preserve">
+    <value>Vytvoř grafy</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
+    <value>Vyber adresář ve kterém jsou soubory gpx</value>
+  </data>
+  <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
+    <value>Vyber adresář do kterého se mají zálohovat soubory gpx</value>
+  </data>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Soubor</value>
+  </data>
+  <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
+    <value>Připni datum na začátek jména souboru GPX</value>
+  </data>
+  <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
+    <value>Odstraň šum GPS na začátku a konci tras</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Zpracování GPX</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="mnuPolish.ImageScaling" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="mnuLanguage.Text" xml:space="preserve">
+    <value>Jazyk</value>
+  </data>
+  <data name="gbPeriod.Text" xml:space="preserve">
+    <value>Výběr období</value>
+  </data>
+  <data name="lblScentArtickle.Text" xml:space="preserve">
+    <value>pachovka</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="rbTotDistance.Size" type="System.Drawing.Size, System.Drawing">
+    <value>302, 29</value>
+  </data>
+  <data name="rbTotDistance.Text" xml:space="preserve">
+    <value>Načucháno ve zvoleném období</value>
+  </data>
+  <data name="rbDistances.Size" type="System.Drawing.Size, System.Drawing">
+    <value>238, 29</value>
+  </data>
+  <data name="rbDistances.Text" xml:space="preserve">
+    <value>Délka jednotlivých trailů</value>
+  </data>
+  <data name="rbAge.Size" type="System.Drawing.Size, System.Drawing">
+    <value>123, 29</value>
+  </data>
+  <data name="rbAge.Text" xml:space="preserve">
+    <value>Stáří trailů</value>
+  </data>
+  <data name="rbSpeed.Size" type="System.Drawing.Size, System.Drawing">
+    <value>230, 29</value>
+  </data>
+  <data name="rbSpeed.Text" xml:space="preserve">
+    <value>Rychlost psa na trailech</value>
+  </data>
+  <data name="mnuSaveAsCsvFile.Text" xml:space="preserve">
+    <value>Exportovat jako csv soubor</value>
+  </data>
+  <data name="mnuSaveAsRtf.Text" xml:space="preserve">
+    <value>Exportovat jako soubor RTF</value>
+  </data>
+  <data name="txtOutput.Text" xml:space="preserve">
+    <value>Tento program slouží ke zpracování vašich záznamů ze stopařské aplikace, například Geo Tracker. </value>
+  </data>
+  <data name="btnBrowse.Text" xml:space="preserve">
+    <value>Procházet</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Adresář, kde jsou umístěny gpx soubory</value>
+  </data>
+  <data name="lblDirectory.Text" xml:space="preserve">
+    <value>Adresář:</value>
+  </data>
+  <data name="chbDateToName.Text" xml:space="preserve">
+    <value>Přidej datum na začátek názvů souborů</value>
+  </data>
+  <data name="btnOpenDataFile.Text" xml:space="preserve">
+    <value>Vytvoř a otevři soubor CSV</value>
+  </data>
+  <data name="lblBackupDirectory.Text" xml:space="preserve">
+    <value>Adresář pro zálohy:</value>
+  </data>
+  <data name="btnBrowseBackup.Text" xml:space="preserve">
+    <value>Procházet</value>
+  </data>
+  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
+    <value>Odstranit šum GPS na začátku a konci tras</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Spáruj trasy kladeče a psa</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Mělo by být natočeno video pro mapu „Mapa trasy obrázku?</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Adresáře lze nastavit v nabídce „Soubor“</value>
+  </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Zobrazit grafy</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Adresáře lze nastavit v nabídce „Soubor“</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Proces již zpracované soubory</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Procesní soubory, které již byly zpracovány</value>
+  </data>
+  <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
+    <value>Tovární resetování</value>
+  </data>
+  <data name="mnuDogName.Text" xml:space="preserve">
+    <value>Jméno psa</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Preference</value>
+  </data>
+</root>
