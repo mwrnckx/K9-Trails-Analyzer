@@ -26,5 +26,8 @@
     <Setting Name="FfmpegPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">ffmpeg.exe</Value>
     </Setting>
+    <Setting Name="VideoDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

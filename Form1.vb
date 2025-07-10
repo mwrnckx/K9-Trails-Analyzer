@@ -1,11 +1,12 @@
 ﻿Imports System.ComponentModel
+Imports System.Formats
 Imports System.Globalization
+Imports System.Linq
 Imports System.Reflection
 Imports System.Runtime.InteropServices.ComTypes
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
-Imports System.Linq
 
 
 Public Class Form1
@@ -13,7 +14,7 @@ Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
 
-    Private Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
+    Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
 
@@ -25,7 +26,8 @@ Public Class Form1
         GPXFilesManager.dateFrom = dtpStartDate.Value
         GPXFilesManager.dateTo = dtpEndDate.Value
         Try
-            If GPXFilesManager.Main() Then
+
+            If Await GPXFilesManager.Main Then
                 Me.WriteRTBOutput(GPXFilesManager)
                 Me.GPXFilesManager = GPXFilesManager
                 btnCharts.Visible = True
@@ -665,7 +667,7 @@ Public Class Form1
 
 
 
-    Private Sub mnuSelect_directory_gpx_files_Click(sender As Object, e As EventArgs) Handles mnuSelect_directory_gpx_files.Click, mnuSelectBackupDirectory.Click
+    Private Sub mnuSelect_directory_gpx_files_Click(sender As Object, e As EventArgs) Handles mnuSelect_directory_gpx_files.Click, mnuSelectBackupDirectory.Click, mnuSelectADirectoryToSaveVideo.Click
         Dim folderDialog As New FolderBrowserDialog
 
 
@@ -674,6 +676,11 @@ Public Class Form1
         ElseIf sender Is mnuSelectBackupDirectory Then
             folderDialog.ShowNewFolderButton = True
             folderDialog.SelectedPath = My.Settings.BackupDirectory
+        ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
+            folderDialog.ShowNewFolderButton = True
+            folderDialog.SelectedPath = My.Settings.VideoDirectory
+        Else
+            Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
         End If
 
 
@@ -684,6 +691,10 @@ Public Class Form1
                 My.Settings.Directory = folderDialog.SelectedPath
             ElseIf sender Is mnuSelectBackupDirectory Then
                 My.Settings.BackupDirectory = folderDialog.SelectedPath
+            ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
+                My.Settings.VideoDirectory = folderDialog.SelectedPath
+            Else
+                Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
             End If
 
         End If

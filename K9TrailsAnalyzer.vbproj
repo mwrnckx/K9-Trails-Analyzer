@@ -7,13 +7,10 @@
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+    <AssemblyName>K9TrailsAnalyzer</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="TestProject1\**" />
-    <EmbeddedResource Remove="TestProject1\**" />
-    <None Remove="TestProject1\**" />
-  </ItemGroup>
+  
 
   <ItemGroup>
     <Import Include="System.Data" />
@@ -21,23 +18,32 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
 
+
   <ItemGroup>
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="My Project\Application.Designer.vb">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-    </Compile>
-  </ItemGroup>
 
   <ItemGroup>
     <None Update="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
+    <None Update="My Project\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <CustomToolNamespace>My</CustomToolNamespace>
+      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+
+
+  <ItemGroup>
+    <Compile Update="My Project\Settings.Designer.vb">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

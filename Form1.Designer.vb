@@ -23,280 +23,278 @@ Partial Class Form1
     ' Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
-        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Form1))
-        Me.dtpStartDate = New System.Windows.Forms.DateTimePicker()
-        Me.dtpEndDate = New System.Windows.Forms.DateTimePicker()
-        Me.btnReadGpxFiles = New System.Windows.Forms.Button()
-        Me.btnCharts = New System.Windows.Forms.Button()
-        Me.ToolTip1 = New System.Windows.Forms.ToolTip(Me.components)
-        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
-        Me.StatusLabel1 = New System.Windows.Forms.ToolStripStatusLabel()
-        Me.MenuStrip1 = New System.Windows.Forms.MenuStrip()
-        Me.mnuFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuSelect_directory_gpx_files = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuSelectBackupDirectory = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuExportAs = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuSettings = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuPrependDateToFileName = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuTrimGPSNoise = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuMergingTracks = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuProcessProcessed = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuAskForVideo = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuLanguage = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuEnglish = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuGerman = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuCzech = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuUkrainian = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuPolish = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuRussian = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.FactoryResetToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.mnuDogName = New System.Windows.Forms.ToolStripMenuItem()
-        Me.PictureBox1 = New System.Windows.Forms.PictureBox()
-        Me.gbPeriod = New System.Windows.Forms.GroupBox()
-        Me.lblScentArtickle = New System.Windows.Forms.Label()
-        Me.rtbOutput = New System.Windows.Forms.RichTextBox()
-        Me.rtbWarnings = New System.Windows.Forms.RichTextBox()
-        Me.StatusStrip1.SuspendLayout()
-        Me.MenuStrip1.SuspendLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.gbPeriod.SuspendLayout()
-        Me.SuspendLayout()
-        '
-        'dtpStartDate
-        '
-        resources.ApplyResources(Me.dtpStartDate, "dtpStartDate")
-        Me.dtpStartDate.CalendarMonthBackground = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
-        Me.dtpStartDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtpStartDate.Name = "dtpStartDate"
-        '
-        'dtpEndDate
-        '
-        resources.ApplyResources(Me.dtpEndDate, "dtpEndDate")
-        Me.dtpEndDate.CalendarMonthBackground = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(255, Byte), Integer), CType(CType(192, Byte), Integer))
-        Me.dtpEndDate.Format = System.Windows.Forms.DateTimePickerFormat.Custom
-        Me.dtpEndDate.Name = "dtpEndDate"
-        '
-        'btnReadGpxFiles
-        '
-        Me.btnReadGpxFiles.BackColor = System.Drawing.Color.Salmon
-        resources.ApplyResources(Me.btnReadGpxFiles, "btnReadGpxFiles")
-        Me.btnReadGpxFiles.Name = "btnReadGpxFiles"
-        Me.btnReadGpxFiles.UseVisualStyleBackColor = False
-        '
-        'btnCharts
-        '
-        Me.btnCharts.BackColor = System.Drawing.Color.DarkGoldenrod
-        resources.ApplyResources(Me.btnCharts, "btnCharts")
-        Me.btnCharts.Name = "btnCharts"
-        Me.btnCharts.UseVisualStyleBackColor = False
-        '
-        'ToolTip1
-        '
-        Me.ToolTip1.IsBalloon = True
-        '
-        'StatusStrip1
-        '
-        Me.StatusStrip1.ImageScalingSize = New System.Drawing.Size(24, 24)
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.StatusLabel1})
-        resources.ApplyResources(Me.StatusStrip1, "StatusStrip1")
-        Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.SizingGrip = False
-        Me.ToolTip1.SetToolTip(Me.StatusStrip1, resources.GetString("StatusStrip1.ToolTip"))
-        '
-        'StatusLabel1
-        '
-        Me.StatusLabel1.Name = "StatusLabel1"
-        resources.ApplyResources(Me.StatusLabel1, "StatusLabel1")
-        '
-        'MenuStrip1
-        '
-        Me.MenuStrip1.BackColor = System.Drawing.Color.FromArgb(CType(CType(172, Byte), Integer), CType(CType(209, Byte), Integer), CType(CType(158, Byte), Integer))
-        Me.MenuStrip1.GripMargin = New System.Windows.Forms.Padding(2, 2, 0, 2)
-        Me.MenuStrip1.ImageScalingSize = New System.Drawing.Size(24, 24)
-        Me.MenuStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuFile, Me.mnuSettings, Me.mnuLanguage, Me.SToolStripMenuItem})
-        resources.ApplyResources(Me.MenuStrip1, "MenuStrip1")
-        Me.MenuStrip1.Name = "MenuStrip1"
-        '
-        'mnuFile
-        '
-        Me.mnuFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuSelect_directory_gpx_files, Me.mnuSelectBackupDirectory, Me.mnuExportAs})
-        resources.ApplyResources(Me.mnuFile, "mnuFile")
-        Me.mnuFile.Name = "mnuFile"
-        '
-        'mnuSelect_directory_gpx_files
-        '
-        Me.mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
-        resources.ApplyResources(Me.mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
-        '
-        'mnuSelectBackupDirectory
-        '
-        Me.mnuSelectBackupDirectory.Name = "mnuSelectBackupDirectory"
-        resources.ApplyResources(Me.mnuSelectBackupDirectory, "mnuSelectBackupDirectory")
-        '
-        'mnuExportAs
-        '
-        Me.mnuExportAs.Name = "mnuExportAs"
-        resources.ApplyResources(Me.mnuExportAs, "mnuExportAs")
-        '
-        'mnuSettings
-        '
-        Me.mnuSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuPrependDateToFileName, Me.mnuTrimGPSNoise, Me.mnuMergingTracks, Me.mnuProcessProcessed, Me.mnuAskForVideo})
-        resources.ApplyResources(Me.mnuSettings, "mnuSettings")
-        Me.mnuSettings.Name = "mnuSettings"
-        '
-        'mnuPrependDateToFileName
-        '
-        Me.mnuPrependDateToFileName.CheckOnClick = True
-        Me.mnuPrependDateToFileName.Name = "mnuPrependDateToFileName"
-        resources.ApplyResources(Me.mnuPrependDateToFileName, "mnuPrependDateToFileName")
-        '
-        'mnuTrimGPSNoise
-        '
-        Me.mnuTrimGPSNoise.CheckOnClick = True
-        Me.mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
-        resources.ApplyResources(Me.mnuTrimGPSNoise, "mnuTrimGPSNoise")
-        '
-        'mnuMergingTracks
-        '
-        Me.mnuMergingTracks.Name = "mnuMergingTracks"
-        resources.ApplyResources(Me.mnuMergingTracks, "mnuMergingTracks")
-        '
-        'mnuProcessProcessed
-        '
-        Me.mnuProcessProcessed.CheckOnClick = True
-        Me.mnuProcessProcessed.Name = "mnuProcessProcessed"
-        resources.ApplyResources(Me.mnuProcessProcessed, "mnuProcessProcessed")
-        '
-        'mnuAskForVideo
-        '
-        Me.mnuAskForVideo.CheckOnClick = True
-        Me.mnuAskForVideo.Name = "mnuAskForVideo"
-        resources.ApplyResources(Me.mnuAskForVideo, "mnuAskForVideo")
-        '
-        'mnuLanguage
-        '
-        Me.mnuLanguage.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuEnglish, Me.mnuGerman, Me.mnuCzech, Me.mnuUkrainian, Me.mnuPolish, Me.mnuRussian})
-        resources.ApplyResources(Me.mnuLanguage, "mnuLanguage")
-        Me.mnuLanguage.Name = "mnuLanguage"
-        '
-        'mnuEnglish
-        '
-        Me.mnuEnglish.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.en_flag
-        resources.ApplyResources(Me.mnuEnglish, "mnuEnglish")
-        Me.mnuEnglish.Name = "mnuEnglish"
-        Me.mnuEnglish.Tag = "en"
-        '
-        'mnuGerman
-        '
-        Me.mnuGerman.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.De_Flag
-        resources.ApplyResources(Me.mnuGerman, "mnuGerman")
-        Me.mnuGerman.Name = "mnuGerman"
-        Me.mnuGerman.Tag = "de"
-        '
-        'mnuCzech
-        '
-        Me.mnuCzech.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.czech_flag
-        resources.ApplyResources(Me.mnuCzech, "mnuCzech")
-        Me.mnuCzech.Name = "mnuCzech"
-        Me.mnuCzech.Tag = "cs"
-        '
-        'mnuUkrainian
-        '
-        Me.mnuUkrainian.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.uk_flag
-        resources.ApplyResources(Me.mnuUkrainian, "mnuUkrainian")
-        Me.mnuUkrainian.Name = "mnuUkrainian"
-        Me.mnuUkrainian.Tag = "uk"
-        '
-        'mnuPolish
-        '
-        Me.mnuPolish.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.pl_flag
-        resources.ApplyResources(Me.mnuPolish, "mnuPolish")
-        Me.mnuPolish.Name = "mnuPolish"
-        Me.mnuPolish.Tag = "pl"
-        '
-        'mnuRussian
-        '
-        Me.mnuRussian.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.ru_flag
-        resources.ApplyResources(Me.mnuRussian, "mnuRussian")
-        Me.mnuRussian.Name = "mnuRussian"
-        Me.mnuRussian.Tag = "ru"
-        '
-        'SToolStripMenuItem
-        '
-        Me.SToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.FactoryResetToolStripMenuItem, Me.mnuDogName})
-        resources.ApplyResources(Me.SToolStripMenuItem, "SToolStripMenuItem")
-        Me.SToolStripMenuItem.Name = "SToolStripMenuItem"
-        '
-        'FactoryResetToolStripMenuItem
-        '
-        Me.FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
-        resources.ApplyResources(Me.FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
-        '
-        'mnuDogName
-        '
-        Me.mnuDogName.Name = "mnuDogName"
-        resources.ApplyResources(Me.mnuDogName, "mnuDogName")
-        '
-        'PictureBox1
-        '
-        resources.ApplyResources(Me.PictureBox1, "PictureBox1")
-        Me.PictureBox1.Image = Global.GPXTrailAnalyzer.My.Resources.Resources.bgImage
-        Me.PictureBox1.Name = "PictureBox1"
-        Me.PictureBox1.TabStop = False
-        '
-        'gbPeriod
-        '
-        Me.gbPeriod.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        Me.gbPeriod.Controls.Add(Me.dtpEndDate)
-        Me.gbPeriod.Controls.Add(Me.dtpStartDate)
-        Me.gbPeriod.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        resources.ApplyResources(Me.gbPeriod, "gbPeriod")
-        Me.gbPeriod.Name = "gbPeriod"
-        Me.gbPeriod.TabStop = False
-        '
-        'lblScentArtickle
-        '
-        resources.ApplyResources(Me.lblScentArtickle, "lblScentArtickle")
-        Me.lblScentArtickle.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        Me.lblScentArtickle.Name = "lblScentArtickle"
-        '
-        'rtbOutput
-        '
-        Me.rtbOutput.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        resources.ApplyResources(Me.rtbOutput, "rtbOutput")
-        Me.rtbOutput.Name = "rtbOutput"
-        '
-        'rtbWarnings
-        '
-        Me.rtbWarnings.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        resources.ApplyResources(Me.rtbWarnings, "rtbWarnings")
-        Me.rtbWarnings.Name = "rtbWarnings"
-        '
-        'Form1
-        '
+        components = New Container()
+        Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(Form1))
+        dtpStartDate = New DateTimePicker()
+        dtpEndDate = New DateTimePicker()
+        btnReadGpxFiles = New Button()
+        btnCharts = New Button()
+        ToolTip1 = New ToolTip(components)
+        StatusStrip1 = New StatusStrip()
+        StatusLabel1 = New ToolStripStatusLabel()
+        MenuStrip1 = New MenuStrip()
+        mnuFile = New ToolStripMenuItem()
+        mnuSelect_directory_gpx_files = New ToolStripMenuItem()
+        mnuSelectBackupDirectory = New ToolStripMenuItem()
+        mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
+        mnuExportAs = New ToolStripMenuItem()
+        mnuSettings = New ToolStripMenuItem()
+        mnuPrependDateToFileName = New ToolStripMenuItem()
+        mnuTrimGPSNoise = New ToolStripMenuItem()
+        mnuMergingTracks = New ToolStripMenuItem()
+        mnuProcessProcessed = New ToolStripMenuItem()
+        mnuAskForVideo = New ToolStripMenuItem()
+        mnuLanguage = New ToolStripMenuItem()
+        mnuEnglish = New ToolStripMenuItem()
+        mnuGerman = New ToolStripMenuItem()
+        mnuCzech = New ToolStripMenuItem()
+        mnuUkrainian = New ToolStripMenuItem()
+        mnuPolish = New ToolStripMenuItem()
+        mnuRussian = New ToolStripMenuItem()
+        SToolStripMenuItem = New ToolStripMenuItem()
+        FactoryResetToolStripMenuItem = New ToolStripMenuItem()
+        mnuDogName = New ToolStripMenuItem()
+        PictureBox1 = New PictureBox()
+        gbPeriod = New GroupBox()
+        lblScentArtickle = New Label()
+        rtbOutput = New RichTextBox()
+        rtbWarnings = New RichTextBox()
+        StatusStrip1.SuspendLayout()
+        MenuStrip1.SuspendLayout()
+        CType(PictureBox1, ISupportInitialize).BeginInit()
+        gbPeriod.SuspendLayout()
+        SuspendLayout()
+        ' 
+        ' dtpStartDate
+        ' 
+        resources.ApplyResources(dtpStartDate, "dtpStartDate")
+        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(255), CByte(255), CByte(192))
+        dtpStartDate.Format = DateTimePickerFormat.Custom
+        dtpStartDate.Name = "dtpStartDate"
+        ' 
+        ' dtpEndDate
+        ' 
+        resources.ApplyResources(dtpEndDate, "dtpEndDate")
+        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(255), CByte(255), CByte(192))
+        dtpEndDate.Format = DateTimePickerFormat.Custom
+        dtpEndDate.Name = "dtpEndDate"
+        ' 
+        ' btnReadGpxFiles
+        ' 
+        btnReadGpxFiles.BackColor = Color.Salmon
+        resources.ApplyResources(btnReadGpxFiles, "btnReadGpxFiles")
+        btnReadGpxFiles.Name = "btnReadGpxFiles"
+        btnReadGpxFiles.UseVisualStyleBackColor = False
+        ' 
+        ' btnCharts
+        ' 
+        btnCharts.BackColor = Color.DarkGoldenrod
+        resources.ApplyResources(btnCharts, "btnCharts")
+        btnCharts.Name = "btnCharts"
+        btnCharts.UseVisualStyleBackColor = False
+        ' 
+        ' ToolTip1
+        ' 
+        ToolTip1.IsBalloon = True
+        ' 
+        ' StatusStrip1
+        ' 
+        StatusStrip1.ImageScalingSize = New Size(24, 24)
+        StatusStrip1.Items.AddRange(New ToolStripItem() {StatusLabel1})
+        resources.ApplyResources(StatusStrip1, "StatusStrip1")
+        StatusStrip1.Name = "StatusStrip1"
+        StatusStrip1.SizingGrip = False
+        ToolTip1.SetToolTip(StatusStrip1, resources.GetString("StatusStrip1.ToolTip"))
+        ' 
+        ' StatusLabel1
+        ' 
+        StatusLabel1.Name = "StatusLabel1"
+        resources.ApplyResources(StatusLabel1, "StatusLabel1")
+        ' 
+        ' MenuStrip1
+        ' 
+        MenuStrip1.BackColor = Color.FromArgb(CByte(172), CByte(209), CByte(158))
+        MenuStrip1.ImageScalingSize = New Size(24, 24)
+        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem})
+        resources.ApplyResources(MenuStrip1, "MenuStrip1")
+        MenuStrip1.Name = "MenuStrip1"
+        ' 
+        ' mnuFile
+        ' 
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuSelectBackupDirectory, mnuSelectADirectoryToSaveVideo, mnuExportAs})
+        resources.ApplyResources(mnuFile, "mnuFile")
+        mnuFile.Name = "mnuFile"
+        ' 
+        ' mnuSelect_directory_gpx_files
+        ' 
+        mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
+        resources.ApplyResources(mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
+        ' 
+        ' mnuSelectBackupDirectory
+        ' 
+        mnuSelectBackupDirectory.Name = "mnuSelectBackupDirectory"
+        resources.ApplyResources(mnuSelectBackupDirectory, "mnuSelectBackupDirectory")
+        ' 
+        ' mnuSelectADirectoryToSaveVideo
+        ' 
+        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
+        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
+        ' 
+        ' mnuExportAs
+        ' 
+        mnuExportAs.Name = "mnuExportAs"
+        resources.ApplyResources(mnuExportAs, "mnuExportAs")
+        ' 
+        ' mnuSettings
+        ' 
+        mnuSettings.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuMergingTracks, mnuProcessProcessed, mnuAskForVideo})
+        resources.ApplyResources(mnuSettings, "mnuSettings")
+        mnuSettings.Name = "mnuSettings"
+        ' 
+        ' mnuPrependDateToFileName
+        ' 
+        mnuPrependDateToFileName.CheckOnClick = True
+        mnuPrependDateToFileName.Name = "mnuPrependDateToFileName"
+        resources.ApplyResources(mnuPrependDateToFileName, "mnuPrependDateToFileName")
+        ' 
+        ' mnuTrimGPSNoise
+        ' 
+        mnuTrimGPSNoise.CheckOnClick = True
+        mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
+        resources.ApplyResources(mnuTrimGPSNoise, "mnuTrimGPSNoise")
+        ' 
+        ' mnuMergingTracks
+        ' 
+        mnuMergingTracks.Name = "mnuMergingTracks"
+        resources.ApplyResources(mnuMergingTracks, "mnuMergingTracks")
+        ' 
+        ' mnuProcessProcessed
+        ' 
+        mnuProcessProcessed.CheckOnClick = True
+        mnuProcessProcessed.Name = "mnuProcessProcessed"
+        resources.ApplyResources(mnuProcessProcessed, "mnuProcessProcessed")
+        ' 
+        ' mnuAskForVideo
+        ' 
+        mnuAskForVideo.CheckOnClick = True
+        mnuAskForVideo.Name = "mnuAskForVideo"
+        resources.ApplyResources(mnuAskForVideo, "mnuAskForVideo")
+        ' 
+        ' mnuLanguage
+        ' 
+        mnuLanguage.DropDownItems.AddRange(New ToolStripItem() {mnuEnglish, mnuGerman, mnuCzech, mnuUkrainian, mnuPolish, mnuRussian})
+        resources.ApplyResources(mnuLanguage, "mnuLanguage")
+        mnuLanguage.Name = "mnuLanguage"
+        ' 
+        ' mnuEnglish
+        ' 
+        resources.ApplyResources(mnuEnglish, "mnuEnglish")
+        mnuEnglish.Name = "mnuEnglish"
+        mnuEnglish.Tag = "en"
+        ' 
+        ' mnuGerman
+        ' 
+        resources.ApplyResources(mnuGerman, "mnuGerman")
+        mnuGerman.Name = "mnuGerman"
+        mnuGerman.Tag = "de"
+        ' 
+        ' mnuCzech
+        ' 
+        resources.ApplyResources(mnuCzech, "mnuCzech")
+        mnuCzech.Name = "mnuCzech"
+        mnuCzech.Tag = "cs"
+        ' 
+        ' mnuUkrainian
+        ' 
+        resources.ApplyResources(mnuUkrainian, "mnuUkrainian")
+        mnuUkrainian.Name = "mnuUkrainian"
+        mnuUkrainian.Tag = "uk"
+        ' 
+        ' mnuPolish
+        ' 
+        resources.ApplyResources(mnuPolish, "mnuPolish")
+        mnuPolish.Name = "mnuPolish"
+        mnuPolish.Tag = "pl"
+        ' 
+        ' mnuRussian
+        ' 
+        resources.ApplyResources(mnuRussian, "mnuRussian")
+        mnuRussian.Name = "mnuRussian"
+        mnuRussian.Tag = "ru"
+        ' 
+        ' SToolStripMenuItem
+        ' 
+        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {FactoryResetToolStripMenuItem, mnuDogName})
+        resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
+        SToolStripMenuItem.Name = "SToolStripMenuItem"
+        ' 
+        ' FactoryResetToolStripMenuItem
+        ' 
+        FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
+        resources.ApplyResources(FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
+        ' 
+        ' mnuDogName
+        ' 
+        mnuDogName.Name = "mnuDogName"
+        resources.ApplyResources(mnuDogName, "mnuDogName")
+        ' 
+        ' PictureBox1
+        ' 
+        resources.ApplyResources(PictureBox1, "PictureBox1")
+        PictureBox1.Name = "PictureBox1"
+        PictureBox1.TabStop = False
+        ' 
+        ' gbPeriod
+        ' 
+        gbPeriod.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        gbPeriod.Controls.Add(dtpEndDate)
+        gbPeriod.Controls.Add(dtpStartDate)
+        gbPeriod.FlatStyle = FlatStyle.Flat
+        resources.ApplyResources(gbPeriod, "gbPeriod")
+        gbPeriod.Name = "gbPeriod"
+        gbPeriod.TabStop = False
+        ' 
+        ' lblScentArtickle
+        ' 
+        resources.ApplyResources(lblScentArtickle, "lblScentArtickle")
+        lblScentArtickle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        lblScentArtickle.Name = "lblScentArtickle"
+        ' 
+        ' rtbOutput
+        ' 
+        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        resources.ApplyResources(rtbOutput, "rtbOutput")
+        rtbOutput.Name = "rtbOutput"
+        ' 
+        ' rtbWarnings
+        ' 
+        rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        resources.ApplyResources(rtbWarnings, "rtbWarnings")
+        rtbWarnings.Name = "rtbWarnings"
+        ' 
+        ' Form1
+        ' 
         resources.ApplyResources(Me, "$this")
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.Controls.Add(Me.rtbWarnings)
-        Me.Controls.Add(Me.rtbOutput)
-        Me.Controls.Add(Me.lblScentArtickle)
-        Me.Controls.Add(Me.gbPeriod)
-        Me.Controls.Add(Me.StatusStrip1)
-        Me.Controls.Add(Me.btnCharts)
-        Me.Controls.Add(Me.btnReadGpxFiles)
-        Me.Controls.Add(Me.MenuStrip1)
-        Me.Controls.Add(Me.PictureBox1)
-        Me.MainMenuStrip = Me.MenuStrip1
-        Me.Name = "Form1"
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
-        Me.MenuStrip1.ResumeLayout(False)
-        Me.MenuStrip1.PerformLayout()
-        CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).EndInit()
-        Me.gbPeriod.ResumeLayout(False)
-        Me.ResumeLayout(False)
-        Me.PerformLayout()
+        AutoScaleMode = AutoScaleMode.Font
+        Controls.Add(rtbWarnings)
+        Controls.Add(rtbOutput)
+        Controls.Add(lblScentArtickle)
+        Controls.Add(gbPeriod)
+        Controls.Add(StatusStrip1)
+        Controls.Add(btnCharts)
+        Controls.Add(btnReadGpxFiles)
+        Controls.Add(MenuStrip1)
+        Controls.Add(PictureBox1)
+        MainMenuStrip = MenuStrip1
+        Name = "Form1"
+        StatusStrip1.ResumeLayout(False)
+        StatusStrip1.PerformLayout()
+        MenuStrip1.ResumeLayout(False)
+        MenuStrip1.PerformLayout()
+        CType(PictureBox1, ISupportInitialize).EndInit()
+        gbPeriod.ResumeLayout(False)
+        ResumeLayout(False)
+        PerformLayout()
 
     End Sub
     Friend WithEvents dtpStartDate As DateTimePicker
@@ -411,5 +409,6 @@ Partial Class Form1
     Friend WithEvents mnuDogName As ToolStripMenuItem
     Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
     Friend WithEvents mnuAskForVideo As ToolStripMenuItem
+    Friend WithEvents mnuSelectADirectoryToSaveVideo As ToolStripMenuItem
 End Class
 

@@ -22,115 +22,118 @@ Partial Class frmEditComments
     'Neupravovat pomocí editoru kódu
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.lblInfo = New System.Windows.Forms.Label()
-        Me.txtGoal = New System.Windows.Forms.TextBox()
-        Me.lblDog = New System.Windows.Forms.Label()
-        Me.lblTrail = New System.Windows.Forms.Label()
-        Me.lblGoal = New System.Windows.Forms.Label()
-        Me.txtDog = New System.Windows.Forms.TextBox()
-        Me.txtTrail = New System.Windows.Forms.TextBox()
-        Me.btnOK = New System.Windows.Forms.Button()
-        Me.SuspendLayout()
-        '
-        'lblInfo
-        '
-        Me.lblInfo.AutoSize = True
-        Me.lblInfo.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.lblInfo.Location = New System.Drawing.Point(34, 51)
-        Me.lblInfo.Name = "lblInfo"
-        Me.lblInfo.Size = New System.Drawing.Size(74, 28)
-        Me.lblInfo.TabIndex = 0
-        Me.lblInfo.Text = "lblInfo"
-        '
-        'txtGoal
-        '
-        Me.txtGoal.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.txtGoal.Location = New System.Drawing.Point(159, 155)
-        Me.txtGoal.Name = "txtGoal"
-        Me.txtGoal.Size = New System.Drawing.Size(1016, 34)
-        Me.txtGoal.TabIndex = 1
-        Me.txtGoal.Text = "txtGoal"
-        '
-        'lblDog
-        '
-        Me.lblDog.AutoSize = True
-        Me.lblDog.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.lblDog.Location = New System.Drawing.Point(34, 252)
-        Me.lblDog.Name = "lblDog"
-        Me.lblDog.Size = New System.Drawing.Size(75, 28)
-        Me.lblDog.TabIndex = 2
-        Me.lblDog.Text = "lblDog"
-        '
-        'lblTrail
-        '
-        Me.lblTrail.AutoSize = True
-        Me.lblTrail.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.lblTrail.Location = New System.Drawing.Point(34, 202)
-        Me.lblTrail.Name = "lblTrail"
-        Me.lblTrail.Size = New System.Drawing.Size(77, 28)
-        Me.lblTrail.TabIndex = 3
-        Me.lblTrail.Text = "lblTrail"
-        '
-        'lblGoal
-        '
-        Me.lblGoal.AutoSize = True
-        Me.lblGoal.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.lblGoal.Location = New System.Drawing.Point(34, 155)
-        Me.lblGoal.Name = "lblGoal"
-        Me.lblGoal.Size = New System.Drawing.Size(79, 28)
-        Me.lblGoal.TabIndex = 4
-        Me.lblGoal.Text = "lblGoal"
-        '
-        'txtDog
-        '
-        Me.txtDog.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.txtDog.Location = New System.Drawing.Point(159, 252)
-        Me.txtDog.Name = "txtDog"
-        Me.txtDog.Size = New System.Drawing.Size(1016, 34)
-        Me.txtDog.TabIndex = 5
-        Me.txtDog.Text = "txtDog"
-        '
-        'txtTrail
-        '
-        Me.txtTrail.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.txtTrail.Location = New System.Drawing.Point(159, 202)
-        Me.txtTrail.Name = "txtTrail"
-        Me.txtTrail.Size = New System.Drawing.Size(1016, 34)
-        Me.txtTrail.TabIndex = 6
-        Me.txtTrail.Text = "txtTrail"
-        '
-        'btnOK
-        '
-        Me.btnOK.BackColor = System.Drawing.Color.DarkGoldenrod
-        Me.btnOK.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnOK.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.btnOK.Location = New System.Drawing.Point(1041, 293)
-        Me.btnOK.Name = "btnOK"
-        Me.btnOK.Size = New System.Drawing.Size(134, 60)
-        Me.btnOK.TabIndex = 1
-        Me.btnOK.Text = "OK"
-        Me.btnOK.UseVisualStyleBackColor = False
-        '
-        'frmEditComments
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(14.0!, 32.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        Me.ClientSize = New System.Drawing.Size(1199, 360)
-        Me.Controls.Add(Me.btnOK)
-        Me.Controls.Add(Me.txtTrail)
-        Me.Controls.Add(Me.txtDog)
-        Me.Controls.Add(Me.lblGoal)
-        Me.Controls.Add(Me.lblTrail)
-        Me.Controls.Add(Me.lblDog)
-        Me.Controls.Add(Me.txtGoal)
-        Me.Controls.Add(Me.lblInfo)
-        Me.Font = New System.Drawing.Font("Cascadia Mono", 12.0!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.Margin = New System.Windows.Forms.Padding(5)
-        Me.Name = "frmEditComments"
-        Me.Text = "Edit comments"
-        Me.ResumeLayout(False)
-        Me.PerformLayout()
+        lblInfo = New Label()
+        txtGoal = New TextBox()
+        lblDog = New Label()
+        lblTrail = New Label()
+        lblGoal = New Label()
+        txtDog = New TextBox()
+        txtTrail = New TextBox()
+        btnOK = New Button()
+        SuspendLayout()
+        ' 
+        ' lblInfo
+        ' 
+        lblInfo.AutoSize = True
+        lblInfo.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        lblInfo.Location = New Point(34, 51)
+        lblInfo.Name = "lblInfo"
+        lblInfo.Size = New Size(74, 28)
+        lblInfo.TabIndex = 0
+        lblInfo.Text = "lblInfo"
+        ' 
+        ' txtGoal
+        ' 
+        txtGoal.AllowDrop = True
+        txtGoal.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        txtGoal.Location = New Point(159, 155)
+        txtGoal.Name = "txtGoal"
+        txtGoal.Size = New Size(1016, 34)
+        txtGoal.TabIndex = 1
+        txtGoal.Text = "txtGoal"
+        ' 
+        ' lblDog
+        ' 
+        lblDog.AutoSize = True
+        lblDog.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        lblDog.Location = New Point(34, 252)
+        lblDog.Name = "lblDog"
+        lblDog.Size = New Size(75, 28)
+        lblDog.TabIndex = 2
+        lblDog.Text = "lblDog"
+        ' 
+        ' lblTrail
+        ' 
+        lblTrail.AutoSize = True
+        lblTrail.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        lblTrail.Location = New Point(34, 202)
+        lblTrail.Name = "lblTrail"
+        lblTrail.Size = New Size(77, 28)
+        lblTrail.TabIndex = 3
+        lblTrail.Text = "lblTrail"
+        ' 
+        ' lblGoal
+        ' 
+        lblGoal.AutoSize = True
+        lblGoal.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        lblGoal.Location = New Point(34, 155)
+        lblGoal.Name = "lblGoal"
+        lblGoal.Size = New Size(79, 28)
+        lblGoal.TabIndex = 4
+        lblGoal.Text = "lblGoal"
+        ' 
+        ' txtDog
+        ' 
+        txtDog.AllowDrop = True
+        txtDog.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        txtDog.Location = New Point(159, 252)
+        txtDog.Name = "txtDog"
+        txtDog.Size = New Size(1016, 34)
+        txtDog.TabIndex = 5
+        txtDog.Text = "txtDog"
+        ' 
+        ' txtTrail
+        ' 
+        txtTrail.AllowDrop = True
+        txtTrail.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        txtTrail.Location = New Point(159, 202)
+        txtTrail.Name = "txtTrail"
+        txtTrail.Size = New Size(1016, 34)
+        txtTrail.TabIndex = 6
+        txtTrail.Text = "txtTrail"
+        ' 
+        ' btnOK
+        ' 
+        btnOK.BackColor = Color.DarkGoldenrod
+        btnOK.FlatStyle = FlatStyle.Flat
+        btnOK.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        btnOK.Location = New Point(1041, 293)
+        btnOK.Name = "btnOK"
+        btnOK.Size = New Size(134, 60)
+        btnOK.TabIndex = 1
+        btnOK.Text = "OK"
+        btnOK.UseVisualStyleBackColor = False
+        ' 
+        ' frmEditComments
+        ' 
+        AutoScaleDimensions = New SizeF(14F, 32F)
+        AutoScaleMode = AutoScaleMode.Font
+        BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        ClientSize = New Size(1199, 360)
+        Controls.Add(btnOK)
+        Controls.Add(txtTrail)
+        Controls.Add(txtDog)
+        Controls.Add(lblGoal)
+        Controls.Add(lblTrail)
+        Controls.Add(lblDog)
+        Controls.Add(txtGoal)
+        Controls.Add(lblInfo)
+        Font = New Font("Cascadia Mono", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
+        Margin = New Padding(5)
+        Name = "frmEditComments"
+        Text = "Edit comments"
+        ResumeLayout(False)
+        PerformLayout()
 
     End Sub
 
