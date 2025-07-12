@@ -262,8 +262,8 @@ Partial Class Form1
         ' 
         ' rtbOutput
         ' 
-        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         resources.ApplyResources(rtbOutput, "rtbOutput")
+        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         rtbOutput.Name = "rtbOutput"
         ' 
         ' rtbWarnings

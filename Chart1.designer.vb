@@ -37,7 +37,7 @@ Partial Class DistanceChart
         '
         Me.chart1.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
         ChartArea1.AxisX.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
-        ChartArea1.AxisX.LabelStyle.Format = "MMMM yy"
+
         ChartArea1.AxisX.Title = "" 'Global.GPXTrailAnalyzer.My.Resources.Resource1.X_AxisLabel
         ChartArea1.AxisX.TitleFont = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)
         ChartArea1.AxisY.LabelStyle.Font = New System.Drawing.Font("Cascadia Code Semibold", 12.0!)

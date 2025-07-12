@@ -23,13 +23,13 @@ Partial Class frmEditComments
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
         lblInfo = New Label()
-        txtGoal = New TextBox()
         lblDog = New Label()
         lblTrail = New Label()
         lblGoal = New Label()
-        txtDog = New TextBox()
-        txtTrail = New TextBox()
         btnOK = New Button()
+        rtbGoal = New RichTextBox()
+        rtbTrail = New RichTextBox()
+        rtbDog = New RichTextBox()
         SuspendLayout()
         ' 
         ' lblInfo
@@ -41,16 +41,6 @@ Partial Class frmEditComments
         lblInfo.Size = New Size(74, 28)
         lblInfo.TabIndex = 0
         lblInfo.Text = "lblInfo"
-        ' 
-        ' txtGoal
-        ' 
-        txtGoal.AllowDrop = True
-        txtGoal.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        txtGoal.Location = New Point(159, 155)
-        txtGoal.Name = "txtGoal"
-        txtGoal.Size = New Size(1016, 34)
-        txtGoal.TabIndex = 1
-        txtGoal.Text = "txtGoal"
         ' 
         ' lblDog
         ' 
@@ -82,51 +72,61 @@ Partial Class frmEditComments
         lblGoal.TabIndex = 4
         lblGoal.Text = "lblGoal"
         ' 
-        ' txtDog
-        ' 
-        txtDog.AllowDrop = True
-        txtDog.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        txtDog.Location = New Point(159, 252)
-        txtDog.Name = "txtDog"
-        txtDog.Size = New Size(1016, 34)
-        txtDog.TabIndex = 5
-        txtDog.Text = "txtDog"
-        ' 
-        ' txtTrail
-        ' 
-        txtTrail.AllowDrop = True
-        txtTrail.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        txtTrail.Location = New Point(159, 202)
-        txtTrail.Name = "txtTrail"
-        txtTrail.Size = New Size(1016, 34)
-        txtTrail.TabIndex = 6
-        txtTrail.Text = "txtTrail"
-        ' 
         ' btnOK
         ' 
         btnOK.BackColor = Color.DarkGoldenrod
         btnOK.FlatStyle = FlatStyle.Flat
         btnOK.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        btnOK.Location = New Point(1041, 293)
+        btnOK.Location = New Point(1041, 342)
         btnOK.Name = "btnOK"
         btnOK.Size = New Size(134, 60)
         btnOK.TabIndex = 1
         btnOK.Text = "OK"
         btnOK.UseVisualStyleBackColor = False
         ' 
+        ' rtbGoal
+        ' 
+        rtbGoal.EnableAutoDragDrop = True
+        rtbGoal.Location = New Point(115, 149)
+        rtbGoal.Name = "rtbGoal"
+        rtbGoal.ScrollBars = RichTextBoxScrollBars.None
+        rtbGoal.Size = New Size(1060, 45)
+        rtbGoal.TabIndex = 7
+        rtbGoal.Text = ""
+        ' 
+        ' rtbTrail
+        ' 
+        rtbTrail.EnableAutoDragDrop = True
+        rtbTrail.Location = New Point(115, 202)
+        rtbTrail.Name = "rtbTrail"
+        rtbTrail.ScrollBars = RichTextBoxScrollBars.None
+        rtbTrail.Size = New Size(1060, 45)
+        rtbTrail.TabIndex = 8
+        rtbTrail.Text = ""
+        ' 
+        ' rtbDog
+        ' 
+        rtbDog.EnableAutoDragDrop = True
+        rtbDog.Location = New Point(115, 252)
+        rtbDog.Name = "rtbDog"
+        rtbDog.ScrollBars = RichTextBoxScrollBars.None
+        rtbDog.Size = New Size(1060, 45)
+        rtbDog.TabIndex = 9
+        rtbDog.Text = ""
+        ' 
         ' frmEditComments
         ' 
         AutoScaleDimensions = New SizeF(14F, 32F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        ClientSize = New Size(1199, 360)
+        ClientSize = New Size(1199, 425)
+        Controls.Add(rtbDog)
+        Controls.Add(rtbTrail)
+        Controls.Add(rtbGoal)
         Controls.Add(btnOK)
-        Controls.Add(txtTrail)
-        Controls.Add(txtDog)
         Controls.Add(lblGoal)
         Controls.Add(lblTrail)
         Controls.Add(lblDog)
-        Controls.Add(txtGoal)
         Controls.Add(lblInfo)
         Font = New Font("Cascadia Mono", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
         Margin = New Padding(5)
@@ -138,11 +138,11 @@ Partial Class frmEditComments
     End Sub
 
     Friend WithEvents lblInfo As Label
-    Friend WithEvents txtGoal As TextBox
     Friend WithEvents lblDog As Label
     Friend WithEvents lblTrail As Label
     Friend WithEvents lblGoal As Label
-    Friend WithEvents txtDog As TextBox
-    Friend WithEvents txtTrail As TextBox
     Friend WithEvents btnOK As Button
+    Friend WithEvents rtbGoal As RichTextBox
+    Friend WithEvents rtbTrail As RichTextBox
+    Friend WithEvents rtbDog As RichTextBox
 End Class

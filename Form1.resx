@@ -505,7 +505,7 @@
   <data name="mnuUkrainian.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAVCAYAAAAnzezqAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
-        XAAAAFwBhyfMcAAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABISURBVEhL7c4x
+        WgAAAFoBBySI6wAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABISURBVEhL7c4x
         FYBQEMTA9cnDCzLwgg707DeQOtdcMU2qJNfXURhNGE0YTRhNGE0YTRhNGE0YTc97d1L6p5N2YAd2YAeG
         B9IDPPVw2zRJa6MAAAAASUVORK5CYII=
 </value>
@@ -537,7 +537,7 @@
   <data name="mnuRussian.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACAAAAAVCAYAAAAnzezqAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAA
-        fAAAAHwBFQ/t5AAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABCSURBVEhL7c4x
+        egAAAHoBlQypfwAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAABCSURBVEhL7c4x
         FQAgFEJRkvwCJrCwjcyDBZhhEM65C9MDw2tAAxoA7MMoeTrJ00meTvJ0kqeTPJ3uGiY1oAG/BwwfFb74
         e0cyoEUAAAAASUVORK5CYII=
 </value>
@@ -3844,6 +3844,9 @@
   <data name="&gt;&gt;lblScentArtickle.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="rtbOutput.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left</value>
+  </data>
   <data name="rtbOutput.Location" type="System.Drawing.Point, System.Drawing">
     <value>403, 64</value>
   </data>
@@ -3851,7 +3854,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1160, 444</value>
+    <value>1160, 345</value>
   </data>
   <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
     <value>30</value>
@@ -3874,17 +3877,20 @@
   <data name="&gt;&gt;rtbOutput.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="rtbWarnings.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Bottom</value>
+  </data>
   <data name="rtbWarnings.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
   </data>
   <data name="rtbWarnings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>403, 540</value>
+    <value>0, 837</value>
   </data>
   <data name="rtbWarnings.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbWarnings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1169, 181</value>
+    <value>1924, 181</value>
   </data>
   <data name="rtbWarnings.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>

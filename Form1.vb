@@ -447,6 +447,13 @@ Public Class Form1
         Dim monthlyXAxisDataWithEmpty As String() = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM yy", currentCulture)).ToArray()
         Dim monthlyYAxisDataWithEmpty As Double() = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray()
 
+        For Each s In monthlyXAxisDataWithEmpty
+            Debug.WriteLine($"X: {s}")
+        Next
+        For Each y In monthlyYAxisDataWithEmpty
+            Debug.WriteLine($"Y: {y}")
+        Next
+
         Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y
         Dim monthlyGrafText = Application.ProductName ' Např. "Měsíční vzdálenost"
         Dim MonthlyChart1 = New DistanceChart(monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)

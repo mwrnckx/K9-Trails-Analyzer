@@ -132,6 +132,7 @@ Partial Class DistanceChart
 
         ' Pøidání dat do série
         If Me.chartType = SeriesChartType.Point Then
+            chart1.ChartAreas(0).AxisX.LabelStyle.Format = "MMMM yy"
             With series1
                 .MarkerSize = 10 ' Nastaví velikost bodù na 10 pixelù
                 .MarkerStyle = MarkerStyle.Circle
@@ -143,6 +144,8 @@ Partial Class DistanceChart
             For i As Integer = 0 To Y_Data.Length - 1
                 series1.Points.AddXY(X_Data(i), Y_Data(i))
             Next
+            'series1.Points.AddXY("Test1", 10)
+            'series1.Points.AddXY("Test2", 20)
 
 
             ' Výpoèet lineární regrese
@@ -174,32 +177,61 @@ Partial Class DistanceChart
                 Debug.WriteLine("Nepodaøilo se proložit pøímku")
             End Try
 
-        ElseIf Me.ChartType = SeriesChartType.Column Then
-            Dim interval As Double = 1D
-            Me.chart1.ChartAreas(0).AxisX.MajorTickMark.Interval = interval
-            chart1.ChartAreas(0).AxisX.MajorGrid.Interval = interval
+            'ElseIf Me.ChartType = SeriesChartType.Column Then
+            '    Dim interval As Double = 1D
+            '    Me.chart1.ChartAreas(0).AxisX.MajorTickMark.Interval = interval
+            '    chart1.ChartAreas(0).AxisX.MajorGrid.Interval = interval
 
-            'set minimum at the middle
-            Me.chart1.ChartAreas(0).AxisX.Minimum = interval / 2D
+            '    'set minimum at the middle
+            '    Me.chart1.ChartAreas(0).AxisX.Minimum = interval / 2D
+            '    series1.Color = Color.Chocolate
+
+            '    ' Povolení zobrazení hodnot nad sloupci
+            '    series1.IsValueShownAsLabel = True
+            '    series1.LabelFormat = "N1" ' Zobrazí èísla s dvìma desetinnými místy
+
+
+
+            '    For i As Integer = 0 To Y_Data.Length - 1
+            '        series1.Points.AddXY(X_DataString(i), Y_Data(i))
+            '        Me.chart1.ChartAreas(0).AxisX.CustomLabels.Add((0.5D + i) * interval,
+            '                              (1.5D + i) * interval, X_DataString(i).ToString())
+            '    Next
+
+            '    For i As Integer = 0 To Y_Data.Length - 1
+            '        series1.Points.AddXY(X_DataString(i), Y_Data(i))
+            '    Next
+
+
+            'End If
+
+        ElseIf Me.chartType = SeriesChartType.Column Then
+
+
             series1.Color = Color.Chocolate
-
-            ' Povolení zobrazení hodnot nad sloupci
-            series1.IsValueShownAsLabel = True
-            series1.LabelFormat = "N1" ' Zobrazí èísla s dvìma desetinnými místy
+        series1.IsValueShownAsLabel = True
+            series1.LabelFormat = "N1"
+            series1.XValueType = ChartValueType.String
+            series1.IsXValueIndexed = True
+            series1.XValueType = ChartValueType.String
 
 
 
             For i As Integer = 0 To Y_Data.Length - 1
                 series1.Points.AddXY(X_DataString(i), Y_Data(i))
-                Me.chart1.ChartAreas(0).AxisX.CustomLabels.Add((0.5D + i) * interval,
-                                      (1.5D + i) * interval, X_DataString(i).ToString())
             Next
 
         End If
 
+
+        chart1.Series.Clear()
         ' Pøidání série do grafu
         'chart.Series.Add(series1)
         chart1.Series.Add(series1)
+        Debug.WriteLine($"Poèet bodù: {series1.Points.Count}")
+        Debug.WriteLine($"ChartAreas: {chart1.ChartAreas.Count}, Series: {chart1.Series.Count}")
+        Debug.WriteLine($"Nakonec: chart.Series.Count={chart1.Series.Count}, Body={series1.Points.Count}")
+
 
     End Sub
 
