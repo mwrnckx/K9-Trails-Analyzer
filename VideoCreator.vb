@@ -5,8 +5,8 @@ Imports System.Reflection.Metadata
 Imports System.Runtime.InteropServices.JavaScript.JSType
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
-Imports System.Windows.Media.Media3D
-Imports System.Windows.Media.TextFormatting
+'Imports System.Windows.Media.Media3D
+'Imports System.Windows.Media.TextFormatting
 Imports System.Xml
 
 ''' <summary>
@@ -34,7 +34,8 @@ Friend Class VideoCreator
     Private Property TracksAsPointsF As List(Of TrackAsPointsF)
     Private Property TracksAsGeoPoints As List(Of TrackAsGeoPoints)
     Private Property TracksAsTrkNode As List(Of TrackAsTrkNode)
-    Private Property WindDirection As Double = 0.0 ' směr větru v stupních, pokud je potřeba, defaultně 0 (sever)
+    Private Property WindDirection As Double?    ' směr větru v stupních, pokud je potřeba, defaultně nothing
+    Private Property Windspeed As Double  ' rychlost větru v m/s, pokud je potřeba, defaultně 0 (klid)
 
     Dim imgWidth As Integer = 600
     Dim imgHeight As Integer = 600
@@ -43,8 +44,6 @@ Friend Class VideoCreator
     Dim pixelsPerMetre As Double = 1.0 'přepočet z GPS na pixely, defaultně 1 pixel = 1 metr
 
 
-    'Dim TrackTimesList As New List(Of List(Of DateTime)) ' ' Časové značky pro všechny trasy (včetně psa, kladeče a křížení)
-    'Dim TrackPointsList As New List(Of List(Of PointF)) ' Body všech tras (včetně psa, kladeče a křížení) 
     ReadOnly latDistancePerDegree As Double = 111_320.0 ' průměrně ~111,3 km na jeden stupeň latitude
     Dim lonDistancePerDegree As Double
 
@@ -58,7 +57,7 @@ Friend Class VideoCreator
     ''' </summary>
     ''' <param name="videoPath">Directory where images and the video will be saved.</param>
     ''' <param name="_minVideoSize">Minimum size of the output video in pixels.</param>
-    Public Sub New(videoPath As IO.DirectoryInfo, _minVideoSize As Single, _windDir As Double)
+    Public Sub New(videoPath As IO.DirectoryInfo, _minVideoSize As Single, Optional _windDir As Double = Nothing, Optional _windSpeed As Double = Nothing)
         ' Nastav cestu k adresáři, kde se budou ukládat obrázky a video
         Me.directory = videoPath
         'pomocný adresář pro PNG obrázky
@@ -66,6 +65,7 @@ Friend Class VideoCreator
         pngDirectory = Me.directory.CreateSubdirectory("png")
         minVideoSize = _minVideoSize
         WindDirection = _windDir
+        Windspeed = _windSpeed
     End Sub
 
     ''' <summary>
@@ -85,12 +85,16 @@ Friend Class VideoCreator
             Next
         Next
 
-        maxLat += (maxLat - minLat) * 0.05  'přidáme 10% na okraje
-        minLat -= (maxLat - minLat) * 0.05  'přidáme 10% na okraje
-        maxLon += (maxLon - minLon) * 0.05  'přidáme 10% na okraje
-        minLon -= (maxLon - minLon) * 0.05  'přidáme 10% na okraje 
+        'add 5% to the edges
+        Dim margins = (maxLat - minLat) * 0.05
+        minLat -= margins
+        maxLat += margins
+        margins = (maxLon - minLon) * 0.05
+        minLon -= margins
+        maxLon += margins
 
-        ' Vypočítej šířku a výšku obrázku v metrech
+
+        ' Calculate the width and height of the figure in metres
         Dim centerLat As Double = (minLat + maxLat) / 2
         lonDistancePerDegree = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
         Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
@@ -99,7 +103,7 @@ Friend Class VideoCreator
         Me.imgWidth = widthInMeters * pixelsPerMetre
         Me.imgHeight = heightInMeters * pixelsPerMetre
 
-        'přepočítá trasy na body a uloží do TrackAsPointsF
+        'converts routes to points and saves to TrackAsPointsF
         Dim _TracksAsPointsF As List(Of TrackAsPointsF) = ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints) 'přepočítá trasy na body a uloží do TrackAsPointsF
 
         CreateVideoFromPointsF(_TracksAsPointsF)
@@ -180,69 +184,73 @@ Friend Class VideoCreator
         Dim penWidth As Single = 0.005 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
         Dim emSize As Single = 0.012 * diagonal '
         Dim arrowlength As Single = 0.06 * diagonal
-        ' Předem vytvoř statickou bitmapu
 
+        ' Předem vytvoř statickou bitmapu
         Dim staticBmp As New Bitmap(imgWidth, imgHeight, PixelFormat.Format32bppArgb)
+        Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
+
         Using g As Graphics = Graphics.FromImage(staticBmp)
             g.Clear(Color.Transparent)
-            'nejprve směr větru:
-            Dim center As New PointF(imgWidth / 2, imgHeight / 2) ' střed růžice
-            Dim angle As Double = (WindDirection + 90) * Math.PI / 180 '' + 90 kvůli orientaci os, převod úhlu větru na radiány
 
-            Dim endX As Single = center.X + arrowlength * Math.Cos(angle)
-            Dim endY As Single = center.Y + arrowlength * Math.Sin(angle)
+            'first the direction of the wind:
+            If WindDirection IsNot Nothing And WindDirection >= 0 And WindDirection <= 360 Then
 
-            Dim endPoint As New PointF(endX, endY)
-            g.DrawLine(New Pen(Color.Orange, penWidth), center, endPoint)
-            ' A pak stejně nakreslíš šipku
+                Dim center As New PointF(imgWidth / 2, imgHeight / 2) ' střed růžice
+                Dim angle As Double = (WindDirection + 90) * Math.PI / 180 '' + 90 kvůli orientaci os, převod úhlu větru na radiány
 
-            '' Úhel křidélek šipky (např. 30°)
-            Dim wingAngle As Double = Math.PI / 6
+                Dim endX As Single = center.X + arrowlength * Math.Cos(angle)
+                Dim endY As Single = center.Y + arrowlength * Math.Sin(angle)
 
-            ' Body křidélek
-            Dim arrowSize As Single = 15 ' délka křidélka
-            Dim x1 As Single = endPoint.X - arrowSize * Math.Cos(angle - wingAngle)
-            Dim y1 As Single = endPoint.Y - arrowSize * Math.Sin(angle - wingAngle)
+                Dim endPoint As New PointF(endX, endY)
+                g.DrawLine(New Pen(Color.Orange, penWidth), center, endPoint)
+                ' A pak stejně nakreslíš šipku
 
-            Dim x2 As Single = endPoint.X - arrowSize * Math.Cos(angle + wingAngle)
-            Dim y2 As Single = endPoint.Y - arrowSize * Math.Sin(angle + wingAngle)
+                '' Úhel křidélek šipky (např. 30°)
+                Dim wingAngle As Double = Math.PI / 6
 
-            ' Nakresli křidélka
-            g.DrawLine(New Pen(Color.Orange, penWidth / 2), endPoint, New PointF(x1, y1))
-            g.DrawLine(New Pen(Color.Orange, penWidth / 2), endPoint, New PointF(x2, y2))
+                ' Body křidélek
+                Dim arrowSize As Single = 15 ' délka křidélka
+                Dim x1 As Single = endPoint.X - arrowSize * Math.Cos(angle - wingAngle)
+                Dim y1 As Single = endPoint.Y - arrowSize * Math.Sin(angle - wingAngle)
 
-            'popis šipky
-            ' Text k šipce
-            Dim windText As String = "wind"
-            Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
-            Dim textSize = g.MeasureString(windText, font)
+                Dim x2 As Single = endPoint.X - arrowSize * Math.Cos(angle + wingAngle)
+                Dim y2 As Single = endPoint.Y - arrowSize * Math.Sin(angle + wingAngle)
 
-            ' Chceme text nakreslit kousek za šipku
-            Dim offset As Single = 10
+                ' Nakresli křidélka
+                g.DrawLine(New Pen(Color.Orange, penWidth / 2), endPoint, New PointF(x1, y1))
+                g.DrawLine(New Pen(Color.Orange, penWidth / 2), endPoint, New PointF(x2, y2))
 
-            ' Bod, kde bude text - spočítáme ho jako bod za endPoint
-            Dim textX As Single = center.X '+ offset * Math.Cos(angle)
-            Dim textY As Single = center.Y '- offset '* Math.Sin(angle)
+                'popis šipky
+                ' Text k šipce
+                Dim windText As String = Windspeed.ToString("0.0") & " m/s "
+                Dim textSize = g.MeasureString(windText, Font)
 
-            ' Uložíme transformaci
-            Dim oldState = g.Save()
+                ' Chceme text nakreslit kousek za šipku
+                Dim offset As Single = 10
 
-            ' Přesuneme se do bodu textu
-            g.TranslateTransform(textX, textY)
+                ' Bod, kde bude text - spočítáme ho jako bod za endPoint
+                Dim textX As Single = center.X '+ offset * Math.Cos(angle)
+                Dim textY As Single = center.Y - offset '* Math.Sin(angle)
 
-            ' Otočíme souřadnicový systém podle směru šipky
-            g.RotateTransform(CSng(angle * 180 / Math.PI))
+                ' Uložíme transformaci
+                Dim oldState = g.Save()
 
-            ' Text zarovnáme tak, aby byl středem na ose šipky
-            Dim textPos As New PointF(0, -textSize.Height)
+                ' Přesuneme se do bodu textu
+                g.TranslateTransform(textX, textY)
 
-            ' Nakreslíme text (s outline, pokud chceš)
-            Dim contrastColor As Color = GetContrastColor(Color.Orange)
-            DrawTextWithOutline(g, windText, font, Color.Orange, contrastColor, textPos, 1)
+                ' Otočíme souřadnicový systém podle směru šipky
+                g.RotateTransform(CSng(angle * 180 / Math.PI))
 
-            ' Vrátíme původní transformaci
-            g.Restore(oldState)
+                ' Text zarovnáme tak, aby byl středem na ose šipky
+                Dim textPos As New PointF(0, -textSize.Height)
 
+                ' Nakreslíme text (s outline, pokud chceš)
+                Dim contrastColor As Color = GetContrastColor(Color.Black)
+                DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
+
+                ' Vrátíme původní transformaci
+                g.Restore(oldState)
+            End If
 
             For Each track As TrackAsPointsF In Me.TracksAsPointsF
                 If track.TrackPointsF.Count = 0 Then Continue For
@@ -253,8 +261,8 @@ Friend Class VideoCreator
                     Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
 
                     Dim popis As String = track.Label & " " & time
-                    textSize = g.MeasureString(popis, font)
-                    contrastColor = GetContrastColor(track.Color)
+                    Dim textSize = g.MeasureString(popis, Font)
+                    Dim contrastColor As Color = GetContrastColor(track.Color)
                     Dim p As PointF = TrackPoints.Last
                     g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
                     Dim offsetX As Single
@@ -265,7 +273,7 @@ Friend Class VideoCreator
                         ' je místo, napiš text vlevo
                         offsetX = -textSize.Width - radius
                     End If
-                    textPos = New PointF(p.X + offsetX, p.Y - textSize.Height / 2)
+                    Dim textPos As New PointF(p.X + offsetX, p.Y - textSize.Height / 2)
                     DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
 
                     'DrawTextWithOutline(g, popis, font, track.Color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
@@ -295,7 +303,7 @@ Friend Class VideoCreator
                             g.FillEllipse(Brushes.Red, p.X - radius / 2, p.Y - radius / 2, radius, radius)
                             ' popis, poslední bod atd.
 
-                            Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
+                            'Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
                             Dim popis As String = frameTime.ToString("HH:mm:ss")
                             Dim textSize = g.MeasureString(popis, font)
                             Dim offsetX As Single
@@ -449,7 +457,7 @@ Friend Class VideoCreator
                         .Location = New Coordinates With {.Lat = lat, .Lon = lon},
                         .Time = time
                     }
-                'nebo asi lépe (uvidíme):
+
                 _TrackAsGeoPoints.TrackGeoPoints.Add(geopoint)
             Next
             tracksAsGeoPoint.Add(_TrackAsGeoPoints)
@@ -468,10 +476,8 @@ Friend Class VideoCreator
 
         Dim inputPattern = System.IO.Path.Combine(pngDir, "frame_%04d.png")
 
-        'psi.Arguments = $"-y -framerate {framerate.ToString(System.Globalization.CultureInfo.InvariantCulture)} -i ""{inputPattern}"" -c:v libvpx -auto-alt-ref 0 ""{outputFile}"""
         'vytvoříme video z obrázků s framerate = 1, to je asi 3x rychlejší než reálný čas, takže video bude 3x zrychlené a kratší
         'to proto, že shotcut neumí zpracovat video s nízkým framerate, takže vytvoříme nejdřív rychlé video a pak ho zpomalíme
-        'psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v libvpx -auto-alt-ref 0 ""{outputFile}.webm"""
         psi.Arguments = $"-y -framerate 1 -i ""{inputPattern}"" -c:v prores_ks -pix_fmt yuva444p10le ""{outputFile}_fast.mov"""
 
         psi.UseShellExecute = False

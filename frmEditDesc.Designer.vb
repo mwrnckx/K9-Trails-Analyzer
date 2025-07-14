@@ -46,7 +46,7 @@ Partial Class frmEditComments
         ' 
         lblDog.AutoSize = True
         lblDog.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblDog.Location = New Point(34, 252)
+        lblDog.Location = New Point(34, 361)
         lblDog.Name = "lblDog"
         lblDog.Size = New Size(75, 28)
         lblDog.TabIndex = 2
@@ -56,7 +56,7 @@ Partial Class frmEditComments
         ' 
         lblTrail.AutoSize = True
         lblTrail.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblTrail.Location = New Point(34, 202)
+        lblTrail.Location = New Point(34, 311)
         lblTrail.Name = "lblTrail"
         lblTrail.Size = New Size(77, 28)
         lblTrail.TabIndex = 3
@@ -66,7 +66,7 @@ Partial Class frmEditComments
         ' 
         lblGoal.AutoSize = True
         lblGoal.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblGoal.Location = New Point(34, 155)
+        lblGoal.Location = New Point(34, 264)
         lblGoal.Name = "lblGoal"
         lblGoal.Size = New Size(79, 28)
         lblGoal.TabIndex = 4
@@ -77,7 +77,7 @@ Partial Class frmEditComments
         btnOK.BackColor = Color.DarkGoldenrod
         btnOK.FlatStyle = FlatStyle.Flat
         btnOK.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        btnOK.Location = New Point(1041, 342)
+        btnOK.Location = New Point(1041, 451)
         btnOK.Name = "btnOK"
         btnOK.Size = New Size(134, 60)
         btnOK.TabIndex = 1
@@ -87,7 +87,7 @@ Partial Class frmEditComments
         ' rtbGoal
         ' 
         rtbGoal.EnableAutoDragDrop = True
-        rtbGoal.Location = New Point(115, 149)
+        rtbGoal.Location = New Point(115, 258)
         rtbGoal.Name = "rtbGoal"
         rtbGoal.ScrollBars = RichTextBoxScrollBars.None
         rtbGoal.Size = New Size(1060, 45)
@@ -97,7 +97,7 @@ Partial Class frmEditComments
         ' rtbTrail
         ' 
         rtbTrail.EnableAutoDragDrop = True
-        rtbTrail.Location = New Point(115, 202)
+        rtbTrail.Location = New Point(115, 311)
         rtbTrail.Name = "rtbTrail"
         rtbTrail.ScrollBars = RichTextBoxScrollBars.None
         rtbTrail.Size = New Size(1060, 45)
@@ -107,7 +107,7 @@ Partial Class frmEditComments
         ' rtbDog
         ' 
         rtbDog.EnableAutoDragDrop = True
-        rtbDog.Location = New Point(115, 252)
+        rtbDog.Location = New Point(115, 361)
         rtbDog.Name = "rtbDog"
         rtbDog.ScrollBars = RichTextBoxScrollBars.None
         rtbDog.Size = New Size(1060, 45)
@@ -119,7 +119,7 @@ Partial Class frmEditComments
         AutoScaleDimensions = New SizeF(14F, 32F)
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        ClientSize = New Size(1199, 425)
+        ClientSize = New Size(1199, 532)
         Controls.Add(rtbDog)
         Controls.Add(rtbTrail)
         Controls.Add(rtbGoal)

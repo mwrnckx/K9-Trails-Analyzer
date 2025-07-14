@@ -383,7 +383,8 @@ Public Class Form1
         Dim xAxisData As Date()
         Dim GrafText As String
 
-        Dim Chart1 As DistanceChart
+        Dim chart1 As DistanceChart
+        'Dim chart2 As LiveChart2
 
         ' Získání dat pro graf rychlosti
         Dim speedData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "DogSpeed")
@@ -391,9 +392,13 @@ Public Class Form1
         yAxisData = speedData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelSpeed
         GrafText = Application.ProductName
-        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        Chart1.Show()
-        Charts.Add(Chart1)
+        chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
+        'chart2 = New LiveChart2(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, "Point", currentCulture)
+        'chart2.Show()
+
+
 
         ' Získání dat pro graf věku trasy
         Dim trailAgeData As Tuple(Of DateTime(), TimeSpan()) = GetGraphData(Of TimeSpan)(gpxRecords, "TrailAge")
@@ -405,9 +410,9 @@ Public Class Form1
         Next
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelAge
         GrafText = Resource1.Y_AxisLabelAge
-        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        Chart1.Show()
-        Charts.Add(Chart1)
+        chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
 
         'Distances
         ' Získání dat pro graf vzdálenosti
@@ -416,9 +421,9 @@ Public Class Form1
         yAxisData = distanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelLength
         GrafText = Application.ProductName
-        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        Chart1.Show()
-        Charts.Add(Chart1)
+        chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
 
         'TotDistance
         Dim totDistanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "TotalDistance")
@@ -426,9 +431,9 @@ Public Class Form1
         yAxisData = totDistanceData.Item2
         yAxisLabel = My.Resources.Resource1.Y_AxisLabelTotalLength
         GrafText = Application.ProductName
-        Chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
-        Chart1.Show()
-        Charts.Add(Chart1)
+        chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
 
 
         ' Vygenerujeme seznam všech měsíců v daném období
@@ -448,7 +453,7 @@ Public Class Form1
         Dim monthlyYAxisDataWithEmpty As Double() = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray()
 
         For Each s In monthlyXAxisDataWithEmpty
-            Debug.WriteLine($"X: {s}")
+            Debug.WriteLine($"X:  {s}")
         Next
         For Each y In monthlyYAxisDataWithEmpty
             Debug.WriteLine($"Y: {y}")

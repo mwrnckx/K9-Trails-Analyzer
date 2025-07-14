@@ -424,8 +424,8 @@ Public Class GPXRecord
     Public Property DogSpeed As Double
     Public Property Reader As GpxReader
     Public Property IsAlreadyProcessed As Boolean
-    Private Property WindDirection As Double = 0.0 ' Směr větru v stupních
-
+    'Private Property WindDirection As Double = 0.0 ' Směr větru v stupních
+    Dim WeatherData As (_temperature As Double, _windSpeed As Double, _windDirection As Double, _precipitation As Double, _relHumidity As Double, _cloudCover As Double)
 
     Private ReadOnly Property gpxDirectory As String
     Private ReadOnly Property BackupDirectory As String
@@ -488,7 +488,7 @@ Public Class GPXRecord
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
 
-        Dim _videoCreator As New VideoCreator(directory, 800, WindDirection)
+        Dim _videoCreator As New VideoCreator(directory, 800, WeatherData._windDirection, WeatherData._windSpeed)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         ' Vytvoř video z trk bodů
@@ -904,57 +904,78 @@ FoundTrailLayerTrk:
 
     ' Funkce, která jen rozdělí text na části a doplní stáří trailu
     Public Function ExtractDescriptionParts(originalDescription As String, ByRef goalPart As String, ByRef trailPart As String, ByRef dogPart As String) As Boolean
-        ' Funkce pro zpracování popisu: doplní čas, normalizuje a vrátí popis ve tvaru:
-        ' Cíl: ...
-        ' Trail: ...
-        ' Pes: ...
+        ' 1️⃣ Odstraníme HTML tagy
+        Dim cleanDescription As String = System.Text.RegularExpressions.Regex.Replace(originalDescription, "<.*?>", "").Trim()
 
-        ' 🔧 Lokálně nastav labely (můžeš je později číst z lokalizačního souboru):
-        Dim goalLabel As String = "🎯" 'My.Resources.Resource1.txtGoalLabel 'cíl
-        Dim trailLabel As String = "👣" 'My.Resources.Resource1.txtTrailLabel '"Trail:"
-        Dim dogLabel As String = "🐕‍🦺" 'My.Resources.Resource1.txtDogLabel '"Pes:"
+        ' 2️⃣ Najdeme části pomocí regexu
+        Dim pattern As String = "(?:(?:(?<goal>🎯|📍|g:)\s*(?<goalText>.*?))(?=(👣|t:|🐕‍🦺|d:|🌡|$)))?" &
+                            "(?:(?:(?<trail>👣|t:)\s*(?<trailText>.*?))(?=(📍|g:|🐕‍🦺|d:|🌡|$)))?" &
+                            "(?:(?:(?<dog>🐕‍🦺|d:)\s*(?<dogText>.*?))(?=(📍|g:|👣|t:|🌡|$)))?"
 
+        Dim regex As New Regex(pattern, RegexOptions.Singleline Or RegexOptions.IgnoreCase)
+        Dim match As Match = regex.Match(cleanDescription)
 
-        ' ✂ Předzpracování textu: odstraníme diakritiku a převedeme na lowercase
-        Dim textNorm As String = RemoveDiacritics(originalDescription).ToLowerInvariant()
-        Dim goalLabelNorm As String = RemoveDiacritics(goalLabel).ToLowerInvariant()
-        Dim trailLabelNorm As String = RemoveDiacritics(trailLabel).ToLowerInvariant()
-        Dim dogLabelNorm As String = RemoveDiacritics(dogLabel).ToLowerInvariant()
-        Dim weatherLabel As String = "🌡"
-
-        ' 🧪 Regexy dynamicky podle labelů (použij Regex.Escape pro jistotu):
-        Dim goalRegex As New Regex(Regex.Escape(goalLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(weatherLabel) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
-        Dim trailRegex As New Regex(Regex.Escape(trailLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(weatherLabel) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
-        Dim dogRegex As New Regex(Regex.Escape(dogLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(dogLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(weatherLabel) & "|" & Regex.Escape(goalLabelNorm) & "|$))", RegexOptions.Singleline)
-
-        'Dim goalRegex As New Regex(Regex.Escape(goalLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
-        'Dim trailRegex As New Regex(Regex.Escape(trailLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
-        'Dim dogRegex As New Regex(Regex.Escape(dogLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(dogLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|$))", RegexOptions.Singleline)
-
-        ' ✂ Odstraníme případné html tagy (jako <br>, <span...> a </span>) z původního textu
-        'Dim cleanDescription = originalDescription.Replace(crlf, "").Replace("<br>", "").Replace(styleBlueBold, "").Replace(styleRedBold, "").Replace(styleGreenBold, "").Replace(styleend, "").Trim()
-        Dim cleanDescription = Regex.Replace(originalDescription, "<.*?>", "").Trim()
-
-
-        ' 🔍 Extrahujeme části popisu
         goalPart = ""
         trailPart = ""
         dogPart = ""
 
-        Dim textNormClean As String = RemoveDiacritics(cleanDescription).ToLowerInvariant()
-
-        Dim mGoal = goalRegex.Match(textNormClean)
-        If mGoal.Success Then goalPart = ExtractOriginalText(cleanDescription, mGoal.Groups(1).Value)
-
-        Dim mTrail = trailRegex.Match(textNormClean)
-        If mTrail.Success Then trailPart = ExtractOriginalText(cleanDescription, mTrail.Groups(1).Value)
-
-        Dim mDog = dogRegex.Match(textNormClean)
-        If mDog.Success Then dogPart = ExtractOriginalText(cleanDescription, mDog.Groups(1).Value)
-        If Not (mGoal.Success Or mTrail.Success Or mDog.Success) Then
-            'když popis neobsahuje žádný předdefinovaný popis uloží se popis jako Trail
-            trailPart &= cleanDescription
+        If match.Success Then
+            goalPart = match.Groups("goalText").Value.Trim()
+            trailPart = match.Groups("trailText").Value.Trim()
+            dogPart = match.Groups("dogText").Value.Trim()
         End If
+
+        ' 3️⃣ Pokud žádná část nebyla nalezena, použij celý text jako trailPart
+        If String.IsNullOrWhiteSpace(goalPart) AndAlso String.IsNullOrWhiteSpace(trailPart) AndAlso String.IsNullOrWhiteSpace(dogPart) Then
+            trailPart = cleanDescription
+        End If
+
+        '' 🔧 Lokálně nastav labely (můžeš je později číst z lokalizačního souboru):
+        'Dim goalLabel As String = "🎯" 'My.Resources.Resource1.txtGoalLabel 'cíl
+        'Dim trailLabel As String = "👣" 'My.Resources.Resource1.txtTrailLabel '"Trail:"
+        'Dim dogLabel As String = "🐕‍🦺" 'My.Resources.Resource1.txtDogLabel '"Pes:"
+
+
+        '' ✂ Předzpracování textu: odstraníme diakritiku a převedeme na lowercase
+        'Dim textNorm As String = RemoveDiacritics(originalDescription).ToLowerInvariant()
+        'Dim goalLabelNorm As String = RemoveDiacritics(goalLabel).ToLowerInvariant()
+        'Dim trailLabelNorm As String = RemoveDiacritics(trailLabel).ToLowerInvariant()
+        'Dim dogLabelNorm As String = RemoveDiacritics(dogLabel).ToLowerInvariant()
+        'Dim weatherLabel As String = "🌡"
+
+        '' 🧪 Regexy dynamicky podle labelů (použij Regex.Escape pro jistotu):
+        'Dim goalRegex As New Regex((Regex.Escape(goalLabelNorm) & "|" & "g:") & "\s*(.*?)(?=\s*(" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(weatherLabel) & "|" & Regex.Escape(dogLabelNorm) & "|" & "g:" & "|" & "t:" & "|" & "d:" & "|$))", RegexOptions.Singleline)
+        'Dim trailRegex As New Regex((Regex.Escape(trailLabelNorm) & "|" & "t:") & "\s*(.*?)(?=\s*(" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(weatherLabel) & "|" & Regex.Escape(dogLabelNorm) & "|" & "g:" & "|" & "t:" & "|" & "d:" & "|$))", RegexOptions.Singleline)
+        'Dim dogRegex As New Regex((Regex.Escape(dogLabelNorm) & "|" & "d:") & "\s*(.*?)(?=\s*(" & Regex.Escape(dogLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(weatherLabel) & "|" & Regex.Escape(goalLabelNorm) & "|" & "g:" & "|" & "t:" & "|" & "d:" & "|$))", RegexOptions.Singleline)
+
+        ''Dim goalRegex As New Regex(Regex.Escape(goalLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
+        ''Dim trailRegex As New Regex(Regex.Escape(trailLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|" & Regex.Escape(dogLabelNorm) & "|$))", RegexOptions.Singleline)
+        ''Dim dogRegex As New Regex(Regex.Escape(dogLabelNorm) & "\s*(.*?)(?=\s*(" & Regex.Escape(dogLabelNorm) & "|" & Regex.Escape(trailLabelNorm) & "|" & Regex.Escape(goalLabelNorm) & "|$))", RegexOptions.Singleline)
+
+        '' ✂ Odstraníme případné html tagy (jako <br>, <span...> a </span>) z původního textu
+        ''Dim cleanDescription = originalDescription.Replace(crlf, "").Replace("<br>", "").Replace(styleBlueBold, "").Replace(styleRedBold, "").Replace(styleGreenBold, "").Replace(styleend, "").Trim()
+        'cleanDescription = Regex.Replace(originalDescription, "<.*?>", "").Trim()
+
+
+        '' 🔍 Extrahujeme části popisu
+        'goalPart = ""
+        'trailPart = ""
+        'dogPart = ""
+
+        'Dim textNormClean As String = RemoveDiacritics(cleanDescription).ToLowerInvariant()
+
+        'Dim mGoal = goalRegex.Match(textNormClean)
+        'If mGoal.Success Then goalPart = ExtractOriginalText(cleanDescription, mGoal.Groups(1).Value)
+
+        'Dim mTrail = trailRegex.Match(textNormClean)
+        'If mTrail.Success Then trailPart = ExtractOriginalText(cleanDescription, mTrail.Groups(1).Value)
+
+        'Dim mDog = dogRegex.Match(textNormClean)
+        'If mDog.Success Then dogPart = ExtractOriginalText(cleanDescription, mDog.Groups(1).Value)
+        'If Not (mGoal.Success Or mTrail.Success Or mDog.Success) Then
+        '    'když popis neobsahuje žádný předdefinovaný popis uloží se popis jako Trail
+        '    trailPart &= cleanDescription
+        'End If
         ' 🕰 Trail part – doplníme čas, pokud tam není
         Dim ageFromTime As TimeSpan = GetAgeFromTime()
         If trailPart <> "" Then
@@ -981,7 +1002,7 @@ FoundTrailLayerTrk:
         Dim styleend As String = "</span>"
 
         ' 🔧 Lokálně nastav labely 
-        Dim goalLabel As String = "🎯" 'My.Resources.Resource1.txtGoalLabel 'cíl
+        Dim goalLabel As String = "📍" 'My.Resources.Resource1.txtGoalLabel 'cíl
         Dim trailLabel As String = "👣" 'My.Resources.Resource1.txtTrailLabel '"Trail:"
         Dim dogLabel As String = "🐕‍🦺" 'My.Resources.Resource1.txtDogLabel '"Pes:"
 
@@ -993,10 +1014,10 @@ FoundTrailLayerTrk:
 
         ' 🌧🌦☀ Počasí
         'Wheather() 'získá počasí, ale zatím nevyužívá, jen pro testování
-        Dim weatherData = Await Wheather()
+        WeatherData = Await Wheather()
 
-        If weatherData._temperature.ToString = "100" Then Return sb.ToString().Trim()
-        Dim strWeather As String = $"🌡{weatherData._temperature.ToString("0.#")} °C  💨{weatherData._windSpeed.ToString("0.#")} m/s {WindDirectionToText(weatherData._windDirection)}  💧{weatherData._precipitation} mm/h ⛅{weatherData._cloudCover} %"
+        If WeatherData._temperature.ToString = "100" Then Return sb.ToString().Trim()
+        Dim strWeather As String = $"🌡{WeatherData._temperature.ToString("0.#")} °C  💨{WeatherData._windSpeed.ToString("0.#")} m/s {windDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity} %   💧{WeatherData._precipitation} mm/h ⛅{WeatherData._cloudCover} %"
 
         sb.Append(styleMaroonBold & strWeather & styleend)
         'Debug.WriteLine($"Teplota: {weatherData._temperature.ToString} °C")
@@ -1642,16 +1663,22 @@ FoundTrailLayerTrk:
     End Function
 
     ' ☀🌦🌧  Počasí
-    Private Async Function Wheather() As Task(Of (_temperature As Double, _windSpeed As Double, _windDirection As Double, _precipitation As Double, _cloudCover As Double))
+    Private Async Function Wheather() As Task(Of (_temperature As Double, _windSpeed As Double, _windDirection As Double, _precipitation As Double, _relHumidity As Double, _cloudCover As Double))
         Dim client As New HttpClient()
         Dim datum As String = $"{trailStart.Time:yyyy-MM-dd}"
-        Dim url As String = $"https://api.open-meteo.com/v1/forecast?latitude={trailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={trailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0cm,wind_direction_10m,cloud_cover,precipitation&wind_speed_unit=ms"
+        Dim url As String = $"https://api.open-meteo.com/v1/forecast?latitude={trailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={trailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
+
+        If trailStart.Time < Today.AddDays(-6) Then
+            'po šesti dnech jsou k dispozici historická data z archivu
+            url = $"https://archive-api.open-meteo.com/v1/archive?latitude={trailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={trailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0_to_7cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
+        End If
+
 
         Dim response As HttpResponseMessage = Await client.GetAsync(url)
         Dim content As String = Await response.Content.ReadAsStringAsync()
         If Not response.IsSuccessStatusCode Then
             RaiseEvent WarningOccurred($"Failed to fetch weather data: {response.ReasonPhrase}", Color.Red)
-            Return (100, 0, 0, 0, 0)
+            Return (100, 0, 0, 0, 0, 0)
         End If
         Dim json As JsonDocument = JsonDocument.Parse(content)
 
@@ -1682,33 +1709,50 @@ FoundTrailLayerTrk:
             Dim windSpeeds = root.GetProperty("hourly").GetProperty("wind_speed_10m")
             Dim windDirs = root.GetProperty("hourly").GetProperty("wind_direction_10m")
             Dim rains = root.GetProperty("hourly").GetProperty("precipitation")
+            Dim relHumidities = root.GetProperty("hourly").GetProperty("relative_humidity_2m")
             Dim cloud_covers = root.GetProperty("hourly").GetProperty("cloud_cover")
+            Try
 
-            ' Vytáhni hodnoty
-            Dim temperature = temps(index).GetDouble()
-            Dim windSpeed = windSpeeds(index).GetDouble()
-            Dim windDir = windDirs(index).GetDouble()
-            Dim precipitation = rains(index).GetDouble
-            Dim cloude_cover = cloud_covers(index).GetDouble
 
-            Debug.Write("Pro čas " & hledanyCasUTC & ": ")
-            Debug.Write("Teplota: " & temperature.ToString())
-            Debug.Write(" Oblačnost:  " & cloude_cover.ToString())
-            Debug.Write(" Srážky (mm/h):  " & precipitation.ToString())
-            Debug.Write(" Vítr (m/s): " & windSpeed.ToString())
-            Debug.WriteLine(" Vítr: " & WindDirectionToText(windDir))
-            Return (temperature, windSpeed, windDir, precipitation, cloude_cover)
+                ' Vytáhni hodnoty
+                Dim temperature = temps(index).GetDouble()
+                Dim windSpeed = windSpeeds(index).GetDouble()
+                Dim windDir = windDirs(index).GetDouble()
+                Dim precipitation = rains(index).GetDouble
+                Dim relHumidity = relHumidities(index).GetDouble
+                Dim cloude_cover = cloud_covers(index).GetDouble
+
+                Debug.Write("Pro čas " & hledanyCasUTC & ": ")
+                Debug.Write("Teplota: " & temperature.ToString())
+                Debug.Write(" Oblačnost:  " & cloude_cover.ToString())
+                Debug.Write(" Srážky (mm/h):  " & precipitation.ToString())
+                Debug.Write(" Vítr (m/s): " & windSpeed.ToString())
+                Debug.WriteLine(" Vítr: " & windDirectionToText(windDir))
+                Return (temperature, windSpeed, windDir, precipitation, relHumidity, cloude_cover)
+            Catch ex As Exception
+                Return (100, 0, 0, 0, 0, 0)
+            End Try
         End If
 
-        Return (100, 0, 0, 0, 0)
+        Return (100, 0, 0, 0, 0, 0)
     End Function
 
-    Function WindDirectionToText(smer As Double) As String
-        Dim strany = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"}
+    'Function WindDirectionToText(smer As Double) As String
+    '    Dim strany = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"}
+    '    ' Každý díl má 22.5°
+    '    Dim index As Integer = CInt((smer + 22.5) \ 45) Mod 8
+    '    Return strany(index)
+    'End Function
+    Function windDirectionToText(direction As Double) As String
+        Dim windDir = {
+    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
+            }
         ' Každý díl má 22.5°
-        Dim index As Integer = CInt((smer + 22.5) \ 45) Mod 8
-        Return strany(index)
+        Dim index As Integer = CInt((direction + 11.25) \ 22.5) Mod 16
+        Return windDir(index)
     End Function
+
 
 End Class
 

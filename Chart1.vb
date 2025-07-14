@@ -177,33 +177,6 @@ Partial Class DistanceChart
                 Debug.WriteLine("Nepodaøilo se proložit pøímku")
             End Try
 
-            'ElseIf Me.ChartType = SeriesChartType.Column Then
-            '    Dim interval As Double = 1D
-            '    Me.chart1.ChartAreas(0).AxisX.MajorTickMark.Interval = interval
-            '    chart1.ChartAreas(0).AxisX.MajorGrid.Interval = interval
-
-            '    'set minimum at the middle
-            '    Me.chart1.ChartAreas(0).AxisX.Minimum = interval / 2D
-            '    series1.Color = Color.Chocolate
-
-            '    ' Povolení zobrazení hodnot nad sloupci
-            '    series1.IsValueShownAsLabel = True
-            '    series1.LabelFormat = "N1" ' Zobrazí èísla s dvìma desetinnými místy
-
-
-
-            '    For i As Integer = 0 To Y_Data.Length - 1
-            '        series1.Points.AddXY(X_DataString(i), Y_Data(i))
-            '        Me.chart1.ChartAreas(0).AxisX.CustomLabels.Add((0.5D + i) * interval,
-            '                              (1.5D + i) * interval, X_DataString(i).ToString())
-            '    Next
-
-            '    For i As Integer = 0 To Y_Data.Length - 1
-            '        series1.Points.AddXY(X_DataString(i), Y_Data(i))
-            '    Next
-
-
-            'End If
 
         ElseIf Me.chartType = SeriesChartType.Column Then
 

@@ -16,8 +16,11 @@ Public Class frmEditComments
         rtbGoal.Text = GoalPart
         rtbTrail.Text = TrailPart
         rtbDog.Text = DogPart
-        lblInfo.Text = $"File: {GpxFileName}{vbCrLf}Edit the comments for the goal, trail, and dog parts of the GPX track. " & vbCrLf &
-                        "These comments will be saved in the GPX file and displayed in the applications."
+        lblInfo.Text = $"File: {GpxFileName}" & vbCrLf &
+                        "Edit the comments for the goal, trail, and dog parts of the GPX track. " & vbCrLf &
+                        "These comments will be saved in the GPX file and displayed in the applications like https://www.gpxsee.org/." & vbCrLf &
+                        "If you are already creating the comment in your GPS app, write G: before the destination description," & vbCrLf &
+                        "T: before the trail description and D: before the dog's work description."
         lblGoal.Text = goalLabel
         lblTrail.Text = trailLabel
         lblDog.Text = dogLabel

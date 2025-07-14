@@ -8,11 +8,18 @@
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
     <AssemblyName>K9TrailsAnalyzer</AssemblyName>
+    <ImportedNamespaces>core=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,K9TrailsAnalyzer=True</ImportedNamespaces>
+    <ApplicationIcon>track.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="track.ico" />
+  </ItemGroup>
 
   
 
   <ItemGroup>
+    <Import Include="core" />
     <Import Include="System.Data" />
     <Import Include="System.Drawing" />
     <Import Include="System.Windows.Forms" />
@@ -20,6 +27,7 @@
 
 
   <ItemGroup>
+    <!--<PackageReference Include="LiveChartsCore.SkiaSharpView.WinForms" Version="2.0.0-rc5.4" />-->
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
 
