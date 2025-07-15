@@ -1,23 +1,33 @@
 ﻿Public Class frmVideoDone
     Private outputFile As String = "outputfile" ' Default value, will be set in constructor
-    Private _bgBitmap As Bitmap
-    Public Sub New(_outputfile As String, _bgbmp As Bitmap)
+    Public Sub New(_outputfile As String, Optional bgImagepath As String = "", Optional bgPNG As Bitmap = Nothing)
 
         ' Toto volání je vyžadované návrhářem
         InitializeComponent()
         outputFile = _outputfile
         ' Přidejte libovolnou inicializaci po volání InitializeComponent().
         Me.lblInfo.Text = $"Video showing the dog's movement on the track has been created and saved to:" & vbCrLf & $"{outputFile}." & vbCrLf & "It can be used as an overlay video in picture-in-picture."
-        Me._bgBitmap = _bgbmp
-        Me.BackgroundImage = _bgBitmap
+        Try
+            Dim img As Image
+            Using fs As New IO.FileStream(bgImagepath, IO.FileMode.Open, IO.FileAccess.Read)
+                img = Image.FromStream(fs)
+            End Using
+            Me.BackgroundImage = img
+        Catch ex As Exception
+            Try
+                Me.BackgroundImage = bgPNG
+            Catch ex2 As Exception
 
+            End Try
+        End Try
 
     End Sub
 
     Private Sub btnOpenFolder_Click(sender As Object, e As EventArgs) Handles btnOpenFolder.Click
         Dim folderPath As String = System.IO.Path.GetDirectoryName(outputFile)
         'Process.Start("explorer.exe", folderPath)
-        Process.Start(folderPath, $"/select,""{outputFile}""")
+        Process.Start("explorer.exe", folderPath)
+
 
     End Sub
 
