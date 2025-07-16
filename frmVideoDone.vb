@@ -6,7 +6,8 @@
         InitializeComponent()
         outputFile = _outputfile
         ' Přidejte libovolnou inicializaci po volání InitializeComponent().
-        Me.lblInfo.Text = $"Video showing the dog's movement on the track has been created and saved to:" & vbCrLf & $"{outputFile}." & vbCrLf & "It can be used as an overlay video in picture-in-picture."
+        Me.lblInfo.Text = $"Video showing the dog's movement on the track has been created and saved to:" &
+            $"{outputFile}." & vbCrLf & "It can be used as an overlay video in picture-in-picture."
         Try
             Dim img As Image
             Using fs As New IO.FileStream(bgImagepath, IO.FileMode.Open, IO.FileAccess.Read)
@@ -20,7 +21,7 @@
 
             End Try
         End Try
-
+        lblInfo.MaximumSize = New Size(Me.Width * 0.8, Me.Height * 0.8) 'nastaví maximální šířku popisku
     End Sub
 
     Private Sub btnOpenFolder_Click(sender As Object, e As EventArgs) Handles btnOpenFolder.Click

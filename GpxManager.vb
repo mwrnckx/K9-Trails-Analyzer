@@ -63,6 +63,8 @@ Public Class GpxFileManager
 
         For Each _gpxRecord As GPXRecord In _gpxFilesMerged
             Try
+                Dim waitForm As New frmPleaseWait()
+                waitForm.Show()
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
                     If prependDateToName Then _gpxRecord.PrependDateToFilename()
@@ -86,7 +88,7 @@ Public Class GpxFileManager
 
                 'a nakonec
                 _gpxRecord.SetCreatedModifiedDate()
-
+                waitForm.Close()
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
                         If MessageBox.Show($"Should a video of the dog's movement be created from the file: {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
@@ -489,18 +491,42 @@ Public Class GPXRecord
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
 
-        Dim _videoCreator As New VideoCreator(directory, 800, WeatherData._windDirection, WeatherData._windSpeed)
+        Dim _videoCreator As New VideoCreator(directory, WeatherData._windDirection, WeatherData._windSpeed)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
-        ' Vytvoř video z trk bodů
-        If Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts) Then
-            Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.mov")
-            Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "background.png")
-            Dim form As New frmVideoDone(videopath, bgPNGPath)
-            form.ShowDialog()
-            form.Dispose()
-            Return True
-        End If
+        Dim waitForm As New frmPleaseWait()
+        waitForm.Show()
+
+        ' Spustíme na pozadí, aby nezamrzlo UI
+        Await Task.Run(Async Function()
+                           ' Spustíme tvůj dlouhý proces
+                           Dim success = Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts)
+
+                           ' Po dokončení se vrať na UI thread a proveď akce
+                           waitForm.Invoke(Sub()
+                                               waitForm.Close()
+
+                                               If success Then
+                                                   Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.mov")
+                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "background.png")
+                                                   Dim form As New frmVideoDone(videopath, bgPNGPath)
+                                                   form.ShowDialog()
+                                                   form.Dispose()
+                                               Else
+                                                   MessageBox.Show("Vytvoření videa selhalo!", "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                               End If
+                                           End Sub)
+                       End Function)
+
+        '' Vytvoř video z trk bodů
+        'If Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts) Then
+        '    Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.mov")
+        '    Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "background.png")
+        '    Dim form As New frmVideoDone(videopath, bgPNGPath)
+        '    form.ShowDialog()
+        '    form.Dispose()
+        '    Return True
+        'End If
 
         Return False
     End Function
@@ -978,11 +1004,11 @@ FoundTrailLayerTrk:
 
         ' 📦 Sestavíme nový popis
         Me.DescriptionParts = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
-        ("♥👍 Trailing 👍♥", Color.Maroon, FontStyle.Bold),
-        (goalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Regular),
-        (trailLabel & " " & trailPart, Color.Blue, FontStyle.Bold),
-        (dogLabel & " " & dogPart, Color.Red, FontStyle.Bold),
-        (strWeather, Color.Maroon, FontStyle.Bold)}
+        ("🐕🐩🐶🐾" & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
+        (My.Resources.Resource1.txtGoalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Regular),
+        (trailLabel & " " & trailPart, Color.Blue, FontStyle.Regular),
+        (dogLabel & " " & dogPart, Color.Red, FontStyle.Regular),
+        (strWeather, Color.Maroon, FontStyle.Regular)}
         'Me.DescriptionParts = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
         '("--> Trailing <--", Color.Maroon, FontStyle.Bold),
         '(My.Resources.Resource1.txtGoalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Bold),

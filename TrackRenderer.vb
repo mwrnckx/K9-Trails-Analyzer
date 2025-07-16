@@ -242,9 +242,9 @@ Public Class PngRenderer
     Public Function RenderStaticText(textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), bgmap As Bitmap) As Bitmap
         Dim maxWidth As Single = bgmap.Width * 0.9 ' maximální šířka textu, 90% šířky obrázku
         Dim startX As Single = bgmap.Width * 0.05 ' začátek textu, 5% od levého okraje
-        Dim startY As Single = bgmap.Height * 0.05 ' začátek textu, 5% od horního okraje
+        Dim startY As Single = bgmap.Height * 0.07 ' začátek textu, 5% od horního okraje
         Dim currentY As Single = startY
-        Dim fontSize As Int32 = CInt(bgmap.Height * 0.04) ' výchozí velikost písma
+        Dim fontSize As Int32 = CInt(bgmap.Height * 0.05) ' výchozí velikost písma
 
 
         Dim staticText As New Bitmap(bgmap.Width, bgmap.Height, PixelFormat.Format32bppArgb)
@@ -333,7 +333,7 @@ Public Class PngRenderer
                     g.DrawString(segmentText, segmentFont, brush, currentPosition)
 
                     ' Posuneme X souřadnici pro další část slova
-                    currentPosition.X += g.MeasureString(segmentText, segmentFont).Width * 0.7 ' menší mezera mezi segmenty, aby se to nelepilo
+                    currentPosition.X += g.MeasureString(segmentText, segmentFont).Width * 0.6 ' menší mezera mezi segmenty, aby se to nelepilo
                     i += segmentCharCount
                 End While
 

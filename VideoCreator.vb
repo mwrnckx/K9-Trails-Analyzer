@@ -6,11 +6,11 @@ Imports Windows.Win32.UI.Input
 Public Class VideoCreator
 
     Private converter As TrackConverter
-    Private pngCreator As PngSequenceCreator
+    'Private pngCreator As PngSequenceCreator
     Private encoder As FfmpegVideoEncoder
 
     Private outputDir As DirectoryInfo
-    Private minVideoSize As Single
+    'Private minVideoSize As Single
     Private windDirection As Double?
     Private windSpeed As Double
     Private imgWidth As Double
@@ -20,14 +20,14 @@ Public Class VideoCreator
     Dim textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
     Public Event WarningOccurred(message As String, _color As Color)
 
-    Public Sub New(outputDir As DirectoryInfo, minVideoSize As Single, Optional windDir As Double? = Nothing, Optional windSpeed As Double = 0, Optional textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)) = Nothing)
+    Public Sub New(outputDir As DirectoryInfo, Optional windDir As Double? = Nothing, Optional windSpeed As Double = 0, Optional textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)) = Nothing)
         Me.outputDir = outputDir
-        Me.minVideoSize = minVideoSize
+        'Me.minVideoSize = minVideoSize
         Me.windDirection = windDir
         Me.windSpeed = windSpeed
         Me.textParts = textParts
 
-        converter = New TrackConverter(minVideoSize)
+        converter = New TrackConverter()
 
     End Sub
 
@@ -53,8 +53,7 @@ Public Class VideoCreator
         'converts routes to points and saves to TrackAsPointsF
 
         backgrounMapPath = IO.Path.Combine(outputDir.FullName, "backgroundMap.png")
-
-        Dim zoom As Integer = 17 ' Zoom level for the background map
+        Dim zoom As Integer = 18 ' Zoom level for the background map
 
         converter.SetCoordinatesBounds(_tracksAsGeoPoints)
 
@@ -67,6 +66,7 @@ Public Class VideoCreator
         Dim _TracksAsPointsF As List(Of TrackAsPointsF) = converter.ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom) 'přepočítá trasy na body a uloží do TrackAsPointsF
 
         Return Await CreateVideoFromPointsF(_TracksAsPointsF)
+
     End Function
 
 
@@ -75,21 +75,26 @@ Public Class VideoCreator
     ''' </summary>
     ''' <param name="_tracksAsPointsF">List of tracks containing 2D points and times.</param>
     Public Async Function CreateVideoFromPointsF(_tracksAsPointsF As List(Of TrackAsPointsF)) As Task(Of Boolean)
-        ' Vykresli statické pozadí
-        Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles)
+        Dim pngDir As DirectoryInfo = Nothing
+        Dim pngCreator As PngSequenceCreator = Nothing
 
-        Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles)
-        'staticBgTransparent.Save(IO.Path.Combine(outputDir.FullName, "staticBgTransparent.png"), System.Drawing.Imaging.ImageFormat.Png)
+        Await Task.Run(Sub()
 
-        Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles)
-        'staticBgMap.Save(IO.Path.Combine(outputDir.FullName, "staticBgMap.png"), System.Drawing.Imaging.ImageFormat.Png)
+                           ' Vykresli statické pozadí
+                           Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles)
 
-        ' Generuj PNG snímky podle časů
-        Dim pngDir = outputDir.CreateSubdirectory("png")
-        Dim pngCreator As New PngSequenceCreator(renderer)
-        Dim pngTimes = pngCreator.GetPngTimes(_tracksAsPointsF)
-        pngCreator.CreateFrames(_tracksAsPointsF, staticBgTransparent, staticBgMap, pngDir, pngTimes, textParts)
+                           Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles)
+                           'staticBgTransparent.Save(IO.Path.Combine(outputDir.FullName, "staticBgTransparent.png"), System.Drawing.Imaging.ImageFormat.Png)
 
+                           Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles)
+                           'staticBgMap.Save(IO.Path.Combine(outputDir.FullName, "staticBgMap.png"), System.Drawing.Imaging.ImageFormat.Png)
+
+                           ' Generuj PNG snímky podle časů
+                           pngDir = outputDir.CreateSubdirectory("png")
+                           pngCreator = New PngSequenceCreator(renderer)
+                           Dim pngTimes = pngCreator.GetPngTimes(_tracksAsPointsF)
+                           pngCreator.CreateFrames(_tracksAsPointsF, staticBgTransparent, staticBgMap, pngDir, pngTimes, textParts)
+                       End Sub)
         ' Sestav video
         Dim outputFile = IO.Path.Combine(outputDir.FullName, "overlay")
         encoder = New FfmpegVideoEncoder()
@@ -97,6 +102,7 @@ Public Class VideoCreator
 
 
     End Function
+
 
     ''' <summary>
     ''' Získá obdélník (bounds) všech bodů ve všech trackách.

@@ -19,7 +19,7 @@ Public Class FfmpegVideoEncoder
         psi.UseShellExecute = False
         psi.RedirectStandardOutput = False
         psi.RedirectStandardError = False
-        psi.CreateNoWindow = False
+        psi.CreateNoWindow = True
 
         Using proc As Process = Process.Start(psi)
             proc.WaitForExit()
@@ -53,6 +53,7 @@ Public Class FfmpegVideoEncoder
         psi2.Arguments = $"-y -i ""{outputFile}_fast.mov"" -c:v prores_ks -pix_fmt yuva444p10le -filter:v ""setpts={strFrameInterval}*PTS"" -r 1 ""{outputFile}.mov"""
 
         psi2.RedirectStandardOutput = False
+        psi2.CreateNoWindow = True
 
         Using proc2 As Process = Process.Start(psi2)
             proc2.WaitForExit()

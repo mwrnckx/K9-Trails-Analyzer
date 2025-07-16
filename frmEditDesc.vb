@@ -16,10 +16,11 @@ Public Class frmEditComments
         rtbGoal.Text = GoalPart
         rtbTrail.Text = TrailPart
         rtbDog.Text = DogPart
+        lblInfo.MaximumSize = New Size(Me.Width * 0.8, Me.Height * 0.8) 'nastaví maximální šířku popisku
         lblInfo.Text = $"File: {GpxFileName}" & vbCrLf &
-                        "Edit the comments for the goal, trail, and dog parts of the GPX track. " & vbCrLf &
-                        "These comments will be saved in the GPX file and displayed in the applications like https://www.gpxsee.org/." & vbCrLf &
-                        "If you are already creating the comment in your GPS app, write G: before the destination description," & vbCrLf &
+                        "Edit the comments for the goal, trail, and dog parts of the GPX track. " &
+                        "These comments will be saved in the GPX file and displayed in the applications like https://www.gpxsee.org/." &
+                        "If you are already creating the comment in your GPS app, write G: before the destination description," &
                         "T: before the trail description and D: before the dog's work description."
         lblGoal.Text = goalLabel
         lblTrail.Text = trailLabel

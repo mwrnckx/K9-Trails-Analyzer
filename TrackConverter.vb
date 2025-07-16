@@ -2,15 +2,15 @@
 Imports Microsoft.VisualBasic.Logging
 
 Public Class TrackConverter
-    Private minVideoSize As Single
+    'Private minVideoSize As Single
     Public minLat As Double = Double.MaxValue
     Public maxLat As Double = Double.MinValue
     Public minLon As Double = Double.MaxValue
     Public maxLon As Double = Double.MinValue
 
 
-    Public Sub New(minVideoSize As Single)
-        Me.minVideoSize = minVideoSize
+    Public Sub New()
+        'Me.minVideoSize = minVideoSize
     End Sub
 
 
@@ -90,7 +90,7 @@ Public Class TrackConverter
         Dim lonDistancePerDegree As Double = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
         Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
         Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
-        Dim pixelsPerMetre As Double = Math.Min(minVideoSize / widthInMeters, minVideoSize / heightInMeters) 'přepočet z GPS na pixely, defaultně 1 pixel = 1 metr
+        'Dim pixelsPerMetre As Double = Math.Min(minVideoSize / widthInMeters, minVideoSize / heightInMeters) 'přepočet z GPS na pixely, defaultně 1 pixel = 1 metr
         'Me.imgWidth = widthInMeters * pixelsPerMetre
         'Me.imgHeight = heightInMeters * pixelsPerMetre
         Dim _tracksAsPointsF As New List(Of TrackAsPointsF)
@@ -103,8 +103,8 @@ Public Class TrackConverter
             }
 
             For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
-                Dim x = CSng(((geoPoint.Location.Lon - minLon)) * lonDistancePerDegree * pixelsPerMetre) 'pozice X osa, přepočítaná na pixely
-                Dim y = CSng(((maxLat - geoPoint.Location.Lat)) * latDistancePerDegree * pixelsPerMetre) ' Y osa obrácená
+                Dim x As Single '= CSng(((geoPoint.Location.Lon - minLon)) * lonDistancePerDegree * pixelsPerMetre) 'pozice X osa, přepočítaná na pixely
+                Dim y As Single '= CSng(((maxLat - geoPoint.Location.Lat)) * latDistancePerDegree * pixelsPerMetre) ' Y osa obrácená
                 Dim pt = LatLonToPixel(geoPoint.Location.Lat, geoPoint.Location.Lon, zoom, minTileX, minTileY)
                 x = pt.X
                 y = pt.Y

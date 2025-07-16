@@ -16,6 +16,7 @@ Public Class Form1
 
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
+        Me.Enabled = False
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
 
         rtbWarnings.Visible = True
@@ -37,6 +38,9 @@ Public Class Form1
         Catch ex As Exception
             MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
         End Try
+        Me.Enabled = True
+
+
     End Sub
 
     Private Sub CreateGpxFileManager()
