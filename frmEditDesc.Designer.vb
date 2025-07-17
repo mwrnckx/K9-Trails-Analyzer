@@ -22,6 +22,7 @@ Partial Class frmEditComments
     'Neupravovat pomocí editoru kódu
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmEditComments))
         lblInfo = New Label()
         lblDog = New Label()
         lblTrail = New Label()
@@ -129,6 +130,7 @@ Partial Class frmEditComments
         Controls.Add(lblDog)
         Controls.Add(lblInfo)
         Font = New Font("Cascadia Mono", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
+        Icon = CType(resources.GetObject("$this.Icon"), Icon)
         Margin = New Padding(5)
         Name = "frmEditComments"
         Text = "Edit comments"

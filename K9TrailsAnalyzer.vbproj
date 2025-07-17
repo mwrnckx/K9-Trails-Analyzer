@@ -25,11 +25,12 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
 
+  
 
   <ItemGroup>
-    <!--<PackageReference Include="LiveChartsCore.SkiaSharpView.WinForms" Version="2.0.0-rc5.4" />-->
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
+
 
 
   <ItemGroup>
@@ -53,5 +54,28 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
+
+
+
+  <ItemGroup>
+    <EmbeddedResource Update="My Project\Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  
+  <ItemGroup>
+  <Compile Update="My Project\Resource1.Designer.vb">
+    <AutoGen>True</AutoGen>
+    <DesignTime>True</DesignTime>
+    <DependentUpon>Resource1.resx</DependentUpon>
+  </Compile>
+</ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="My Project\VideoExport\" />
+  </ItemGroup>
+
 
 </Project>

@@ -371,7 +371,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Export as .
+        '''  Vyhledá lokalizovaný řetězec podobný Export as file  (rtf, txt, csv).
         '''</summary>
         Friend Shared ReadOnly Property Tooltip_ExportAs() As String
             Get
@@ -443,7 +443,16 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Goal:.
+        '''  Vyhledá lokalizovaný řetězec podobný Edit the comments for the goal, trail and dog. These comments will be saved in the GPX file and displayed in applications such as https://www.gpxsee.org/ and in overlay videos. If you are creating the comments in your GPS app, write &apos;G:&apos; before the destination description, &apos;T:&apos; before the trail description, and &apos;D:&apos; before the dog&apos;s work description..
+        '''</summary>
+        Friend Shared ReadOnly Property txtEditDescLabel() As String
+            Get
+                Return ResourceManager.GetString("txtEditDescLabel", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Training goal:.
         '''</summary>
         Friend Shared ReadOnly Property txtGoalLabel() As String
             Get

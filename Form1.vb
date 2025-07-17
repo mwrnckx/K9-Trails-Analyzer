@@ -29,6 +29,7 @@ Public Class Form1
         Try
 
             If Await GPXFilesManager.Main Then
+                Me.Enabled = True
                 Me.WriteRTBOutput(GPXFilesManager)
                 Me.GPXFilesManager = GPXFilesManager
                 btnCharts.Visible = True

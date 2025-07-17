@@ -148,7 +148,7 @@
     <value>  to </value>
   </data>
   <data name="outAll_gpx_files_from_directory" xml:space="preserve">
-    <value>Processed all gpx files from the directory:</value>
+    <value>Processed all gpx files from the directory: </value>
   </data>
   <data name="outTotalNumberOfGPXFiles" xml:space="preserve">
     <value>Total number of track/trails</value>
@@ -202,7 +202,7 @@
     <value>Trim GPS noise at track's start and end.</value>
   </data>
   <data name="Tooltip_ExportAs" xml:space="preserve">
-    <value>Export as </value>
+    <value>Export as file  (rtf, txt, csv)</value>
   </data>
   <data name="outDescription" xml:space="preserve">
     <value>Description</value>
@@ -256,7 +256,7 @@
     <value>Sniffed per month (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
-    <value>Goal:</value>
+    <value>Training goal:</value>
   </data>
   <data name="txtTrailLabel" xml:space="preserve">
     <value>Trail:</value>
@@ -269,5 +269,8 @@
   </data>
   <data name="txtCrossTrack" xml:space="preserve">
     <value>cross-track</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Edit the comments for the goal, trail and dog. These comments will be saved in the GPX file and displayed in applications such as https://www.gpxsee.org/ and in overlay videos. If you are creating the comments in your GPS app, write 'G:' before the destination description, 'T:' before the trail description, and 'D:' before the dog's work description.</value>
   </data>
 </root>

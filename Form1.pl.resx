@@ -280,4 +280,37 @@
   <data name="&gt;&gt;lblDirectory.ZOrder" xml:space="preserve">
     <value>14</value>
   </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Pokaż wykresy</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Katalogi można ustawić w menu „Plik”</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Katalogi można ustawić w menu „Plik”</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Wybierz katalog, aby zapisać nakładkę wideo</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Match Runner i pies utwory</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Proces już przetworzony pliki</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Pliki procesowe, które zostały już przetworzone</value>
+  </data>
+  <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
+    <value>Reset fabryki</value>
+  </data>
+  <data name="mnuDogName.Text" xml:space="preserve">
+    <value>Nazwa psa</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Preferencje</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Utwórz nakładkę wideo</value>
+  </data>
 </root>

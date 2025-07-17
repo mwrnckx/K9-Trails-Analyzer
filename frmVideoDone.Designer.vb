@@ -22,78 +22,82 @@ Partial Class frmVideoDone
     'Neupravovat pomocí editoru kódu
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.lblInfo = New System.Windows.Forms.Label()
-        Me.btnOpenFolder = New System.Windows.Forms.Button()
-        Me.btnPlayVideo = New System.Windows.Forms.Button()
-        Me.btnClose = New System.Windows.Forms.Button()
-        Me.SuspendLayout()
-        '
-        'lblInfo
-        '
-        Me.lblInfo.AutoEllipsis = True
-        Me.lblInfo.BackColor = System.Drawing.Color.Transparent
-        Me.lblInfo.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.lblInfo.Location = New System.Drawing.Point(41, 52)
-        Me.lblInfo.Name = "lblInfo"
-        Me.lblInfo.Size = New System.Drawing.Size(680, 95)
-        Me.lblInfo.TabIndex = 0
-        Me.lblInfo.Text = "lblInfo"
-        '
-        'btnOpenFolder
-        '
-        Me.btnOpenFolder.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.btnOpenFolder.BackColor = System.Drawing.Color.DarkGoldenrod
-        Me.btnOpenFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnOpenFolder.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.btnOpenFolder.Location = New System.Drawing.Point(195, 227)
-        Me.btnOpenFolder.Name = "btnOpenFolder"
-        Me.btnOpenFolder.Size = New System.Drawing.Size(201, 58)
-        Me.btnOpenFolder.TabIndex = 2
-        Me.btnOpenFolder.Text = "Open folder "
-        Me.btnOpenFolder.UseVisualStyleBackColor = False
-        '
-        'btnPlayVideo
-        '
-        Me.btnPlayVideo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.btnPlayVideo.BackColor = System.Drawing.Color.DarkGoldenrod
-        Me.btnPlayVideo.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnPlayVideo.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.btnPlayVideo.Location = New System.Drawing.Point(46, 227)
-        Me.btnPlayVideo.Name = "btnPlayVideo"
-        Me.btnPlayVideo.Size = New System.Drawing.Size(123, 58)
-        Me.btnPlayVideo.TabIndex = 1
-        Me.btnPlayVideo.Text = "Play "
-        Me.btnPlayVideo.UseVisualStyleBackColor = False
-        '
-        'btnClose
-        '
-        Me.btnClose.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink
-        Me.btnClose.BackColor = System.Drawing.Color.DarkGoldenrod
-        Me.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat
-        Me.btnClose.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.btnClose.Location = New System.Drawing.Point(587, 227)
-        Me.btnClose.Name = "btnClose"
-        Me.btnClose.Size = New System.Drawing.Size(134, 58)
-        Me.btnClose.TabIndex = 3
-        Me.btnClose.Text = "Close"
-        Me.btnClose.UseVisualStyleBackColor = False
-        '
-        'frmVideoDone
-        '
-        Me.AutoScaleDimensions = New System.Drawing.SizeF(12.0!, 28.0!)
-        Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.BackColor = System.Drawing.Color.FromArgb(CType(CType(237, Byte), Integer), CType(CType(240, Byte), Integer), CType(CType(213, Byte), Integer))
-        Me.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom
-        Me.ClientSize = New System.Drawing.Size(731, 306)
-        Me.Controls.Add(Me.btnClose)
-        Me.Controls.Add(Me.btnPlayVideo)
-        Me.Controls.Add(Me.btnOpenFolder)
-        Me.Controls.Add(Me.lblInfo)
-        Me.Font = New System.Drawing.Font("Segoe UI", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(238, Byte))
-        Me.Margin = New System.Windows.Forms.Padding(4, 4, 4, 4)
-        Me.Name = "frmVideoDone"
-        Me.Text = "Overlay video"
-        Me.ResumeLayout(False)
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmVideoDone))
+        lblInfo = New Label()
+        btnOpenFolder = New Button()
+        btnPlayVideo = New Button()
+        btnClose = New Button()
+        SuspendLayout()
+        ' 
+        ' lblInfo
+        ' 
+        lblInfo.AutoEllipsis = True
+        lblInfo.AutoSize = True
+        lblInfo.BackColor = Color.Transparent
+        lblInfo.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        lblInfo.Location = New Point(41, 52)
+        lblInfo.Name = "lblInfo"
+        lblInfo.Size = New Size(74, 28)
+        lblInfo.TabIndex = 0
+        lblInfo.Text = "lblInfo"
+        ' 
+        ' btnOpenFolder
+        ' 
+        btnOpenFolder.AutoSizeMode = AutoSizeMode.GrowAndShrink
+        btnOpenFolder.BackColor = Color.DarkGoldenrod
+        btnOpenFolder.FlatStyle = FlatStyle.Flat
+        btnOpenFolder.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        btnOpenFolder.Location = New Point(193, 334)
+        btnOpenFolder.Name = "btnOpenFolder"
+        btnOpenFolder.Size = New Size(201, 58)
+        btnOpenFolder.TabIndex = 2
+        btnOpenFolder.Text = "Open folder "
+        btnOpenFolder.UseVisualStyleBackColor = False
+        ' 
+        ' btnPlayVideo
+        ' 
+        btnPlayVideo.AutoSizeMode = AutoSizeMode.GrowAndShrink
+        btnPlayVideo.BackColor = Color.DarkGoldenrod
+        btnPlayVideo.FlatStyle = FlatStyle.Flat
+        btnPlayVideo.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        btnPlayVideo.Location = New Point(44, 334)
+        btnPlayVideo.Name = "btnPlayVideo"
+        btnPlayVideo.Size = New Size(123, 58)
+        btnPlayVideo.TabIndex = 1
+        btnPlayVideo.Text = "Play "
+        btnPlayVideo.UseVisualStyleBackColor = False
+        ' 
+        ' btnClose
+        ' 
+        btnClose.AutoSizeMode = AutoSizeMode.GrowAndShrink
+        btnClose.BackColor = Color.DarkGoldenrod
+        btnClose.FlatStyle = FlatStyle.Flat
+        btnClose.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        btnClose.Location = New Point(585, 334)
+        btnClose.Name = "btnClose"
+        btnClose.Size = New Size(134, 58)
+        btnClose.TabIndex = 3
+        btnClose.Text = "Close"
+        btnClose.UseVisualStyleBackColor = False
+        ' 
+        ' frmVideoDone
+        ' 
+        AutoScaleDimensions = New SizeF(12.0F, 28.0F)
+        AutoScaleMode = AutoScaleMode.Font
+        BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        BackgroundImageLayout = ImageLayout.Zoom
+        ClientSize = New Size(731, 404)
+        Controls.Add(btnClose)
+        Controls.Add(btnPlayVideo)
+        Controls.Add(btnOpenFolder)
+        Controls.Add(lblInfo)
+        Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        Icon = CType(resources.GetObject("$this.Icon"), Icon)
+        Margin = New Padding(4)
+        Name = "frmVideoDone"
+        Text = "Overlay video"
+        ResumeLayout(False)
+        PerformLayout()
 
     End Sub
 

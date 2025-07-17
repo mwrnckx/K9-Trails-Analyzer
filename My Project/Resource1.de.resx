@@ -219,5 +219,55 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>Am Anfang der Strecke, bevor Sie losgehen, und am Ende, bevor Sie die Aufzeichnung beenden, zeichnet das GPS-Gerät oft ungenaue oder fehlerhafte Daten auf. Wenn diese Option aktiviert ist, versucht das Programm, diese Ungenauigkeiten automatisch zu entfernen.</value>
   </data>
-  
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Legen Sie den maximalen Zeitunterschied (in Stunden) zwischen zwei Track -Rekorde ein, die als verwandt und in einer GPX -Datei als Spur der Ebene und als Spur des Hundes zusammengefasst werden sollten. Der Wert zeigt daher das maximale Alter der von Ihnen verwendeten Spur an. Ein Wert von 0 deaktiviert die automatische Verschmelzung.</value>
+  </data>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Setzen Sie Bedingungen für das Zusammenführen von Spuren</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>GPX -Dateien zusammenführen?</value>
+  </data>
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Entscheiden Sie, ob diese beiden Dateien als Track-Layer- und Hundespur verwandt sind.</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>Durch das Zusammenführen erhalten Sie eine einzige GPX-Datei, die die Spuren sowohl des Trail-Schichts als auch des Hundes enthält.</value>
+  </data>
+  <data name="lblIsThisLayerQ" xml:space="preserve">
+    <value>Erste Datei</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Zweite Datei</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Erinnern Sie sich an die Entscheidung von "Nein" für dieses Paar</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>Fragen Sie für die anderen Paare nicht mehr und machen Sie sofort (sorgfältig!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>Fragen Sie für die anderen Paare nicht mehr und verschmelzen Sie nicht.</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>Nächst noch einmal fragen</value>
+  </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Pro Monat schnüffelt (km)</value>
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Trainingsziel:</value>
+  </data>
+  <data name="txtDogLabel" xml:space="preserve">
+    <value>Hund:</value>
+  </data>
+  <data name="txtCrossTrack" xml:space="preserve">
+    <value>Cross-Track</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Bearbeiten Sie die Kommentare für Ziel, Trail und Hund. Diese Kommentare werden in der GPX -Datei gespeichert und in Anwendungen wie https://www.gpxsee.org/ und in Overlay -Videos angezeigt. Wenn Sie die Kommentare in Ihrer GPS -App erstellen, schreiben Sie 'G:' vor der Zielbeschreibung, 't:' vor der Spurbeschreibung und 'D:' vor der Arbeitsbeschreibung des Hundes.</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>Pfad:</value>
+  </data>
 </root>

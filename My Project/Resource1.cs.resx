@@ -256,7 +256,7 @@
     <value>Načucháno měsíčně (km)</value>
   </data>
   <data name="txtGoalLabel" xml:space="preserve">
-    <value>Cíl:</value>
+    <value>Cíl tréninku:</value>
   </data>
   <data name="txtDogLabel" xml:space="preserve">
     <value>Pes:</value>
@@ -266,5 +266,11 @@
   </data>
   <data name="txtCrossTrack" xml:space="preserve">
     <value>křížení</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Upravte komentáře k cíli, stezce a psa. Tyto komentáře budou uloženy v souboru GPX a zobrazeny v aplikacích, jako je https://www.gpxsee.org/ a v překrytí videí. Pokud vytváříte komentáře ve své aplikaci GPS, napište 'g:' Před popisem cíle, 't:' Před popisem stezky a 'D:' Před popisem práce psa.</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>Trail</value>
   </data>
 </root>

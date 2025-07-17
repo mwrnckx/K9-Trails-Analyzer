@@ -53,8 +53,8 @@ Public Class OsmTileDownloader
                     Try
                         'Dim data = wc.DownloadData(url)
                         Dim data = Await client.GetByteArrayAsync(url)
-                        Dim fileName = IO.Path.GetFileName(url)
-                        IO.File.WriteAllBytes(fileName, data)
+                        'Dim fileName = IO.Path.GetFileName(url)
+                        'IO.File.WriteAllBytes(fileName, data)
 
                         Await Task.Delay(500) ' pauza, aby tě neblokli
 

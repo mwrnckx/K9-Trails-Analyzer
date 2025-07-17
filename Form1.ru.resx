@@ -198,4 +198,37 @@
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>До:</value>
   </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Выберите каталог, чтобы сохранить видео наложения</value>
+  </data>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Экспорт как (Rtf. TXT, CSV)</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Треки матча бегуна и собаки</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Процесс уже обработанных файлов</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Файлы процесса, которые уже обработались</value>
+  </data>
+  <data name="mnuDogName.Text" xml:space="preserve">
+    <value>Название собаки</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Предпочтения</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Каталоги могут быть установлены в меню «Файл»</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Каталоги могут быть установлены в меню «Файл»</value>
+  </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Показать диаграммы</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Создать наложение видео</value>
+  </data>
 </root>

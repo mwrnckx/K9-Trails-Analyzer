@@ -368,7 +368,7 @@
     <value>636, 34</value>
   </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
-    <value>Should a video be made for the "Picture-in-Picture route map?</value>
+    <value>Create an overlay video</value>
   </data>
   <data name="mnuSettings.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI Semibold, 9pt, style=Bold</value>

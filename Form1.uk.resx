@@ -195,4 +195,40 @@
   <data name="rbDistances.Text1" xml:space="preserve">
     <value>Довжина окремих маршрутів</value>
   </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Прочитайте дані з файлів gpx</value>
+  </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Показати графіки</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Каталоги можна встановити в меню "Файл"</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Каталоги можна встановити в меню "Файл"</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Виберіть каталог, щоб зберегти відео накладення</value>
+  </data>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Експорт як (Rtf. TXT, CSV)</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Матч -бігун та доріжки собак</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Обробка вже оброблених файлів</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Обробка файлів, які вже обробляються</value>
+  </data>
+  <data name="mnuDogName.Text" xml:space="preserve">
+    <value>Назва собаки</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Уподобання</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Створіть накладне відео</value>
+  </data>
 </root>

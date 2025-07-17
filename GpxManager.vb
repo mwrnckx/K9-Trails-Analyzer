@@ -63,17 +63,16 @@ Public Class GpxFileManager
 
         For Each _gpxRecord As GPXRecord In _gpxFilesMerged
             Try
-                Dim waitForm As New frmPleaseWait()
-                waitForm.Show()
+
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
                     If prependDateToName Then _gpxRecord.PrependDateToFilename()
                     If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                 End If
-                _gpxRecord.Description = Await _gpxRecord.BuildSummaryDescription(Me.ForceProcess) 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
                 _gpxRecord.Distance = _gpxRecord.CalculateLayerTrailDistance()
                 totalDist += _gpxRecord.Distance
                 _gpxRecord.TotalDistance = totalDist
+                _gpxRecord.Description = Await _gpxRecord.BuildSummaryDescription(Me.ForceProcess) 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
                 _gpxRecord.TrailAge = _gpxRecord.GetAge
 
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
@@ -88,7 +87,7 @@ Public Class GpxFileManager
 
                 'a nakonec
                 _gpxRecord.SetCreatedModifiedDate()
-                waitForm.Close()
+
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
                         If MessageBox.Show($"Should a video of the dog's movement be created from the file: {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
@@ -689,6 +688,34 @@ FoundTrailLayerTrk:
         Return TimeSpan.Zero
     End Function
 
+    Public Function GetLengthFromComments(inputText As String) As Single
+        ' Upravený regulární výraz pro nalezení čísla, které může být i desetinné
+        Dim regex As New Regex("\b\d+[.,]?\d*\s*(m(metr(y|ů))?|km|kilometrů?)\b", RegexOptions.IgnoreCase)
+        Dim match As Match = regex.Match(inputText)
+
+        If match.Success Then
+            Dim nalezenaDelka As String = match.Value
+            ' Převede desetinnou tečku nebo čárku na standardní tečku pro parsování
+            Dim delkaString As String = Regex.Match(nalezenaDelka, "\d+[.,]?\d*").Value.Replace(",", ".")
+            Dim delkaCislo As Double = Double.Parse(delkaString, CultureInfo.InvariantCulture)
+
+
+
+
+            If nalezenaDelka.Contains("km") Then
+
+                Return delkaCislo ' in km
+            ElseIf nalezenaDelka.Contains("m"c) Then
+
+                Return delkaCislo / 1000
+            End If
+        End If
+
+        ' Pokud nebyla nalezena, vrátí 0
+        Return 0
+    End Function
+
+
 
 
     Public Function OdstranDataACasZNazvuSouboru(fileName As String) As String
@@ -966,7 +993,7 @@ FoundTrailLayerTrk:
         End If
 
 
-        ' 🕰 Trail part – doplníme čas, pokud tam není
+        ' 🕰 Trail part – doplníme čas a délku pokud nejsou
         Dim ageFromTime As TimeSpan = GetAgeFromTime()
         If trailPart <> "" Then
             Dim ageFromComments As TimeSpan = GetAgeFromComments(trailPart)
@@ -974,10 +1001,22 @@ FoundTrailLayerTrk:
                 ' Odebereme případný starý čas z trailPart (např. "1.2 h něco")
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*h\s*", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění vícenásobných mezer
-                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h " & trailPart
+                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h, " & trailPart
             End If
+            Dim LengthfromComments As Single = GetLengthFromComments(trailPart)
+            If LengthfromComments = 0 Then
+                ' Odebereme případnou starou délku z trailPart (např. "1.2 km něco")
+                trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)\s*", "", RegexOptions.IgnoreCase).Trim()
+                trailPart = trailPart.Replace(My.Resources.Resource1.outLength.ToLower & ":", "") ' odstranění vícenásobných mezer
+                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & " km, " & trailPart
+            End If
+
         Else
-            trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h"
+            If Me.Distance > 0 Then
+                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & " km"
+            End If
+            trailPart &= ", " & My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h"
+
         End If
         Return True ' Vrátíme True, pokud se podařilo rozdělit popis
     End Function
@@ -1004,17 +1043,12 @@ FoundTrailLayerTrk:
 
         ' 📦 Sestavíme nový popis
         Me.DescriptionParts = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
-        ("🐕🐩🐶🐾" & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
+        ("🐕🐩🐶🐾 " & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
         (My.Resources.Resource1.txtGoalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Regular),
         (trailLabel & " " & trailPart, Color.Blue, FontStyle.Regular),
         (dogLabel & " " & dogPart, Color.Red, FontStyle.Regular),
         (strWeather, Color.Maroon, FontStyle.Regular)}
-        'Me.DescriptionParts = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
-        '("--> Trailing <--", Color.Maroon, FontStyle.Bold),
-        '(My.Resources.Resource1.txtGoalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Bold),
-        '(My.Resources.Resource1.txtTrailLabel & " " & trailPart, Color.Blue, FontStyle.Bold),
-        '(My.Resources.Resource1.txtDogLabel & " " & dogPart, Color.Red, FontStyle.Bold),
-        '(strWeather, Color.Maroon, FontStyle.Bold)}
+
         Dim sb As New System.Text.StringBuilder()
         If goalPart <> "" Then sb.Append(styleGreenBold & goalLabel & " " & goalPart & styleend & crlf)
         sb.Append(styleBlueBold & trailLabel & " " & trailPart & styleend & crlf)

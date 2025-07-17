@@ -218,9 +218,6 @@
   <data name="mnuMergingTracks.Text" xml:space="preserve">
     <value>Spáruj trasy kladeče a psa</value>
   </data>
-  <data name="mnuAskForVideo.Text" xml:space="preserve">
-    <value>Mělo by být natočeno video pro mapu „Mapa trasy obrázku?</value>
-  </data>
   <data name="StatusLabel1.ToolTipText" xml:space="preserve">
     <value>Adresáře lze nastavit v nabídce „Soubor“</value>
   </data>
@@ -231,7 +228,7 @@
     <value>Adresáře lze nastavit v nabídce „Soubor“</value>
   </data>
   <data name="mnuProcessProcessed.Text" xml:space="preserve">
-    <value>Proces již zpracované soubory</value>
+    <value>Zpracuj i již zpracované soubory</value>
   </data>
   <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
     <value>Procesní soubory, které již byly zpracovány</value>
@@ -244,5 +241,14 @@
   </data>
   <data name="SToolStripMenuItem.Text" xml:space="preserve">
     <value>Preference</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Vyberte adresář pro uložení překrytí videa</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Vytvoř overlay video</value>
+  </data>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Uložit jako (rtf. Txt, CSV)</value>
   </data>
 </root>

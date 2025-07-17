@@ -1,12 +1,10 @@
 ﻿Imports System.IO
-'Imports System.Globalization
 Imports System.Xml
 Imports Windows.Win32.UI.Input
 
 Public Class VideoCreator
 
     Private converter As TrackConverter
-    'Private pngCreator As PngSequenceCreator
     Private encoder As FfmpegVideoEncoder
 
     Private outputDir As DirectoryInfo
@@ -103,47 +101,48 @@ Public Class VideoCreator
 
     End Function
 
-
-    ''' <summary>
-    ''' Získá obdélník (bounds) všech bodů ve všech trackách.
-    ''' </summary>
-    ''' <param name="tracks">List tracků obsahujících 2D body.</param>
-    ''' <returns>RectangleF s minX, minY a velikostí (Width, Height).</returns>
-    Function GetTrackBounds(tracks As List(Of TrackAsPointsF)) As Rectangle
-        ' Sesbíráme všechny body (Location) do jedné kolekce
-        Dim allPoints = tracks _
-        .Where(Function(t) t.TrackPointsF IsNot Nothing AndAlso t.TrackPointsF.Count > 0) _
-        .SelectMany(Function(t) t.TrackPointsF) _
-        .Select(Function(tp) tp.Location) _
-        .ToList()
-
-        If allPoints.Count = 0 Then
-            ' Nemáme žádné body, vrať prázdný RectangleF
-            Return Rectangle.Empty
-        End If
-
-        Dim minX = allPoints.Min(Function(p) p.X)
-        Dim maxX = allPoints.Max(Function(p) p.X)
-        Dim minY = allPoints.Min(Function(p) p.Y)
-        Dim maxY = allPoints.Max(Function(p) p.Y)
-
-        Dim width = maxX - minX
-        Dim height = maxY - minY
-
-        ' Přidáme 5 % okraje na každou stranu
-        Dim marginX = width * 0.05
-        Dim marginY = height * 0.05
-
-        Dim newMinX = CInt(Math.Floor(minX - marginX))
-        Dim newMinY = CInt(Math.Floor(minY - marginY))
-        Dim newWidth = CInt(Math.Ceiling(width + 2 * marginX))
-        Dim newHeight = CInt(Math.Ceiling(height + 2 * marginY))
-
-        Return New Rectangle(newMinX, newMinY, newWidth, newHeight)
-
-    End Function
-
-
-
 End Class
+
+''' <summary>
+''' Získá obdélník (bounds) všech bodů ve všech trackách.
+''' </summary>
+''' <param name="tracks">List tracků obsahujících 2D body.</param>
+''' <returns>RectangleF s minX, minY a velikostí (Width, Height).</returns>
+'Function GetTrackBounds(tracks As List(Of TrackAsPointsF)) As Rectangle
+'    ' Sesbíráme všechny body (Location) do jedné kolekce
+'    Dim allPoints = tracks _
+'    .Where(Function(t) t.TrackPointsF IsNot Nothing AndAlso t.TrackPointsF.Count > 0) _
+'    .SelectMany(Function(t) t.TrackPointsF) _
+'    .Select(Function(tp) tp.Location) _
+'    .ToList()
+
+'    If allPoints.Count = 0 Then
+'        ' Nemáme žádné body, vrať prázdný RectangleF
+'        Return Rectangle.Empty
+'    End If
+
+'    Dim minX = allPoints.Min(Function(p) p.X)
+'    Dim maxX = allPoints.Max(Function(p) p.X)
+'    Dim minY = allPoints.Min(Function(p) p.Y)
+'    Dim maxY = allPoints.Max(Function(p) p.Y)
+
+'    Dim width = maxX - minX
+'    Dim height = maxY - minY
+
+'    ' Přidáme 5 % okraje na každou stranu
+'    Dim marginX = width * 0.05
+'    Dim marginY = height * 0.05
+
+'    Dim newMinX = CInt(Math.Floor(minX - marginX))
+'    Dim newMinY = CInt(Math.Floor(minY - marginY))
+'    Dim newWidth = CInt(Math.Ceiling(width + 2 * marginX))
+'    Dim newHeight = CInt(Math.Ceiling(height + 2 * marginY))
+
+'    Return New Rectangle(newMinX, newMinY, newWidth, newHeight)
+
+'End Function
+
+
+
+
 

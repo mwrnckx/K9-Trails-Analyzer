@@ -197,7 +197,7 @@ Partial Class DistanceChart
         End If
 
 
-        chart1.Series.Clear()
+        'chart1.Series.Clear()
         ' Pøidání série do grafu
         'chart.Series.Add(series1)
         chart1.Series.Add(series1)

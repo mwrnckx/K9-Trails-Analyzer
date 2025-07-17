@@ -219,5 +219,55 @@
   <data name="Tooltip_mnuTrim" xml:space="preserve">
     <value>На початку сліду, поки ви ще не почали рух, і в кінці, поки не вимкнули запис, GPS-пристрій може записувати неточні або помилкові дані. Якщо цю опцію увімкнено, програма спробує автоматично видалити ці помилки.</value>
   </data>
- 
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Встановіть максимальну різницю в часі (у годинах) між двома треками, які слід вважати пов'язаними та об'єднаними в один файл GPX як трек шару та трек собаки. Таким чином, значення вказує на максимальний вік сліду, який ви використовуєте. Значення 0 вимикає автоматичне злиття.</value>
+  </data>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Встановіть умови для злиття треків</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>Об'єднати файли gpx?</value>
+  </data>
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Вирішіть, чи пов’язані ці два файли як трек-трек та доріжка собак.</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>Об’єднавши їх, ви отримаєте один файл GPX, який містить треки як шарі, так і собаки.</value>
+  </data>
+  <data name="lblIsThisLayerQ" xml:space="preserve">
+    <value>Перший файл</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Другий файл</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Пам'ятайте рішення про "ні" для цієї пари</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>Для інших пар, більше не питайте і не приєднуйтесь до відразу (обережно!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>Для інших пар більше не питайте і не об'єднайте.</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>Наступного разу запитайте ще раз</value>
+  </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Нюхали на місяць (км)</value>
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Навчальна мета:</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>Слід:</value>
+  </data>
+  <data name="txtDogLabel" xml:space="preserve">
+    <value>Собака:</value>
+  </data>
+  <data name="txtCrossTrack" xml:space="preserve">
+    <value>перехресний</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Відредагуйте коментарі до мети, сліду та собаки. Ці коментарі будуть збережені у файлі GPX та відображатись у таких програмах, як https://www.gpxsee.org/ та у відеозаписах. Якщо ви створюєте коментарі у своєму додатку GPS, напишіть "G:" Перед описом призначення "T:" Перед описом сліду та "D:" Перед робочим описом собаки.</value>
+  </data>
 </root>
