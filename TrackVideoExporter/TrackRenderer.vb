@@ -1,4 +1,5 @@
 ﻿
+Imports System.Drawing
 Imports System.Drawing.Imaging
 Imports System.Drawing.Text
 Imports System.Globalization

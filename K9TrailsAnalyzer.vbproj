@@ -10,8 +10,15 @@
     <AssemblyName>K9TrailsAnalyzer</AssemblyName>
     <ImportedNamespaces>core=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,K9TrailsAnalyzer=True</ImportedNamespaces>
     <ApplicationIcon>track.ico</ApplicationIcon>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <AppDesignerFolder>My Project</AppDesignerFolder>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TrackVideoExporter\**" />
+    <EmbeddedResource Remove="TrackVideoExporter\**" />
+    <None Remove="TrackVideoExporter\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <Content Include="track.ico" />
@@ -32,6 +39,12 @@
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
 
+  
+
+  <ItemGroup>
+    <ProjectReference Include="TrackVideoExporter\TrackVideoExporter.vbproj" />
+  </ItemGroup>
+
 
 
   <ItemGroup>
@@ -49,6 +62,11 @@
 
 
   <ItemGroup>
+    <Compile Update="My Project\Application.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
     <Compile Update="My Project\Settings.Designer.vb">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>

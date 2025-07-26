@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>TrackVideoExporter</RootNamespace>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TrackVideoExporter\**" />
+    <EmbeddedResource Remove="TrackVideoExporter\**" />
+    <None Remove="TrackVideoExporter\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="VideoExportSettings.Designer.vb">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>VideoExportSettings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="VideoExportSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>VideoExportSettings.Designer.vb</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

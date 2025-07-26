@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "K9TrailsAnalyzer", "K9TrailsAnalyzer.vbproj", "{EBFD122F-643B-420C-8035-170FCD19DA48}"
+	ProjectSection(ProjectDependencies) = postProject
+		{028BF736-F795-4F89-A14B-013993E3B60D} = {028BF736-F795-4F89-A14B-013993E3B60D}
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "TrackVideoExporter", "TrackVideoExporter\TrackVideoExporter.vbproj", "{028BF736-F795-4F89-A14B-013993E3B60D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +20,10 @@ Global
 		{EBFD122F-643B-420C-8035-170FCD19DA48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EBFD122F-643B-420C-8035-170FCD19DA48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EBFD122F-643B-420C-8035-170FCD19DA48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{028BF736-F795-4F89-A14B-013993E3B60D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{028BF736-F795-4F89-A14B-013993E3B60D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{028BF736-F795-4F89-A14B-013993E3B60D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{028BF736-F795-4F89-A14B-013993E3B60D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,8 +4,9 @@ Imports System.Text.RegularExpressions
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
 Imports System.Text.Json
-Imports GPXTrailAnalyzer.OverlayVideoExport
 Imports System.Net.Http
+Imports TrackVideoExporter
+Imports TrackVideoExporter.TrackVideoExporter
 
 
 Public Class GpxFileManager
@@ -482,7 +483,7 @@ Public Class GPXRecord
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
 
-        Dim _videoCreator As New OverlayVideoCreator(directory, WeatherData._windDirection, WeatherData._windSpeed)
+        Dim _videoCreator As New VideoExportManager(directory, WeatherData._windDirection, WeatherData._windSpeed)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         Dim waitForm As New frmPleaseWait()

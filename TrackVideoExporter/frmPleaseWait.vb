@@ -1,4 +1,8 @@
-﻿Public Class frmPleaseWait
+﻿Imports System.Drawing
+Imports System.Windows
+Imports System.Windows.Forms
+
+Public Class frmPleaseWait
     Inherits Form
     Private WithEvents lblMessage As Label
     Private WithEvents progressBar As ProgressBar

@@ -15,6 +15,15 @@ Public Class frmEditComments
     Private ddHelper2 As RichTextBoxDragDropHelper
     Private ddHelper3 As RichTextBoxDragDropHelper
 
+    Public Sub New()
+
+        ' Toto volání je vyžadované návrhářem.
+        InitializeComponent()
+
+        ' Přidejte libovolnou inicializaci po volání InitializeComponent().
+
+    End Sub
+
     Private Sub frmEditComments_Load(sender As Object, e As EventArgs) Handles Me.Load
         rtbGoal.Text = GoalPart
         rtbTrail.Text = TrailPart
@@ -44,15 +53,46 @@ Public Class frmEditComments
         Me.btnOK.Focus() 'aby šlo jen odkliknout
     End Sub
 
-    Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click, Me.Closing
+    Private Sub SaveFormData()
+        ' Tato subrutina obsahuje veškerou logiku pro uložení dat z RichTextBoxů
         GoalPart = rtbGoal.Text
         TrailPart = rtbTrail.Text
         DogPart = rtbDog.Text
         GoalPartEng = rtbGoalEng.Text
         TrailPartEng = rtbTrailEng.Text
         DogPartEng = rtbDogEng.Text
+    End Sub
+
+    Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
+        ' Po kliknutí na OK tlačítko se data uloží a formulář se zavře s výsledkem OK
+        SaveFormData()
         Me.DialogResult = DialogResult.OK
         Me.Close()
+    End Sub
+
+    Private Sub MyForm_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        ' Tato událost se spustí, když se formulář zavírá (včetně křížku)
+        ' e.CloseReason vám řekne, proč se formulář zavírá.
+        ' Pokud se zavírá křížkem (UserClosing) A ještě nebylo nastaveno DialogResult na OK (např. přes tlačítko OK),
+        ' pak to ošetříme jako OK.
+
+        If e.CloseReason = CloseReason.UserClosing AndAlso Me.DialogResult <> DialogResult.OK Then
+            ' Uživatel zavřel křížkem a NEKLIKL na OK.
+            ' Protože chceme stejný efekt jako OK, uložíme data a nastavíme DialogResult.
+            SaveFormData()
+            Me.DialogResult = DialogResult.OK
+            ' Všimněte si, že zde již NEnutíme formulář k zavření pomocí Me.Close().
+            ' Událost FormClosing se postará o jeho zavření po dokončení.
+        ElseIf Me.DialogResult = DialogResult.OK Then
+            ' Pokud je DialogResult již OK (nastaveno tlačítkem OK),
+            ' znamená to, že data jsou již uložena (nebo se budou ukládat jinde),
+            ' a nemusíme zde nic dalšího dělat, kromě toho, že umožníme zavření.
+        End If
+        ' Pokud byste chtěli, aby křížek fungoval jako Cancel, udělali byste:
+        ' If e.CloseReason = CloseReason.UserClosing AndAlso Me.DialogResult <> DialogResult.OK Then
+        '     Me.DialogResult = DialogResult.Cancel
+        ' End If
+
     End Sub
 
 

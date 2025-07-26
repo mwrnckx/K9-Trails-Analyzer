@@ -1,4 +1,5 @@
-﻿Imports System.Net.Http
+﻿Imports System.Drawing
+Imports System.Net.Http
 
 Public Class OsmTileDownloader
     Private Const TileSize As Integer = 256
