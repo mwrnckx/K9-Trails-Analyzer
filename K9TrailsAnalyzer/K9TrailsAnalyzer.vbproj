@@ -14,12 +14,7 @@
     <AppDesignerFolder>My Project</AppDesignerFolder>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="TrackVideoExporter\**" />
-    <EmbeddedResource Remove="TrackVideoExporter\**" />
-    <None Remove="TrackVideoExporter\**" />
-  </ItemGroup>
-
+ 
   <ItemGroup>
     <Content Include="track.ico" />
   </ItemGroup>
@@ -42,7 +37,7 @@
   
 
   <ItemGroup>
-    <ProjectReference Include="TrackVideoExporter\TrackVideoExporter.vbproj" />
+    <ProjectReference Include="..\TrackVideoExporter\TrackVideoExporter.vbproj" />
   </ItemGroup>
 
 
