@@ -4,6 +4,9 @@ Public Class frmEditComments
     Public Property GoalPart As String
     Public Property TrailPart As String
     Public Property DogPart As String
+    Public Property GoalPartEng As String
+    Public Property TrailPartEng As String
+    Public Property DogPartEng As String
     Dim goalLabel As String = My.Resources.Resource1.txtGoalLabel 'cíl
     Dim trailLabel As String = My.Resources.Resource1.txtTrailLabel '"Trail:"
     Dim dogLabel As String = My.Resources.Resource1.txtDogLabel '"Pes:"
@@ -16,6 +19,9 @@ Public Class frmEditComments
         rtbGoal.Text = GoalPart
         rtbTrail.Text = TrailPart
         rtbDog.Text = DogPart
+        rtbGoalEng.Text = GoalPart
+        rtbTrailEng.Text = TrailPart
+        rtbDogEng.Text = DogPart
         lblInfo.MaximumSize = New Size(Me.Width * 0.8, Me.Height * 0.8) 'nastaví maximální šířku popisku
         lblInfo.Text = $"{Form1.mnuFile.Text} {GpxFileName}" &
             vbCrLf & My.Resources.Resource1.txtEditDescLabel
@@ -38,10 +44,13 @@ Public Class frmEditComments
         Me.btnOK.Focus() 'aby šlo jen odkliknout
     End Sub
 
-    Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
+    Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click, Me.Closing
         GoalPart = rtbGoal.Text
         TrailPart = rtbTrail.Text
         DogPart = rtbDog.Text
+        GoalPartEng = rtbGoalEng.Text
+        TrailPartEng = rtbTrailEng.Text
+        DogPartEng = rtbDogEng.Text
         Me.DialogResult = DialogResult.OK
         Me.Close()
     End Sub
@@ -51,7 +60,7 @@ Public Class frmEditComments
     Private Sub RichTextBox_DragEnter(sender As Object, e As DragEventArgs) _
     Handles rtbDog.DragEnter, rtbGoal.DragEnter, rtbTrail.DragEnter
         Debug.WriteLine("Data formats:")
-        For Each fmt In e.Data.GetFormats()
+        For Each fmt In e.Data.GetFormats
             Debug.WriteLine($" - {fmt}")
         Next
 
@@ -70,9 +79,9 @@ Public Class frmEditComments
 
     Private Sub RichTextBox_DragDrop(sender As Object, e As DragEventArgs) _
     Handles rtbDog.DragDrop, rtbGoal.DragDrop, rtbTrail.DragDrop
-        Dim rtb As RichTextBox = CType(sender, RichTextBox)
-        Dim text As String = CStr(e.Data.GetData(DataFormats.Text))
-        Dim pos As Integer = rtb.SelectionStart
+        Dim rtb = CType(sender, RichTextBox)
+        Dim text = CStr(e.Data.GetData(DataFormats.Text))
+        Dim pos = rtb.SelectionStart
         rtb.SelectedText = text
     End Sub
 

@@ -1,19 +1,10 @@
-﻿Imports System.Diagnostics.Eventing
-Imports System.Globalization
+﻿Imports System.Globalization
 Imports System.IO
-Imports System.Net.WebRequestMethods
-Imports System.Runtime.CompilerServices.RuntimeHelpers
 Imports System.Text.RegularExpressions
-Imports System.Windows.Forms.LinkLabel
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
-Imports Microsoft.VisualBasic.Logging
-Imports System.Windows.Forms
-Imports System.Drawing.Text
 Imports System.Text.Json
-
-Imports System.Drawing
-Imports System.Drawing.Imaging
+Imports GPXTrailAnalyzer.OverlayVideoExport
 Imports System.Net.Http
 
 
@@ -422,6 +413,7 @@ Public Class GPXRecord
     Public Property TotalDistance As Double
     Public Property Description As String
     Private DescriptionParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle))
+    Private DescriptionPartsEng As List(Of (Text As String, Color As Color, FontStyle As FontStyle))
     Public Property Link As String
     Public Property DogSpeed As Double
     Public Property Reader As GpxReader
@@ -490,7 +482,7 @@ Public Class GPXRecord
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
 
-        Dim _videoCreator As New VideoCreator(directory, WeatherData._windDirection, WeatherData._windSpeed)
+        Dim _videoCreator As New OverlayVideoCreator(directory, WeatherData._windDirection, WeatherData._windSpeed)
         AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         Dim waitForm As New frmPleaseWait()
@@ -499,7 +491,7 @@ Public Class GPXRecord
         ' Spustíme na pozadí, aby nezamrzlo UI
         Await Task.Run(Async Function()
                            ' Spustíme tvůj dlouhý proces
-                           Dim success = Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts)
+                           Dim success = Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts, DescriptionPartsEng)
 
                            ' Po dokončení se vrať na UI thread a proveď akce
                            waitForm.Invoke(Sub()
@@ -574,7 +566,7 @@ Public Class GPXRecord
                 Return ageFromComments
             Else
                 Debug.WriteLine($"Age of the trail { Me.Reader.FileName} wasn't found!")
-        Return TimeSpan.Zero
+                Return TimeSpan.Zero
             End If
         End If
 
@@ -1022,7 +1014,7 @@ FoundTrailLayerTrk:
     End Function
 
 
-    Private Async Function BuildDescription(goalPart As String, trailPart As String, dogPart As String) As Task(Of String)
+    Private Async Function BuildDescription(goalPart As String, trailPart As String, dogPart As String, goalPartEng As String, trailPartEng As String, dogPartEng As String) As Task(Of String)
         Dim crlf As String = "<br>"
         Dim styleGreenBold As String = "<span style='color:darkgreen; font-weight:bold;'>"
         Dim styleBlueBold As String = "<span style='color:blue; font-weight:bold;'>"
@@ -1036,18 +1028,27 @@ FoundTrailLayerTrk:
         Dim dogLabel As String = "🐕" 'My.Resources.Resource1.txtDogLabel '"Pes:"
 
         ' 🌧🌦☀ Počasí
-        'Wheather() 'získá počasí, ale zatím nevyužívá, jen pro testování
+        'Wheather() 'získá počasí
         WeatherData = Await Wheather()
         Dim strWeather As String = $"🌡{WeatherData._temperature.ToString("0.#")} °C  💨 {WeatherData._windSpeed.ToString("0.#")} m/s {windDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity} %   💧{WeatherData._precipitation} mm/h ⛅{WeatherData._cloudCover} %"
 
 
-        ' 📦 Sestavíme nový popis
+        ' 📦 Sestavíme nový popis pro video
         Me.DescriptionParts = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
-        ("🐕🐩🐶🐾 " & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
+        ("🐩  " & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
         (My.Resources.Resource1.txtGoalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Regular),
         (trailLabel & " " & trailPart, Color.Blue, FontStyle.Regular),
         (dogLabel & " " & dogPart, Color.Red, FontStyle.Regular),
         (strWeather, Color.Maroon, FontStyle.Regular)}
+
+        ' 📦 Sestavíme nový popis pro video
+        Me.DescriptionPartsEng = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
+        ("🐩  " & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
+        (goalLabel & " " & goalPartEng, Color.DarkGreen, FontStyle.Regular),
+        (trailLabel & " " & trailPartEng, Color.Blue, FontStyle.Regular),
+        (dogLabel & " " & dogPartEng, Color.Red, FontStyle.Regular),
+        (strWeather, Color.Maroon, FontStyle.Regular)}
+
 
         Dim sb As New System.Text.StringBuilder()
         If goalPart <> "" Then sb.Append(styleGreenBold & goalLabel & " " & goalPart & styleend & crlf)
@@ -1092,7 +1093,7 @@ FoundTrailLayerTrk:
                             }
             Dim newDescription As String = ""
             If frm.ShowDialog() = DialogResult.OK Then
-                newDescription = Await BuildDescription(frm.GoalPart, frm.TrailPart, frm.DogPart)
+                newDescription = Await BuildDescription(frm.GoalPart, frm.TrailPart, frm.DogPart, frm.GoalPartEng, frm.TrailPartEng, frm.DogPartEng)
                 ' ... tady nový popis použiješ
             End If
             Return newDescription.ToString().Trim()

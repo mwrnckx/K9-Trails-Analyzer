@@ -1,10 +1,9 @@
 ﻿
 Imports System.Drawing.Imaging
 Imports System.Drawing.Text
-Imports System.Drawing
 Imports System.Globalization
 Imports System.IO
-Imports System.Windows.Forms.VisualStyles.VisualStyleElement.Taskbar
+Imports System.Reflection.Metadata
 
 Public Class PngSequenceCreator
     Private renderer As PngRenderer
@@ -16,7 +15,7 @@ Public Class PngSequenceCreator
         Me.renderer = renderer
     End Sub
 
-    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, pngDir As DirectoryInfo, pngTimes As List(Of DateTime), textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)))
+    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, pngDir As DirectoryInfo, pngTimes As List(Of DateTime), textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), textPartsEng As List(Of (Text As String, Color As Color, FontStyle As FontStyle)))
         Const minFrameInterval As Double = 3.0 'minimální interval mezi snímky v sekundách, aby video nebylo moc velké a rychlé, defaultně 3 sekundy
         Try
             'úklidíme staré PNG obrázky, pokud existují
@@ -36,13 +35,22 @@ Public Class PngSequenceCreator
         Next
         frameInterval = Math.Max(minFrameInterval, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
 
-        Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval)) 'počet dynamických snímků
 
         Dim initialFrames As Integer = 0
         ' Vytvoříme statický obrázek s textem
         If textParts IsNot Nothing Then
             Dim staticTextbmp = renderer.RenderStaticText(textParts, staticbgMap)
-            For frameindex As Integer = 0 To 1
+            For frameindex As Integer = initialFrames To initialFrames + 1
+                Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameindex:D4}.png")
+                staticTextbmp.Save(filename, ImageFormat.Png)
+                initialFrames += 1
+            Next
+        End If
+
+        ' Vytvoříme statický obrázek s anglickým textem
+        If textPartsEng IsNot Nothing Then
+            Dim staticTextbmp = renderer.RenderStaticText(textPartsEng, staticbgMap)
+            For frameindex As Integer = initialFrames To initialFrames + 1
                 Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameindex:D4}.png")
                 staticTextbmp.Save(filename, ImageFormat.Png)
                 initialFrames += 1
@@ -51,13 +59,15 @@ Public Class PngSequenceCreator
 
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
-            For frameindex As Integer = 2 To 3
+            For frameindex As Integer = initialFrames To initialFrames + 1
                 Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameindex:D4}.png")
                 staticbgMap.Save(filename, ImageFormat.Png)
                 initialFrames += 1
             Next
         End If
+
         Dim _dogTrail As New List(Of PointF)
+        Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval)) 'počet dynamických snímků
         For frameindex As Integer = 0 To frameCount - 1
             Dim frameTime = pngTimes.First().AddSeconds((frameindex) * frameInterval)
             Dim frame = renderer.RenderFrame(tracks, staticBgTransparent, frameTime, _dogTrail)
@@ -121,27 +131,115 @@ Public Class PngRenderer
         Dim backgroundMap = New Bitmap(backgroundTiles.bgmap)
 
         Using g As Graphics = Graphics.FromImage(backgroundMap)
+            'first the direction of the wind:
+            If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
+                Dim center As New PointF(backgroundTiles.bgmap.Width / 2, backgroundTiles.bgmap.Height / 2) ' střed růžice
+                Dim arrowlength As Single = 0.06 * diagonal
+                DrawWindArrow(g, center, arrowlength, windDirection.GetValueOrDefault(0), Color.Orange)
+            End If
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
                 g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
                 ' popis, poslední bod atd.
                 Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
 
-                Dim popis As String = track.Label & " " & time
-                Dim textSize = g.MeasureString(popis, font)
-                Dim contrastColor As Color = GetContrastColor(track.Color)
+
+
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
                 g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
+
+                Dim popis As String = track.Label
+                Dim textSize = g.MeasureString(popis, font)
+                Dim textoffsetX As Single
+                Dim contrastColor As Color = GetContrastColor(track.Color)
+                If p.X - textSize.Width - radius < 0 Then
+                    ' není místo vlevo, napiš text vpravo od elipsy
+                    textoffsetX = radius
+                Else
+                    ' je místo, napiš text vlevo
+                    textoffsetX = -textSize.Width - radius
+                End If
+                Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
+                DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
+
             Next
         End Using
 
         Return backgroundMap
     End Function
 
+    Private Function DrawWindArrow(g As Graphics, position As PointF, arrowLength As Single, direction As Double, color As Color)
+        ' Vykreslí šipku větru
+
+        Dim angleRad = -(direction - 270) * Math.PI / 180.0 'převod na radiány
+        Dim endX As Single = position.X + arrowLength * Math.Cos(angleRad)
+        Dim endY As Single = position.Y - arrowLength * Math.Sin(angleRad) ' Y je obráceně v grafice
+        Using pen As New Pen(color, penWidth)
+            g.DrawLine(pen, position.X, position.Y, endX, endY)
+            ' Kreslení šipky na konci
+            Dim arrowHeadSize = 0.3 * arrowLength ' velikost hlavy šipky
+            Dim headAngle1 = angleRad + Math.PI / 6 ' 30 stupňů
+            Dim headAngle2 = angleRad - Math.PI / 6 ' -30 stupňů
+            Dim headX1 As Single = endX - arrowHeadSize * Math.Cos(headAngle1)
+            Dim headY1 As Single = endY + arrowHeadSize * Math.Sin(headAngle1)
+            Dim headX2 As Single = endX - arrowHeadSize * Math.Cos(headAngle2)
+            Dim headY2 As Single = endY + arrowHeadSize * Math.Sin(headAngle2)
+            g.DrawLine(pen, endX, endY, headX1, headY1)
+            g.DrawLine(pen, endX, endY, headX2, headY2)
+            'popis šipky
+            ' Text k šipce
+            Dim windText As String = windSpeed.ToString("0.0") & " m/s "
+            Dim textSize = g.MeasureString(windText, font)
+
+            ' Chceme text nakreslit kousek za šipku
+            Dim popisOffset As Single = 10
+
+            ' Bod, kde bude text - spočítáme ho jako bod za endPoint
+            Dim textX As Single = position.X '+ offset * Math.Cos(angle)
+            Dim textY As Single = position.Y - popisOffset '* Math.Sin(angle)
+
+            ' Uložíme transformaci
+            Dim oldState = g.Save()
+
+            ' Přesuneme se do bodu textu
+            g.TranslateTransform(textX, textY)
+
+            ' Vypočítáme úhel v rozmezí -180 až 180
+            Dim angleDeg As Single = -CSng(angleRad * 180 / Math.PI)
+            If angleDeg < -180 Then angleDeg += 360
+            If angleDeg > 180 Then angleDeg -= 360
+            Dim textPos As New PointF(0, -textSize.Height)
+            ' Pokud by text byl vzhůru nohama, otočíme ho o 180°
+            If angleDeg > 90 Or angleDeg < -90 Then
+                angleDeg += 180
+                textY += textSize.Height ' posuneme text o výšku dolů, aby nebyl přeházený
+                ' Text zarovnáme tak, aby byl středem na ose šipky
+                textPos.X -= textSize.Width
+            End If
+
+            ' Otočíme souřadnicový systém podle směru šipky
+            g.RotateTransform(angleDeg)
+
+
+            ' Otočíme souřadnicový systém podle směru šipky
+            'g.RotateTransform(-CSng(angleRad * 180 / Math.PI))
+
+
+
+            ' Nakreslíme text (s outline, pokud chceš)
+            Dim contrastColor As Color = GetContrastColor(Color.Black)
+            DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
+
+            ' Vrátíme původní transformaci
+            g.Restore(oldState)
+
+        End Using
+    End Function
+
     Public Function RenderStaticTransparentBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single)) As Bitmap
         ' Vykresli statické stopy, šipku větru, popisky
 
-        Dim arrowlength As Single = 0.06 * diagonal
+
 
         Dim staticBmp As New Bitmap(backgroundTiles.bgmap.Width, backgroundTiles.bgmap.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(staticBmp)
@@ -149,90 +247,48 @@ Public Class PngRenderer
 
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
-
                 Dim center As New PointF(backgroundTiles.bgmap.Width / 2, backgroundTiles.bgmap.Height / 2) ' střed růžice
-                Dim angle As Double = (windDirection + 90) * Math.PI / 180 '' + 90 kvůli orientaci os, převod úhlu větru na radiány
-
-                Dim endX As Single = center.X + arrowlength * Math.Cos(angle)
-                Dim endY As Single = center.Y + arrowlength * Math.Sin(angle)
-
-                Dim endPoint As New PointF(endX, endY)
-                g.DrawLine(New Pen(Color.Orange, penWidth), center, endPoint)
-                ' A pak stejně nakreslíš šipku
-
-                '' Úhel křidélek šipky (např. 30°)
-                Dim wingAngle As Double = Math.PI / 6
-
-                ' Body křidélek
-                Dim arrowSize As Single = 15 ' délka křidélka
-                Dim x1 As Single = endPoint.X - arrowSize * Math.Cos(angle - wingAngle)
-                Dim y1 As Single = endPoint.Y - arrowSize * Math.Sin(angle - wingAngle)
-
-                Dim x2 As Single = endPoint.X - arrowSize * Math.Cos(angle + wingAngle)
-                Dim y2 As Single = endPoint.Y - arrowSize * Math.Sin(angle + wingAngle)
-
-                ' Nakresli křidélka
-                g.DrawLine(New Pen(Color.Orange, penWidth / 2), endPoint, New PointF(x1, y1))
-                g.DrawLine(New Pen(Color.Orange, penWidth / 2), endPoint, New PointF(x2, y2))
-
-                'popis šipky
-                ' Text k šipce
-                Dim windText As String = windSpeed.ToString("0.0") & " m/s "
-                Dim textSize = g.MeasureString(windText, font)
-
-                ' Chceme text nakreslit kousek za šipku
-                Dim popisOffset As Single = 10
-
-                ' Bod, kde bude text - spočítáme ho jako bod za endPoint
-                Dim textX As Single = center.X '+ offset * Math.Cos(angle)
-                Dim textY As Single = center.Y - popisOffset '* Math.Sin(angle)
-
-                ' Uložíme transformaci
-                Dim oldState = g.Save()
-
-                ' Přesuneme se do bodu textu
-                g.TranslateTransform(textX, textY)
-
-                ' Otočíme souřadnicový systém podle směru šipky
-                g.RotateTransform(CSng(angle * 180 / Math.PI))
-
-                ' Text zarovnáme tak, aby byl středem na ose šipky
-                Dim textPos As New PointF(0, -textSize.Height)
-
-                ' Nakreslíme text (s outline, pokud chceš)
-                Dim contrastColor As Color = GetContrastColor(Color.Black)
-                DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
-
-                ' Vrátíme původní transformaci
-                g.Restore(oldState)
+                Dim arrowlength As Single = 0.06 * diagonal
+                DrawWindArrow(g, center, arrowlength, windDirection.GetValueOrDefault(0), Color.Orange)
             End If
+
+
 
             For Each track As TrackAsPointsF In tracksAsPointsF
                 If track.TrackPointsF.Count = 0 Then Continue For
-                If Not track.IsMoving Then
-                    Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                    g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
-                    ' popis, poslední bod atd.
-                    Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
-
-                    Dim popis As String = track.Label & " " & time
-                    Dim textSize = g.MeasureString(popis, font)
-                    Dim contrastColor As Color = GetContrastColor(track.Color)
-                    Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
-                    g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
-                    Dim textoffsetX As Single
-                    If p.X - textSize.Width - radius < 0 Then
-                        ' není místo vlevo, napiš text vpravo od elipsy
-                        textoffsetX = radius
-                    Else
-                        ' je místo, napiš text vlevo
-                        textoffsetX = -textSize.Width - radius
-                    End If
-                    Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
-                    DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
-
-                    'DrawTextWithOutline(g, popis, font, track.Color, contrastColor, New PointF(p.X - textSize.Width - radius, p.Y - textSize.Height / 2), 2)
+                Dim brush As SolidBrush
+                If track.IsMoving Then
+                    Dim semiTransparentColor As Color = Color.FromArgb(100, track.Color) ' 128 = 50% průhlednost
+                    brush = New SolidBrush(semiTransparentColor)
+                Else
+                    brush = New SolidBrush(track.Color) ' plná barva pro statické stopy
                 End If
+
+                Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+                g.DrawLines(New Pen(brush, penWidth), TrackPoints.ToArray)
+                ' popis, poslední bod atd.
+                Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
+
+
+
+
+                Dim contrastColor As Color = GetContrastColor(track.Color)
+                Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
+                g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
+
+                Dim popis As String = track.Label & " " & time
+                Dim textSize = g.MeasureString(popis, font)
+                Dim textoffsetX As Single
+                If p.X - textSize.Width - radius < 0 Then
+                    ' není místo vlevo, napiš text vpravo od elipsy
+                    textoffsetX = radius
+                Else
+                    ' je místo, napiš text vlevo
+                    textoffsetX = -textSize.Width - radius
+                End If
+                Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
+                If Not track.IsMoving Then DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
+
             Next
         End Using
 
@@ -242,29 +298,40 @@ Public Class PngRenderer
     Public Function RenderStaticText(textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), bgmap As Bitmap) As Bitmap
         Dim maxWidth As Single = bgmap.Width * 0.9 ' maximální šířka textu, 90% šířky obrázku
         Dim startX As Single = bgmap.Width * 0.05 ' začátek textu, 5% od levého okraje
-        Dim startY As Single = bgmap.Height * 0.07 ' začátek textu, 5% od horního okraje
+        Dim startY As Single = 0 ' bgmap.Height * 0.05 ' začátek textu, 5% od horního okraje
         Dim currentY As Single = startY
         Dim fontSize As Int32 = CInt(bgmap.Height * 0.05) ' výchozí velikost písma
 
-
         Dim staticText As New Bitmap(bgmap.Width, bgmap.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(staticText)
-            g.Clear(Color.White)
-            g.TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAlias ' Pro lepší kvalitu textu
+            g.TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAlias ' Lepší kvalita textu
 
-            For Each part In textParts
-                Using mainFont As New Font("Cascadia Code", fontSize, part.FontStyle)
-                    Using textBrush As New SolidBrush(part.Color)
-                        ' Oblast, do které se má text vykreslit a zalamovat
-                        Dim drawingArea As New RectangleF(startX, startY, maxWidth, 2000) ' Výšku dej dostatečně velkou
-
-                        ' Zavolání naší nové super-funkce!
-                        startY = DrawWrappedTextWithEmoji(g, part.Text, mainFont, textBrush, drawingArea)
+            Dim fits As Boolean = False
+            Dim i As Integer = 0
+            Do Until (fits And i < 100)
+                i += 1
+                g.Clear(Color.White)
+                currentY = startY
+                fits = True
+                Dim lineHeight As Single
+                For Each part In textParts
+                    Using mainFont As New Font("Cascadia Code", fontSize, part.FontStyle)
+                        Using textBrush As New SolidBrush(part.Color)
+                            Dim drawingArea As New RectangleF(startX, currentY, maxWidth, 2000)
+                            currentY = DrawWrappedTextWithEmoji(g, part.Text, mainFont, textBrush, drawingArea)
+                        End Using
+                        lineHeight = mainFont.GetHeight(g)
                     End Using
-                End Using
 
-            Next
+                    If currentY + lineHeight > bgmap.Height Then
+                        fits = False
+                        fontSize = Math.Floor(fontSize * (bgmap.Height / currentY))  ' Adaptivní zmenšení písma
+                        Exit For ' Není třeba pokračovat, už víme že se nevejde
+                    End If
+                Next
+            Loop
         End Using
+
         Return staticText
     End Function
 
@@ -286,9 +353,9 @@ Public Class PngRenderer
 
         ' Font, který použijeme specificky pro emoji
         Using emojiFont As New Font("Segoe UI Emoji", baseFont.Size, baseFont.Style)
-
-            Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
             Dim lineHeight As Single = baseFont.GetHeight(g)
+            Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
+            currentPosition.Y += lineHeight * 1.5 'odskočí práznou řádku
             Dim spaceWidth As Single = g.MeasureString(" ", baseFont).Width
 
             ' Rozdělíme celý text na jednotlivá slova
@@ -340,7 +407,7 @@ Public Class PngRenderer
                 ' Po vykreslení slova přidáme mezeru
                 currentPosition.X += spaceWidth
             Next
-            currentPosition.Y += lineHeight * 2 'odskočí práznou řádku, aby se další text nevykreslil přímo pod posledním slovem
+
             Return currentPosition.Y
         End Using
     End Function

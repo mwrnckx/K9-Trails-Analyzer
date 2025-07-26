@@ -264,7 +264,16 @@
   <data name="txtCrossTrack" xml:space="preserve">
     <value>кросс-трек</value>
   </data>
+  <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
+    <value>Справочник резервного копирования такой же, как основной каталог - это не может быть!</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>След:</value>
+  </data>
+  <data name="txtTrailLayer" xml:space="preserve">
+    <value>следопрокладчик</value>
+  </data>
   <data name="txtEditDescLabel" xml:space="preserve">
-    <value>Отредактируйте комментарии для цели, тропы и собаки. Эти комментарии будут сохранены в файле GPX и отображаются в таких приложениях, как https://www.gpxsee.org/ и в видео наложения. Если вы создаете комментарии в своем приложении GPS, напишите «g:» перед описанием назначения «t:» до описания следа и «D:» перед описанием работы собаки.</value>
+    <value>Отредактируйте комментарии к цели, тропе и собаке. Эти комментарии будут сохранены в файле GPX и отображаются в таких приложениях, как gpxsee.org и видеоролики. Если вы пишете комментарии в своем приложении GPS, добавьте «g:» перед описанием цели «t:» до описания тропы и «D:» перед описанием работы собаки. Вы можете написать английский перевод во втором ряду, если хотите.</value>
   </data>
 </root>

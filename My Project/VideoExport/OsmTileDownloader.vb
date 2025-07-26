@@ -1,7 +1,4 @@
-﻿Imports System.Drawing
-Imports System.Net
-Imports System.Net.Http
-Imports System.Xml.Serialization
+﻿Imports System.Net.Http
 
 Public Class OsmTileDownloader
     Private Const TileSize As Integer = 256
@@ -32,10 +29,6 @@ Public Class OsmTileDownloader
         Dim result As New Bitmap(bmpWidth, bmpHeight)
 
         Using g As Graphics = Graphics.FromImage(result)
-            'Dim wc As New WebClient()
-            'wc.Headers(HttpRequestHeader.UserAgent) = "K9TrailsAnalyzer/1.0 (mwrnckx@seznam.cz)"
-            'wc.Headers(HttpRequestHeader.Referer) = "https://github.com/mwrnckx/"
-
 
             Dim client As New HttpClient()
             client.DefaultRequestHeaders.UserAgent.ParseAdd("K9TrailsAnalyzer/1.0 (mwrnckx@seznam.cz)")

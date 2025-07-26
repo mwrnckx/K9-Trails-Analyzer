@@ -1,5 +1,4 @@
 ﻿Imports System.Xml
-Imports Microsoft.VisualBasic.Logging
 
 Public Class TrackConverter
     'Private minVideoSize As Single

@@ -6,7 +6,7 @@ Public Class FfmpegVideoEncoder
 
     Public Event WarningOccurred(message As String, _color As Color)
 
-    Public Async Function EncodeFromPngs(pngDir As DirectoryInfo, outputFile As String, frameinterval As Double) As Task(Of Boolean)
+    Public Function EncodeFromPngs(pngDir As DirectoryInfo, outputFile As String, frameinterval As Double) As Task(Of Boolean)
         Dim psi As New ProcessStartInfo()
         psi.FileName = FindFfmpegPath()
 
@@ -26,7 +26,7 @@ Public Class FfmpegVideoEncoder
         End Using
         If Not System.IO.File.Exists(outputFile & "_fast.mov") Then
             RaiseEvent WarningOccurred("Failed to create video from images.", Color.Red)
-            Return False
+            Return Task.FromResult(False)
         Else
             ''úklid:
             'IO.Directory.GetFiles(pngDir).ToList().ForEach(Sub(f) System.IO.File.Delete(f))
@@ -50,7 +50,9 @@ Public Class FfmpegVideoEncoder
         psi2.UseShellExecute = False
         'psi2.Arguments = $"-i ""{outputFile}"" -c:v libvpx -filter:v ""setpts={slowRate}*PTS"" -an  ""{slowFile}"""
         'psi2.Arguments = $"-i ""{outputFile}"" -c:v libvpx -pix_fmt yuva420p -filter:v ""setpts={slowRate}*PTS"" -an  ""{slowFile}"""
+
         psi2.Arguments = $"-y -i ""{outputFile}_fast.mov"" -c:v prores_ks -pix_fmt yuva444p10le -filter:v ""setpts={strFrameInterval}*PTS"" -r 1 ""{outputFile}.mov"""
+
 
         psi2.RedirectStandardOutput = False
         psi2.CreateNoWindow = True
@@ -60,7 +62,7 @@ Public Class FfmpegVideoEncoder
         End Using
         If Not System.IO.File.Exists(outputFile & ".mov") Then
             RaiseEvent WarningOccurred($"Failed to create video {outputFile}.mov.", Color.Red)
-            Return False
+            Return Task.FromResult(False)
         Else
 
             Debug.WriteLine("Hotovo! Video vygenerováno.")
@@ -81,7 +83,7 @@ Public Class FfmpegVideoEncoder
                 'když selže smazání adresáře, např. když je otevřený v jiném programu, jede se dál
 
             End Try
-            Return True
+            Return Task.FromResult(True)
         End If
     End Function
 

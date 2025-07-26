@@ -317,9 +317,9 @@ Partial Class Form1
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
         mnuAskForVideo.Checked = My.Settings.AskForVideo
 
-        If My.Settings.Directory = "" Then
-            My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
-        End If
+        'If My.Settings.Directory = "" Then
+        '    My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
+        'End If
 
         If My.Settings.BackupDirectory = "" Then
             My.Settings.BackupDirectory = System.IO.Path.Combine(My.Settings.Directory, "gpxFilesBackup")

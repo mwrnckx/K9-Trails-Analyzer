@@ -155,6 +155,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný The backup directory is the same as the main directory - it can&apos;t be!.
+        '''</summary>
+        Friend Shared ReadOnly Property mBoxBackupDirectorySameAsGpxDirectory() As String
+            Get
+                Return ResourceManager.GetString("mBoxBackupDirectorySameAsGpxDirectory", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Data Retrieval Failed.
         '''</summary>
         Friend Shared ReadOnly Property mBoxDataRetrievalFailed() As String
@@ -218,7 +227,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Processed all gpx files from the directory:.
+        '''  Vyhledá lokalizovaný řetězec podobný Processed all gpx files from the directory: .
         '''</summary>
         Friend Shared ReadOnly Property outAll_gpx_files_from_directory() As String
             Get
@@ -443,7 +452,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Edit the comments for the goal, trail and dog. These comments will be saved in the GPX file and displayed in applications such as https://www.gpxsee.org/ and in overlay videos. If you are creating the comments in your GPS app, write &apos;G:&apos; before the destination description, &apos;T:&apos; before the trail description, and &apos;D:&apos; before the dog&apos;s work description..
+        '''  Vyhledá lokalizovaný řetězec podobný Edit the comments for the goal, the trail and the dog. These comments will be saved in the GPX file and displayed in applications such as gpxsee.org and overlay videos. If you are writing the comments in your GPS app, add &apos;g:&apos; before the description of the goal, &apos;t:&apos; before the description of the trail and &apos;d:&apos; before the description of the dog&apos;s work. You can write an English translation in the second row if you wish..
         '''</summary>
         Friend Shared ReadOnly Property txtEditDescLabel() As String
             Get

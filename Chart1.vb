@@ -1,13 +1,10 @@
 
 Imports System.Globalization
-Imports System.Runtime.InteropServices
-Imports System.Runtime.InteropServices.ComTypes
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 
 Partial Class DistanceChart
     Inherits System.Windows.Forms.Form
-
 
     ' Vlastnosti pro data
     Private X_Data As DateTime()
@@ -144,9 +141,6 @@ Partial Class DistanceChart
             For i As Integer = 0 To Y_Data.Length - 1
                 series1.Points.AddXY(X_Data(i), Y_Data(i))
             Next
-            'series1.Points.AddXY("Test1", 10)
-            'series1.Points.AddXY("Test2", 20)
-
 
             ' Výpoèet lineární regrese
             Dim regression = CalculateLinearRegression(X_Data, Y_Data, isIntercept)
@@ -182,7 +176,7 @@ Partial Class DistanceChart
 
 
             series1.Color = Color.Chocolate
-        series1.IsValueShownAsLabel = True
+            series1.IsValueShownAsLabel = True
             series1.LabelFormat = "N1"
             series1.XValueType = ChartValueType.String
             series1.IsXValueIndexed = True
@@ -197,14 +191,12 @@ Partial Class DistanceChart
         End If
 
 
-        'chart1.Series.Clear()
+
         ' Pøidání série do grafu
-        'chart.Series.Add(series1)
         chart1.Series.Add(series1)
         Debug.WriteLine($"Poèet bodù: {series1.Points.Count}")
         Debug.WriteLine($"ChartAreas: {chart1.ChartAreas.Count}, Series: {chart1.Series.Count}")
         Debug.WriteLine($"Nakonec: chart.Series.Count={chart1.Series.Count}, Body={series1.Points.Count}")
-
 
     End Sub
 

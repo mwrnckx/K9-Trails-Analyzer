@@ -261,10 +261,13 @@
   <data name="txtDogLabel" xml:space="preserve">
     <value>Pies:</value>
   </data>
-  <data name="txtEditDescLabel" xml:space="preserve">
-    <value>Edytuj komentarze do bramki, szlaku i psa. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak https://www.gpxsee.org/ oraz w nakładkach. Jeśli tworzysz komentarze w aplikacji GPS, napisz „G:” przed opisem docelowego „T:” Przed opisem szlaku i „D:” przed opisem psa.</value>
-  </data>
   <data name="txtTrailLabel" xml:space="preserve">
     <value>Ścieżka:</value>
+  </data>
+  <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
+    <value>Katalog kopii zapasowej jest taki sam jak główny katalog - nie może być!</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Edytuj komentarze do bramki, szlaku i psa. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w swojej aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „D:” przed opisem pracy psa. Jeśli chcesz, możesz napisać tłumaczenie na angielski w drugim rzędzie.</value>
   </data>
 </root>

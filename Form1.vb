@@ -1,9 +1,6 @@
 ﻿Imports System.ComponentModel
-Imports System.Formats
 Imports System.Globalization
-Imports System.Linq
 Imports System.Reflection
-Imports System.Runtime.InteropServices.ComTypes
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
@@ -26,6 +23,10 @@ Public Class Form1
         'období, které se má zpracovat
         GPXFilesManager.dateFrom = dtpStartDate.Value
         GPXFilesManager.dateTo = dtpEndDate.Value
+
+        If My.Settings.Directory = "" Then
+            mnuSelect_directory_gpx_files_Click(btnReadGpxFiles, New EventArgs)
+        End If
         Try
 
             If Await GPXFilesManager.Main Then
@@ -389,7 +390,6 @@ Public Class Form1
         Dim GrafText As String
 
         Dim chart1 As DistanceChart
-        'Dim chart2 As LiveChart2
 
         ' Získání dat pro graf rychlosti
         Dim speedData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "DogSpeed")
@@ -400,9 +400,6 @@ Public Class Form1
         chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
-        'chart2 = New LiveChart2(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, "Point", currentCulture)
-        'chart2.Show()
-
 
 
         ' Získání dat pro graf věku trasy
@@ -687,31 +684,49 @@ Public Class Form1
     Private Sub mnuSelect_directory_gpx_files_Click(sender As Object, e As EventArgs) Handles mnuSelect_directory_gpx_files.Click, mnuSelectBackupDirectory.Click, mnuSelectADirectoryToSaveVideo.Click
         Dim folderDialog As New FolderBrowserDialog
 
-
-        If sender Is mnuSelect_directory_gpx_files Then
+        If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
+            If My.Settings.Directory = "" Then
+                My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
+            End If
             folderDialog.SelectedPath = My.Settings.Directory
         ElseIf sender Is mnuSelectBackupDirectory Then
             folderDialog.ShowNewFolderButton = True
-            folderDialog.SelectedPath = My.Settings.BackupDirectory
+            If My.Settings.BackupDirectory = "" Then
+                folderDialog.SelectedPath = My.Settings.Directory
+            Else
+                ' Pokud je nastavená záložní složka, použij ji
+                folderDialog.SelectedPath = My.Settings.BackupDirectory
+            End If
         ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
             folderDialog.ShowNewFolderButton = True
-            folderDialog.SelectedPath = My.Settings.VideoDirectory
+            If My.Settings.VideoDirectory = "" Then
+                folderDialog.SelectedPath = My.Settings.Directory
+            Else
+                folderDialog.SelectedPath = My.Settings.VideoDirectory
+            End If
+
         Else
-            Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
+                Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
         End If
 
 
 
         If folderDialog.ShowDialog() = DialogResult.OK Then
 
-            If sender Is mnuSelect_directory_gpx_files Then
+            If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 My.Settings.Directory = folderDialog.SelectedPath
             ElseIf sender Is mnuSelectBackupDirectory Then
-                My.Settings.BackupDirectory = folderDialog.SelectedPath
+                If folderDialog.SelectedPath <> My.Settings.Directory Then
+                    My.Settings.BackupDirectory = folderDialog.SelectedPath
+                Else
+                    MessageBox.Show(My.Resources.Resource1.mBoxBackupDirectorySameAsGpxDirectory, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    Return ' Pokud je záložní složka stejná jako hlavní složka, neukládej ji    
+                End If
+
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
-                My.Settings.VideoDirectory = folderDialog.SelectedPath
-            Else
-                Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
+                    My.Settings.VideoDirectory = folderDialog.SelectedPath
+                Else
+                    Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
             End If
 
         End If

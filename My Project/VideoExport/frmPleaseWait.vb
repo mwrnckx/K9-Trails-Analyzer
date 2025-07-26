@@ -6,17 +6,17 @@
         Me.Text = "Please Wait"
         Me.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         Me.ControlBox = False
-        Me.Size = New Size(300, 150)
+        Me.Size = New Size(400, 150)
         Me.StartPosition = FormStartPosition.CenterScreen
         lblMessage = New Label() With {
-            .Text = "Processing, please wait...",
+            .Text = "I'm making an overlay video, please stand by...",
             .AutoSize = True,
             .Location = New Point(20, 20)
         }
         Me.Controls.Add(lblMessage)
         progressBar = New ProgressBar() With {
             .Location = New Point(20, 60),
-            .Size = New Size(240, 20),
+            .Size = New Size(360, 20),
             .Style = ProgressBarStyle.Marquee
         }
         Me.Controls.Add(progressBar)

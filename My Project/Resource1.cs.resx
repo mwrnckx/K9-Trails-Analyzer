@@ -267,10 +267,13 @@
   <data name="txtCrossTrack" xml:space="preserve">
     <value>křížení</value>
   </data>
-  <data name="txtEditDescLabel" xml:space="preserve">
-    <value>Upravte komentáře k cíli, stezce a psa. Tyto komentáře budou uloženy v souboru GPX a zobrazeny v aplikacích, jako je https://www.gpxsee.org/ a v překrytí videí. Pokud vytváříte komentáře ve své aplikaci GPS, napište 'g:' Před popisem cíle, 't:' Před popisem stezky a 'D:' Před popisem práce psa.</value>
-  </data>
   <data name="txtTrailLabel" xml:space="preserve">
-    <value>Trail</value>
+    <value>Trail:</value>
+  </data>
+  <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
+    <value>Záložní adresář je stejný jako hlavní adresář - to nelze!</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Upravte komentáře k cíli, trailu  a práci psa. Tyto komentáře budou uloženy v souboru GPX a zobrazeny v aplikacích, jako jsou gpxsee.org a v overlay videu. Pokud píšete komentáře ve své aplikaci GPS, přidejte 'g:' před popisem cíle, 't:' před popisem trailu a „d:“ před popisem práce psa. Pokud si přejete, můžete napsat anglický překlad ve druhé řadě.</value>
   </data>
 </root>
