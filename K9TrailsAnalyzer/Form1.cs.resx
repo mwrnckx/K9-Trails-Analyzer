@@ -254,4 +254,10 @@
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>Do:</value>
   </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Načíst data ze souborů GPX ve vybrané složce</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>K9 Trails Analyzer</value>
+  </data>
 </root>

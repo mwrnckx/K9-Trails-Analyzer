@@ -14,29 +14,17 @@ Option Explicit On
 
 Namespace TrackVideoExporter
     
-    <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),
-     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")>
+    <Global.System.Runtime.CompilerServices.CompilerGeneratedAttribute(),  _
+     Global.System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "17.14.0.0")>  _
     Partial Friend NotInheritable Class VideoExportSettings
         Inherits Global.System.Configuration.ApplicationSettingsBase
-
-        Private Shared defaultInstance As VideoExportSettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New VideoExportSettings()), VideoExportSettings)
-
+        
+        Private Shared defaultInstance As VideoExportSettings = CType(Global.System.Configuration.ApplicationSettingsBase.Synchronized(New VideoExportSettings()),VideoExportSettings)
+        
         Public Shared ReadOnly Property [Default]() As VideoExportSettings
             Get
                 Return defaultInstance
             End Get
-        End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property FfmpegPath() As String
-            Get
-                Return CType(Me("FfmpegPath"),String)
-            End Get
-            Set
-                Me("FfmpegPath") = value
-            End Set
         End Property
     End Class
 End Namespace

@@ -133,7 +133,7 @@
     <value>Date  </value>
   </data>
   <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Data Retrieval Failed</value>
+    <value>Loading GPX files from the selected directory failed</value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Error Creating CSV</value>

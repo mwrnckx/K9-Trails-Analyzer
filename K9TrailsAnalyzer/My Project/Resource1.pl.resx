@@ -132,9 +132,6 @@
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Data</value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Nie udało się pobrać danych</value>
-  </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Błąd podczas tworzenia pliku CSV</value>
   </data>
@@ -269,5 +266,8 @@
   </data>
   <data name="txtEditDescLabel" xml:space="preserve">
     <value>Edytuj komentarze do bramki, szlaku i psa. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w swojej aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „D:” przed opisem pracy psa. Jeśli chcesz, możesz napisać tłumaczenie na angielski w drugim rzędzie.</value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Ładowanie plików GPX z wybranego katalogu nie powiodło się</value>
   </data>
 </root>

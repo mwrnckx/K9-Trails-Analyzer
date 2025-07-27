@@ -132,9 +132,6 @@
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Дата</value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Не удалось получить данные</value>
-  </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Ошибка при создании CSV</value>
   </data>
@@ -275,5 +272,8 @@
   </data>
   <data name="txtEditDescLabel" xml:space="preserve">
     <value>Отредактируйте комментарии к цели, тропе и собаке. Эти комментарии будут сохранены в файле GPX и отображаются в таких приложениях, как gpxsee.org и видеоролики. Если вы пишете комментарии в своем приложении GPS, добавьте «g:» перед описанием цели «t:» до описания тропы и «D:» перед описанием работы собаки. Вы можете написать английский перевод во втором ряду, если хотите.</value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Загрузка файлов GPX из выбранного каталога не удалась</value>
   </data>
 </root>

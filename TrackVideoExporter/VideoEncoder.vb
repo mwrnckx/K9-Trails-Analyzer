@@ -7,9 +7,9 @@ Public Class FfmpegVideoEncoder
 
     Public Event WarningOccurred(message As String, _color As Color)
 
-    Public Function EncodeFromPngs(pngDir As DirectoryInfo, outputFile As String, frameinterval As Double) As Task(Of Boolean)
+    Public Function EncodeFromPngs(FfmpegPath As String, pngDir As DirectoryInfo, outputFile As String, frameinterval As Double) As Task(Of Boolean)
         Dim psi As New ProcessStartInfo()
-        psi.FileName = FindFfmpegPath()
+        psi.FileName = FfmpegPath
 
         Dim inputPattern = System.IO.Path.Combine(pngDir.FullName, "frame_%04d.png")
 

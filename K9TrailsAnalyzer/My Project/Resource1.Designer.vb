@@ -164,7 +164,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Data Retrieval Failed.
+        '''  Vyhledá lokalizovaný řetězec podobný Loading GPX files from the selected directory failed.
         '''</summary>
         Friend Shared ReadOnly Property mBoxDataRetrievalFailed() As String
             Get

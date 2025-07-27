@@ -98,6 +98,11 @@ Public Class PngSequenceCreator
     End Function
 End Class
 
+
+
+''' <summary>
+''' Provides functionality for rendering PNG images with track data, wind information, and text.
+''' </summary>
 Public Class PngRenderer
     Private minVideoSize As Single
     Private windDirection As Double?
@@ -105,12 +110,17 @@ Public Class PngRenderer
     Private trackBounds As RectangleF
 
     Dim diagonal As Single
-    Dim radius As Single  ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
+    Dim radius As Single ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
     Dim penWidth As Single ' šířka pera pro kreslení čar, 1% šířky obrázku
-    Dim emSize As Single  '
+    Dim emSize As Single '
     Dim font As Font
 
-
+    ''' <summary>
+    ''' Initializes a new instance of the <see cref="PngRenderer"/> class.
+    ''' </summary>
+    ''' <param name="windDirection">The direction of the wind in degrees (0-360), or null if not available.</param>
+    ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
+    ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
     Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single))
         Me.minVideoSize = minVideoSize
         Me.windDirection = windDirection
@@ -124,7 +134,16 @@ Public Class PngRenderer
     End Sub
 
 
+    '   ---
+    '  ## Public Functions
+    '  ---
 
+    ''' <summary>
+    ''' Renders a static map background with tracks.
+    ''' </summary>
+    ''' <param name="tracksAsPointsF">A list of tracks to be rendered as points.</param>
+    ''' <param name="backgroundTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
+    ''' <returns>A <see cref="Bitmap"/> containing the rendered static map background.</returns>
     Public Function RenderStaticMapBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single)) As Bitmap
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
@@ -169,78 +188,15 @@ Public Class PngRenderer
         Return backgroundMap
     End Function
 
-    Private Function DrawWindArrow(g As Graphics, position As PointF, arrowLength As Single, direction As Double, color As Color)
-        ' Vykreslí šipku větru
-
-        Dim angleRad = -(direction - 270) * Math.PI / 180.0 'převod na radiány
-        Dim endX As Single = position.X + arrowLength * Math.Cos(angleRad)
-        Dim endY As Single = position.Y - arrowLength * Math.Sin(angleRad) ' Y je obráceně v grafice
-        Using pen As New Pen(color, penWidth)
-            g.DrawLine(pen, position.X, position.Y, endX, endY)
-            ' Kreslení šipky na konci
-            Dim arrowHeadSize = 0.3 * arrowLength ' velikost hlavy šipky
-            Dim headAngle1 = angleRad + Math.PI / 6 ' 30 stupňů
-            Dim headAngle2 = angleRad - Math.PI / 6 ' -30 stupňů
-            Dim headX1 As Single = endX - arrowHeadSize * Math.Cos(headAngle1)
-            Dim headY1 As Single = endY + arrowHeadSize * Math.Sin(headAngle1)
-            Dim headX2 As Single = endX - arrowHeadSize * Math.Cos(headAngle2)
-            Dim headY2 As Single = endY + arrowHeadSize * Math.Sin(headAngle2)
-            g.DrawLine(pen, endX, endY, headX1, headY1)
-            g.DrawLine(pen, endX, endY, headX2, headY2)
-            'popis šipky
-            ' Text k šipce
-            Dim windText As String = windSpeed.ToString("0.0") & " m/s "
-            Dim textSize = g.MeasureString(windText, font)
-
-            ' Chceme text nakreslit kousek za šipku
-            Dim popisOffset As Single = 10
-
-            ' Bod, kde bude text - spočítáme ho jako bod za endPoint
-            Dim textX As Single = position.X '+ offset * Math.Cos(angle)
-            Dim textY As Single = position.Y - popisOffset '* Math.Sin(angle)
-
-            ' Uložíme transformaci
-            Dim oldState = g.Save()
-
-            ' Přesuneme se do bodu textu
-            g.TranslateTransform(textX, textY)
-
-            ' Vypočítáme úhel v rozmezí -180 až 180
-            Dim angleDeg As Single = -CSng(angleRad * 180 / Math.PI)
-            If angleDeg < -180 Then angleDeg += 360
-            If angleDeg > 180 Then angleDeg -= 360
-            Dim textPos As New PointF(0, -textSize.Height)
-            ' Pokud by text byl vzhůru nohama, otočíme ho o 180°
-            If angleDeg > 90 Or angleDeg < -90 Then
-                angleDeg += 180
-                textY += textSize.Height ' posuneme text o výšku dolů, aby nebyl přeházený
-                ' Text zarovnáme tak, aby byl středem na ose šipky
-                textPos.X -= textSize.Width
-            End If
-
-            ' Otočíme souřadnicový systém podle směru šipky
-            g.RotateTransform(angleDeg)
-
-
-            ' Otočíme souřadnicový systém podle směru šipky
-            'g.RotateTransform(-CSng(angleRad * 180 / Math.PI))
-
-
-
-            ' Nakreslíme text (s outline, pokud chceš)
-            Dim contrastColor As Color = GetContrastColor(Color.Black)
-            DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
-
-            ' Vrátíme původní transformaci
-            g.Restore(oldState)
-
-        End Using
-    End Function
-
+    ''' <summary>
+    ''' Renders static tracks, wind arrow, and labels onto a transparent background.
+    ''' </summary>
+    ''' <param name="tracksAsPointsF">A list of tracks to be rendered as points.</param>
+    ''' <param name="backgroundTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.
+    ''' The dimensions of bgmap are used to determine the size of the resulting transparent bitmap.</param>
+    ''' <returns>A <see cref="Bitmap"/> with a transparent background, containing the rendered tracks, wind arrow, and labels.</returns>
     Public Function RenderStaticTransparentBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single)) As Bitmap
         ' Vykresli statické stopy, šipku větru, popisky
-
-
 
         Dim staticBmp As New Bitmap(backgroundTiles.bgmap.Width, backgroundTiles.bgmap.Height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(staticBmp)
@@ -269,10 +225,6 @@ Public Class PngRenderer
                 g.DrawLines(New Pen(brush, penWidth), TrackPoints.ToArray)
                 ' popis, poslední bod atd.
                 Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
-
-
-
-
                 Dim contrastColor As Color = GetContrastColor(track.Color)
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
                 g.FillEllipse(brush, p.X - radius / 2, p.Y - radius / 2, radius, radius)
@@ -296,10 +248,16 @@ Public Class PngRenderer
         Return staticBmp
     End Function
 
+    ''' <summary>
+    ''' Renders static text onto a new bitmap with a white background. The text will wrap and adjust font size to fit within the specified area.
+    ''' </summary>
+    ''' <param name="textParts">A list of tuples, each containing the text string, its color, and font style.</param>
+    ''' <param name="bgmap">A bitmap used to determine the dimensions for the new text bitmap.</param>
+    ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
     Public Function RenderStaticText(textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), bgmap As Bitmap) As Bitmap
         Dim maxWidth As Single = bgmap.Width * 0.9 ' maximální šířka textu, 90% šířky obrázku
         Dim startX As Single = bgmap.Width * 0.05 ' začátek textu, 5% od levého okraje
-        Dim startY As Single = 0 ' bgmap.Height * 0.05 ' začátek textu, 5% od horního okraje
+        Dim startY As Single = 0 ' začátek textu
         Dim currentY As Single = startY
         Dim fontSize As Int32 = CInt(bgmap.Height * 0.05) ' výchozí velikost písma
 
@@ -336,92 +294,14 @@ Public Class PngRenderer
         Return staticText
     End Function
 
-
-
     ''' <summary>
-    ''' Vykreslí textový řetězec obsahující českou diakritiku a emoji
-    ''' se správným zalamováním slov uvnitř daného obdélníku.
+    ''' Renders a single frame of the animation, including a static background and a moving track (e.g., a dog's trail).
     ''' </summary>
-    ''' <param name="g">Grafický kontext (Graphics).</param>
-    ''' <param name="text">Text k vykreslení.</param>
-    ''' <param name="baseFont">Základní font pro text (např. Segoe UI).</param>
-    ''' <param name="brush">Štětec pro barvu textu.</param>
-    ''' <param name="layoutRect">Obdélník definující oblast pro kreslení a zalamování.</param>
-    Public Function DrawWrappedTextWithEmoji(ByVal g As Graphics, ByVal text As String, ByVal baseFont As Font, ByVal brush As Brush, ByVal layoutRect As RectangleF) As Single
-        ' Nastavení pro kvalitnější vykreslování
-        g.TextRenderingHint = TextRenderingHint.AntiAlias
-        g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
-
-        ' Font, který použijeme specificky pro emoji
-        Using emojiFont As New Font("Segoe UI Emoji", baseFont.Size, baseFont.Style)
-            Dim lineHeight As Single = baseFont.GetHeight(g)
-            Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
-            currentPosition.Y += lineHeight * 1.5 'odskočí práznou řádku
-            Dim spaceWidth As Single = g.MeasureString(" ", baseFont).Width
-
-            ' Rozdělíme celý text na jednotlivá slova
-            Dim words() As String = text.Split(" "c)
-
-            For Each word As String In words
-                If String.IsNullOrEmpty(word) Then Continue For
-
-                ' --- Krok 1: Změření šířky aktuálního slova (které může obsahovat text i emoji) ---
-                Dim wordWidth As Single = 0
-                Dim i As Integer = 0
-                While i < word.Length
-                    ' Zjednodušená detekce emoji
-                    Dim isEmoji As Boolean = (i + 1 < word.Length AndAlso Char.IsSurrogatePair(word, i)) _
-                                         OrElse (UnicodeCategory.OtherSymbol = Char.GetUnicodeCategory(word, i))
-
-                    Dim segmentFont As Font = If(isEmoji, emojiFont, baseFont)
-                    Dim segmentCharCount As Integer = If(isEmoji AndAlso Char.IsSurrogatePair(word, i), 2, 1)
-                    Dim segmentText As String = word.Substring(i, segmentCharCount)
-
-                    wordWidth += g.MeasureString(segmentText, segmentFont).Width
-                    i += segmentCharCount
-                End While
-
-                ' --- Krok 2: Kontrola zalamování ---
-                ' Pokud by slovo přesáhlo šířku a nejsme na začátku řádku, zalomíme.
-                If (currentPosition.X + wordWidth > layoutRect.Right) AndAlso (currentPosition.X > layoutRect.X) Then
-                    currentPosition.X = layoutRect.X
-                    currentPosition.Y += lineHeight
-                End If
-
-                ' --- Krok 3: Vykreslení slova po segmentech ---
-                i = 0
-                While i < word.Length
-                    Dim isEmoji As Boolean = (i + 1 < word.Length AndAlso Char.IsSurrogatePair(word, i)) _
-                                         OrElse (UnicodeCategory.OtherSymbol = Char.GetUnicodeCategory(word, i))
-
-                    Dim segmentFont As Font = If(isEmoji, emojiFont, baseFont)
-                    Dim segmentCharCount As Integer = If(isEmoji AndAlso Char.IsSurrogatePair(word, i), 2, 1)
-                    Dim segmentText As String = word.Substring(i, segmentCharCount)
-
-                    g.DrawString(segmentText, segmentFont, brush, currentPosition)
-
-                    ' Posuneme X souřadnici pro další část slova
-                    currentPosition.X += g.MeasureString(segmentText, segmentFont).Width * 0.6 ' menší mezera mezi segmenty, aby se to nelepilo
-                    i += segmentCharCount
-                End While
-
-                ' Po vykreslení slova přidáme mezeru
-                currentPosition.X += spaceWidth
-            Next
-
-            Return currentPosition.Y
-        End Using
-    End Function
-
-    Function GetContrastColor(bgColor As Color) As Color
-        Dim luminance As Double = 0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B
-        If luminance < 128 Then
-            Return Color.White
-        Else
-            Return Color.Black
-        End If
-    End Function
-
+    ''' <param name="tracks">A list of tracks to be rendered.</param>
+    ''' <param name="staticBackground">The pre-rendered static background bitmap to draw upon.</param>
+    ''' <param name="frameTime">The current time for which to render the frame.</param>
+    ''' <param name="_dogTrail">A list of points representing the dog's trail, which will be updated by this method.</param>
+    ''' <returns>A <see cref="Bitmap"/> representing the rendered frame.</returns>
     Public Function RenderFrame(tracks As List(Of TrackAsPointsF), staticBackground As Bitmap, frameTime As DateTime, ByRef _dogTrail As List(Of PointF)) As Bitmap
         ' Vykresli aktuální snímek s pohybujícím se psem
 
@@ -468,6 +348,176 @@ Public Class PngRenderer
 
     End Function
 
+    '---
+    '## Private Helpers
+    '---
+
+    ''' <summary>
+    ''' Draws a wind arrow on the graphics context.
+    ''' </summary>
+    ''' <param name="g">The Graphics object to draw on.</param>
+    ''' <param name="position">The center position of the wind arrow.</param>
+    ''' <param name="arrowLength">The length of the main arrow line.</param>
+    ''' <param name="direction">The direction of the wind in degrees (0-360).</param>
+    ''' <param name="color">The color of the wind arrow.</param>
+    Private Sub DrawWindArrow(g As Graphics, position As PointF, arrowLength As Single, direction As Double, color As Color)
+        ' Vykreslí šipku větru
+
+        Dim angleRad = -(direction - 270) * Math.PI / 180.0 'převod na radiány
+        Dim endX As Single = position.X + arrowLength * Math.Cos(angleRad)
+        Dim endY As Single = position.Y - arrowLength * Math.Sin(angleRad) ' Y je obráceně v grafice
+        Using pen As New Pen(color, penWidth)
+            g.DrawLine(pen, position.X, position.Y, endX, endY)
+            ' Kreslení šipky na konci
+            Dim arrowHeadSize = 0.3 * arrowLength ' velikost hlavy šipky
+            Dim headAngle1 = angleRad + Math.PI / 6 ' 30 stupňů
+            Dim headAngle2 = angleRad - Math.PI / 6 ' -30 stupňů
+            Dim headX1 As Single = endX - arrowHeadSize * Math.Cos(headAngle1)
+            Dim headY1 As Single = endY + arrowHeadSize * Math.Sin(headAngle1)
+            Dim headX2 As Single = endX - arrowHeadSize * Math.Cos(headAngle2)
+            Dim headY2 As Single = endY + arrowHeadSize * Math.Sin(headAngle2)
+            g.DrawLine(pen, endX, endY, headX1, headY1)
+            g.DrawLine(pen, endX, endY, headX2, headY2)
+            'popis šipky
+            ' Text k šipce
+            Dim windText As String = windSpeed.ToString("0.0", CultureInfo.InvariantCulture) & " m/s "
+            Dim textSize = g.MeasureString(windText, font)
+
+            ' Chceme text nakreslit kousek za šipku
+            Dim popisOffset As Single = 10
+
+            ' Bod, kde bude text - spočítáme ho jako bod za endPoint
+            Dim textX As Single = position.X '+ offset * Math.Cos(angle)
+            Dim textY As Single = position.Y - popisOffset '* Math.Sin(angle)
+
+            ' Uložíme transformaci
+            Dim oldState = g.Save()
+
+            ' Přesuneme se do bodu textu
+            g.TranslateTransform(textX, textY)
+
+            ' Vypočítáme úhel v rozmezí -180 až 180
+            Dim angleDeg As Single = -CSng(angleRad * 180 / Math.PI)
+            If angleDeg < -180 Then angleDeg += 360
+            If angleDeg > 180 Then angleDeg -= 360
+            Dim textPos As New PointF(0, -textSize.Height)
+            ' Pokud by text byl vzhůru nohama, otočíme ho o 180°
+            If angleDeg > 90 Or angleDeg < -90 Then
+                angleDeg += 180
+                textY += textSize.Height ' posuneme text o výšku dolů, aby nebyl přeházený
+                ' Text zarovnáme tak, aby byl středem na ose šipky
+                textPos.X -= textSize.Width
+            End If
+
+            ' Otočíme souřadnicový systém podle směru šipky
+            g.RotateTransform(angleDeg)
+
+
+            ' Nakreslíme text (s outline)
+            Dim contrastColor As Color = GetContrastColor(Color.Black)
+            DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
+
+            ' Vrátíme původní transformaci
+            g.Restore(oldState)
+
+        End Using
+    End Sub
+
+    ''' <summary>
+    ''' Draws a text string containing Czech diacritics and emojis, with proper word wrapping, within a given rectangle.
+    ''' </summary>
+    ''' <param name="g">The Graphics object to draw on.</param>
+    ''' <param name="text">The text string to draw.</param>
+    ''' <param name="baseFont">The base font for the text (e.g., Segoe UI).</param>
+    ''' <param name="brush">The brush for the text color.</param>
+    ''' <param name="layoutRect">The rectangle defining the drawing and wrapping area.</param>
+    ''' <returns>The Y-coordinate of the current drawing position after rendering the text.</returns>
+    Public Function DrawWrappedTextWithEmoji(ByVal g As Graphics, ByVal text As String, ByVal baseFont As Font, ByVal brush As Brush, ByVal layoutRect As RectangleF) As Single
+        ' Nastavení pro kvalitnější vykreslování
+        g.TextRenderingHint = TextRenderingHint.AntiAlias
+        g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+
+        ' Font, který použijeme specificky pro emoji
+        Using emojiFont As New Font("Segoe UI Emoji", baseFont.Size, baseFont.Style)
+            Dim lineHeight As Single = baseFont.GetHeight(g)
+            Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
+            currentPosition.Y += lineHeight * 1.5 'odskočí práznou řádku
+            Dim spaceWidth As Single = g.MeasureString(" ", baseFont).Width
+
+            ' Rozdělíme celý text na jednotlivá slova
+            Dim words() As String = text.Split(" "c)
+
+            For Each word As String In words
+                If String.IsNullOrEmpty(word) Then Continue For
+
+                ' --- Krok 1: Změření šířky aktuálního slova (které může obsahovat text i emoji) ---
+                Dim wordWidth As Single = 0
+                Dim i As Integer = 0
+                While i < word.Length
+                    ' Zjednodušená detekce emoji
+                    Dim isEmoji As Boolean = (i + 1 < word.Length AndAlso Char.IsSurrogatePair(word, i)) _
+                                             OrElse (UnicodeCategory.OtherSymbol = Char.GetUnicodeCategory(word, i))
+
+                    Dim segmentFont As Font = If(isEmoji, emojiFont, baseFont)
+                    Dim segmentCharCount As Integer = If(isEmoji AndAlso Char.IsSurrogatePair(word, i), 2, 1)
+                    Dim segmentText As String = word.Substring(i, segmentCharCount)
+
+                    wordWidth += g.MeasureString(segmentText, segmentFont).Width
+                    i += segmentCharCount
+                End While
+
+                ' --- Krok 2: Kontrola zalamování ---
+                ' Pokud by slovo přesáhlo šířku a nejsme na začátku řádku, zalomíme.
+                If (currentPosition.X + wordWidth > layoutRect.Right) AndAlso (currentPosition.X > layoutRect.X) Then
+                    currentPosition.X = layoutRect.X
+                    currentPosition.Y += lineHeight
+                End If
+
+                ' --- Krok 3: Vykreslení slova po segmentech ---
+                i = 0
+                While i < word.Length
+                    Dim isEmoji As Boolean = (i + 1 < word.Length AndAlso Char.IsSurrogatePair(word, i)) _
+                                             OrElse (UnicodeCategory.OtherSymbol = Char.GetUnicodeCategory(word, i))
+
+                    Dim segmentFont As Font = If(isEmoji, emojiFont, baseFont)
+                    Dim segmentCharCount As Integer = If(isEmoji AndAlso Char.IsSurrogatePair(word, i), 2, 1)
+                    Dim segmentText As String = word.Substring(i, segmentCharCount)
+
+                    g.DrawString(segmentText, segmentFont, brush, currentPosition)
+
+                    ' Posuneme X souřadnici pro další část slova
+                    currentPosition.X += g.MeasureString(segmentText, segmentFont).Width * 0.6 ' menší mezera mezi segmenty, aby se to nelepilo
+                    i += segmentCharCount
+                End While
+
+                ' Po vykreslení slova přidáme mezeru
+                currentPosition.X += spaceWidth
+            Next
+
+            Return currentPosition.Y
+        End Using
+    End Function
+
+    ''' <summary>
+    ''' Determines a contrasting color (black or white) for a given background color.
+    ''' </summary>
+    ''' <param name="bgColor">The background color.</param>
+    ''' <returns>Either <see cref="Color.White"/> or <see cref="Color.Black"/>, depending on which provides better contrast.</returns>
+    Function GetContrastColor(bgColor As Color) As Color
+        Dim luminance As Double = 0.299 * bgColor.R + 0.587 * bgColor.G + 0.114 * bgColor.B
+        If luminance < 128 Then
+            Return Color.White
+        Else
+            Return Color.Black
+        End If
+    End Function
+
+    ''' <summary>
+    ''' Interpolates the position of a track (e.g., a dog's position) at a specific time.
+    ''' </summary>
+    ''' <param name="track">The track containing location and time data.</param>
+    ''' <param name="frameTime">The time for which to interpolate the position.</param>
+    ''' <returns>The interpolated <see cref="PointF"/> position of the track at the given time.</returns>
     Private Function InterpolatedDogPosition(track As TrackAsPointsF, frameTime As DateTime) As PointF
 
         Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
@@ -508,7 +558,16 @@ Public Class PngRenderer
         Return TrackPoints.Last()
     End Function
 
-
+    ''' <summary>
+    ''' Draws a text string with an outline.
+    ''' </summary>
+    ''' <param name="g">The Graphics object to draw on.</param>
+    ''' <param name="text">The text string to draw.</param>
+    ''' <param name="font">The font to use for the text.</param>
+    ''' <param name="mainColor">The main color of the text.</param>
+    ''' <param name="outlineColor">The color of the text outline.</param>
+    ''' <param name="pos">The position to draw the text.</param>
+    ''' <param name="outlineSize">The size of the outline in pixels.</param>
     Private Sub DrawTextWithOutline(g As Graphics, text As String, font As Font, mainColor As Color, outlineColor As Color, pos As PointF, outlineSize As Integer)
         Using mainBrush As New SolidBrush(mainColor)
             Using outlineBrush As New SolidBrush(outlineColor)

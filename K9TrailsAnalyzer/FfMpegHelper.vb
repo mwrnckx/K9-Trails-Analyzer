@@ -1,13 +1,14 @@
 ﻿Imports System.Windows.Forms
+Imports GPXTrailAnalyzer.My
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
 
 Module FfMpegHelper
     Public Function FindFfmpegPath() As String
         ' 1. Zkontroluj, jestli je uložená cesta a soubor tam je
-        If Not String.IsNullOrEmpty(VideoExportSettings.Default.FfmpegPath) AndAlso
-       System.IO.File.Exists(VideoExportSettings.Default.FfmpegPath) Then
-            Return VideoExportSettings.Default.FfmpegPath
+        If Not String.IsNullOrEmpty(My.Settings.FfmpegPath) AndAlso
+       System.IO.File.Exists(My.Settings.FfmpegPath) Then
+            Return My.Settings.FfmpegPath
         End If
 
         ' 2. Zkus typické cesty
@@ -20,8 +21,8 @@ Module FfMpegHelper
 
         For Each path In commonPaths
             If System.IO.File.Exists(path) Then
-                VideoExportSettings.Default.FfmpegPath = path
-                VideoExportSettings.Default.Save()
+                My.Settings.FfmpegPath = path
+                My.Settings.Save()
                 Return path
             End If
         Next
@@ -37,8 +38,8 @@ Module FfMpegHelper
                 Dim output As String = proc.StandardOutput.ReadToEnd()
                 Dim lines = output.Split({Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries)
                 If lines.Length > 0 AndAlso System.IO.File.Exists(lines(0)) Then
-                    VideoExportSettings.Default.FfmpegPath = lines(0)
-                    VideoExportSettings.Default.Save()
+                    My.Settings.FfmpegPath = lines(0)
+                    My.Settings.Save()
                     Return lines(0)
                 End If
             End Using
@@ -51,8 +52,8 @@ Module FfMpegHelper
         ofd.Title = "Najdi ffmpeg.exe"
         ofd.Filter = "ffmpeg.exe|ffmpeg.exe"
         If ofd.ShowDialog() = DialogResult.OK Then
-            VideoExportSettings.Default.FfmpegPath = ofd.FileName
-            VideoExportSettings.Default.Save()
+            My.Settings.FfmpegPath = ofd.FileName
+            My.Settings.Save()
 
             Return ofd.FileName
         Else

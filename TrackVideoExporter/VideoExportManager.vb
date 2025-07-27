@@ -12,7 +12,10 @@ Namespace TrackVideoExporter
 
         Private converter As TrackConverter
         Private encoder As FfmpegVideoEncoder
-
+        Private FFMpegPath As String
+        ''' <summary>
+        ''' Directory where output images and video will be saved.
+        ''' </summary>
         Private outputDir As DirectoryInfo
         Private windDirection As Double?
         Private windSpeed As Double
@@ -29,15 +32,16 @@ Namespace TrackVideoExporter
         ''' <summary>
         ''' Initializes a new instance of the <see cref="VideoExportManager"/> class.
         ''' </summary>
+        ''' <param name="FFMpegPath">Path to the FFMpeg executable.</param>
         ''' <param name="outputDir">Output directory for generated images and video.</param>
         ''' <param name="windDir">Optional wind direction in degrees.</param>
         ''' <param name="windSpeed">Optional wind speed.</param>
         ''' <param name="textParts">Optional list of styled text parts to display.</param>
-        Public Sub New(outputDir As DirectoryInfo,
+        Public Sub New(FFMpegPath As String, outputDir As DirectoryInfo,
                        Optional windDir As Double? = Nothing,
                        Optional windSpeed As Double = 0,
                        Optional textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)) = Nothing)
-
+            Me.FFMpegPath = FFMpegPath
             Me.outputDir = outputDir
             Me.windDirection = windDir
             Me.windSpeed = windSpeed
@@ -138,7 +142,7 @@ Namespace TrackVideoExporter
 
             Dim outputFile = IO.Path.Combine(outputDir.FullName, "overlay")
             encoder = New FfmpegVideoEncoder()
-            Return Await encoder.EncodeFromPngs(pngDir, outputFile, pngCreator.frameInterval)
+            Return Await encoder.EncodeFromPngs(FFMpegPath, pngDir, outputFile, pngCreator.frameInterval)
 
         End Function
 

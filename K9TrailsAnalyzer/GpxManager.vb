@@ -97,7 +97,7 @@ Public Class GpxFileManager
             End Try
         Next _gpxRecord
         GpxRecords = _gpxFilesMerged
-        If GpxRecords IsNot Nothing Then
+        If GpxRecords IsNot Nothing And GpxRecords.Count > 0 Then
             Return True
         Else
             Return False
@@ -482,8 +482,8 @@ Public Class GPXRecord
         Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
-
-        Dim videoCreator As New VideoExportManager(directory, WeatherData._windDirection, WeatherData._windSpeed)
+        Dim FFmpegPath As String = FindFfmpegPath()
+        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, WeatherData._windDirection, WeatherData._windSpeed)
         AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         Dim waitForm As New frmPleaseWait()

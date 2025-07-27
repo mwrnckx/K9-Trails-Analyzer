@@ -709,8 +709,6 @@ Public Class Form1
                 Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
         End If
 
-
-
         If folderDialog.ShowDialog() = DialogResult.OK Then
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then

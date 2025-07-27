@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RootNamespace>TrackVideoExporter</RootNamespace>
-    <TargetFramework>net8.0-windows</TargetFramework>
+     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
@@ -11,6 +11,16 @@
     <Compile Remove="TrackVideoExporter\**" />
     <EmbeddedResource Remove="TrackVideoExporter\**" />
     <None Remove="TrackVideoExporter\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="FfMpegHelper.vb" />
+    <Compile Remove="frmPleaseWait.Designer.vb" />
+    <Compile Remove="frmPleaseWait.vb" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="frmPleaseWait.resx" />
   </ItemGroup>
 
   <ItemGroup>
