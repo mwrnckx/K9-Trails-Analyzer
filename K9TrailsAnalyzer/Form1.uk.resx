@@ -195,9 +195,6 @@
   <data name="rbDistances.Text1" xml:space="preserve">
     <value>Довжина окремих маршрутів</value>
   </data>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Прочитайте дані з файлів gpx</value>
-  </data>
   <data name="btnCharts.Text" xml:space="preserve">
     <value>Показати графіки</value>
   </data>
@@ -230,5 +227,20 @@
   </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
     <value>Створіть накладне відео</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Завантажте дані з файлів gpx у вибраній папці</value>
+  </data>
+  <data name="mnuSaveAsRtf.Text" xml:space="preserve">
+    <value>Експорт як файл RTF</value>
+  </data>
+  <data name="txtOutput.Text" xml:space="preserve">
+    <value>Ця програма використовується для обробки ваших записів із програми відстеження, наприклад, Geo Tracker.</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Каталог, де розташовані файли GPX</value>
+  </data>
+  <data name="btnBrowseBackup.Text" xml:space="preserve">
+    <value>Перегляд</value>
   </data>
 </root>

@@ -200,7 +200,7 @@
     <value>1</value>
   </data>
   <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Read data from gpx files</value>
+    <value>Load data from gpx files in the selected folder</value>
   </data>
   <data name="&gt;&gt;btnReadGpxFiles.Name" xml:space="preserve">
     <value>btnReadGpxFiles</value>
@@ -347,7 +347,7 @@
     <value>636, 34</value>
   </data>
   <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
-    <value>Trim GPS noise at track's start and end.</value>
+    <value>Trim GPS noise at track's start and end</value>
   </data>
   <data name="mnuMergingTracks.Size" type="System.Drawing.Size, System.Drawing">
     <value>636, 34</value>
@@ -11280,5 +11280,62 @@
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="txtWarnings.Text" xml:space="preserve">
+    <value>Errors and Logs:</value>
+  </data>
+  <data name="btnChartDistances.Text" xml:space="preserve">
+    <value>Create charts</value>
+  </data>
+  <data name="rbTotDistance.Text" xml:space="preserve">
+    <value>Sniffed in the selected period</value>
+  </data>
+  <data name="rbDistances.Text" xml:space="preserve">
+    <value>The length of each trail</value>
+  </data>
+  <data name="rbAge.Text" xml:space="preserve">
+    <value>The age of the trail</value>
+  </data>
+  <data name="rbSpeed.Text" xml:space="preserve">
+    <value>The speed of the dog on the trails</value>
+  </data>
+  <data name="mnuSaveAsCsvFile.Text" xml:space="preserve">
+    <value>Export as a CSV file</value>
+  </data>
+  <data name="mnuSaveAsRtf.Text" xml:space="preserve">
+    <value>Export as RTF file!</value>
+  </data>
+  <data name="txtOutput.Text" xml:space="preserve">
+    <value>This program is used to process your records from the tracking application, such as a geo tracker.</value>
+  </data>
+  <data name="btnBrowse.Text" xml:space="preserve">
+    <value>Go through</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Directory where GPX files are located</value>
+  </data>
+  <data name="lblDirectory.Text" xml:space="preserve">
+    <value>Directory:</value>
+  </data>
+  <data name="chbDateToName.Text" xml:space="preserve">
+    <value>Add the date to the start of file names</value>
+  </data>
+  <data name="btnOpenDataFile.Text" xml:space="preserve">
+    <value>Create and open the CSV file</value>
+  </data>
+  <data name="lblBackupDirectory.Text" xml:space="preserve">
+    <value>Directory for backups:</value>
+  </data>
+  <data name="btnBrowseBackup.Text" xml:space="preserve">
+    <value>Go through</value>
+  </data>
+  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
+    <value>Remove GPS noise at the beginning and end of the routes</value>
+  </data>
+  <data name="lblStartDate.Text" xml:space="preserve">
+    <value>From:</value>
+  </data>
+  <data name="lblEndDate.Text" xml:space="preserve">
+    <value>To:</value>
   </data>
 </root>

@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Načti data ze souborů gpx</value>
-  </data>
   <data name="txtWarnings.Text" xml:space="preserve">
     <value>Chyby a logy:</value>
   </data>
@@ -243,12 +240,18 @@
     <value>Preference</value>
   </data>
   <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
-    <value>Vyberte adresář pro uložení překrytí videa</value>
+    <value>Vyberte adresář pro uložení overlay videa</value>
   </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
     <value>Vytvoř overlay video</value>
   </data>
   <data name="mnuExportAs.Text" xml:space="preserve">
-    <value>Uložit jako (rtf. Txt, CSV)</value>
+    <value>Uložit jako (rtf. txt, CSV)</value>
+  </data>
+  <data name="lblStartDate.Text" xml:space="preserve">
+    <value>Od:</value>
+  </data>
+  <data name="lblEndDate.Text" xml:space="preserve">
+    <value>Do:</value>
   </data>
 </root>

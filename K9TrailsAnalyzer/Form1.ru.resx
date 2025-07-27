@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Чтение данных из файлов gpx</value>
-  </data>
   <data name="txtWarnings.Text" xml:space="preserve">
     <value>Ошибки и журналы:</value>
   </data>
@@ -151,7 +148,7 @@
     <value>Выбор периода</value>
   </data>
   <data name="lblScentArtickle.Text" xml:space="preserve">
-    <value>занюшка </value>
+    <value>занюшка</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Анализатор статистики Mantrailing</value>
@@ -230,5 +227,17 @@
   </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
     <value>Создать наложение видео</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Загрузите данные из файлов GPX в выбранной папке</value>
+  </data>
+  <data name="mnuSaveAsRtf.Text" xml:space="preserve">
+    <value>Экспорт как файл RTF</value>
+  </data>
+  <data name="txtOutput.Text" xml:space="preserve">
+    <value>Эта программа используется для обработки ваших записей из приложения для отслеживания, таких как Geo Tracker.</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Каталог, где расположены файлы GPX</value>
   </data>
 </root>

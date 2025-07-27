@@ -141,9 +141,6 @@
   <data name="&gt;&gt;dtpEndDate.ZOrder" xml:space="preserve">
     <value>18</value>
   </data>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Odczyt danych z plików gpx</value>
-  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="txtWarnings.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -312,5 +309,17 @@
   </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
     <value>Utwórz nakładkę wideo</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Ładuj dane z plików GPX w wybranym folderze</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Katalog, w którym znajdują się pliki GPX</value>
+  </data>
+  <data name="mnuSaveAsRtf.Text" xml:space="preserve">
+    <value>Eksportuj jako plik RTF</value>
+  </data>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Zapisz jako (RTF. TXT, CSV)</value>
   </data>
 </root>

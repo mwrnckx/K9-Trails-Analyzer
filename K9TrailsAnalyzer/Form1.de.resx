@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="btnReadGpxFiles.Text" xml:space="preserve">
-    <value>Daten aus gpx-Dateien lesen</value>
-  </data>
   <data name="txtWarnings.Text" xml:space="preserve">
     <value>Fehler und Protokolle:</value>
   </data>
@@ -236,5 +233,14 @@
   </data>
   <data name="SToolStripMenuItem.Text" xml:space="preserve">
     <value>Vorlieben</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Laden Sie Daten aus GPX -Dateien im ausgewählten Ordner</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Verzeichnis, in dem sich GPX -Dateien befinden</value>
+  </data>
+  <data name="txtOutput.Text" xml:space="preserve">
+    <value>Dieses Programm wird verwendet, um Ihre Datensätze aus der Tracking -Anwendung wie einem Geo -Tracker zu verarbeiten.</value>
   </data>
 </root>

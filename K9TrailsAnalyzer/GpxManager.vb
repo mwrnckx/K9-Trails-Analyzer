@@ -84,7 +84,7 @@ Public Class GpxFileManager
                     If My.Settings.AskForVideo AndAlso _gpxRecord.DogStart <> Date.MinValue Then
                         If MessageBox.Show($"Should a video of the dog's movement be created from the file: {_gpxRecord.Reader.FileName}?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) = DialogResult.Yes Then
                             Try
-                                Await _gpxRecord.CreateVideoFromDogTrack()
+                                Await _gpxRecord.CreateVideoFromTracks()
                             Catch ex As Exception
                                 MessageBox.Show($"Creating a video from a file {_gpxRecord.Reader.FileName} failed." & vbCrLf & $"Message: {ex}")
                             End Try
@@ -449,7 +449,7 @@ Public Class GPXRecord
         RaiseEvent WarningOccurred(_message, _color)
     End Sub
 
-    Public Async Function CreateVideoFromDogTrack() As Task(Of Boolean)
+    Public Async Function CreateVideoFromTracks() As Task(Of Boolean)
         'Dim layerNodes, dogNodes As XmlNodeList
         Dim allTracks As New List(Of TrackAsTrkPts)
         For Each trkNode As XmlNode In Me.Reader.SelectNodes("trk")
@@ -483,8 +483,8 @@ Public Class GPXRecord
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
 
-        Dim _videoCreator As New VideoExportManager(directory, WeatherData._windDirection, WeatherData._windSpeed)
-        AddHandler _videoCreator.WarningOccurred, AddressOf WriteRTBWarning
+        Dim videoCreator As New VideoExportManager(directory, WeatherData._windDirection, WeatherData._windSpeed)
+        AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         Dim waitForm As New frmPleaseWait()
         waitForm.Show()
@@ -492,7 +492,7 @@ Public Class GPXRecord
         ' Spustíme na pozadí, aby nezamrzlo UI
         Await Task.Run(Async Function()
                            ' Spustíme tvůj dlouhý proces
-                           Dim success = Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts, DescriptionPartsEng)
+                           Dim success = Await videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts, DescriptionPartsEng)
 
                            ' Po dokončení se vrať na UI thread a proveď akce
                            waitForm.Invoke(Sub()
@@ -505,20 +505,10 @@ Public Class GPXRecord
                                                    form.ShowDialog()
                                                    form.Dispose()
                                                Else
-                                                   MessageBox.Show("Vytvoření videa selhalo!", "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                                   MessageBox.Show("Video creation failed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
                                                End If
                                            End Sub)
                        End Function)
-
-        '' Vytvoř video z trk bodů
-        'If Await _videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts) Then
-        '    Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.mov")
-        '    Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "background.png")
-        '    Dim form As New frmVideoDone(videopath, bgPNGPath)
-        '    form.ShowDialog()
-        '    form.Dispose()
-        '    Return True
-        'End If
 
         Return False
     End Function
