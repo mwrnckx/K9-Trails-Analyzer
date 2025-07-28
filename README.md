@@ -5,8 +5,6 @@ It allows to load GPX records from training sessions and analyze them (length, a
 An essential part of it is a library for generating overlay videos (dog and handler tracking) for use in videos recording the dog's work. In the video you can see the dog's work and its position on the trail, distance from the tracker's route, etc. The video also shows the direction and strength of the wind! This is an excellent tool for analyzing the dog's work.
 
 
-
-
 ### Choose your preferred language for details: 
 - **[English](Docs/README.en.md)**
 - **[Čeština](Docs/README.cs.md)** 
@@ -18,4 +16,9 @@ An essential part of it is a library for generating overlay videos (dog and hand
 <br> <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/total.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/total.jpg" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg" width="350"></a>
 <br> <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg" width="350"></a>
-<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/speed.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/speed.jpg" width="350"></a>
+<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg" width="350"></a>
+
+<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
+<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png" width="350"></a>
+
+<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg" width="350"></a>
