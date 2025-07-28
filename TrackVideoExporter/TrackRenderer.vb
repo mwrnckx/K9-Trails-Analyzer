@@ -16,8 +16,31 @@ Public Class PngSequenceCreator
         Me.renderer = renderer
     End Sub
 
-    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, pngDir As DirectoryInfo, pngTimes As List(Of DateTime), textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), textPartsEng As List(Of (Text As String, Color As Color, FontStyle As FontStyle)))
+    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), textPartsEng As List(Of (Text As String, Color As Color, FontStyle As FontStyle)))
+        'static pngs first:
+        ' Vytvoříme statický obrázek s textem
+
+        If textParts IsNot Nothing Then
+            Dim staticTextbmp = renderer.RenderStaticText(textParts)
+            Dim filename = IO.Path.Combine(outputDir.FullName, "TrailDescription.png")
+            staticTextbmp.Save(filename, ImageFormat.Png)
+        End If
+
+        ' Vytvoříme statický obrázek s anglickým textem
+        If textPartsEng IsNot Nothing Then
+            Dim staticTextbmp = renderer.RenderStaticText(textPartsEng)
+            Dim filename = IO.Path.Combine(outputDir.FullName, "TrailDescriptionENG.png")
+            staticTextbmp.Save(filename, ImageFormat.Png)
+        End If
+
+        ' Vytvoříme statický obrázek s mapou 
+        If staticbgMap IsNot Nothing Then
+            Dim filename = IO.Path.Combine(outputDir.FullName, "TrailsOnMap.png")
+            staticbgMap.Save(filename, ImageFormat.Png)
+        End If
+
         Const minFrameInterval As Double = 3.0 'minimální interval mezi snímky v sekundách, aby video nebylo moc velké a rychlé, defaultně 3 sekundy
+        Dim pngDir = outputDir.CreateSubdirectory("png")
         Try
             'úklidíme staré PNG obrázky, pokud existují
             IO.Directory.GetFiles(pngDir.FullName).ToList().ForEach(Sub(f) System.IO.File.Delete(f))
@@ -30,43 +53,13 @@ Public Class PngSequenceCreator
         frameInterval = durationSeconds 'výchozí hodnota, skutečná hodnota bude nalezena v cyklu
         For i = 0 To pngTimes.Count - 2
             'hledám minimální rozdíl kvůli maximální plynulosti
-            frameInterval = Math.Max(0.1, frameInterval) 'minimální interval 0.1 sekundy
+            frameInterval = Math.Max(1, frameInterval) 'minimální interval 1 sekunda
             frameInterval = Math.Min(frameInterval, (pngTimes(i + 1) - pngTimes(i)).TotalSeconds)
             Debug.WriteLine($"{i} {(pngTimes(i + 1) - pngTimes(i)).TotalSeconds}")
         Next
         frameInterval = Math.Max(minFrameInterval, frameInterval) 'minimální interval 3 sekundy, aby nebyl nulový nebo záporný a video nebylo moc velké
-
-
-        Dim initialFrames As Integer = 0
-        ' Vytvoříme statický obrázek s textem
-        If textParts IsNot Nothing Then
-            Dim staticTextbmp = renderer.RenderStaticText(textParts, staticbgMap)
-            For frameindex As Integer = initialFrames To initialFrames + 1
-                Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameindex:D4}.png")
-                staticTextbmp.Save(filename, ImageFormat.Png)
-                initialFrames += 1
-            Next
-        End If
-
-        ' Vytvoříme statický obrázek s anglickým textem
-        If textPartsEng IsNot Nothing Then
-            Dim staticTextbmp = renderer.RenderStaticText(textPartsEng, staticbgMap)
-            For frameindex As Integer = initialFrames To initialFrames + 1
-                Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameindex:D4}.png")
-                staticTextbmp.Save(filename, ImageFormat.Png)
-                initialFrames += 1
-            Next
-        End If
-
-        ' Vytvoříme statický obrázek s mapou 
-        If staticbgMap IsNot Nothing Then
-            For frameindex As Integer = initialFrames To initialFrames + 1
-                Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameindex:D4}.png")
-                staticbgMap.Save(filename, ImageFormat.Png)
-                initialFrames += 1
-            Next
-        End If
-
+        frameInterval = 1 'pro testování, aby bylo video rychlé a krátké
+        Dim initialFrames As Integer = 0 'nakonec nepoužito
         Dim _dogTrail As New List(Of PointF)
         Dim frameCount = CInt(Math.Ceiling(durationSeconds / frameInterval)) 'počet dynamických snímků
         For frameindex As Integer = 0 To frameCount - 1
@@ -74,11 +67,7 @@ Public Class PngSequenceCreator
             Dim frame = renderer.RenderFrame(tracks, staticBgTransparent, frameTime, _dogTrail)
             Dim frameNumber As String = (frameindex + initialFrames).ToString("D4")
             Dim filename = IO.Path.Combine(pngDir.FullName, $"frame_{frameNumber}.png")
-            'frame.Save(filename, Imaging.ImageFormat.Png)
             frame.Save(filename, ImageFormat.Png)
-            'uloží pro další použití jako pozadí
-            Dim bgPNGFileName = IO.Path.Combine(pngDir.Parent.FullName, "background.png")
-            If frameindex = CInt(2 * frameCount / 3) Then frame.Save(bgPNGFileName, ImageFormat.Png)
             frame.Dispose()
         Next
     End Sub
@@ -252,16 +241,17 @@ Public Class PngRenderer
     ''' Renders static text onto a new bitmap with a white background. The text will wrap and adjust font size to fit within the specified area.
     ''' </summary>
     ''' <param name="textParts">A list of tuples, each containing the text string, its color, and font style.</param>
-    ''' <param name="bgmap">A bitmap used to determine the dimensions for the new text bitmap.</param>
+    ''' <param name="width">With of the new text bitmap.</param>
+    ''' <param name="height">height of the new text bitmap.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
-    Public Function RenderStaticText(textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), bgmap As Bitmap) As Bitmap
-        Dim maxWidth As Single = bgmap.Width * 0.9 ' maximální šířka textu, 90% šířky obrázku
-        Dim startX As Single = bgmap.Width * 0.05 ' začátek textu, 5% od levého okraje
+    Public Function RenderStaticText(textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
+        Dim maxWidth As Single = width * 0.9 ' maximální šířka textu, 90% šířky obrázku
+        Dim startX As Single = width * 0.05 ' začátek textu, 5% od levého okraje
         Dim startY As Single = 0 ' začátek textu
         Dim currentY As Single = startY
-        Dim fontSize As Int32 = CInt(bgmap.Height * 0.05) ' výchozí velikost písma
+        Dim fontSize As Int32 = CInt(height * 0.05) ' výchozí velikost písma
 
-        Dim staticText As New Bitmap(bgmap.Width, bgmap.Height, PixelFormat.Format32bppArgb)
+        Dim staticText As New Bitmap(width, height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(staticText)
             g.TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAlias ' Lepší kvalita textu
 
@@ -282,9 +272,9 @@ Public Class PngRenderer
                         lineHeight = mainFont.GetHeight(g)
                     End Using
 
-                    If currentY + lineHeight > bgmap.Height Then
+                    If currentY + lineHeight > height Then
                         fits = False
-                        fontSize = Math.Floor(fontSize * (bgmap.Height / currentY))  ' Adaptivní zmenšení písma
+                        fontSize = Math.Floor(fontSize * (height / (currentY + lineHeight))) - 1  ' Adaptivní zmenšení písma
                         Exit For ' Není třeba pokračovat, už víme že se nevejde
                     End If
                 Next

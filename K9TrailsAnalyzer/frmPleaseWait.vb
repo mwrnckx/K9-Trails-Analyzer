@@ -20,13 +20,18 @@ Public Class frmPleaseWait
         Me.Controls.Add(lblMessage)
         progressBar = New ProgressBar() With {
             .Location = New Point(20, 60),
-            .Size = New Size(360, 20),
+            .Size = New Size(340, 20),
             .Style = ProgressBarStyle.Marquee
         }
         Me.Controls.Add(progressBar)
+
+
     End Sub
     Public Sub UpdateMessage(message As String)
         lblMessage.Text = message
     End Sub
+
+
+
 
 End Class

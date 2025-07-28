@@ -30,7 +30,7 @@ Partial Class frmPleaseWait
         ' 
         ' frmPleaseWait
         ' 
-        AutoScaleDimensions = New SizeF(11.0F, 25.0F)
+        AutoScaleDimensions = New SizeF(11F, 25F)
         AutoScaleMode = AutoScaleMode.Font
         ClientSize = New Size(800, 450)
         ControlBox = False

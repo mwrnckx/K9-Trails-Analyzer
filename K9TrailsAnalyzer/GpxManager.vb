@@ -425,6 +425,8 @@ Public Class GPXRecord
     Private ReadOnly Property gpxDirectory As String
     Private ReadOnly Property BackupDirectory As String
 
+    Const NBSP As String = ChrW(160)
+
     Public Sub New(_reader As GpxReader, forceProcess As Boolean)
         gpxDirectory = My.Settings.Directory
         BackupDirectory = My.Settings.BackupDirectory
@@ -499,8 +501,8 @@ Public Class GPXRecord
                                                waitForm.Close()
 
                                                If success Then
-                                                   Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.mov")
-                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "background.png")
+                                                   Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.webm")
+                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "TrailsOnMap.png")
                                                    Dim form As New frmVideoDone(videopath, bgPNGPath)
                                                    form.ShowDialog()
                                                    form.Dispose()
@@ -984,21 +986,23 @@ FoundTrailLayerTrk:
                 ' Odebereme případný starý čas z trailPart (např. "1.2 h něco")
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*h\s*", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění vícenásobných mezer
-                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h, " & trailPart
+                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
             End If
             Dim LengthfromComments As Single = GetLengthFromComments(trailPart)
             If LengthfromComments = 0 Then
                 ' Odebereme případnou starou délku z trailPart (např. "1.2 km něco")
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)\s*", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outLength.ToLower & ":", "") ' odstranění vícenásobných mezer
-                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & " km, " & trailPart
+                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & NBSP & "km, " & trailPart
             End If
 
         Else
             If Me.Distance > 0 Then
-                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & " km"
+                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & NBSP & "km"
             End If
-            trailPart &= ", " & My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & " h"
+            If ageFromTime.TotalHours > 0 Then
+                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
+            End If
 
         End If
         Return True ' Vrátíme True, pokud se podařilo rozdělit popis
@@ -1021,7 +1025,7 @@ FoundTrailLayerTrk:
         ' 🌧🌦☀ Počasí
         'Wheather() 'získá počasí
         WeatherData = Await Wheather()
-        Dim strWeather As String = $"🌡{WeatherData._temperature.ToString("0.#")} °C  💨 {WeatherData._windSpeed.ToString("0.#")} m/s {windDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity} %   💧{WeatherData._precipitation} mm/h ⛅{WeatherData._cloudCover} %"
+        Dim strWeather As String = $"🌡{WeatherData._temperature.ToString("0.#")}{NBSP}°C  💨{NBSP}{WeatherData._windSpeed.ToString("0.#")}{NBSP}m/s {windDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity}{NBSP}%   💧{WeatherData._precipitation}{NBSP}mm/h ⛅{WeatherData._cloudCover}{NBSP}%"
 
 
         ' 📦 Sestavíme nový popis pro video

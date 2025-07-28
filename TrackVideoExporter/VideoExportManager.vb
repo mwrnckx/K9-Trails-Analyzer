@@ -129,20 +129,20 @@ Namespace TrackVideoExporter
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles)
                                Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles)
 
-                               pngDir = outputDir.CreateSubdirectory("png")
+
                                pngCreator = New PngSequenceCreator(renderer)
 
                                Dim pngTimes = pngCreator.GetPngTimes(_tracksAsPointsF)
 
                                pngCreator.CreateFrames(_tracksAsPointsF,
                                         staticBgTransparent, staticBgMap,
-                                        pngDir, pngTimes, textParts, textPartsEng)
+                                        outputDir, pngTimes, textParts, textPartsEng)
 
                            End Sub)
 
             Dim outputFile = IO.Path.Combine(outputDir.FullName, "overlay")
             encoder = New FfmpegVideoEncoder()
-            Return Await encoder.EncodeFromPngs(FFMpegPath, pngDir, outputFile, pngCreator.frameInterval)
+            Return Await encoder.EncodeFromPngs(FFMpegPath, outputDir, outputFile, pngCreator.frameInterval)
 
         End Function
 
