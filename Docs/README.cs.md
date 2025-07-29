@@ -19,9 +19,26 @@ Testováno pro aplikace Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, 
 - **Zobrazení grafu**: Aplikace nabízí vizualizaci dat ve formě grafu, který zobrazuje celkovou vzdálenost, délky jednotlivých tras, stáří tras a rychlost psa v čase.
 - ** Vytvoření videa na kterém je trasa kladeče a pohyb psa v reálném čase na transparentním pozadí. Ve videu je šipka znázorňující směr a sílu větru. Toto video může být ve vhodném editoru (jako například Shotcut) spojeno se záznamem trailu z akční kamery.
 
-## Instalace
-*** ***
-**Stáhněte soubor K9 Trails Analyzer.zip**, rozbalte jej do libovolné prázdné složky a spusťte soubor EXE.
+## 🛠️ Instalace
+
+1. Stáhněte si soubor ZIP ze sekce [Releases](https://github.com/mwrnckx/K9-Trails-AnalyzerII/releases).
+2. Rozbalte jej do libovolné složky.
+3. Spusťte `K9TrailsAnalyzer.exe`.
+
+🔧 Pro export videa se ujistěte, že je nainstalován nebo  v PATH přístupný soubor `ffmpeg.exe`. (Pokud pro střih videí používáte [Shotcut](https://shotcut.org/), je to v pořádku - ten obsahuje ffmpeg.)
+
+## Závislosti
+
+- .NET 8.0
+- Aplikace používá externí software <a href="https://ffmpeg.org/">ffmpeg</a>, který musí být nainstalován pokud chcete vytvářet videa. Pokud k úpravě videa používáte <a href="https://www.shotcut.org/"> Shotcut</a>, tak ten obsahuje ffmpeg a máte po starostech 😉.
+
+## 📂 Project structure
+
+This solution contains two projects:
+
+- `K9-Trails-Analyzer` — main Windows Forms application (GPX analysis)
+- `TrackVideoExporter` — class library used to generate overlay videos
+
 
 ## Lokalizace
 - **English**

@@ -4,7 +4,7 @@ Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
 
 Module FfMpegHelper
-    Public Function FindFfmpegPath() As String
+    Public Function FindAnSaveFfmpegPath() As String
         ' 1. Zkontroluj, jestli je uložená cesta a soubor tam je
         If Not String.IsNullOrEmpty(My.Settings.FfmpegPath) AndAlso
        System.IO.File.Exists(My.Settings.FfmpegPath) Then
@@ -16,7 +16,10 @@ Module FfMpegHelper
         "C:\Programy\ffmpeg\bin\ffmpeg.exe",
         "C:\Program Files\ffmpeg\bin\ffmpeg.exe",
         "C:\ffmpeg\bin\ffmpeg.exe",
-         "C:\Programs\ffmpeg\bin\ffmpeg.exe"
+        "C:\Programs\ffmpeg\bin\ffmpeg.exe",
+        "C:\Programs\Shotcut\ffmpeg.exe",
+        "C:\Program Files\Shotcut\ffmpeg.exe",
+        "C:\Shotcut\ffmpeg.exe"
     }
 
         For Each path In commonPaths
@@ -49,7 +52,7 @@ Module FfMpegHelper
 
         ' 4. Pokud nenajde, zeptej se uživatele
         Dim ofd As New OpenFileDialog()
-        ofd.Title = "Najdi ffmpeg.exe"
+        ofd.Title = "Find ffmpeg.exe"
         ofd.Filter = "ffmpeg.exe|ffmpeg.exe"
         If ofd.ShowDialog() = DialogResult.OK Then
             My.Settings.FfmpegPath = ofd.FileName
@@ -57,8 +60,10 @@ Module FfMpegHelper
 
             Return ofd.FileName
         Else
-            Throw New Exception("Nepodařilo se najít ffmpeg.exe")
+            MessageBox.Show("Could not find ffmpeg.exe, video will not be created", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
         End If
+
+        Return Nothing
     End Function
 
 End Module

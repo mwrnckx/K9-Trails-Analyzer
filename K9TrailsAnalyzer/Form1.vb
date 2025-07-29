@@ -706,10 +706,10 @@ Public Class Form1
             End If
 
         Else
-                Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
+            Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
         End If
 
-        If folderDialog.ShowDialog() = DialogResult.OK Then
+        If folderDialog.ShowDialog = DialogResult.OK Then
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 My.Settings.Directory = folderDialog.SelectedPath
@@ -717,14 +717,14 @@ Public Class Form1
                 If folderDialog.SelectedPath <> My.Settings.Directory Then
                     My.Settings.BackupDirectory = folderDialog.SelectedPath
                 Else
-                    MessageBox.Show(My.Resources.Resource1.mBoxBackupDirectorySameAsGpxDirectory, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                    MessageBox.Show(Resource1.mBoxBackupDirectorySameAsGpxDirectory, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                     Return ' Pokud je záložní složka stejná jako hlavní složka, neukládej ji    
                 End If
 
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
-                    My.Settings.VideoDirectory = folderDialog.SelectedPath
-                Else
-                    Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
+                My.Settings.VideoDirectory = folderDialog.SelectedPath
+            Else
+                Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
             End If
 
         End If
@@ -791,7 +791,21 @@ Public Class Form1
         My.Settings.Save()
     End Sub
 
+    Private Sub mnuSetFFmpegPath_Click(sender As Object, e As EventArgs) Handles mnuSetFFmpegPath.Click
+        Dim FFmpegPath As String = FindFfmpegPath()
+        Dim ofd As New OpenFileDialog()
+        ofd.InitialDirectory = My.Settings.FfmpegPath
+        ofd.Title = "Find ffmpeg.exe"
+        ofd.Filter = "ffmpeg.exe|ffmpeg.exe"
+        If ofd.ShowDialog() = DialogResult.OK Then
+            My.Settings.FfmpegPath = ofd.FileName
+            My.Settings.Save()
+        End If
+    End Sub
 
+    Private Sub mnuExit_Click(sender As Object, e As EventArgs) Handles mnuExit.Click
+        Me.Close() ' Zavře aplikaci
+    End Sub
 End Class
 
 

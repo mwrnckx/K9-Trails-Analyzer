@@ -1,8 +1,21 @@
-﻿# K9 Trails AnalyzerII
+﻿# K9 Trails Analyzer
 
-This project was created as an aid for handlers involved in mantrailing or practical tracking.
-It allows to load GPX records from training sessions and analyze them (length, age, etc.).
-An essential part of it is a library for generating overlay videos (dog and handler tracking) for use in videos recording the dog's work. In the video you can see the dog's work and its position on the trail, distance from the tracker's route, etc. The video also shows the direction and strength of the wind! This is an excellent tool for analyzing the dog's work.
+## 🔍 What is this?
+
+K9 Trails Analyzer is a Windows tool for analyzing GPX tracks from mantrailing sessions.  
+It provides detailed stats about track length, age, dog speed, and generates overlay videos with wind direction and real-time GPS position, i.e. it shows the dog's movement along the trail, its distance from the runner's track, and other key details.
+
+This project is designed to assist dog handlers involved in mantrailing or practical scent tracking.
+
+
+## 🛠️ Installation
+
+1. Download the ZIP file from the [Releases](https://github.com/mwrnckx/K9-Trails-AnalyzerII/releases) section.
+2. Unzip it to any folder.
+3. Run `K9-Trails-Analyzer.exe`.
+
+🔧 For video export, make sure `ffmpeg.exe` is installed or accessible in PATH. (If you use [Shotcut](https://shotcut.org/), you’re good – it includes ffmpeg.)
+
 
 
 ### Choose your preferred language for details: 
@@ -10,15 +23,15 @@ An essential part of it is a library for generating overlay videos (dog and hand
 - **[Čeština](Docs/README.cs.md)** 
 - **[Deutsch](Docs/README.de.md)**
 
-## Screenshots
+## Screenshots from the Analyzer:
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/Form1a.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/Form1a.jpg" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/Form1b.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/Form1b.jpg" width="350"></a>
 <br> <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/total.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/total.jpg" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg" width="350"></a>
 <br> <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg" width="350"></a>
-
+# Video with GPS track overlay on youtube: <a href="https://youtu.be/gLJybAo56VU">https://youtu.be/gLJybAo56VU</a>
+# Screenshots from the video:
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
-<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png" width="350"></a>
-
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg" width="350"></a>
+<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png" width="350"></a>

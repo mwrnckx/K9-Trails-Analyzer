@@ -36,8 +36,8 @@ Partial Class Form1
         mnuFile = New ToolStripMenuItem()
         mnuSelect_directory_gpx_files = New ToolStripMenuItem()
         mnuSelectBackupDirectory = New ToolStripMenuItem()
-        mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuExportAs = New ToolStripMenuItem()
+        mnuExit = New ToolStripMenuItem()
         mnuSettings = New ToolStripMenuItem()
         mnuPrependDateToFileName = New ToolStripMenuItem()
         mnuTrimGPSNoise = New ToolStripMenuItem()
@@ -52,8 +52,10 @@ Partial Class Form1
         mnuPolish = New ToolStripMenuItem()
         mnuRussian = New ToolStripMenuItem()
         SToolStripMenuItem = New ToolStripMenuItem()
-        FactoryResetToolStripMenuItem = New ToolStripMenuItem()
         mnuDogName = New ToolStripMenuItem()
+        mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
+        mnuSetFFmpegPath = New ToolStripMenuItem()
+        FactoryResetToolStripMenuItem = New ToolStripMenuItem()
         PictureBox1 = New PictureBox()
         gbPeriod = New GroupBox()
         lblScentArtickle = New Label()
@@ -121,7 +123,7 @@ Partial Class Form1
         ' 
         ' mnuFile
         ' 
-        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuSelectBackupDirectory, mnuSelectADirectoryToSaveVideo, mnuExportAs})
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuSelectBackupDirectory, mnuExportAs, mnuExit})
         resources.ApplyResources(mnuFile, "mnuFile")
         mnuFile.Name = "mnuFile"
         ' 
@@ -135,15 +137,15 @@ Partial Class Form1
         mnuSelectBackupDirectory.Name = "mnuSelectBackupDirectory"
         resources.ApplyResources(mnuSelectBackupDirectory, "mnuSelectBackupDirectory")
         ' 
-        ' mnuSelectADirectoryToSaveVideo
-        ' 
-        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
-        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
-        ' 
         ' mnuExportAs
         ' 
         mnuExportAs.Name = "mnuExportAs"
         resources.ApplyResources(mnuExportAs, "mnuExportAs")
+        ' 
+        ' mnuExit
+        ' 
+        mnuExit.Name = "mnuExit"
+        resources.ApplyResources(mnuExit, "mnuExit")
         ' 
         ' mnuSettings
         ' 
@@ -224,19 +226,29 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {FactoryResetToolStripMenuItem, mnuDogName})
+        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuDogName, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, FactoryResetToolStripMenuItem})
         resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
         SToolStripMenuItem.Name = "SToolStripMenuItem"
-        ' 
-        ' FactoryResetToolStripMenuItem
-        ' 
-        FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
-        resources.ApplyResources(FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
         ' 
         ' mnuDogName
         ' 
         mnuDogName.Name = "mnuDogName"
         resources.ApplyResources(mnuDogName, "mnuDogName")
+        ' 
+        ' mnuSelectADirectoryToSaveVideo
+        ' 
+        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
+        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
+        ' 
+        ' mnuSetFFmpegPath
+        ' 
+        mnuSetFFmpegPath.Name = "mnuSetFFmpegPath"
+        resources.ApplyResources(mnuSetFFmpegPath, "mnuSetFFmpegPath")
+        ' 
+        ' FactoryResetToolStripMenuItem
+        ' 
+        FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
+        resources.ApplyResources(FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
         ' 
         ' PictureBox1
         ' 
@@ -410,5 +422,7 @@ Partial Class Form1
     Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
     Friend WithEvents mnuAskForVideo As ToolStripMenuItem
     Friend WithEvents mnuSelectADirectoryToSaveVideo As ToolStripMenuItem
+    Friend WithEvents mnuSetFFmpegPath As ToolStripMenuItem
+    Friend WithEvents mnuExit As ToolStripMenuItem
 End Class
 

@@ -42,7 +42,7 @@ Public Class GpxFileManager
         maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
         trimGPS_Noise = My.Settings.TrimGPSnoise
-        'mergeDecisions = My.Settings.MergeDecisions
+
 
     End Sub
 
