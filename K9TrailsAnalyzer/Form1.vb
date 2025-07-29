@@ -14,6 +14,11 @@ Public Class Form1
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
         Me.Enabled = False
+
+        If My.Settings.Directory = "" Then
+            mnuSelect_directory_gpx_files_Click(btnReadGpxFiles, New EventArgs)
+        End If
+
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
 
         rtbWarnings.Visible = True
@@ -24,9 +29,7 @@ Public Class Form1
         GPXFilesManager.dateFrom = dtpStartDate.Value
         GPXFilesManager.dateTo = dtpEndDate.Value
 
-        If My.Settings.Directory = "" Then
-            mnuSelect_directory_gpx_files_Click(btnReadGpxFiles, New EventArgs)
-        End If
+
         Try
 
             If Await GPXFilesManager.Main Then

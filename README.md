@@ -14,9 +14,6 @@ This project is designed to assist dog handlers involved in mantrailing or pract
 2. Unzip it to any folder.
 3. Run `K9TrailsAnalyzer.exe`.
 
-🔧 For video export, make sure `ffmpeg.exe` is installed or accessible in PATH. (If you use [Shotcut](https://shotcut.org/), you’re good – it includes ffmpeg.)
-
-
 
 ### Choose your preferred language for details: 
 - **[English](Docs/README.en.md)**
@@ -30,8 +27,9 @@ This project is designed to assist dog handlers involved in mantrailing or pract
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg" width="350"></a>
 <br> <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg" width="350"></a>
-# Video with GPS track overlay on youtube: <a href="https://youtu.be/gLJybAo56VU">https://youtu.be/gLJybAo56VU</a>
+# Video with GPS track overlay on youtube: 
+<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/VideoScreenshot.png" width="350"></a>
 # Screenshots from the video:
-<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
-<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg" width="350"></a>
-<a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png" width="350"></a>
+<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
+<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg" width="350"></a>
+<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailDescriptionENG.png" width="350"></a>

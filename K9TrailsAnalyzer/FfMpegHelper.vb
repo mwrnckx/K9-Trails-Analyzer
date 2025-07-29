@@ -11,6 +11,14 @@ Public Module FfMpegHelper
             Return My.Settings.FfmpegPath
         End If
 
+
+        Dim ffmpegPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ffmpeg.exe")
+        If System.IO.File.Exists(ffmpegPath) Then
+                My.Settings.FfmpegPath = ffmpegPath
+                My.Settings.Save()
+                Return ffmpegPath
+            End If
+
         ' 2. Zkus typické cesty
         Dim commonPaths = New String() {
         "C:\Programy\ffmpeg\bin\ffmpeg.exe",

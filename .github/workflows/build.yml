@@ -55,8 +55,13 @@ jobs:
           7z x ffmpeg.zip -offmpeg-temp
           copy "ffmpeg-temp\ffmpeg-*-essentials_build\bin\ffmpeg.exe" K9TrailsAnalyzer\bin\Release\net8.0-windows\
 
-      - name: Zip binaries
-        run: Compress-Archive -Path K9TrailsAnalyzer\bin\Release\net8.0-windows\* -DestinationPath K9-Trails-Analyzer.zip
+      - name: Zip binaries into folder
+        run: |
+          $dest = "K9-Trails-Analyzer-Package\K9TrailsAnalyzer"
+          New-Item -ItemType Directory -Force -Path $dest
+          Copy-Item -Path "K9TrailsAnalyzer\bin\Release\net8.0-windows\*" -Destination $dest -Recurse
+          Compress-Archive -Path "K9-Trails-Analyzer-Package\*" -DestinationPath "K9-Trails-Analyzer.zip"
+
 
      
       - name: Upload zipped build
