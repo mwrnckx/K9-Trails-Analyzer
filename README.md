@@ -12,7 +12,7 @@ This project is designed to assist dog handlers involved in mantrailing or pract
 
 1. Download the ZIP file from the [Releases](https://github.com/mwrnckx/K9-Trails-AnalyzerII/releases) section.
 2. Unzip it to any folder.
-3. Run `K9-Trails-Analyzer.exe`.
+3. Run `K9TrailsAnalyzer.exe`.
 
 🔧 For video export, make sure `ffmpeg.exe` is installed or accessible in PATH. (If you use [Shotcut](https://shotcut.org/), you’re good – it includes ffmpeg.)
 

@@ -42,7 +42,7 @@ Public Class GpxFileManager
         maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
         trimGPS_Noise = My.Settings.TrimGPSnoise
-
+        'mergeDecisions = My.Settings.MergeDecisions
 
     End Sub
 
@@ -484,7 +484,7 @@ Public Class GPXRecord
         Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
-        Dim FFmpegPath As String = FindFfmpegPath()
+        Dim FFmpegPath As String = FindAnSaveFfmpegPath()
         Dim videoCreator As New VideoExportManager(FFmpegPath, directory, WeatherData._windDirection, WeatherData._windSpeed)
         AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 

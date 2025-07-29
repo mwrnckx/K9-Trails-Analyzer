@@ -16,8 +16,8 @@ Testováno pro aplikace Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, 
 - **Výpočet stáří tras**: Pokud je v souboru zaznamenána trasa kladeče i psa, aplikace vypočítá stáří trasy.
 - **Výpočet rychlosti**: Umožňuje vypočítat průměrnou rychlost psa na každé trase.
 - **Export**: Výsledky lze exportovat do formátů RTF, TXT nebo CSV pro tisk nebo další analýzu v Excelu.
-- **Zobrazení grafu**: Aplikace nabízí vizualizaci dat ve formě grafu, který zobrazuje celkovou vzdálenost, délky jednotlivých tras, stáří tras a rychlost psa v čase.
-- ** Vytvoření videa na kterém je trasa kladeče a pohyb psa v reálném čase na transparentním pozadí. Ve videu je šipka znázorňující směr a sílu větru. Toto video může být ve vhodném editoru (jako například Shotcut) spojeno se záznamem trailu z akční kamery.
+- **Zobrazení grafů**: Aplikace nabízí vizualizaci dat ve formě grafů, které zobrazují celkovou vzdálenost, délky jednotlivých tras, stáří tras a rychlost psa v čase.
+- **Vytvoření videa** na kterém je trasa kladeče a pohyb psa v reálném čase na transparentním pozadí. Ve videu je šipka znázorňující směr a sílu větru. Toto video může být ve vhodném editoru (jako například [Shotcut](https://shotcut.org/)) spojeno se záznamem trailu z akční kamery.
 
 ## 🛠️ Instalace
 
@@ -30,14 +30,14 @@ Testováno pro aplikace Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, 
 ## Závislosti
 
 - .NET 8.0
-- Aplikace používá externí software <a href="https://ffmpeg.org/">ffmpeg</a>, který musí být nainstalován pokud chcete vytvářet videa. Pokud k úpravě videa používáte <a href="https://www.shotcut.org/"> Shotcut</a>, tak ten obsahuje ffmpeg a máte po starostech 😉.
+- Aplikace používá externí software <a href="https://ffmpeg.org/">ffmpeg</a>, který musí být nainstalován pokud chcete vytvářet videa. Pokud k úpravě videa používáte [Shotcut](https://shotcut.org/), tak ten obsahuje ffmpeg a máte po starostech 😉.
 
-## 📂 Project structure
+## 📂 Struktura projektu
 
-This solution contains two projects:
+Toto řešení obsahuje dva projekty:
 
-- `K9-Trails-Analyzer` — main Windows Forms application (GPX analysis)
-- `TrackVideoExporter` — class library used to generate overlay videos
+- `K9-Trails-Analyzer` - hlavní aplikace Windows Forms (analýza GPX).
+- `TrackVideoExporter` - knihovna tříd sloužící ke generování překryvných videí
 
 
 ## Lokalizace
@@ -49,5 +49,5 @@ This solution contains two projects:
 - **Українська**
 
 ## Licence
-Tento projekt je licencován pod licencí MIT - podrobnosti naleznete v souboru LICENSE.md.
+Tento projekt je licencován pod licencí UNLICENSED - podrobnosti naleznete v souboru UNLICENSE.
 

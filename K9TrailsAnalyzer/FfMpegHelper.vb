@@ -3,7 +3,7 @@ Imports GPXTrailAnalyzer.My
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
 
-Module FfMpegHelper
+Public Module FfMpegHelper
     Public Function FindAnSaveFfmpegPath() As String
         ' 1. Zkontroluj, jestli je uložená cesta a soubor tam je
         If Not String.IsNullOrEmpty(My.Settings.FfmpegPath) AndAlso

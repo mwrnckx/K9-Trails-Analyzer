@@ -792,7 +792,8 @@ Public Class Form1
     End Sub
 
     Private Sub mnuSetFFmpegPath_Click(sender As Object, e As EventArgs) Handles mnuSetFFmpegPath.Click
-        Dim FFmpegPath As String = FindFfmpegPath()
+
+        Dim FFmpegPath As String = FindAnSaveFfmpegPath()
         Dim ofd As New OpenFileDialog()
         ofd.InitialDirectory = My.Settings.FfmpegPath
         ofd.Title = "Find ffmpeg.exe"
