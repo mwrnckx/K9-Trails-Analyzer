@@ -5,6 +5,10 @@ on:
     branches:
       - master  # nebo 'main', podle toho, jak se jmenuje tvoje hlavní větev
   workflow_dispatch: # umožní ruční spuštění
+permissions:
+  contents: write
+  packages: write
+  # (add other permissions if needed)  
 
 jobs:
   build:
