@@ -23,6 +23,20 @@ jobs:
         
       - name: Restore NuGet packages
         run: dotnet restore K9-Trails-Analyzer.sln
+        
+      - name: Update AssemblyVersion from release tag
+        run: |
+          $tag = "${{ github.ref_name }}"
+          if ($tag -match "^v(\d+)\.(\d+)\.(\d+)$") {
+            $version = "$($Matches[1]).$($Matches[2]).$($Matches[3]).0"
+            (Get-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj) `
+              -replace '<AssemblyVersion>.*?</AssemblyVersion>', "<AssemblyVersion>$version</AssemblyVersion>" |
+              Set-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj
+          } else {
+            Write-Error "Tag name '$tag' is not in expected format vX.Y.Z"
+            exit 1
+          }
+
 
       - name: Build solution
         run: msbuild K9-Trails-Analyzer.sln /p:Configuration=Release
@@ -36,7 +50,7 @@ jobs:
             K9TrailsAnalyzer\bin\Release\
 
       - name: Zip binaries
-        run: Compress-Archive -Path K9TrailsAnalyzer\bin\Release\* -DestinationPath build.zip
+        run: Compress-Archive -Path K9TrailsAnalyzer\bin\Release\net8.0-windows\* -DestinationPath build.zip
 
      
       - name: Upload zipped build

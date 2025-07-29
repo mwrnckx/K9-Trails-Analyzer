@@ -7,7 +7,7 @@
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
-    <AssemblyVersion>0.3.0.0</AssemblyVersion>
+  <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <AssemblyName>K9TrailsAnalyzer</AssemblyName>
     <ImportedNamespaces>core=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,K9TrailsAnalyzer=True</ImportedNamespaces>
     <ApplicationIcon>track.ico</ApplicationIcon>
