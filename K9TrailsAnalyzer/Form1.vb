@@ -789,6 +789,7 @@ Public Class Form1
     Private Sub mnuAskForVideo_CheckedChanged(sender As Object, e As EventArgs) Handles mnuAskForVideo.CheckedChanged
         My.Settings.AskForVideo = mnuAskForVideo.Checked
         My.Settings.Save()
+
     End Sub
 
     Private Sub mnuSetFFmpegPath_Click(sender As Object, e As EventArgs) Handles mnuSetFFmpegPath.Click
