@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Globalization
+Imports System.IO
 Imports System.Reflection
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
@@ -15,9 +16,38 @@ Public Class Form1
 
         Me.Enabled = False
 
-        If My.Settings.Directory = "" Then
-            mnuSelect_directory_gpx_files_Click(btnReadGpxFiles, New EventArgs)
+        Dim gpxDir As String = My.Settings.Directory
+        If String.IsNullOrWhiteSpace(gpxDir) OrElse Not Directory.Exists(gpxDir) Then
+            ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku Samples vedle exe
+            Dim defaultDir As String = Path.Combine(Application.StartupPath, "Samples")
+
+            If Directory.Exists(defaultDir) Then
+                gpxDir = defaultDir
+                My.Settings.Directory = gpxDir
+                My.Settings.Save()
+            Else
+                ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
+                mnuSelect_directory_gpx_files_Click(btnReadGpxFiles, New EventArgs)
+
+            End If
         End If
+
+        Dim backupDir As String = My.Settings.BackupDirectory
+        If String.IsNullOrWhiteSpace(backupDir) OrElse Not Directory.Exists(backupDir) Then
+            ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku  vedle exe
+            Dim defaultDir As String = Path.Combine(Application.StartupPath, "gpxFilesBackup")
+
+            If Directory.Exists(defaultDir) Then
+                backupDir = defaultDir
+                My.Settings.BackupDirectory = backupDir
+                My.Settings.Save()
+            Else
+                ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
+                MessageBox.Show("Backup Directory was not set up correctly!")
+                Return
+            End If
+        End If
+
 
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
 
@@ -810,6 +840,32 @@ Public Class Form1
     Private Sub mnuExit_Click(sender As Object, e As EventArgs) Handles mnuExit.Click
         Me.Close() ' Zavře aplikaci
     End Sub
+
+    Private Sub cmbTimeInterval_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbTimeInterval.SelectedIndexChanged
+
+        Dim today As Date = Date.Today
+        Select Case cmbTimeInterval.SelectedIndex
+            Case 0
+                dtpStartDate.Value = today.AddDays(-6)
+                dtpEndDate.Value = today
+            Case 1
+                dtpStartDate.Value = today.AddDays(-30)
+                dtpEndDate.Value = today
+            Case 2
+                dtpStartDate.Value = today.AddDays(-364)
+                dtpEndDate.Value = today
+            Case 3
+                dtpStartDate.Value = New Date(today.Year, 1, 1) ' Začátek roku
+                dtpEndDate.Value = today
+            Case 4
+                dtpStartDate.Value = New Date(today.Year - 1, 1, 1) ' Začátek minulého roku
+                dtpEndDate.Value = New Date(today.Year - 1, 12, 31) ' konec minulého roku
+            Case Else
+                ' Necháme hodnoty, jak jsou
+        End Select
+    End Sub
+
+
 End Class
 
 

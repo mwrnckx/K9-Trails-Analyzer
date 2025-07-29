@@ -48,6 +48,10 @@ Public Class GpxFileManager
 
     Public Async Function Main() As Task(Of Boolean)
         Dim _gpxFilesSortedAndFiltered As List(Of GPXRecord) = GetGPXFilesWithinInterval()
+        If _gpxFilesSortedAndFiltered.Count = 0 Then
+            RaiseEvent WarningOccurred("No GPX files found within the specified date interval.", Color.Red)
+            Return False
+        End If
         Dim _gpxFilesMerged As List(Of GPXRecord) = MergeGpxFiles(_gpxFilesSortedAndFiltered)
 
         Dim totalDist As Double = 0
@@ -55,7 +59,6 @@ Public Class GpxFileManager
 
         For Each _gpxRecord As GPXRecord In _gpxFilesMerged
             Try
-
                 If Me.ForceProcess Or Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
                     If prependDateToName Then _gpxRecord.PrependDateToFilename()
@@ -113,6 +116,12 @@ Public Class GpxFileManager
         Dim gpxFilesWithinInterval As New List(Of GPXRecord)
         ' Načteme všechny GPX soubory
         Dim gpxFilesAllPath As List(Of String) = Directory.GetFiles(gpxDirectory, "*.gpx").ToList()
+        If gpxFilesAllPath.Count = 0 Then
+            RaiseEvent WarningOccurred("No GPX files found in the specified directory.", Color.Red)
+            Return gpxFilesWithinInterval 'vrátí prázdný list, pokud nejsou žádné soubory
+        Else
+            RaiseEvent WarningOccurred($"Found {gpxFilesAllPath.Count} GPX files in the specified directory.", Color.DarkGreen)
+        End If
         Dim backup As Boolean = False
         Try
             For Each gpxFilePath In gpxFilesAllPath
@@ -164,7 +173,11 @@ Public Class GpxFileManager
         End Try
         ' Seřazení podle data
         gpxFilesWithinInterval.Sort(Function(x, y) x.LayerStart.CompareTo(y.LayerStart))
-
+        If gpxFilesWithinInterval.Count = 0 Then
+            RaiseEvent WarningOccurred("No GPX files found within the specified date interval.", Color.Red)
+        Else
+            RaiseEvent WarningOccurred($"Found {gpxFilesWithinInterval.Count} GPX files within the specified date interval.", Color.DarkGreen)
+        End If
         Return gpxFilesWithinInterval
     End Function
 
@@ -431,6 +444,8 @@ Public Class GPXRecord
         gpxDirectory = My.Settings.Directory
         BackupDirectory = My.Settings.BackupDirectory
 
+
+
         If Not Directory.Exists(BackupDirectory) Then
             Directory.CreateDirectory(BackupDirectory)
         End If
@@ -648,7 +663,7 @@ FoundTrailLayerTrk:
 
     Public Function GetAgeFromComments(inputText As String) As TimeSpan
         ' Upravený regulární výraz pro nalezení čísla, které může být i desetinné
-        Dim regex As New Regex("\b\d+[.,]?\d*\s*(h(odin(y|a))?|hod|min(ut)?)\b", RegexOptions.IgnoreCase)
+        Dim regex As New Regex("\d+[.,]?\d*\s*(h(odin(y|a))?|hod|min(ut)?)(?=\W|$)", RegexOptions.IgnoreCase)
         Dim match As Match = regex.Match(inputText)
 
         If match.Success Then
@@ -984,24 +999,27 @@ FoundTrailLayerTrk:
             Dim ageFromComments As TimeSpan = GetAgeFromComments(trailPart)
             If ageFromComments = TimeSpan.Zero Then
                 ' Odebereme případný starý čas z trailPart (např. "1.2 h něco")
-                trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*h\s*", "", RegexOptions.IgnoreCase).Trim()
-                trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění vícenásobných mezer
-                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
+                'trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*h\s*", "", RegexOptions.IgnoreCase).Trim()
+                trailPart = Regex.Replace(trailPart, "\d+[.,]?\d*\s*(h(odin(y|a))?|hod|min(ut)?)(?=\W|$)", "", RegexOptions.IgnoreCase).Trim()
+                trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění age:
+                trailPart = trailPart.Replace("🕒:", "") ' odstranění 🕒:
+                trailPart = "🕒:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
             End If
             Dim LengthfromComments As Single = GetLengthFromComments(trailPart)
             If LengthfromComments = 0 Then
                 ' Odebereme případnou starou délku z trailPart (např. "1.2 km něco")
-                trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)\s*", "", RegexOptions.IgnoreCase).Trim()
+                trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)(?=\W|$)", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outLength.ToLower & ":", "") ' odstranění vícenásobných mezer
-                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & NBSP & "km, " & trailPart
+                trailPart = trailPart.Replace("📏:", "") '
+                trailPart = "📏:" & NBSP & Me.Distance.ToString("F1") & NBSP & "km, " & trailPart
             End If
 
         Else
-            If Me.Distance > 0 Then
-                trailPart = My.Resources.Resource1.outLength.ToLower & ": " & Me.Distance.ToString("F1") & NBSP & "km"
+                If Me.Distance > 0 Then
+                trailPart = "📏:" & NBSP & Me.Distance.ToString("F1") & NBSP & "km"
             End If
             If ageFromTime.TotalHours > 0 Then
-                trailPart = My.Resources.Resource1.outAge.ToLower & ": " & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
+                trailPart = "🕒:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
             End If
 
         End If

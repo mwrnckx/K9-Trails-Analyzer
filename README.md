@@ -27,8 +27,9 @@ This project is designed to assist dog handlers involved in mantrailing or pract
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/length.jpg" width="350"></a>
 <br> <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/age.jpg" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/months.jpg" width="350"></a>
+## TrackVideoExporter
 # Video with GPS track overlay on youtube: 
-<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/VideoScreenshot.png" width="350"></a>
+<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer-2/blob/master/Docs/Screenshots/videoScreenshot.png" width="350"></a>
 # Screenshots from the video:
 <a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
 <a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-AnalyzerII/blob/master/Docs/Screenshots/overlay.jpg" width="350"></a>

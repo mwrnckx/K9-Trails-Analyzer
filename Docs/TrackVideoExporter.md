@@ -1,14 +1,14 @@
 # 🎬  TrackVideoExporter – GPX record to Video Rendering Library
 
 **TrackVideoExporter** is a .NET library designed to create annotated overlay video from GPX tracks.
-It overlays routes on map tiles and on a transparent background, adds timestamps and other data overlays, and produces videos, suitable for canine trailing, tracking, and general GPS recorded tracks visualization.
+It overlays routes on map tiles and/or on a transparent background, adds timestamps and other data overlays, and produces videos, suitable for canine trailing, tracking, and general GPS recorded tracks visualization.
 
 ---
 
 
 ## 🎯 Features
 
-- 🗺️ Map overlay from standard tile sources (e.g. OSM, ESRI)
+- 🗺️Map overlay from standard tile sources (e.g. OSM, ESRI)
 - 🎥 GPX track visualization on transparent background
 - 🕒 Timestamp overlays and data annotation
 - 🔧 Modular architecture (GPX parser, tile cache, renderer, FFmpeg-based encoder)
@@ -27,8 +27,6 @@ This library lets you render the GPS trails (of the runner and the dog) and in t
 
 ## 🧱 Dependencies
 .NET 6+
-
-FFmpeg (must be installed and accessible)
 
 ---
 

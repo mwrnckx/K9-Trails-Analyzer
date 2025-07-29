@@ -322,4 +322,22 @@
   <data name="mnuExportAs.Text" xml:space="preserve">
     <value>Zapisz jako (RTF. TXT, CSV)</value>
   </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Ostatnie 7 dni</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Ostatnie 30 dni</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Ostatnie 365 dni (domyślnie)</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Bieżący rok</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>W ubiegłym roku</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Zasięg niestandardowy</value>
+  </data>
 </root>

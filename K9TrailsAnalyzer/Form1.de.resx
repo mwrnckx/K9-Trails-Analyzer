@@ -243,4 +243,22 @@
   <data name="txtOutput.Text" xml:space="preserve">
     <value>Dieses Programm wird verwendet, um Ihre Datensätze aus der Tracking -Anwendung wie einem Geo -Tracker zu verarbeiten.</value>
   </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Letzten 7 Tage</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Letzte 30 Tage</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Letzte 365 Tage (Standard)</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>Letztes Jahr</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Laufendes Jahr</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Benutzerdefinierter Bereich</value>
+  </data>
 </root>

@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="BackupDirectory" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">BackupDirectory</Value>
     </Setting>
     <Setting Name="Directory" Type="System.String" Scope="User">
       <Value Profile="(Default)" />

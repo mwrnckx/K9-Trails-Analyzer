@@ -260,4 +260,22 @@
   <data name="$this.Text" xml:space="preserve">
     <value>K9 Trails Analyzer</value>
   </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Posledních 7 dní</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Posledních 30 dní</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Posledních 365 dní (výchozí)</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Aktuální rok</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>Loňský rok</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Vlastní rozsah</value>
+  </data>
 </root>

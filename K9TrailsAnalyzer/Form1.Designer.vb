@@ -58,6 +58,7 @@ Partial Class Form1
         FactoryResetToolStripMenuItem = New ToolStripMenuItem()
         PictureBox1 = New PictureBox()
         gbPeriod = New GroupBox()
+        cmbTimeInterval = New ComboBox()
         lblScentArtickle = New Label()
         rtbOutput = New RichTextBox()
         rtbWarnings = New RichTextBox()
@@ -70,14 +71,15 @@ Partial Class Form1
         ' dtpStartDate
         ' 
         resources.ApplyResources(dtpStartDate, "dtpStartDate")
-        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(255), CByte(255), CByte(192))
+        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
         dtpStartDate.Format = DateTimePickerFormat.Custom
         dtpStartDate.Name = "dtpStartDate"
         ' 
         ' dtpEndDate
         ' 
         resources.ApplyResources(dtpEndDate, "dtpEndDate")
-        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(255), CByte(255), CByte(192))
+        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         dtpEndDate.Format = DateTimePickerFormat.Custom
         dtpEndDate.Name = "dtpEndDate"
         ' 
@@ -178,7 +180,9 @@ Partial Class Form1
         ' 
         ' mnuAskForVideo
         ' 
+        mnuAskForVideo.Checked = True
         mnuAskForVideo.CheckOnClick = True
+        mnuAskForVideo.CheckState = CheckState.Checked
         mnuAskForVideo.Name = "mnuAskForVideo"
         resources.ApplyResources(mnuAskForVideo, "mnuAskForVideo")
         ' 
@@ -259,12 +263,21 @@ Partial Class Form1
         ' gbPeriod
         ' 
         gbPeriod.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        gbPeriod.Controls.Add(cmbTimeInterval)
         gbPeriod.Controls.Add(dtpEndDate)
         gbPeriod.Controls.Add(dtpStartDate)
         gbPeriod.FlatStyle = FlatStyle.Flat
         resources.ApplyResources(gbPeriod, "gbPeriod")
         gbPeriod.Name = "gbPeriod"
         gbPeriod.TabStop = False
+        ' 
+        ' cmbTimeInterval
+        ' 
+        cmbTimeInterval.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        cmbTimeInterval.FormattingEnabled = True
+        cmbTimeInterval.Items.AddRange(New Object() {resources.GetString("cmbTimeInterval.Items"), resources.GetString("cmbTimeInterval.Items1"), resources.GetString("cmbTimeInterval.Items2"), resources.GetString("cmbTimeInterval.Items3"), resources.GetString("cmbTimeInterval.Items4"), resources.GetString("cmbTimeInterval.Items5")})
+        resources.ApplyResources(cmbTimeInterval, "cmbTimeInterval")
+        cmbTimeInterval.Name = "cmbTimeInterval"
         ' 
         ' lblScentArtickle
         ' 
@@ -338,10 +351,10 @@ Partial Class Form1
         End If
         My.Settings.Save()
         CreateGpxFileManager()
-        'gpxCalculator = New GPXDistanceCalculator()
-        Me.dtpEndDate.Value = Now
-        Me.dtpStartDate.Value = Me.dtpEndDate.Value.AddYears(-1)
-        Me.dtpStartDate.Value = Me.dtpStartDate.Value.AddDays(1)
+        Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
+        'Me.dtpEndDate.Value = Now
+        'Me.dtpStartDate.Value = Me.dtpEndDate.Value.AddYears(-1)
+        'Me.dtpStartDate.Value = Me.dtpStartDate.Value.AddDays(1)
 
 
         Me.StatusLabel1.Text = $"Directory: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Backup Directory: {ZkratCestu(My.Settings.BackupDirectory, 130)}"
@@ -424,5 +437,6 @@ Partial Class Form1
     Friend WithEvents mnuSelectADirectoryToSaveVideo As ToolStripMenuItem
     Friend WithEvents mnuSetFFmpegPath As ToolStripMenuItem
     Friend WithEvents mnuExit As ToolStripMenuItem
+    Friend WithEvents cmbTimeInterval As ComboBox
 End Class
 

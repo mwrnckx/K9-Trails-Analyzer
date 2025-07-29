@@ -243,4 +243,22 @@
   <data name="btnBrowseBackup.Text" xml:space="preserve">
     <value>Перегляд</value>
   </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Останні 7 днів</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Останні 30 днів</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Останні 365 днів (за замовчуванням)</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Поточний рік</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>Минулого року</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Спеціальний діапазон</value>
+  </data>
 </root>
