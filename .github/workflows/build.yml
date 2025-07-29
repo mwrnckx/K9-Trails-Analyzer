@@ -16,6 +16,9 @@ jobs:
 
       - name: Set up MSBuild
         uses: microsoft/setup-msbuild@v2
+        
+      - name: Restore NuGet packages
+        run: dotnet restore K9-Trails-Analyzer.sln
 
       - name: Build solution
         run: msbuild K9-Trails-Analyzer.sln /p:Configuration=Release
