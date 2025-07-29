@@ -48,9 +48,15 @@ jobs:
           name: K9TrailsAnalyzer
           path: |
             K9TrailsAnalyzer\bin\Release\
+            
+      - name: Download FFmpeg
+        run: |
+        curl -L -o ffmpeg.zip https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+        7z x ffmpeg.zip -offmpeg-temp
+        copy "ffmpeg-temp\ffmpeg-*-essentials_build\bin\ffmpeg.exe" K9TrailsAnalyzer\bin\Release\net8.0-windows\
 
       - name: Zip binaries
-        run: Compress-Archive -Path K9TrailsAnalyzer\bin\Release\net8.0-windows\* -DestinationPath build.zip
+        run: Compress-Archive -Path K9TrailsAnalyzer\bin\Release\net8.0-windows\* -DestinationPath K9-Trails-Analyzer.zip
 
      
       - name: Upload zipped build
