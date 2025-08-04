@@ -66,10 +66,13 @@ Public Class Form1
             If Await GPXFilesManager.Main Then
                 Enabled = True
                 WriteRTBOutput(GPXFilesManager)
-                GPXFilesManager = GPXFilesManager
+                'Me.GPXFilesManager = GPXFilesManager
                 btnCharts.Visible = True
             Else
                 MessageBox.Show(Resource1.mBoxDataRetrievalFailed)
+                Enabled = True
+                WriteRTBOutput(GPXFilesManager)
+                btnCharts.Visible = False
                 Return
             End If
         Catch ex As Exception

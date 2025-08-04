@@ -129,4 +129,10 @@
   <data name="lblInfo.Text" xml:space="preserve">
     <value>Bearbeiten Sie die Kommentare zur Trainingssesion. Diese Kommentare werden in der GPX -Datei gespeichert und in Anwendungen wie gpxsee.org und Overlay -Videos angezeigt. Wenn Sie die Kommentare in Ihrer GPS -App schreiben, fügen Sie "G:" vor der Beschreibung des Ziels "t:" vor der Beschreibung des Trails und "P:" vor der Bewertung der Teamarbeit hinzu. Wenn Sie eine weitere Übersetzung hinzufügen möchten, drücken Sie die Schaltfläche "Eine andere Sprache hinzufügen". Ansonsten klicken Sie auf "OK".</value>
   </data>
+  <data name="btnAnotherLang.Text" xml:space="preserve">
+    <value>Fügen Sie eine andere Sprache hinzu</value>
+  </data>
+  <data name="lblLanguage.Text" xml:space="preserve">
+    <value>Sprache:</value>
+  </data>
 </root>

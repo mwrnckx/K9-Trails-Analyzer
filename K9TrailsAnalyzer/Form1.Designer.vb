@@ -114,9 +114,9 @@ Partial Class Form1
         ' MenuStrip1
         ' 
         MenuStrip1.BackColor = Color.FromArgb(CByte(172), CByte(209), CByte(158))
+        resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
         MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem})
-        resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.Name = "MenuStrip1"
         ' 
         ' mnuFile
@@ -347,6 +347,7 @@ Partial Class Form1
         TabVideoExport.Controls.Add(PictureBox3)
         resources.ApplyResources(TabVideoExport, "TabVideoExport")
         TabVideoExport.Name = "TabVideoExport"
+        TabVideoExport.UseVisualStyleBackColor = True
         ' 
         ' lvGpxFiles
         ' 
@@ -470,6 +471,7 @@ Partial Class Form1
         Me.Text = thisAssemName.Name & "   " & thisAssemName.Version.ToString
 
         Me.btnReadGpxFiles.Focus()
+        Me.btnReadGpxFiles.Select
     End Sub
 
     Private Sub ReadHelp()

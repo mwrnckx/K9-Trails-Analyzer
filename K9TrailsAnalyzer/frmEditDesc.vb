@@ -61,9 +61,9 @@ Public Class frmEditComments
     End Sub
 
     Private Sub frmEditDesc_Load(sender As Object, e As EventArgs) Handles Me.Load
-        rtbGoal.Text = Me.TrailDescription.Goal.Text
-        rtbTrail.Text = Me.TrailDescription.Trail.Text
-        rtbPerformance.Text = Me.TrailDescription.Performance.Text
+        txtGoal.Text = Me.TrailDescription.Goal.Text
+        txtTrail.Text = Me.TrailDescription.Trail.Text
+        txtPerformance.Text = Me.TrailDescription.Performance.Text
         If Language IsNot Nothing Then
             ' Pokud je jazyk nastaven, zablokujeme conmbo!
             Me.ComboBox1.Enabled = False
@@ -74,9 +74,9 @@ Public Class frmEditComments
         lblInfo.Text = $"{Form1.mnuFile.Text} {GpxFileName}" &
             vbCrLf & lblInfo.Text
 
-        rtbPerformance.AllowDrop = True
-        rtbGoal.AllowDrop = True
-        rtbTrail.AllowDrop = True
+        txtPerformance.AllowDrop = True
+        txtGoal.AllowDrop = True
+        txtTrail.AllowDrop = True
 
         Me.lblGoal.Text = TrailReport.dogLabel & Me.lblGoal.Text
         Me.lblTrail.Text = TrailReport.trailLabel & Me.lblTrail.Text
@@ -89,9 +89,9 @@ Public Class frmEditComments
 
     Private Sub SaveFormData()
         ' Tato subrutina obsahuje veškerou logiku pro uložení dat z RichTextBoxů
-        Me.TrailDescription.Goal.Text = rtbGoal.Text
-        Me.TrailDescription.Trail.Text = rtbTrail.Text
-        Me.TrailDescription.Performance.Text = rtbPerformance.Text
+        Me.TrailDescription.Goal.Text = txtGoal.Text
+        Me.TrailDescription.Trail.Text = txtTrail.Text
+        Me.TrailDescription.Performance.Text = txtPerformance.Text
         If Me.Language Is Nothing Then
             Me.Language = ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
         ElseIf Me.Language <> ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() Then

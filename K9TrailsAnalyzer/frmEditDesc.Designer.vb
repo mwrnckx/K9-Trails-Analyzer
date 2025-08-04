@@ -28,12 +28,12 @@ Partial Class frmEditComments
         lblTrail = New Label()
         lblGoal = New Label()
         btnOK = New Button()
-        rtbGoal = New RichTextBox()
-        rtbTrail = New RichTextBox()
-        rtbPerformance = New RichTextBox()
         btnAnotherLang = New Button()
         lblLanguage = New Label()
         ComboBox1 = New ComboBox()
+        txtGoal = New TextBox()
+        txtPerformance = New TextBox()
+        txtTrail = New TextBox()
         SuspendLayout()
         ' 
         ' lblInfo
@@ -63,24 +63,6 @@ Partial Class frmEditComments
         btnOK.Name = "btnOK"
         btnOK.UseVisualStyleBackColor = False
         ' 
-        ' rtbGoal
-        ' 
-        rtbGoal.EnableAutoDragDrop = True
-        resources.ApplyResources(rtbGoal, "rtbGoal")
-        rtbGoal.Name = "rtbGoal"
-        ' 
-        ' rtbTrail
-        ' 
-        rtbTrail.EnableAutoDragDrop = True
-        resources.ApplyResources(rtbTrail, "rtbTrail")
-        rtbTrail.Name = "rtbTrail"
-        ' 
-        ' rtbPerformance
-        ' 
-        rtbPerformance.EnableAutoDragDrop = True
-        resources.ApplyResources(rtbPerformance, "rtbPerformance")
-        rtbPerformance.Name = "rtbPerformance"
-        ' 
         ' btnAnotherLang
         ' 
         resources.ApplyResources(btnAnotherLang, "btnAnotherLang")
@@ -99,16 +81,31 @@ Partial Class frmEditComments
         resources.ApplyResources(ComboBox1, "ComboBox1")
         ComboBox1.Name = "ComboBox1"
         ' 
+        ' txtGoal
+        ' 
+        resources.ApplyResources(txtGoal, "txtGoal")
+        txtGoal.Name = "txtGoal"
+        ' 
+        ' txtPerformance
+        ' 
+        resources.ApplyResources(txtPerformance, "txtPerformance")
+        txtPerformance.Name = "txtPerformance"
+        ' 
+        ' txtTrail
+        ' 
+        resources.ApplyResources(txtTrail, "txtTrail")
+        txtTrail.Name = "txtTrail"
+        ' 
         ' frmEditComments
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
         BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Controls.Add(txtTrail)
+        Controls.Add(txtPerformance)
+        Controls.Add(txtGoal)
         Controls.Add(ComboBox1)
         Controls.Add(btnAnotherLang)
-        Controls.Add(rtbPerformance)
-        Controls.Add(rtbTrail)
-        Controls.Add(rtbGoal)
         Controls.Add(btnOK)
         Controls.Add(lblGoal)
         Controls.Add(lblTrail)
@@ -126,10 +123,10 @@ Partial Class frmEditComments
     Friend WithEvents lblTrail As Label
     Friend WithEvents lblGoal As Label
     Friend WithEvents btnOK As Button
-    Friend WithEvents rtbGoal As RichTextBox
-    Friend WithEvents rtbTrail As RichTextBox
-    Friend WithEvents rtbPerformance As RichTextBox
     Friend WithEvents btnAnotherLang As Button
     Friend WithEvents lblLanguage As Label
     Friend WithEvents ComboBox1 As ComboBox
+    Friend WithEvents txtGoal As TextBox
+    Friend WithEvents txtPerformance As TextBox
+    Friend WithEvents txtTrail As TextBox
 End Class

@@ -126,4 +126,10 @@
   <data name="lblInfo.Text" xml:space="preserve">
     <value>Edytuj komentarze do Sesji Szkolenia. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „P:” przed oceną pracy zespołu. Jeśli chcesz dodać kolejne tłumaczenie, naciśnij przycisk „Dodaj inny język”. W przeciwnym razie kliknij „OK”.</value>
   </data>
+  <data name="btnAnotherLang.Text" xml:space="preserve">
+    <value>Dodaj inny język</value>
+  </data>
+  <data name="lblLanguage.Text" xml:space="preserve">
+    <value>Język:</value>
+  </data>
 </root>

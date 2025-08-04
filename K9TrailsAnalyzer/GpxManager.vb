@@ -1110,9 +1110,12 @@ FoundRunnerTrailTrk:
         Dim cleanDescription As String = System.Text.RegularExpressions.Regex.Replace(originalDescription, "<.*?>", "").Trim()
 
         ' 2️⃣ Najdeme části pomocí regexu
-        Dim pattern As String = "(?:(?:(?<goal>🎯|📍|g:)\s*(?<goalText>.*?))(?=(👣|t:|🐕|p:|🌡|$)))?" &
-                            "(?:(?:(?<trail>👣|t:)\s*(?<trailText>.*?))(?=(📍|g:|🐕|p:|🌡|$)))?" &
-                            "(?:(?:(?<dog>🐕|p:)\s*(?<dogText>.*?))(?=(📍|g:|👣|t:|🌡|$)))?"
+        Dim g = TrailReport.goalLabel
+        Dim t = TrailReport.trailLabel
+        Dim p = TrailReport.performanceLabel
+        Dim pattern As String = $"(?:(?:(?<goal>{g}|g:)\s*(?<goalText>.*?))(?=({t}|t:|🐕|p:|🌡|$)))?" &
+                            $"(?:(?:(?<trail>{t}|t:)\s*(?<trailText>.*?))(?=({g}|g:|🐕|p:|🌡|$)))?" &
+                            $"(?:(?:(?<dog>{p}|p:)\s*(?<dogText>.*?))(?=({g}|g:|{t}|t:|🌡|$)))?"
 
         Dim regex As New Regex(pattern, RegexOptions.Singleline Or RegexOptions.IgnoreCase)
         Dim match As Match = regex.Match(cleanDescription)
@@ -1138,8 +1141,8 @@ FoundRunnerTrailTrk:
                 'trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*h\s*", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = Regex.Replace(trailPart, "\d+[.,]?\d*\s*(h(odin(y|a))?|hod|min(ut)?)(?=\W|$)", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění age:
-                trailPart = trailPart.Replace("🕒:", "") ' odstranění 🕒:
-                trailPart = "🕒:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
+                trailPart = trailPart.Replace("⏳:", "") ' odstranění 🕒:
+                trailPart = "⏳:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
             End If
             Dim LengthfromComments As Single = GetLengthFromComments(trailPart)
             If LengthfromComments = 0 Then
@@ -1155,7 +1158,7 @@ FoundRunnerTrailTrk:
                 trailPart = "📏:" & NBSP & Me.TrailDistance.ToString("F1") & NBSP & "km"
             End If
             If ageFromTime.TotalHours > 0 Then
-                trailPart = "🕒:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
+                trailPart = "⏳:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
             End If
 
         End If
@@ -1181,14 +1184,6 @@ FoundRunnerTrailTrk:
         WeatherData = Await Wheather()
         Dim strWeather As String = $"🌡{WeatherData._temperature.ToString("0.#")}{NBSP}°C  💨{NBSP}{WeatherData._windSpeed.ToString("0.#")}{NBSP}m/s {windDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity}{NBSP}%   💧{WeatherData._precipitation}{NBSP}mm/h ⛅{WeatherData._cloudCover}{NBSP}%"
         desc.weather.Text = strWeather
-
-        '' 📦 Sestavíme nový popis pro video
-        'Me.DescriptionParts = New List(Of (Text As String, Color As Color, FontStyle As FontStyle)) From {
-        '("🐩  " & My.Settings.DogName, Color.Maroon, FontStyle.Bold),
-        '(goalLabel & " " & goalPart, Color.DarkGreen, FontStyle.Regular),
-        '(trailLabel & " " & trailPart, Color.Blue, FontStyle.Regular),
-        '(performanceLabel & " " & performancePart, Color.Red, FontStyle.Regular),
-        '(strWeather, Color.Maroon, FontStyle.Regular)}
 
 
         Dim sb As New System.Text.StringBuilder()
@@ -2103,6 +2098,7 @@ Public Class GpxReader
     ' Konstruktor načte XML dokument a nastaví XmlNamespaceManager
     ' Konstruktor načte XML dokument, sjednotí namespace na GPX 1.1 a nastaví XmlNamespaceManager
     Public Sub New(_filePath As String)
+        FilePath = _filePath
         Try
             ' 1. Načteme celý soubor do textového řetězce
             Dim fileContent As String = System.IO.File.ReadAllText(_filePath)
@@ -2114,7 +2110,7 @@ Public Class GpxReader
             ' 3. Načteme upravený textový řetězec do XmlDocument
             xmlDoc = New XmlDocument()
             xmlDoc.LoadXml(fileContent)
-            FilePath = _filePath
+
 
             ' ----------------------------------------------------------------------------------
             ' ZBYTEK VAŠEHO KÓDU ZŮSTÁVÁ STEJNÝ
@@ -2147,11 +2143,11 @@ xmlns:          namespaceManager.AddNamespace("locus", "https://www.locusmap.app
             End If
 
         Catch ex As FileNotFoundException
-            Throw New ArgumentException($"File '{FileName}' has not been found.", ex)
+            Throw New ArgumentException($"File '{Me.FileName}' has not been found.", ex)
         Catch ex As XmlException
-            Throw New XmlException($"Error in XML '{FileName}': {ex.Message}", ex)
+            Throw New XmlException($"Error in XML '{Me.FileName}': {ex.Message}", ex)
         Catch ex As Exception
-            Throw New Exception($"Error loading file '{FileName}': {ex.Message}", ex)
+            Throw New Exception($"Error loading file '{Me.FileName}': {ex.Message}", ex)
         End Try
     End Sub
 
@@ -2234,26 +2230,27 @@ xmlns:          namespaceManager.AddNamespace("locus", "https://www.locusmap.app
                                 Optional namespaceUriToUse As String = GPX_NAMESPACE_URI
                                 ) As XmlNode
 
-        Dim insertedNode As XmlNode = Nothing
-        Dim childNode As XmlElement = CreateElement(XpathchildNodeName, namespaceUriToUse)
-        childNode.InnerText = value
 
-        If attValue <> "" Then childNode.SetAttribute(attName, attValue)
 
         Dim childNodes As XmlNodeList = Me.SelectAllChildNodes(XpathchildNodeName, parentNode)
 
         ' Kontrola duplicity
         For Each node As XmlNode In childNodes
-            If node.Attributes IsNot Nothing AndAlso
-           node.Attributes(attName)?.Value = attValue Or
-           node.InnerText.Equals(value, StringComparison.OrdinalIgnoreCase) Then
-
-                Debug.WriteLine($"Uzel {XpathchildNodeName} s atributem {attName}={attValue} a textem '{value}' již existuje.")
+            If (node.Attributes(attName)?.Value = attValue) Then ' zkontroluje zda node s atributem attvalue už neexistuje:
+                'node.RemoveAll() ' odstraní všechny podřízené uzly, pokud existují
+                node.InnerText = value ' nastaví text na nový
+                'If node IsNot Nothing AndAlso node.ParentNode IsNot Nothing Then
+                '    node.ParentNode.RemoveChild(node)
+                'End If
                 Return node ' nalezen existující uzel, končíme
             End If
         Next
 
         ' Pokud jsme žádný nenalezli, tak ho přidáme
+        Dim insertedNode As XmlNode = Nothing
+        Dim childNode As XmlElement = CreateElement(XpathchildNodeName, namespaceUriToUse)
+        childNode.InnerText = value
+        If attValue <> "" Then childNode.SetAttribute(attName, attValue)
         Debug.WriteLine($"Přidávám nový uzel {XpathchildNodeName} s atributem {attName}={attValue} a textem '{value}'.")
 
         If childNodes.Count = 0 OrElse insertAfter Then

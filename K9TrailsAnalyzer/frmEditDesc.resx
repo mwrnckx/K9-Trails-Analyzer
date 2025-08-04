@@ -125,7 +125,7 @@
     <value>34, 9</value>
   </data>
   <data name="lblInfo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>858, 226</value>
+    <value>785, 156</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="lblInfo.TabIndex" type="System.Int32, mscorlib">
@@ -156,10 +156,10 @@
     <value>Cascadia Code, 12pt, style=Bold</value>
   </data>
   <data name="lblPerformance.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 419</value>
+    <value>34, 350</value>
   </data>
   <data name="lblPerformance.Size" type="System.Drawing.Size, System.Drawing">
-    <value>247, 21</value>
+    <value>190, 21</value>
   </data>
   <data name="lblPerformance.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -186,10 +186,10 @@
     <value>Cascadia Code, 12pt, style=Bold</value>
   </data>
   <data name="lblTrail.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 348</value>
+    <value>34, 267</value>
   </data>
   <data name="lblTrail.Size" type="System.Drawing.Size, System.Drawing">
-    <value>103, 21</value>
+    <value>64, 21</value>
   </data>
   <data name="lblTrail.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -216,10 +216,10 @@
     <value>Cascadia Code, 12pt, style=Bold</value>
   </data>
   <data name="lblGoal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 278</value>
+    <value>34, 185</value>
   </data>
   <data name="lblGoal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>168, 21</value>
+    <value>136, 21</value>
   </data>
   <data name="lblGoal.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -250,7 +250,7 @@
     <value>Segoe UI, 14pt, style=Bold</value>
   </data>
   <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>758, 464</value>
+    <value>685, 439</value>
   </data>
   <data name="btnOK.Size" type="System.Drawing.Size, System.Drawing">
     <value>134, 60</value>
@@ -273,87 +273,6 @@
   <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
     <value>5</value>
   </data>
-  <data name="rtbGoal.Location" type="System.Drawing.Point, System.Drawing">
-    <value>262, 254</value>
-  </data>
-  <data name="rtbGoal.ScrollBars" type="System.Windows.Forms.RichTextBoxScrollBars, System.Windows.Forms">
-    <value>Vertical</value>
-  </data>
-  <data name="rtbGoal.Size" type="System.Drawing.Size, System.Drawing">
-    <value>630, 64</value>
-  </data>
-  <data name="rtbGoal.TabIndex" type="System.Int32, mscorlib">
-    <value>7</value>
-  </data>
-  <data name="rtbGoal.Text" xml:space="preserve">
-    <value />
-  </data>
-  <data name="&gt;&gt;rtbGoal.Name" xml:space="preserve">
-    <value>rtbGoal</value>
-  </data>
-  <data name="&gt;&gt;rtbGoal.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;rtbGoal.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;rtbGoal.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="rtbTrail.Location" type="System.Drawing.Point, System.Drawing">
-    <value>262, 324</value>
-  </data>
-  <data name="rtbTrail.ScrollBars" type="System.Windows.Forms.RichTextBoxScrollBars, System.Windows.Forms">
-    <value>Vertical</value>
-  </data>
-  <data name="rtbTrail.Size" type="System.Drawing.Size, System.Drawing">
-    <value>630, 64</value>
-  </data>
-  <data name="rtbTrail.TabIndex" type="System.Int32, mscorlib">
-    <value>8</value>
-  </data>
-  <data name="rtbTrail.Text" xml:space="preserve">
-    <value />
-  </data>
-  <data name="&gt;&gt;rtbTrail.Name" xml:space="preserve">
-    <value>rtbTrail</value>
-  </data>
-  <data name="&gt;&gt;rtbTrail.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;rtbTrail.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;rtbTrail.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="rtbPerformance.Location" type="System.Drawing.Point, System.Drawing">
-    <value>262, 394</value>
-  </data>
-  <data name="rtbPerformance.ScrollBars" type="System.Windows.Forms.RichTextBoxScrollBars, System.Windows.Forms">
-    <value>Vertical</value>
-  </data>
-  <data name="rtbPerformance.Size" type="System.Drawing.Size, System.Drawing">
-    <value>630, 64</value>
-  </data>
-  <data name="rtbPerformance.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
-  </data>
-  <data name="rtbPerformance.Text" xml:space="preserve">
-    <value />
-  </data>
-  <data name="&gt;&gt;rtbPerformance.Name" xml:space="preserve">
-    <value>rtbPerformance</value>
-  </data>
-  <data name="&gt;&gt;rtbPerformance.Type" xml:space="preserve">
-    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;rtbPerformance.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;rtbPerformance.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="btnAnotherLang.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
@@ -367,10 +286,10 @@
     <value>NoControl</value>
   </data>
   <data name="btnAnotherLang.Location" type="System.Drawing.Point, System.Drawing">
-    <value>544, 464</value>
+    <value>512, 439</value>
   </data>
   <data name="btnAnotherLang.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 60</value>
+    <value>167, 60</value>
   </data>
   <data name="btnAnotherLang.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -388,7 +307,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnAnotherLang.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>4</value>
   </data>
   <data name="lblLanguage.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -400,7 +319,7 @@
     <value>NoControl</value>
   </data>
   <data name="lblLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>136, 490</value>
+    <value>239, 478</value>
   </data>
   <data name="lblLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>91, 21</value>
@@ -424,7 +343,7 @@
     <value>8</value>
   </data>
   <data name="ComboBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>262, 482</value>
+    <value>357, 470</value>
   </data>
   <data name="ComboBox1.Size" type="System.Drawing.Size, System.Drawing">
     <value>121, 29</value>
@@ -442,6 +361,87 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ComboBox1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="txtGoal.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 209</value>
+  </data>
+  <data name="txtGoal.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="txtGoal.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>Vertical</value>
+  </data>
+  <data name="txtGoal.Size" type="System.Drawing.Size, System.Drawing">
+    <value>785, 46</value>
+  </data>
+  <data name="txtGoal.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;txtGoal.Name" xml:space="preserve">
+    <value>txtGoal</value>
+  </data>
+  <data name="&gt;&gt;txtGoal.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtGoal.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtGoal.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="txtPerformance.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 374</value>
+  </data>
+  <data name="txtPerformance.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="txtPerformance.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>Vertical</value>
+  </data>
+  <data name="txtPerformance.Size" type="System.Drawing.Size, System.Drawing">
+    <value>785, 46</value>
+  </data>
+  <data name="txtPerformance.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;txtPerformance.Name" xml:space="preserve">
+    <value>txtPerformance</value>
+  </data>
+  <data name="&gt;&gt;txtPerformance.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtPerformance.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtPerformance.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="txtTrail.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 291</value>
+  </data>
+  <data name="txtTrail.Multiline" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="txtTrail.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>Vertical</value>
+  </data>
+  <data name="txtTrail.Size" type="System.Drawing.Size, System.Drawing">
+    <value>785, 46</value>
+  </data>
+  <data name="txtTrail.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;txtTrail.Name" xml:space="preserve">
+    <value>txtTrail</value>
+  </data>
+  <data name="&gt;&gt;txtTrail.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtTrail.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtTrail.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -454,7 +454,7 @@
     <value>True</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>918, 531</value>
+    <value>918, 524</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Mono, 12pt</value>
