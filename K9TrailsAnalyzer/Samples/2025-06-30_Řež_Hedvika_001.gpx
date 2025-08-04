@@ -5,7 +5,7 @@
     <time>2025-06-30T12:14:24.780Z</time>
   </metadata>
   <trk>
-    <type>TrailLayer</type>
+    <type>RunnerTrail</type>
     <name>2025-06-30 Řež Hedvika</name>
     <desc><![CDATA[<span style='color:blue; font-weight:bold;'>g: length, junctions t: 0,7 h d: problems at one intersection, but managed independently</span><br><span style='color:maroon; font-weight:bold;'>🌡22 °C  💨 1,9 m/s N 💧38 %   💧0 mm/h ⛅0 %</span>]]></desc>
     <extensions>
@@ -1024,7 +1024,7 @@
     </trkseg>
   </trk>
   <trk>
-    <type>Dog</type>
+    <type>DogTrack</type>
     <trkseg>
       <trkpt lat="50.1742417" lon="14.3677050">
         <ele>251.23</ele>

@@ -47,7 +47,7 @@ Imports TrackVideoExporter.TrackVideoExporter
          If trkType.Trim().ToLower() = TrackTypes.Dog.Trim().ToLower() Then
              isMoving = True
              trackColor = Color.Red
-         ElseIf trkType.Trim().ToLower() = TrackTypes.TrailLayer.Trim().ToLower() Then
+         ElseIf trkType.Trim().ToLower() = TrackTypes.Runner.Trim().ToLower() Then
              trackColor = Color.Blue
          End If
          TrackAsTrkptsList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)

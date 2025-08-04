@@ -172,7 +172,7 @@
     <value>Exportieren als RTF-Datei</value>
   </data>
   <data name="btnBrowse.Text" xml:space="preserve">
-    <value>Durchsuchen...</value>
+    <value>Durchsuchen</value>
   </data>
   <data name="lblDirectory.Text" xml:space="preserve">
     <value>Verzeichnis:</value>
@@ -188,12 +188,6 @@
   </data>
   <data name="btnBrowseBackup.Text" xml:space="preserve">
     <value>Durchsuchen...</value>
-  </data>
-  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
-    <value>"GPS-Rauschen am Anfang und Ende der Strecke entfernen"</value>
-  </data>
-  <data name="lblStartDate.Text" xml:space="preserve">
-    <value>Von:</value>
   </data>
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>Bis:</value>
@@ -260,5 +254,38 @@
   </data>
   <data name="cmbTimeInterval.Items5" xml:space="preserve">
     <value>Benutzerdefinierter Bereich</value>
+  </data>
+  <data name="StatusStrip1.Text" xml:space="preserve">
+    <value>StatusStrip1</value>
+  </data>
+  <data name="StatusLabel1.Text" xml:space="preserve">
+    <value>Toolstrip</value>
+  </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>MenuSrip1</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
+    <value>Mnuselecttooltip</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Länge</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Anzahl der Tracks</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Setzen Sie den FFMPEG -Pfad</value>
+  </data>
+  <data name="mnuRussian.Text" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="mnuPolish.Text" xml:space="preserve">
+    <value>Polski</value>
+  </data>
+  <data name="mnuCzech.Text" xml:space="preserve">
+    <value>Česky</value>
   </data>
 </root>

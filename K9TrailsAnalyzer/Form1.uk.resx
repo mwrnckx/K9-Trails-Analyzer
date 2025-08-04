@@ -183,12 +183,6 @@
   <data name="lblBackupDirectory.Text" xml:space="preserve">
     <value>Резервна копія:</value>
   </data>
-  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
-    <value>Видалити шум GPS на початку та в кінці треків</value>
-  </data>
-  <data name="lblStartDate.Text" xml:space="preserve">
-    <value>Від:</value>
-  </data>
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>До:</value>
   </data>
@@ -260,5 +254,26 @@
   </data>
   <data name="cmbTimeInterval.Items5" xml:space="preserve">
     <value>Спеціальний діапазон</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Вихід</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Встановіть шлях FFMPEG</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>Експорт Videa</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Довжина</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Статистика</value>
   </data>
 </root>

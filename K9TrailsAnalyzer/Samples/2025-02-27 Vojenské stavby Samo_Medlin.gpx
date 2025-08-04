@@ -4,7 +4,7 @@
   <trk>
     <name><![CDATA[2025-02-27Vojenské stavby Samo]]></name>
     <desc>g: T: Double knowing </desc>
-    <type>TrailLayer</type>
+    <type>RunnerTrail</type>
     <type><![CDATA[unknown]]></type>
     <extensions>
       <topografix:color>c0c0c0</topografix:color>
@@ -7463,7 +7463,7 @@
   </trk>
   <trk>
     <name><![CDATA[2025-02-27Medlin]]></name>
-    <type>Dog</type>
+    <type>DogTrack</type>
     <type><![CDATA[unknown]]></type>
     <extensions>
       <topografix:color>c0c0c0</topografix:color>

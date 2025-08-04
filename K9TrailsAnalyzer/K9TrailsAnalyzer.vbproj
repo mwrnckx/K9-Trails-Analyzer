@@ -7,9 +7,13 @@
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
+     <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
   <AssemblyVersion>0.0.0.0</AssemblyVersion>
     <AssemblyName>K9TrailsAnalyzer</AssemblyName>
-    <ImportedNamespaces>core=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,K9TrailsAnalyzer=True</ImportedNamespaces>
+   <!-- <ImportedNamespaces>core=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,K9TrailsAnalyzer=True</ImportedNamespaces> -->
     <ApplicationIcon>track.ico</ApplicationIcon>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <AppDesignerFolder>My Project</AppDesignerFolder>
@@ -17,47 +21,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Samples\2025-02-15 Křivenická Samo.gpx" />
-    <None Remove="Samples\2025-02-27 Vojenské stavby Samo_Medlin.gpx" />
-    <None Remove="Samples\2025-02-27Vojenské_stavby_Samo.gpx" />
-    <None Remove="Samples\2025-06-23 Kostoprt.Samo.gpx" />
-    <None Remove="Samples\2025-06-23 Statek_Samo.gpx" />
-    <None Remove="Samples\2025-06-23_křížení.gpx" />
-    <None Remove="Samples\2025-06-30_Řež_Hedvika_001.gpx" />
-    <None Remove="Samples\2025-07-17_Na_průhonu_Samo.gpx" />
-    <None Remove="Samples\2025-07-21_Bašť_Kristýna.gpx" />
-    <None Remove="Samples\2025-07-25_PN_Bohnice_Samo.gpx" />
-    <None Remove="Samples\2025-07-27_Větrolam_Samo.gpx" />
+    <Compile Remove="Resources\Resource1.cs.Designer.vb" />
+    <Compile Remove="Resources\Resource1.cs1.Designer.vb" />
+    <Compile Remove="Resources\Resource1.de.Designer.vb" />
+    <Compile Remove="Resources\Resource1.de1.Designer.vb" />
+    <Compile Remove="Resources\Resource1.Designer.vb" />
+    <Compile Remove="Resources\Resource1.pl.Designer.vb" />
+    <Compile Remove="Resources\Resource1.pl1.Designer.vb" />
+    <Compile Remove="Resources\Resource1.ru.Designer.vb" />
+    <Compile Remove="Resources\Resource1.ru1.Designer.vb" />
+    <Compile Remove="Resources\Resource1.uk.Designer.vb" />
+    <Compile Remove="Resources\Resource1.uk1.Designer.vb" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Samples\2025-02-15 Křivenická Samo.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-02-27 Vojenské stavby Samo_Medlin.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-06-23 Kostoprt.Samo.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-06-23 Statek_Samo.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-06-30_Řež_Hedvika_001.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-07-17_Na_průhonu_Samo.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-07-21_Bašť_Kristýna.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-07-25_PN_Bohnice_Samo.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Samples\2025-07-27_Větrolam_Samo.gpx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <None Remove="Samples\2025-02-27Vojenské_stavby_Samo.gpx" />
+    <None Remove="Samples\2025-06-23_křížení.gpx" />
   </ItemGroup>
 
  
@@ -68,7 +47,7 @@
   
 
   <ItemGroup>
-    <Import Include="core" />
+   <!-- <Import Include="core" /> -->
     <Import Include="System.Data" />
     <Import Include="System.Drawing" />
     <Import Include="System.Windows.Forms" />
@@ -101,6 +80,39 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
+    <None Update="Samples\2025-02-15 Křivenická Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-02-27 Vojenské stavby Samo_Medlin.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-06-14 Bast Dog.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-06-14 Bast Runner.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-06-23 Kostoprt.Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-06-23 Statek_Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-06-30_Řež_Hedvika_001.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-07-17_Na_průhonu_Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-07-21_Bašť_Kristýna.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-07-25_PN_Bohnice_Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-07-27_Větrolam_Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 
@@ -121,22 +133,26 @@
     </Compile>
   </ItemGroup>
 
+<ItemGroup>
+ <!-- <EmbeddedResource Include="Resources\Resource1.resx">
+    <Generator>ResXFileCodeGenerator</Generator>
+    <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
+    <CustomToolNamespace>My.Resources</CustomToolNamespace>
+  </EmbeddedResource> -->
 
-
-  <ItemGroup>
-    <EmbeddedResource Update="My Project\Resource1.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  
-  <ItemGroup>
-  <Compile Update="My Project\Resource1.Designer.vb">
+  <Compile Include="Resources\Resource1.Designer.vb">
     <AutoGen>True</AutoGen>
     <DesignTime>True</DesignTime>
     <DependentUpon>Resource1.resx</DependentUpon>
   </Compile>
+</ItemGroup>
+
+<ItemGroup>
+  <EmbeddedResource Update="Resources\Resource1.resx">
+    <Generator>ResXFileCodeGenerator</Generator>
+    <CustomToolNamespace>My.Resources</CustomToolNamespace>
+    <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
+  </EmbeddedResource>
 </ItemGroup>
 
 

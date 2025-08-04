@@ -196,11 +196,8 @@
   <data name="mnuSaveAsCsvFile.Text" xml:space="preserve">
     <value>Eksport jako plik CSV</value>
   </data>
-  <data name="txtOutput.Text" xml:space="preserve">
-    <value>GPX Records:</value>
-  </data>
   <data name="btnBrowse.Text" xml:space="preserve">
-    <value>Przeglądaj...</value>
+    <value>Przeglądaj</value>
   </data>
   <data name="lblDirectory.Text" xml:space="preserve">
     <value>Katalog:</value>
@@ -216,12 +213,6 @@
   </data>
   <data name="btnBrowseBackup.Text" xml:space="preserve">
     <value>Przeglądaj...</value>
-  </data>
-  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
-    <value>Usuń szum GPS na początku i końcu trasy</value>
-  </data>
-  <data name="lblStartDate.Text" xml:space="preserve">
-    <value>Od:</value>
   </data>
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>Do:</value>
@@ -339,5 +330,29 @@
   </data>
   <data name="cmbTimeInterval.Items5" xml:space="preserve">
     <value>Zasięg niestandardowy</value>
+  </data>
+  <data name="StatusStrip1.Text" xml:space="preserve">
+    <value>StatusStrip1</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Plik</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Długość</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>Eksport wideo</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Ustaw ścieżkę FFMPEG</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Koniec</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Statystyka</value>
   </data>
 </root>

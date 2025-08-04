@@ -5,7 +5,7 @@
     <time>2025-06-24T05:04:49.422Z</time>
   </metadata>
   <trk>
-    <type>CrossTrack</type>
+    <type>CrossTrail</type>
     <name>2025-06-24 07:04:14</name>
        <extensions>
       <line xmlns="http://www.topografix.com/GPX/gpx_style/0/2">
@@ -1045,7 +1045,7 @@
   </trk>
   <trk>
     <desc>&lt;span style='color:blue; font-weight:bold;'&gt;T: 0,2 h&lt;/span&gt;&lt;br&gt;</desc>
-    <type>TrailLayer</type>
+    <type>RunnerTrail</type>
     <trkseg>
       <trkpt lat="50.1428036" lon="14.41258614">
         <ele>239.46</ele>
@@ -1610,7 +1610,7 @@
     </trkseg>
   </trk>
   <trk>
-    <type>Dog</type>
+    <type>DogTrack</type>
     <trkseg>
       <trkpt lat="50.1426967" lon="14.4127000">
         <ele>240.63</ele>

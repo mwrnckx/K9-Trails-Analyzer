@@ -1,11 +1,16 @@
 ﻿Imports System.Drawing
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
 
 ''' <summary>
 ''' Provides conversion of GPX data between various internal formats used for video rendering.
 ''' </summary>
 Public Class TrackConverter
-
+    ''' <summary>
+    ''' Raised when a non-critical warning occurs during processing.
+    ''' </summary>
+    Public Event WarningOccurred(message As String, _color As Color)
     ''' <summary>
     ''' Minimum latitude found in all tracks.
     ''' </summary>
@@ -40,16 +45,16 @@ Public Class TrackConverter
     Public Function ConvertTracksAsTrkNodesToTrackAsTrkPts(_tracksAsTrkNode As List(Of TrackAsTrkNode)) As List(Of TrackAsTrkPts)
         Dim tracksAsTrkPts As New List(Of TrackAsTrkPts)
         For Each track In _tracksAsTrkNode
-            Dim trkptNodes As XmlNodeList = SelectTrkptNodes(track.TrkNode)
-            Dim _TrackAsTrkPts As New TrackAsTrkPts With {
-                .Label = track.Label,
-                .Color = track.Color,
-                .IsMoving = track.IsMoving,
-                .TrackPoints = trkptNodes
-            }
+            Dim _TrackAsTrkPts As TrackAsTrkPts = ConvertTrackAsTrkNodeToTrkPts(track)
             tracksAsTrkPts.Add(_TrackAsTrkPts)
         Next
         Return tracksAsTrkPts
+    End Function
+
+    Public Function ConvertTrackAsTrkNodeToTrkPts(track As TrackAsTrkNode) As TrackAsTrkPts
+        Dim trkptNodes As XmlNodeList = SelectTrkptNodes(track.TrkNode)
+        Dim _TrackAsTrkPts As New TrackAsTrkPts(track.TrackType, trkptNodes)
+        Return _TrackAsTrkPts
     End Function
 
     ''' <summary>
@@ -58,15 +63,10 @@ Public Class TrackConverter
     ''' <param name="_tracksAsTrkPts">List of tracks containing XML track point nodes.</param>
     ''' <returns>List of <see cref="TrackAsGeoPoints"/> with lat/lon and time.</returns>
     Public Function ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts As List(Of TrackAsTrkPts)) As List(Of TrackAsGeoPoints)
-        Dim tracksAsGeoPoint As New List(Of TrackAsGeoPoints)
-        For Each Track In _tracksAsTrkPts
-            Dim _TrackAsGeoPoints As New TrackAsGeoPoints With {
-                .Label = Track.Label,
-                .Color = Track.Color,
-                .IsMoving = Track.IsMoving,
-                .TrackGeoPoints = New List(Of TrackGeoPoint)
-            }
-            For Each trkptnode As XmlNode In Track.TrackPoints
+        Dim tracksAsGeoPoints As New List(Of TrackAsGeoPoints)
+        For Each track In _tracksAsTrkPts
+            Dim trackGeoPoints As New List(Of TrackGeoPoint)
+            For Each trkptnode As XmlNode In track.TrackPoints
                 Dim lat = Double.Parse(trkptnode.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
                 Dim lon = Double.Parse(trkptnode.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
                 Dim timenode = SelectSingleChildNode("time", trkptnode)
@@ -81,11 +81,13 @@ Public Class TrackConverter
                     .Location = New Coordinates With {.Lat = lat, .Lon = lon},
                     .Time = time
                 }
-                _TrackAsGeoPoints.TrackGeoPoints.Add(geopoint)
+                trackGeoPoints.Add(geopoint)
             Next
-            tracksAsGeoPoint.Add(_TrackAsGeoPoints)
+
+            Dim _TrackAsGeoPoints As New TrackAsGeoPoints(track.TrackType, trackGeoPoints)
+            tracksAsGeoPoints.Add(_TrackAsGeoPoints)
         Next
-        Return tracksAsGeoPoint
+        Return tracksAsGeoPoints
     End Function
 
     ''' <summary>
@@ -120,12 +122,7 @@ Public Class TrackConverter
 
         Dim _tracksAsPointsF As New List(Of TrackAsPointsF)
         For Each Track In _tracksAsGeoPoints
-            Dim _TrackAsPointsF As New TrackAsPointsF With {
-                .Label = Track.Label,
-                .Color = Track.Color,
-                .IsMoving = Track.IsMoving,
-                .TrackPointsF = New List(Of TrackPointF)
-            }
+            Dim _TrackAsPointsF As New TrackAsPointsF(Track.TrackType, New List(Of TrackPointF))
 
             For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
                 Dim pt = LatLonToPixel(geoPoint.Location.Lat, geoPoint.Location.Lon, zoom, minTileX, minTileY)
@@ -176,11 +173,94 @@ Public Class TrackConverter
     ''' <param name="childName">Name of the child element to select (e.g., "time").</param>
     ''' <param name="parent">The parent XmlNode (e.g., trkpt).</param>
     ''' <returns>The selected XmlNode, or Nothing if not found.</returns>
-    Function SelectSingleChildNode(childName As String, parent As XmlNode) As XmlNode
+    Public Function SelectSingleChildNode(childName As String, parent As XmlNode) As XmlNode
         Dim nsmgr As New XmlNamespaceManager(parent.OwnerDocument.NameTable)
         Dim ns As String = parent.GetNamespaceOfPrefix("")
         nsmgr.AddNamespace("gpx", ns)
         Return parent.SelectSingleNode($"gpx:{childName}", nsmgr)
     End Function
+
+    ' Metoda pro výběr poduzlů z uzlu Node
+
+    Public Function SelectChildNodes(childName As String, parent As XmlNode) As XmlNodeList
+        Dim nsmgr As New XmlNamespaceManager(parent.OwnerDocument.NameTable)
+        Dim ns As String = parent.GetNamespaceOfPrefix("")
+        nsmgr.AddNamespace("gpx", ns)
+        Return parent.SelectNodes($"gpx:{childName}", nsmgr)
+    End Function
+
+
+    Public Function CalculateTrailDistance(trkNode As XmlNode) As Double
+        Dim totalLengthOfFirst_trkseg As Double = 0.0
+        Dim lat1, lon1, lat2, lon2 As Double
+        Dim firstPoint As Boolean = True
+
+        Dim timeNode As XmlNode = Nothing
+
+        Dim firstSegment As XmlNode = SelectSingleChildNode("trkseg", trkNode)
+        ' If the segment exists, calculate its length
+        If firstSegment IsNot Nothing Then
+            ' Select all track points in the first segment (<trkpt>)
+            Dim trackPoints As XmlNodeList = SelectChildNodes("trkpt", firstSegment)
+
+            ' Calculate the distance between each point in the first segment
+            For Each point As XmlNode In trackPoints
+                Try
+                    ' Check if attributes exist and load them as Double
+                    If point.Attributes("lat") IsNot Nothing AndAlso point.Attributes("lon") IsNot Nothing Then
+                        Dim lat As Double = Convert.ToDouble(point.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+                        Dim lon As Double = Convert.ToDouble(point.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+
+                        If firstPoint Then
+                            ' Initialize the first point
+                            lat1 = lat
+                            lon1 = lon
+                            firstPoint = False
+                        Else
+                            ' Calculate the distance between the previous and current point
+                            lat2 = lat
+                            lon2 = lon
+                            totalLengthOfFirst_trkseg += HaversineDistance(lat1, lon1, lat2, lon2, "km")
+
+                            ' Move the current point into lat1, lon1 for the next iteration
+                            lat1 = lat2
+                            lon1 = lon2
+                        End If
+                    End If
+                Catch ex As Exception
+                    ' Adding a more detailed exception message
+                    Debug.WriteLine("Error: " & ex.Message)
+                    RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
+                End Try
+            Next
+        End If
+
+        Return totalLengthOfFirst_trkseg ' Result in kilometers
+    End Function
+
+    ' Function to calculate the distance in km between two GPS points using the Haversine formula
+    Public Function HaversineDistance(lat1 As Double, lon1 As Double, lat2 As Double, lon2 As Double, units As String) As Double
+        Dim dLat As Double = DegToRad(lat2 - lat1)
+        Dim dLon As Double = DegToRad(lon2 - lon1)
+        ' Constants for converting degrees to radians and Earth's radius
+        Const EARTH_RADIUS As Double = 6371 ' Earth's radius in kilometers
+
+        Dim a As Double = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(DegToRad(lat1)) * Math.Cos(DegToRad(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2)
+        Dim c As Double = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a))
+
+        If units = "km" Then
+            Return EARTH_RADIUS * c ' Result in kilometers
+        ElseIf units = "m" Then
+            Return EARTH_RADIUS * c * 1000 'result in metres
+        Else
+            Return EARTH_RADIUS * c ' Result in kilometers
+        End If
+    End Function
+    ' Function to convert degrees to radians
+    Private Function DegToRad(degrees As Double) As Double
+        Const PI As Double = 3.14159265358979
+        Return degrees * PI / 180
+    End Function
+
 
 End Class

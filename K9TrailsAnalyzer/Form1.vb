@@ -5,6 +5,7 @@ Imports System.Reflection
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
+Imports TrackVideoExporter.TrackVideoExporter
 
 
 Public Class Form1
@@ -14,12 +15,12 @@ Public Class Form1
 
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
-        Me.Enabled = False
+        Enabled = False
 
-        Dim gpxDir As String = My.Settings.Directory
+        Dim gpxDir = My.Settings.Directory
         If String.IsNullOrWhiteSpace(gpxDir) OrElse Not Directory.Exists(gpxDir) Then
             ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku Samples vedle exe
-            Dim defaultDir As String = Path.Combine(Application.StartupPath, "Samples")
+            Dim defaultDir = Path.Combine(Application.StartupPath, "Samples")
 
             If Directory.Exists(defaultDir) Then
                 gpxDir = defaultDir
@@ -32,10 +33,10 @@ Public Class Form1
             End If
         End If
 
-        Dim backupDir As String = My.Settings.BackupDirectory
+        Dim backupDir = My.Settings.BackupDirectory
         If String.IsNullOrWhiteSpace(backupDir) OrElse Not Directory.Exists(backupDir) Then
             ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku  vedle exe
-            Dim defaultDir As String = Path.Combine(Application.StartupPath, "gpxFilesBackup")
+            Dim defaultDir = Path.Combine(Application.StartupPath, "gpxFilesBackup")
 
             If Directory.Exists(defaultDir) Then
                 backupDir = defaultDir
@@ -63,20 +64,52 @@ Public Class Form1
         Try
 
             If Await GPXFilesManager.Main Then
-                Me.Enabled = True
-                Me.WriteRTBOutput(GPXFilesManager)
-                Me.GPXFilesManager = GPXFilesManager
+                Enabled = True
+                WriteRTBOutput(GPXFilesManager)
+                GPXFilesManager = GPXFilesManager
                 btnCharts.Visible = True
             Else
-                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
+                MessageBox.Show(Resource1.mBoxDataRetrievalFailed)
+                Return
             End If
         Catch ex As Exception
-            MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed)
+            MessageBox.Show(Resource1.mBoxDataRetrievalFailed)
+            Return
         End Try
-        Me.Enabled = True
 
+        ' Naplnění ListView s daty
+        FillListViewWithGpxRecords()
+        Enabled = True
+    End Sub
+
+
+    Private Sub FillListViewWithGpxRecords()
+        ' Vymažeme předchozí položky
+        lvGpxFiles.Items.Clear()
+
+        ' Pro každý záznam přidáme řádek do ListView
+        For Each record As GPXRecord In GPXFilesManager.GpxRecords
+
+            Dim item As New ListViewItem(record.FileName) ' první sloupec
+            If record.DogStart Is Nothing OrElse record.DogStart.Time = Date.MinValue Then 'Pokud není datum začátku trasy psa, nejde označit
+                item.ForeColor = Color.Gray
+                item.Font = New Font(lvGpxFiles.Font, FontStyle.Italic)
+                item.ToolTipText = "This gpx record doesn't contain dog's track, video cannot be created from it."
+            End If
+            item.SubItems.Add(record.TrailStart.Time.ToString("yyyy-MM-dd HH:mm")) ' např. datum
+            item.SubItems.Add($"{record.TrailDistance:F2} km") ' délka trasy
+            item.SubItems.Add($"{record.TrailAge.TotalHours:F1} h") ' věk trasy v hodinách
+            item.SubItems.Add($"{record.Tracks.Count}") ' počet tras
+            item.Tag = record ' pro pozdější použití (např. vytvoření videa)
+
+            lvGpxFiles.Items.Add(item)
+        Next
 
     End Sub
+
+
+
+
 
     Private Sub CreateGpxFileManager()
         ' Zrušení odběru událostí u staré instance (pokud existuje)
@@ -122,7 +155,7 @@ Public Class Form1
         Dim i As Integer = 0
         For Each _gpxRecord As GPXRecord In _gpxRecords
             Try
-                Dim fileShortName As String = (IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.filePath) & manySpaces).Substring(0, 30)
+                Dim fileShortName As String = (IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath) & manySpaces).Substring(0, 30)
                 i += 1
                 ' Nastavení fontu a barvy textu
                 Me.rtbOutput.SelectionStart = Me.rtbOutput.Text.Length ' Pozice na konec textu
@@ -132,8 +165,8 @@ Public Class Form1
                 Me.rtbOutput.AppendText($"{i.ToString("D3")} {fileShortName} ")
 
                 Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
-                Me.rtbOutput.AppendText(_gpxRecord.LayerStart.Date.ToShortDateString & "    ")
-                Me.rtbOutput.AppendText(_gpxRecord.Distance.ToString("F2") & " km" & "     ")
+                Me.rtbOutput.AppendText(_gpxRecord.TrailStart.Time.ToString("dd.MM.yy") & "    ")
+                Me.rtbOutput.AppendText(_gpxRecord.TrailDistance.ToString("F2") & " km" & "     ")
                 If _gpxRecord.TrailAge.TotalHours > 0 Then
                     Me.rtbOutput.AppendText(_gpxRecord.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
                 Else
@@ -169,7 +202,7 @@ Public Class Form1
         Next _gpxRecord
 
 
-        Dim totalDistance As Double = _gpxRecords(_gpxRecords.Count - 1).TotalDistance
+        Dim totalDistance As Double = _gpxFilesManager.TotalDistance
         'Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
 
         ' Nastavení fontu a barvy textu
@@ -204,7 +237,7 @@ Public Class Form1
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.Distance)
+        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailDistance)
         Me.rtbOutput.AppendText((1000 * averageDistance).ToString("F0") & " m" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
@@ -365,7 +398,7 @@ Public Class Form1
 
             ' Create the CSV file and write headers
             Using writer As New IO.StreamWriter(csvFilePath, False, System.Text.Encoding.UTF8)
-                writer.WriteLine("File Name;Date;Age/h;Length/km;speed;Total Length;Description;Video")
+                writer.WriteLine("File Name;Date;Age/h;Length/km;speed;Description;Video")
 
                 For Each _gpxRecord As GPXRecord In GPXFilesManager.GpxRecords
                     With _gpxRecord
@@ -378,11 +411,10 @@ Public Class Form1
 
                         ' Write each row in the CSV file
                         writer.Write($"{fileName};")
-                        writer.Write($"{ .LayerStart.ToString("yyyy-MM-dd")};")
+                        writer.Write($"{ .RunnerStart.ToString("yyyy-MM-dd")};")
                         writer.Write($"{_age};")
-                        writer.Write($"{ .Distance:F2};")
+                        writer.Write($"{ .TrailDistance:F2};")
                         If Not .DogSpeed = 0 Then writer.Write($"{ .DogSpeed:F2};") Else writer.Write(";")
-                        writer.Write($"{ .TotalDistance:F2};")
                         writer.Write($"{ .Description};")
                         If Not .Link Is Nothing Then
                             writer.WriteLine($"=HYPERTEXTOVÝ.ODKAZ(""{ .Link}"")")
@@ -393,7 +425,7 @@ Public Class Form1
                 Next
 
                 ' Write the total distance at the end of the CSV file
-                writer.WriteLine($"Total;;; { GPXFilesManager.GpxRecords(GPXFilesManager.GpxRecords.Count - 1).TotalDistance:F2}")
+                writer.WriteLine($"Total;;; { GPXFilesManager.TotalDistance:F2}")
             End Using
 
 
@@ -410,7 +442,7 @@ Public Class Form1
         'zruší předchozí grafy
         CloseGrafs()
 
-        Dim gpxRecords As List(Of GPXRecord) = GPXFilesManager.GpxRecords
+        Dim gpxRecords = GPXFilesManager.GpxRecords
         If gpxRecords.Count < 2 Then
             MessageBox.Show("First you need to read the data from the gpx files!")
             Return
@@ -425,10 +457,10 @@ Public Class Form1
         Dim chart1 As DistanceChart
 
         ' Získání dat pro graf rychlosti
-        Dim speedData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "DogSpeed")
+        Dim speedData = GetGraphData(Of Double)(gpxRecords, Function(r) r.DogSpeed)
         xAxisData = speedData.Item1
         yAxisData = speedData.Item2
-        yAxisLabel = My.Resources.Resource1.Y_AxisLabelSpeed
+        yAxisLabel = Resource1.Y_AxisLabelSpeed
         GrafText = Application.ProductName
         chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
@@ -436,14 +468,14 @@ Public Class Form1
 
 
         ' Získání dat pro graf věku trasy
-        Dim trailAgeData As Tuple(Of DateTime(), TimeSpan()) = GetGraphData(Of TimeSpan)(gpxRecords, "TrailAge")
+        Dim trailAgeData = GetGraphData(Of TimeSpan)(gpxRecords, Function(r) r.TrailAge)
         xAxisData = trailAgeData.Item1
         ReDim yAxisData(trailAgeData.Item2.Length - 1)
-        For i As Integer = 0 To trailAgeData.Item2.Length - 1
+        For i = 0 To trailAgeData.Item2.Length - 1
             ' Převod TimeSpan na Double (např. v hodinách)
             yAxisData(i) = trailAgeData.Item2(i).TotalHours ' Nebo TotalMinutes, TotalSeconds, atd. podle potřeby
         Next
-        yAxisLabel = My.Resources.Resource1.Y_AxisLabelAge
+        yAxisLabel = Resource1.Y_AxisLabelAge
         GrafText = Resource1.Y_AxisLabelAge
         chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
@@ -451,20 +483,20 @@ Public Class Form1
 
         'Distances
         ' Získání dat pro graf vzdálenosti
-        Dim distanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "Distance")
+        Dim distanceData = GetGraphData(Of Double)(gpxRecords, Function(r) r.TrailDistance)
         xAxisData = distanceData.Item1
         yAxisData = distanceData.Item2
-        yAxisLabel = My.Resources.Resource1.Y_AxisLabelLength
+        yAxisLabel = Resource1.Y_AxisLabelLength
         GrafText = Application.ProductName
         chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
         'TotDistance
-        Dim totDistanceData As Tuple(Of DateTime(), Double()) = GetGraphData(Of Double)(gpxRecords, "TotalDistance")
+        Dim totDistanceData = GetGraphData(Of Double)(gpxRecords, Function(r) r.TotalDistance)
         xAxisData = totDistanceData.Item1
         yAxisData = totDistanceData.Item2
-        yAxisLabel = My.Resources.Resource1.Y_AxisLabelTotalLength
+        yAxisLabel = Resource1.Y_AxisLabelTotalLength
         GrafText = Application.ProductName
         chart1 = New DistanceChart(xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
         chart1.Show()
@@ -476,16 +508,16 @@ Public Class Form1
                     Select(Function(offset) dtpStartDate.Value.AddMonths(offset)).
                     Select(Function(d) New DateTime(d.Year, d.Month, 1))
 
-        ' Použijeme Left Join pro zahrnutí všech měsíců, i těch bez dat a použijeme LayerStart
+        ' Použijeme Left Join pro zahrnutí všech měsíců, i těch bez dat a použijeme runnerStart
         Dim monthlySumsWithEmpty = From month In allMonths
                                    Group Join ms In (From record In gpxRecords
-                                                     Group record By Month = New DateTime(record.LayerStart.Year, record.LayerStart.Month, 1) Into grp = Group
-                                                     Select New With {.Month = Month, .TotalDistance = grp.Sum(Function(r) r.Distance)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {.Month = month, .TotalDistance = 0.0})
+                                                     Group record By Month = New DateTime(record.RunnerStart.Time.Year, record.RunnerStart.Time.Month, 1) Into grp = Group
+                                                     Select New With {Month, .TotalDistance = grp.Sum(Function(r) r.TrailDistance)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {month, .TotalDistance = 0.0})
                                    Select subMs
 
         ' Převedeme na pole pro graf
-        Dim monthlyXAxisDataWithEmpty As String() = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM yy", currentCulture)).ToArray()
-        Dim monthlyYAxisDataWithEmpty As Double() = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray()
+        Dim monthlyXAxisDataWithEmpty = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM yy", currentCulture)).ToArray
+        Dim monthlyYAxisDataWithEmpty = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray
 
         For Each s In monthlyXAxisDataWithEmpty
             Debug.WriteLine($"X:  {s}")
@@ -503,48 +535,69 @@ Public Class Form1
 
     End Sub
 
-    Public Function GetGraphData(Of T)(gpxRecords As List(Of GPXRecord), propertyName As String) As Tuple(Of DateTime(), T())
+    Public Function GetGraphData(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
         If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
-            Dim propertyInfo As PropertyInfo = GetType(GPXRecord).GetProperty(propertyName)
+            Dim timestamps As New List(Of DateTime)
+            Dim values As New List(Of T)
 
-            If propertyInfo IsNot Nothing Then
-                Dim filteredData = gpxRecords.
-                Where(Function(record)
-                          Dim propertyValue = propertyInfo.GetValue(record)
-                          If propertyValue IsNot Nothing Then
-                              If GetType(T) = GetType(TimeSpan) Then
-                                  Return DirectCast(propertyValue, TimeSpan).TotalHours <> 0 ' Přímé porovnání TotalHours s 0
-                              ElseIf GetType(T) = GetType(Double) Then
-                                  Return CDbl(propertyValue) <> 0
-                              ElseIf GetType(T) = GetType(Integer) Then
-                                  Return CInt(propertyValue) <> 0
-                              ElseIf GetType(T) = GetType(Long) Then
-                                  Return CLng(propertyValue) <> 0
-                              ElseIf GetType(T) = GetType(Single) Then
-                                  Return CSng(propertyValue) <> 0
-                              Else
-                                  Throw New ArgumentException($"Typ T musí být numerický (Double, Integer, Long, Single).")
-                              End If
-                          Else
-                              Return False ' Ošetření pro null hodnoty
-                          End If
-                      End Function).
-                Select(Function(record) New With {.X = record.LayerStart, .Y = DirectCast(propertyInfo.GetValue(record), T)})
-
-                If filteredData.Any() Then
-                    Return New Tuple(Of DateTime(), T())(filteredData.Select(Function(item) item.X).ToArray(), filteredData.Select(Function(item) item.Y).ToArray())
-                Else
-                    Debug.WriteLine($"Po filtrování pro vlastnost '{propertyName}' nezůstala žádná data. Graf nebude zobrazen.")
-                    Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
+            For Each rec In gpxRecords
+                If rec?.TrailStart IsNot Nothing Then
+                    timestamps.Add(rec.TrailStart.Time)
+                    values.Add(selector(rec))
                 End If
-            Else
-                Throw New ArgumentException($"Vlastnost '{propertyName}' neexistuje ve třídě GPXRecord.")
-            End If
+            Next
+
+            Return Tuple.Create(timestamps.ToArray(), values.ToArray())
         Else
             Debug.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
             Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
         End If
     End Function
+
+
+
+    'Public Function GetGraphDataOld(Of T)(gpxRecords As List(Of GPXRecord), propertyName As String) As Tuple(Of DateTime(), T())
+    '    If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
+    '        Dim propertyInfo As PropertyInfo = GetType(GPXRecord).GetProperty(propertyName)
+
+    '        If propertyInfo IsNot Nothing Then
+    '            Dim filteredData = gpxRecords.
+    '            Where(Function(record)
+    '                      Dim propertyValue = propertyInfo.GetValue(record)
+    '                      If propertyValue IsNot Nothing Then
+    '                          If GetType(T) = GetType(TimeSpan) Then
+    '                              Return DirectCast(propertyValue, TimeSpan).TotalHours <> 0 ' Přímé porovnání TotalHours s 0
+    '                          ElseIf GetType(T) = GetType(Double) Then
+    '                              Return CDbl(propertyValue) <> 0
+    '                          ElseIf GetType(T) = GetType(Integer) Then
+    '                              Return CInt(propertyValue) <> 0
+    '                          ElseIf GetType(T) = GetType(Long) Then
+    '                              Return CLng(propertyValue) <> 0
+    '                          ElseIf GetType(T) = GetType(Single) Then
+    '                              Return CSng(propertyValue) <> 0
+    '                          Else
+    '                              Throw New ArgumentException($"Typ T musí být numerický (Double, Integer, Long, Single).")
+    '                          End If
+    '                      Else
+    '                          Return False ' Ošetření pro null hodnoty
+    '                      End If
+    '                  End Function).
+    '            Select(Function(record) New With {.X = record.runnerStart, .Y = DirectCast(propertyInfo.GetValue(record), T)})
+
+    '            If filteredData.Any() Then
+    '                Return New Tuple(Of DateTime(), T())(filteredData.Select(Function(item.time) item.time.X).ToArray(), filteredData.Select(Function(item.time) item.time.Y).ToArray())
+    '            Else
+    '                Debug.WriteLine($"Po filtrování pro vlastnost '{propertyName}' nezůstala žádná data. Graf nebude zobrazen.")
+    '                Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
+    '            End If
+    '        Else
+    '            Throw New ArgumentException($"Vlastnost '{propertyName}' neexistuje ve třídě GPXRecord.")
+    '        End If
+    '    Else
+    '        Debug.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
+    '        Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
+    '    End If
+    'End Function
 
     Public Sub CloseGrafs()
         ' Zavření grafů
@@ -788,7 +841,7 @@ Public Class Form1
         Dim message, title, defaultValue As String
         Dim myValue As Object
         ' Set prompt.
-        message = My.Resources.Resource1.Tooltip_mnuMergingTracks '"Set the maximum time difference (i.e. age of trails in hours) to identify related GPX tracks for automatic merging i.e. tracks of a trail-layer (runner) and the dog. A value of 0 disables automatic merging."
+        message = My.Resources.Resource1.Tooltip_mnuMergingTracks '"Set the maximum time difference (i.e. age of trails in hours) to identify related GPX tracks for automatic merging i.e. tracks of a Runner (runner) and the dog. A value of 0 disables automatic merging."
         ' Set title.
         title = My.Resources.Resource1.mBoxMergingTracksText
         defaultValue = My.Settings.maxAge   ' Set default value.
@@ -819,10 +872,6 @@ Public Class Form1
         My.Settings.Save()
     End Sub
 
-    Private Sub mnuAskForVideo_CheckedChanged(sender As Object, e As EventArgs) Handles mnuAskForVideo.CheckedChanged
-        My.Settings.AskForVideo = mnuAskForVideo.Checked
-        My.Settings.Save()
-    End Sub
 
     Private Sub mnuSetFFmpegPath_Click(sender As Object, e As EventArgs) Handles mnuSetFFmpegPath.Click
 
@@ -843,7 +892,7 @@ Public Class Form1
 
     Private Sub cmbTimeInterval_SelectedIndexChanged(sender As Object, e As EventArgs) Handles cmbTimeInterval.SelectedIndexChanged
 
-        Dim today As Date = Date.Today
+        Dim today = Date.Today
         Select Case cmbTimeInterval.SelectedIndex
             Case 0
                 dtpStartDate.Value = today.AddDays(-6)
@@ -863,6 +912,109 @@ Public Class Form1
             Case Else
                 ' Necháme hodnoty, jak jsou
         End Select
+    End Sub
+
+    Private Async Sub btnCreateVideos_Click(sender As Object, e As EventArgs) Handles btnCreateVideos.Click
+
+        If lvGpxFiles.CheckedItems.Count > 2 Then
+            If mboxq($"Are you sure you want to create videos from {lvGpxFiles.CheckedItems.Count} gpx records now? It can take a long time and there's no chance to stop it 🤣!", "Are you sure?") = DialogResult.No Then
+                Return
+            End If
+        End If
+
+        Dim selectedFiles As New List(Of GPXRecord)
+        For Each item As ListViewItem In lvGpxFiles.CheckedItems
+            ' Předpoklad: Tag obsahuje plnou cestu k souboru
+            Dim _gpxRecord As GPXRecord = TryCast(item.Tag, GPXRecord) 'není to zbytečný?
+            If Not _gpxRecord Is Nothing Then
+                selectedFiles.Add(_gpxRecord)
+            End If
+        Next
+
+        ' Můžeš je teď předat funkci pro export videa
+
+        If selectedFiles.Count = 0 Then
+            mboxEx("First, select the footage from which to create the video!")
+            Return
+        End If
+
+        ' Pro test: vypiš vybrané cesty
+        For Each record In selectedFiles
+            Debug.WriteLine(record)
+
+            Try
+                Await CreateVideoFromGPXRecord(record)
+            Catch ex As Exception
+                mboxEx($"Creating a video from a file {record.FileName} failed." & vbCrLf & $"Message: {ex}")
+            End Try
+        Next
+    End Sub
+
+    Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord) As Task(Of Boolean)
+
+        ' Create a video from the dog track and save it in the video directory
+        ' Zjisti název souboru bez přípony
+        Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.FileName)
+        ' Sestav cestu k novému adresáři
+        If My.Settings.VideoDirectory = "" Then My.Settings.VideoDirectory = My.Settings.Directory
+        Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
+        ' Pokud adresář neexistuje, vytvoř ho
+        If Not directory.Exists Then directory.Create()
+        Dim FFmpegPath As String = FindAnSaveFfmpegPath()
+        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData._windDirection, _gpxRecord.WeatherData._windSpeed)
+        AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
+
+        Dim waitForm As New frmPleaseWait()
+        waitForm.Show()
+
+        ' Spustíme na pozadí, aby nezamrzlo UI
+        Await Task.Run(Async Function()
+                           ' Spustíme tvůj dlouhý proces
+                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.LocalisedReports)
+
+                           ' Po dokončení se vrať na UI thread a proveď akce
+                           waitForm.Invoke(Sub()
+                                               waitForm.Close()
+
+                                               If success Then
+                                                   Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.webm")
+                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "TrailsOnMap.png")
+                                                   Dim form As New frmVideoDone(videopath, bgPNGPath)
+                                                   form.ShowDialog()
+                                                   form.Dispose()
+                                               Else
+                                                   MessageBox.Show("Video creation failed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                               End If
+                                           End Sub)
+                       End Function)
+
+        Return False
+    End Function
+
+
+
+    Private Sub lvGpxFiles_ItemChecked(sender As Object, e As ItemCheckedEventArgs) Handles lvGpxFiles.ItemChecked
+        Dim _gpxRecord As GPXRecord = TryCast(e.Item.Tag, GPXRecord)
+        If _gpxRecord.DogStart Is Nothing OrElse _gpxRecord.DogStart.Time = Date.MinValue Then 'Pokud není datum začátku trasy psa, nejde označit
+
+            If e.Item.Checked Then
+                mboxEx("This gpx footage does not contain the dog's movement, there is no point in creating a video from it")
+                e.Item.Checked = False
+            End If
+            e.Item.Selected = False
+
+        End If
+    End Sub
+
+    Private Sub lvGpxFiles_ItemSelectionChanged(sender As Object, e As ListViewItemSelectionChangedEventArgs) Handles lvGpxFiles.ItemSelectionChanged
+        e.Item.Selected = False 'aby se to nepletlo s checked
+    End Sub
+
+    Private Sub TabControl1_Selecting(sender As Object, e As TabControlCancelEventArgs) Handles TabControl1.Selecting
+        If e.TabPage Is TabVideoExport AndAlso lvGpxFiles.Items.Count = 0 Then
+            mboxEx("This tab is not ready yet." & vbCrLf & "First you need to load the gpx files - click on the salmon button!")
+            e.Cancel = True
+        End If
     End Sub
 
 

@@ -1,6 +1,7 @@
 ﻿Imports System.ComponentModel
 Imports System.Reflection
 Imports System.Threading
+Imports TrackVideoExporter
 
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Form1
@@ -25,13 +26,10 @@ Partial Class Form1
     Private Sub InitializeComponent()
         components = New Container()
         Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(Form1))
-        dtpStartDate = New DateTimePicker()
-        dtpEndDate = New DateTimePicker()
-        btnReadGpxFiles = New Button()
-        btnCharts = New Button()
         ToolTip1 = New ToolTip(components)
         StatusStrip1 = New StatusStrip()
         StatusLabel1 = New ToolStripStatusLabel()
+        btnCreateVideos = New Button()
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
         mnuSelect_directory_gpx_files = New ToolStripMenuItem()
@@ -43,7 +41,6 @@ Partial Class Form1
         mnuTrimGPSNoise = New ToolStripMenuItem()
         mnuMergingTracks = New ToolStripMenuItem()
         mnuProcessProcessed = New ToolStripMenuItem()
-        mnuAskForVideo = New ToolStripMenuItem()
         mnuLanguage = New ToolStripMenuItem()
         mnuEnglish = New ToolStripMenuItem()
         mnuGerman = New ToolStripMenuItem()
@@ -57,45 +54,36 @@ Partial Class Form1
         mnuSetFFmpegPath = New ToolStripMenuItem()
         FactoryResetToolStripMenuItem = New ToolStripMenuItem()
         PictureBox1 = New PictureBox()
+        lblScentArtickle = New Label()
+        rtbWarnings = New RichTextBox()
+        TabControl1 = New TabControl()
+        TabStats = New TabPage()
+        rtbOutput = New RichTextBox()
         gbPeriod = New GroupBox()
         cmbTimeInterval = New ComboBox()
-        lblScentArtickle = New Label()
-        rtbOutput = New RichTextBox()
-        rtbWarnings = New RichTextBox()
+        dtpEndDate = New DateTimePicker()
+        dtpStartDate = New DateTimePicker()
+        btnCharts = New Button()
+        btnReadGpxFiles = New Button()
+        PictureBox2 = New PictureBox()
+        TabVideoExport = New TabPage()
+        lvGpxFiles = New ListView()
+        clmFileName = New ColumnHeader()
+        clmDate = New ColumnHeader()
+        clmLength = New ColumnHeader()
+        clmAge = New ColumnHeader()
+        clmTrkCount = New ColumnHeader()
+        PictureBox3 = New PictureBox()
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
         CType(PictureBox1, ISupportInitialize).BeginInit()
+        TabControl1.SuspendLayout()
+        TabStats.SuspendLayout()
         gbPeriod.SuspendLayout()
+        CType(PictureBox2, ISupportInitialize).BeginInit()
+        TabVideoExport.SuspendLayout()
+        CType(PictureBox3, ISupportInitialize).BeginInit()
         SuspendLayout()
-        ' 
-        ' dtpStartDate
-        ' 
-        resources.ApplyResources(dtpStartDate, "dtpStartDate")
-        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
-        dtpStartDate.Format = DateTimePickerFormat.Custom
-        dtpStartDate.Name = "dtpStartDate"
-        ' 
-        ' dtpEndDate
-        ' 
-        resources.ApplyResources(dtpEndDate, "dtpEndDate")
-        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        dtpEndDate.Format = DateTimePickerFormat.Custom
-        dtpEndDate.Name = "dtpEndDate"
-        ' 
-        ' btnReadGpxFiles
-        ' 
-        btnReadGpxFiles.BackColor = Color.Salmon
-        resources.ApplyResources(btnReadGpxFiles, "btnReadGpxFiles")
-        btnReadGpxFiles.Name = "btnReadGpxFiles"
-        btnReadGpxFiles.UseVisualStyleBackColor = False
-        ' 
-        ' btnCharts
-        ' 
-        btnCharts.BackColor = Color.DarkGoldenrod
-        resources.ApplyResources(btnCharts, "btnCharts")
-        btnCharts.Name = "btnCharts"
-        btnCharts.UseVisualStyleBackColor = False
         ' 
         ' ToolTip1
         ' 
@@ -114,6 +102,14 @@ Partial Class Form1
         ' 
         StatusLabel1.Name = "StatusLabel1"
         resources.ApplyResources(StatusLabel1, "StatusLabel1")
+        ' 
+        ' btnCreateVideos
+        ' 
+        resources.ApplyResources(btnCreateVideos, "btnCreateVideos")
+        btnCreateVideos.BackColor = Color.Salmon
+        btnCreateVideos.Name = "btnCreateVideos"
+        ToolTip1.SetToolTip(btnCreateVideos, resources.GetString("btnCreateVideos.ToolTip"))
+        btnCreateVideos.UseVisualStyleBackColor = False
         ' 
         ' MenuStrip1
         ' 
@@ -151,7 +147,7 @@ Partial Class Form1
         ' 
         ' mnuSettings
         ' 
-        mnuSettings.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuMergingTracks, mnuProcessProcessed, mnuAskForVideo})
+        mnuSettings.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuMergingTracks, mnuProcessProcessed})
         resources.ApplyResources(mnuSettings, "mnuSettings")
         mnuSettings.Name = "mnuSettings"
         ' 
@@ -177,14 +173,6 @@ Partial Class Form1
         mnuProcessProcessed.CheckOnClick = True
         mnuProcessProcessed.Name = "mnuProcessProcessed"
         resources.ApplyResources(mnuProcessProcessed, "mnuProcessProcessed")
-        ' 
-        ' mnuAskForVideo
-        ' 
-        mnuAskForVideo.Checked = True
-        mnuAskForVideo.CheckOnClick = True
-        mnuAskForVideo.CheckState = CheckState.Checked
-        mnuAskForVideo.Name = "mnuAskForVideo"
-        resources.ApplyResources(mnuAskForVideo, "mnuAskForVideo")
         ' 
         ' mnuLanguage
         ' 
@@ -260,6 +248,43 @@ Partial Class Form1
         PictureBox1.Name = "PictureBox1"
         PictureBox1.TabStop = False
         ' 
+        ' lblScentArtickle
+        ' 
+        resources.ApplyResources(lblScentArtickle, "lblScentArtickle")
+        lblScentArtickle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        lblScentArtickle.Name = "lblScentArtickle"
+        ' 
+        ' rtbWarnings
+        ' 
+        rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        resources.ApplyResources(rtbWarnings, "rtbWarnings")
+        rtbWarnings.Name = "rtbWarnings"
+        ' 
+        ' TabControl1
+        ' 
+        TabControl1.Controls.Add(TabStats)
+        TabControl1.Controls.Add(TabVideoExport)
+        resources.ApplyResources(TabControl1, "TabControl1")
+        TabControl1.Name = "TabControl1"
+        TabControl1.SelectedIndex = 0
+        ' 
+        ' TabStats
+        ' 
+        TabStats.Controls.Add(rtbOutput)
+        TabStats.Controls.Add(gbPeriod)
+        TabStats.Controls.Add(btnCharts)
+        TabStats.Controls.Add(btnReadGpxFiles)
+        TabStats.Controls.Add(PictureBox2)
+        resources.ApplyResources(TabStats, "TabStats")
+        TabStats.Name = "TabStats"
+        TabStats.UseVisualStyleBackColor = True
+        ' 
+        ' rtbOutput
+        ' 
+        resources.ApplyResources(rtbOutput, "rtbOutput")
+        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        rtbOutput.Name = "rtbOutput"
+        ' 
         ' gbPeriod
         ' 
         gbPeriod.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
@@ -279,35 +304,94 @@ Partial Class Form1
         resources.ApplyResources(cmbTimeInterval, "cmbTimeInterval")
         cmbTimeInterval.Name = "cmbTimeInterval"
         ' 
-        ' lblScentArtickle
+        ' dtpEndDate
         ' 
-        resources.ApplyResources(lblScentArtickle, "lblScentArtickle")
-        lblScentArtickle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        lblScentArtickle.Name = "lblScentArtickle"
+        resources.ApplyResources(dtpEndDate, "dtpEndDate")
+        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpEndDate.Format = DateTimePickerFormat.Custom
+        dtpEndDate.Name = "dtpEndDate"
         ' 
-        ' rtbOutput
+        ' dtpStartDate
         ' 
-        resources.ApplyResources(rtbOutput, "rtbOutput")
-        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        rtbOutput.Name = "rtbOutput"
+        resources.ApplyResources(dtpStartDate, "dtpStartDate")
+        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
+        dtpStartDate.Format = DateTimePickerFormat.Custom
+        dtpStartDate.Name = "dtpStartDate"
         ' 
-        ' rtbWarnings
+        ' btnCharts
         ' 
-        rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        resources.ApplyResources(rtbWarnings, "rtbWarnings")
-        rtbWarnings.Name = "rtbWarnings"
+        btnCharts.BackColor = Color.DarkGoldenrod
+        resources.ApplyResources(btnCharts, "btnCharts")
+        btnCharts.Name = "btnCharts"
+        btnCharts.UseVisualStyleBackColor = False
+        ' 
+        ' btnReadGpxFiles
+        ' 
+        btnReadGpxFiles.BackColor = Color.Salmon
+        resources.ApplyResources(btnReadGpxFiles, "btnReadGpxFiles")
+        btnReadGpxFiles.Name = "btnReadGpxFiles"
+        btnReadGpxFiles.UseVisualStyleBackColor = False
+        ' 
+        ' PictureBox2
+        ' 
+        resources.ApplyResources(PictureBox2, "PictureBox2")
+        PictureBox2.Name = "PictureBox2"
+        PictureBox2.TabStop = False
+        ' 
+        ' TabVideoExport
+        ' 
+        TabVideoExport.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabVideoExport.Controls.Add(btnCreateVideos)
+        TabVideoExport.Controls.Add(lvGpxFiles)
+        TabVideoExport.Controls.Add(PictureBox3)
+        resources.ApplyResources(TabVideoExport, "TabVideoExport")
+        TabVideoExport.Name = "TabVideoExport"
+        ' 
+        ' lvGpxFiles
+        ' 
+        resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
+        lvGpxFiles.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        lvGpxFiles.CheckBoxes = True
+        lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
+        lvGpxFiles.Name = "lvGpxFiles"
+        lvGpxFiles.UseCompatibleStateImageBehavior = False
+        lvGpxFiles.View = View.Details
+        ' 
+        ' clmFileName
+        ' 
+        resources.ApplyResources(clmFileName, "clmFileName")
+        ' 
+        ' clmDate
+        ' 
+        resources.ApplyResources(clmDate, "clmDate")
+        ' 
+        ' clmLength
+        ' 
+        resources.ApplyResources(clmLength, "clmLength")
+        ' 
+        ' clmAge
+        ' 
+        resources.ApplyResources(clmAge, "clmAge")
+        ' 
+        ' clmTrkCount
+        ' 
+        resources.ApplyResources(clmTrkCount, "clmTrkCount")
+        ' 
+        ' PictureBox3
+        ' 
+        resources.ApplyResources(PictureBox3, "PictureBox3")
+        PictureBox3.Name = "PictureBox3"
+        PictureBox3.TabStop = False
         ' 
         ' Form1
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
+        Controls.Add(TabControl1)
         Controls.Add(rtbWarnings)
-        Controls.Add(rtbOutput)
         Controls.Add(lblScentArtickle)
-        Controls.Add(gbPeriod)
         Controls.Add(StatusStrip1)
-        Controls.Add(btnCharts)
-        Controls.Add(btnReadGpxFiles)
         Controls.Add(MenuStrip1)
         Controls.Add(PictureBox1)
         MainMenuStrip = MenuStrip1
@@ -317,20 +401,26 @@ Partial Class Form1
         MenuStrip1.ResumeLayout(False)
         MenuStrip1.PerformLayout()
         CType(PictureBox1, ISupportInitialize).EndInit()
+        TabControl1.ResumeLayout(False)
+        TabStats.ResumeLayout(False)
         gbPeriod.ResumeLayout(False)
+        CType(PictureBox2, ISupportInitialize).EndInit()
+        TabVideoExport.ResumeLayout(False)
+        TabVideoExport.PerformLayout()
+        CType(PictureBox3, ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 
     End Sub
-    Friend WithEvents dtpStartDate As DateTimePicker
-    Friend WithEvents dtpEndDate As DateTimePicker
-    Friend WithEvents btnReadGpxFiles As Button
 
 
     Public Sub New()
         ' Toto volání je vyžadované návrhářem.
         InitializeComponent()
         ' Přidejte libovolnou inicializaci po volání InitializeComponent().
+
+        'nastavuje logiku pro zobrazení názvu trasy v seznamu
+        TrackTypeResolvers.LabelResolver = AddressOf ResolveLabel
     End Sub
 
 
@@ -340,7 +430,6 @@ Partial Class Form1
 
         mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
-        mnuAskForVideo.Checked = My.Settings.AskForVideo
 
         'If My.Settings.Directory = "" Then
         '    My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
@@ -380,7 +469,7 @@ Partial Class Form1
         'verze se nastaví v AssamblyInfo.vb nebo v My Project -> Aplikace -> Informace o sestavení!!!!!!!!!!!!!!!!
         Me.Text = thisAssemName.Name & "   " & thisAssemName.Version.ToString
 
-
+        Me.btnReadGpxFiles.Focus()
     End Sub
 
     Private Sub ReadHelp()
@@ -400,11 +489,6 @@ Partial Class Form1
 
         End Select
     End Sub
-
-
-
-
-    Friend WithEvents btnCharts As Button
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents mnuFile As ToolStripMenuItem
@@ -422,10 +506,8 @@ Partial Class Form1
     Friend WithEvents mnuGerman As ToolStripMenuItem
     Friend WithEvents mnuRussian As ToolStripMenuItem
     Friend WithEvents mnuPolish As ToolStripMenuItem
-    Friend WithEvents gbPeriod As GroupBox
     Friend WithEvents lblScentArtickle As Label
     Friend WithEvents mnuTrimGPSNoise As ToolStripMenuItem
-    Friend WithEvents rtbOutput As RichTextBox
     Friend WithEvents mnuExportAs As ToolStripMenuItem
     Friend WithEvents mnuMergingTracks As ToolStripMenuItem
     Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
@@ -433,10 +515,27 @@ Partial Class Form1
     Friend WithEvents rtbWarnings As RichTextBox
     Friend WithEvents mnuDogName As ToolStripMenuItem
     Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
-    Friend WithEvents mnuAskForVideo As ToolStripMenuItem
     Friend WithEvents mnuSelectADirectoryToSaveVideo As ToolStripMenuItem
     Friend WithEvents mnuSetFFmpegPath As ToolStripMenuItem
     Friend WithEvents mnuExit As ToolStripMenuItem
+    Friend WithEvents TabControl1 As TabControl
+    Friend WithEvents TabStats As TabPage
+    Friend WithEvents TabVideoExport As TabPage
+    Friend WithEvents rtbOutput As RichTextBox
+    Friend WithEvents gbPeriod As GroupBox
     Friend WithEvents cmbTimeInterval As ComboBox
+    Friend WithEvents dtpEndDate As DateTimePicker
+    Friend WithEvents dtpStartDate As DateTimePicker
+    Friend WithEvents btnCharts As Button
+    Friend WithEvents btnReadGpxFiles As Button
+    Friend WithEvents PictureBox2 As PictureBox
+    Friend WithEvents lvGpxFiles As ListView
+    Friend WithEvents PictureBox3 As PictureBox
+    Friend WithEvents clmFileName As ColumnHeader
+    Friend WithEvents clmDate As ColumnHeader
+    Friend WithEvents clmLength As ColumnHeader
+    Friend WithEvents clmTrkCount As ColumnHeader
+    Private WithEvents btnCreateVideos As Button
+    Friend WithEvents clmAge As ColumnHeader
 End Class
 

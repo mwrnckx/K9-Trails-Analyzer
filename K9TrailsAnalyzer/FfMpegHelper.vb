@@ -1,5 +1,5 @@
 ﻿Imports System.Windows.Forms
-Imports GPXTrailAnalyzer.My
+'Imports GPXTrailAnalyzer.My
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
 

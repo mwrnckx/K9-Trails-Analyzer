@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Y-AxisLabelTotalLength" xml:space="preserve">
+    <value>Načucháno kilometrů</value>
+  </data>
+  <data name="Y-AxisLabelLength" xml:space="preserve">
+    <value>Délka jednotlivých trailů (km)</value>
+  </data>
+  <data name="Y-AxisLabelAge" xml:space="preserve">
+    <value>Stáří trailů (hodin)</value>
+  </data>
+  <data name="Y-AxisLabelSpeed" xml:space="preserve">
+    <value>Rychlost psa na trailech (km/h)</value>
+  </data>
+  <data name="X_AxisLabel" xml:space="preserve">
+    <value>Datum  </value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Načtení souborů gpx ze zvoleného adresáře selhalo</value>
+  </data>
+  <data name="mBoxErrorCreatingCSV" xml:space="preserve">
+    <value>Chyba při tvorbě CSV souboru</value>
+  </data>
+  <data name="mBoxNo gpx file was found" xml:space="preserve">
+    <value>Nebyl nalezen žádný soubor gpx</value>
+  </data>
+  <data name="outProcessed_period_from" xml:space="preserve">
+    <value>Zpracováno období: od </value>
+  </data>
+  <data name="outDo" xml:space="preserve">
+    <value>  do </value>
+  </data>
+  <data name="outAll_gpx_files_from_directory" xml:space="preserve">
+    <value>Zpracovány všechny gpx soubory z adresáře:  </value>
+  </data>
+  <data name="outTotalNumberOfGPXFiles" xml:space="preserve">
+    <value>Celkový počet  stop/trailů</value>
+  </data>
+  <data name="outTotalLength" xml:space="preserve">
+    <value>Celková délka trailů v daném období</value>
+  </data>
+  <data name="outLength" xml:space="preserve">
+    <value>Délka</value>
+  </data>
+  <data name="outgpxFileName" xml:space="preserve">
+    <value>Jméno souboru gpx</value>
+  </data>
+  <data name="outAge" xml:space="preserve">
+    <value>Stáří</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>předmět</value>
+  </data>
+  <data name="outSpeed" xml:space="preserve">
+    <value>Rychlost psa</value>
+  </data>
+  <data name="outAverageDistance" xml:space="preserve">
+    <value>Průměrná délka trailů</value>
+  </data>
+  <data name="outAverageAge" xml:space="preserve">
+    <value>Průměrné stáří trailů</value>
+  </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Průměrná rychlost psa</value>
+  </data>
+  <data name="logBackupOfFiles" xml:space="preserve">
+    <value>Soubory gpx byly úspěšně zálohovány do: </value>
+  </data>
+  <data name="Tooltip_mnuDirectory" xml:space="preserve">
+    <value>Najdi adresář, ve kterém jsou gpx soubory které se mají zpracovat</value>
+  </data>
+  <data name="Tooltip_mnuBackupDirectory" xml:space="preserve">
+    <value>Adresář pro zálohování gpx souborů před jejich zpracováním</value>
+  </data>
+  <data name="mBoxMissingData" xml:space="preserve">
+    <value>Chcete-li uložit data načtená ze souborů gpx, musíte soubory gpx nejprve načíst. Použijte tlačítko na formuláři.</value>
+  </data>
+  <data name="lblFrom" xml:space="preserve">
+    <value>Od: </value>
+  </data>
+  <data name="lblTo" xml:space="preserve">
+    <value>Do: </value>
+  </data>
+  <data name="Tooltip_ExportAs" xml:space="preserve">
+    <value>Ulož data jako soubor (rtf, txt, csv)</value>
+  </data>
+  <data name="outDescription" xml:space="preserve">
+    <value>Poznámky</value>
+  </data>
+  <data name="Tooltip_dtpStart" xml:space="preserve">
+    <value>Začátek období, ve kterém mají být stopy zpracovány.</value>
+  </data>
+  <data name="Tooltip_mnuPrependDate" xml:space="preserve">
+    <value>Přidávat datum k názvům gpx souborů při jejich zpracování. Užitečné pro třídění souborů atd.</value>
+  </data>
+  <data name="Tooltip_dtpEnd" xml:space="preserve">
+    <value>Konec období, ve kterém mají být stopy zpracovány.</value>
+  </data>
+  <data name="Tooltip_mnuTrim" xml:space="preserve">
+    <value>Na začátku trasy, než se vydáte na cestu, a na konci, než vypnete záznam, GPS přístroj často zaznamenává nepřesné nebo chybné údaje. Pokud je toto tlačítko zaškrtnuté, program se pokusí tyto nepřesnosti automaticky odstranit.</value>
+  </data>
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Nastavte maximální časový rozdíl (v hodinách) mezi dvěma záznamy tras, které mají být považovány za související  a mají se sloučit do jednoho gpx souboru  jako trasa kladeče a trasa psa. Hodnota tedy udává maximální stáří trailů. Hodnota 0 zcela vypne slučování.</value>
+  </data>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Podmínky pro slučování  záznamů tras</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>Spojit GPX soubory?</value>
+  </data>
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Rozhodněte, zda tyto dva soubory patří k sobě (jako trasa kladeče, trasa psa, případně křížení)</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>Spojením získáte jeden gpx soubor obsahující sobě odpovídající trasy</value>
+  </data>
+  <data name="lblIsThisRunnerQ" xml:space="preserve">
+    <value>První soubor</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Druhý soubor</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Zapamatovat volbu pro tuto dvojici</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>U dalších dvojic se už neptat a rovnou spojit (opatrně!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>U dalších dvojic se už neptat a nic nespojovat</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>U příští dvojice se zase zeptat</value>
+  </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Načucháno měsíčně (km)</value>
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Cíl tréninku</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>Trail</value>
+  </data>
+  <data name="txtperformanceLabel" xml:space="preserve">
+    <value>Výkon týmu</value>
+  </data>
+  <data name="txtRunner" xml:space="preserve">
+    <value>kladeč</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Upravte komentáře k tréninku. Tyto komentáře budou uloženy v souboru GPX a zobrazeny v aplikacích, jako jsou gpxsee.org a v overlay videu. Pokud píšete komentáře ve své aplikaci GPS, přidejte 'g:' před popisem cíle, 't:' před popisem trailu a 'd:' před popisem práce psa. Pokud si přejete, můžete napsat anglický překlad ve druhém řádku.</value>
+  </data>
+  <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
+    <value>Záložní adresář je stejný jako hlavní adresář - to nelze!</value>
+  </data>
+  <data name="txtUnknown" xml:space="preserve">
+    <value>Neznámý</value>
+  </data>
+  <data name="CrossTrail_IntroText" xml:space="preserve">
+    <value>Soubor GPX {0} obsahuje {1} trasy(u). 
+Pro další zpracování je třeba rozhodnout, která trasa odpovídá
+-&gt; trase kladeče, 
+-&gt; záznamu pohybu psa
+-&gt; křížení.
+Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče, druhá je trasa psa. Ale pokud je trasa jen jedna nebo jich je více než dvě musíte to rozhodnout vy. Aplikace se to pokusí odhadnout, ale nemusí se vždy trefit 😉!</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Trasa psa</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>Trasa kladeče</value>
+  </data>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Křížení</value>
+  </data>
+</root>

@@ -5,7 +5,7 @@
     <time>2025-06-23T09:33:16.796Z</time>
   </metadata>
   <trk>
-    <type>CrossTrack</type>
+    <type>CrossTrail</type>
      <name>2025-06-23 křížení</name>
     <extensions>
       <line xmlns="http://www.topografix.com/GPX/gpx_style/0/2">
@@ -825,7 +825,7 @@
   </trk>
   <trk>
     <desc>g: cross track</desc>
-    <type>TrailLayer</type>
+    <type>RunnerTrail</type>
     <name>2025-06-23 Statek Samo</name>
     <extensions>
       <line xmlns="http://www.topografix.com/GPX/gpx_style/0/2">
@@ -1404,7 +1404,7 @@
     </trkseg>
   </trk>
   <trk>
-    <type>Dog</type>
+    <type>DogTrack</type>
     <trkseg>
       <trkpt lat="50.14014518" lon="14.41527444">
         <ele>264.77</ele>

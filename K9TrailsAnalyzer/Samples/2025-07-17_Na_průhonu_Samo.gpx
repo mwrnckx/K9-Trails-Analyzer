@@ -6,7 +6,7 @@
     <time>2025-07-17T09:07:00.401Z</time>
   </metadata>
   <trk>
-    <type>TrailLayer</type>
+    <type>RunnerTrail</type>
     <name>2025-07-17 Na průhonu Samo</name>
     <desc><![CDATA[<span style='color:darkgreen; font-weight:bold;'>📍 urban, backtracking at the start</span><br><span style='color:blue; font-weight:bold;'>👣 0,4 km, 1,0 h, Double knowing, urban</span><br><span style='color:red; font-weight:bold;'>🐕 Getting disturbed by dogs, otherwise very good work, all scent artickles found</span><br><span style='color:maroon; font-weight:bold;'>🌡17,4 °C  💨 2,8 m/s NNW 💧71 %   💧0 mm/h ⛅100 %</span>]]></desc>
     <extensions>
@@ -1056,7 +1056,7 @@
     </trkseg>
   </trk>
   <trk>
-    <type>Dog</type>
+    <type>DogTrack</type>
     <trkseg>
       <trkpt lat="50.1405217" lon="14.4320033">
         <ele>291.66</ele>

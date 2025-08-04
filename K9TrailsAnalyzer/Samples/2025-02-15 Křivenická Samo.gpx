@@ -3,7 +3,7 @@
   <trk>
     <name><![CDATA[2025-02-15 Křivenická Samo]]></name>
     <desc>📍 contaminated snow 👣 1.2 h 🌡-3,3 °C  💨 1 m/s WSW 💧86 %   💧0 mm/h ⛅83 %</desc>
-    <type>TrailLayer</type>
+    <type>RunnerTrail</type>
     <type><![CDATA[unknown]]></type>
     <extensions>
       <topografix:color>c0c0c0</topografix:color>

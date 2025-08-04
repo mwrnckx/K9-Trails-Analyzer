@@ -1,0 +1,290 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Y-AxisLabelTotalLength" xml:space="preserve">
+    <value>Erschnüffelte Kilometer</value>
+  </data>
+  <data name="Y-AxisLabelLength" xml:space="preserve">
+    <value>Länge der einzelnen Spuren (km)</value>
+  </data>
+  <data name="Y-AxisLabelAge" xml:space="preserve">
+    <value>Alter der Spuren (Stunden)</value>
+  </data>
+  <data name="Y-AxisLabelSpeed" xml:space="preserve">
+    <value>Tempo des Hundes (km/h)</value>
+  </data>
+  <data name="X_AxisLabel" xml:space="preserve">
+    <value>Datum  </value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Das Laden von GPX -Dateien aus dem ausgewählten Verzeichnis fehlgeschlagen</value>
+  </data>
+  <data name="mBoxErrorCreatingCSV" xml:space="preserve">
+    <value>Fehler beim Erstellen von CSV</value>
+  </data>
+  <data name="mBoxNo gpx file was found" xml:space="preserve">
+    <value>Es wurde keine gpx-Datei gefunden</value>
+  </data>
+  <data name="outProcessed_period_from" xml:space="preserve">
+    <value>Bearbeiteter Zeitraum: von</value>
+  </data>
+  <data name="outDo" xml:space="preserve">
+    <value>  zu</value>
+  </data>
+  <data name="outAll_gpx_files_from_directory" xml:space="preserve">
+    <value>Verarbeitet alle gpx-Dateien aus dem Verzeichnis: </value>
+  </data>
+  <data name="outTotalNumberOfGPXFiles" xml:space="preserve">
+    <value>Gesamtzahl der Spuren</value>
+  </data>
+  <data name="outTotalLength" xml:space="preserve">
+    <value>Gesamtlänge aller Spuren</value>
+  </data>
+  <data name="outLength" xml:space="preserve">
+    <value>Länge</value>
+  </data>
+  <data name="outgpxFileName" xml:space="preserve">
+    <value>GPX-Dateiname</value>
+  </data>
+  <data name="outAge" xml:space="preserve">
+    <value>Alter</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Artikel</value>
+  </data>
+  <data name="outSpeed" xml:space="preserve">
+    <value>Tempo des Hundes</value>
+  </data>
+  <data name="outAverageDistance" xml:space="preserve">
+    <value>Durchschnittliche Länge der Spuren</value>
+  </data>
+  <data name="outAverageAge" xml:space="preserve">
+    <value>Das durchschnittliche Alter der Spuren</value>
+  </data>
+  <data name="outAverageSpeed" xml:space="preserve">
+    <value>Durchschnittliche Tempo des Hundes</value>
+  </data>
+  <data name="logBackupOfFiles" xml:space="preserve">
+    <value>Die gpx-Dateien wurden erfolgreich in dem Verzeichnis gesichert:</value>
+  </data>
+  <data name="Tooltip_mnuDirectory" xml:space="preserve">
+    <value>Suchen Sie das Verzeichnis, das die zu bearbeitenden gpx-Dateien enthält</value>
+  </data>
+  <data name="Tooltip_mnuBackupDirectory" xml:space="preserve">
+    <value>Verzeichnis zum Sichern von gpx-Dateien vor der Verarbeitung</value>
+  </data>
+  <data name="mBoxMissingData" xml:space="preserve">
+    <value>In order to save data read from gpx files, you must first load the gpx files. Use the button on the form.</value>
+  </data>
+  <data name="lblFrom" xml:space="preserve">
+    <value>Von: </value>
+  </data>
+  <data name="lblTo" xml:space="preserve">
+    <value>Bis: </value>
+  </data>
+  <data name="Tooltip_ExportAs" xml:space="preserve">
+    <value>Export as file  (rtf, txt, csv)</value>
+  </data>
+  <data name="outDescription" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="Tooltip_dtpStart" xml:space="preserve">
+    <value>Dies ist der Beginn des Zeitraums, in dem die Wanderwege bearbeitet werden sollen.</value>
+  </data>
+  <data name="Tooltip_mnuPrependDate" xml:space="preserve">
+    <value>Vorangestelltes Datum bei der Verarbeitung von Dateinamen. Nützlich zum Sortieren von Dateien usw.</value>
+  </data>
+  <data name="Tooltip_dtpEnd" xml:space="preserve">
+    <value>Dies ist das Ende des Zeitraums, in dem die Wanderwege zu bearbeiten sind.</value>
+  </data>
+  <data name="Tooltip_mnuTrim" xml:space="preserve">
+    <value>Am Anfang der Strecke, bevor Sie losgehen, und am Ende, bevor Sie die Aufzeichnung beenden, zeichnet das GPS-Gerät oft ungenaue oder fehlerhafte Daten auf. Wenn diese Option aktiviert ist, versucht das Programm, diese Ungenauigkeiten automatisch zu entfernen.</value>
+  </data>
+  <data name="Tooltip_mnuMergingTracks" xml:space="preserve">
+    <value>Legen Sie den maximalen Zeitunterschied (in Stunden) zwischen zwei Track -Rekorde ein, die als verwandt und in einer GPX -Datei als Spur der Ebene und als Spur des Hundes zusammengefasst werden sollten. Der Wert zeigt daher das maximale Alter der von Ihnen verwendeten Spur an. Ein Wert von 0 deaktiviert die automatische Verschmelzung.</value>
+  </data>
+  <data name="mBoxMergingTracksText" xml:space="preserve">
+    <value>Setzen Sie Bedingungen für das Zusammenführen von Spuren</value>
+  </data>
+  <data name="lblMergeGPXtracksQ" xml:space="preserve">
+    <value>GPX -Dateien zusammenführen?</value>
+  </data>
+  <data name="lblMergeTwoToOneQ" xml:space="preserve">
+    <value>Entscheiden Sie, ob diese beiden Dateien als Track-Runner- und Hundespur verwandt sind.</value>
+  </data>
+  <data name="lblMergingYouGet" xml:space="preserve">
+    <value>Durch das Zusammenführen erhalten Sie eine einzige GPX-Datei, die die Spuren sowohl des Trail-Schichts als auch des Hundes enthält.</value>
+  </data>
+  <data name="lblIsThisRunnerQ" xml:space="preserve">
+    <value>Erste Datei</value>
+  </data>
+  <data name="lblIsThisTrackOfTheDog" xml:space="preserve">
+    <value>Zweite Datei</value>
+  </data>
+  <data name="chbRemembDecisQ" xml:space="preserve">
+    <value>Erinnern Sie sich an die Entscheidung von "Nein" für dieses Paar</value>
+  </data>
+  <data name="rbDontAskMergeQ" xml:space="preserve">
+    <value>Fragen Sie für die anderen Paare nicht mehr und machen Sie sofort (sorgfältig!)</value>
+  </data>
+  <data name="rbDontAskDontMerge" xml:space="preserve">
+    <value>Fragen Sie für die anderen Paare nicht mehr und verschmelzen Sie nicht.</value>
+  </data>
+  <data name="rbAskAgein" xml:space="preserve">
+    <value>Nächst noch einmal fragen</value>
+  </data>
+  <data name="Y-AxisLabelMonthly" xml:space="preserve">
+    <value>Pro Monat schnüffelt (km)</value>
+  </data>
+  <data name="txtGoalLabel" xml:space="preserve">
+    <value>Trainingsziel</value>
+  </data>
+  <data name="txtTrailLabel" xml:space="preserve">
+    <value>Pfad</value>
+  </data>
+  <data name="txtRunner" xml:space="preserve">
+    <value>runner</value>
+  </data>
+  <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
+    <value>Das Backup -Verzeichnis entspricht dem Hauptverzeichnis - es kann nicht sein!</value>
+  </data>
+  <data name="txtUnknown" xml:space="preserve">
+    <value>Unbekannt</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Hundespur</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Übergangsweg</value>
+  </data>
+  <data name="CrossTrail_IntroText" xml:space="preserve">
+    <value>Die GPX -Datei {0} enthält {1} Routen.
+Zur weiteren Verarbeitung müssen Sie entscheiden, welcher Spur entspricht
+-&gt; Subjekt (Läufer, Schicht) Trail,
+-&gt; Die Bewegungsaufzeichnung des Hundes.
+-&gt; Andere Personen kreuzen.
+Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der Subjektweg, der zweite ist die Hundestrecke. Aber wenn es nur einen Track oder mehr als zwei gibt, müssen Sie sich entscheiden.</value>
+  </data>
+  <data name="txtperformanceLabel" xml:space="preserve">
+    <value>K9 -Teamleistung</value>
+  </data>
+</root>

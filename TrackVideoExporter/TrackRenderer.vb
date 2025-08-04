@@ -16,22 +16,25 @@ Public Class PngSequenceCreator
         Me.renderer = renderer
     End Sub
 
-    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), textPartsEng As List(Of (Text As String, Color As Color, FontStyle As FontStyle)))
+    Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), LocalisedReports As Dictionary(Of String, TrailReport))
         'static pngs first:
         ' Vytvoříme statický obrázek s textem
-
-        If textParts IsNot Nothing Then
-            Dim staticTextbmp = renderer.RenderStaticText(textParts)
-            Dim filename = IO.Path.Combine(outputDir.FullName, "TrailDescription.png")
+        Dim keys = LocalisedReports.Keys.ToList()
+        For Each key In keys
+            Dim textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
+            Dim trailReport = LocalisedReports(key)
+            Dim staticTextbmp = renderer.RenderStaticText(trailReport)
+            Dim filename = IO.Path.Combine(outputDir.FullName, key & "-" & "TrailDescription.png")
             staticTextbmp.Save(filename, ImageFormat.Png)
-        End If
 
-        ' Vytvoříme statický obrázek s anglickým textem
-        If textPartsEng IsNot Nothing Then
-            Dim staticTextbmp = renderer.RenderStaticText(textPartsEng)
-            Dim filename = IO.Path.Combine(outputDir.FullName, "TrailDescriptionENG.png")
-            staticTextbmp.Save(filename, ImageFormat.Png)
-        End If
+        Next key
+
+        '' Vytvoříme statický obrázek s anglickým textem
+        'If textPartsEng IsNot Nothing Then
+        '    Dim staticTextbmp = renderer.RenderStaticText(textPartsEng)
+        '    Dim filename = IO.Path.Combine(outputDir.FullName, "TrailDescriptionENG.png")
+        '    staticTextbmp.Save(filename, ImageFormat.Png)
+        'End If
 
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
@@ -244,7 +247,7 @@ Public Class PngRenderer
     ''' <param name="width">With of the new text bitmap.</param>
     ''' <param name="height">height of the new text bitmap.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
-    Public Function RenderStaticText(textParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle)), Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
+    Public Function RenderStaticText(trailReport As TrailReport, Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
         Dim maxWidth As Single = width * 0.9 ' maximální šířka textu, 90% šířky obrázku
         Dim startX As Single = width * 0.05 ' začátek textu, 5% od levého okraje
         Dim startY As Single = 0 ' začátek textu
@@ -263,11 +266,13 @@ Public Class PngRenderer
                 currentY = startY
                 fits = True
                 Dim lineHeight As Single
-                For Each part In textParts
-                    Using mainFont As New Font("Cascadia Code", fontSize, part.FontStyle)
+
+                For Each part In trailReport.toList
+                    Using mainFont = New Font(part.Font.FontFamily, fontSize, part.Font.Style)
+
                         Using textBrush As New SolidBrush(part.Color)
                             Dim drawingArea As New RectangleF(startX, currentY, maxWidth, 2000)
-                            currentY = DrawWrappedTextWithEmoji(g, part.Text, mainFont, textBrush, drawingArea)
+                            currentY = DrawWrappedTextWithEmoji(g, part.Label & "  " & part.Text, mainFont, textBrush, drawingArea)
                         End Using
                         lineHeight = mainFont.GetHeight(g)
                     End Using

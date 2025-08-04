@@ -169,7 +169,7 @@
     <value>Экспорт в файл CSV</value>
   </data>
   <data name="btnBrowse.Text" xml:space="preserve">
-    <value>Просмотреть...</value>
+    <value>Просмотреть</value>
   </data>
   <data name="lblDirectory.Text" xml:space="preserve">
     <value>Каталог:</value>
@@ -185,12 +185,6 @@
   </data>
   <data name="btnBrowseBackup.Text" xml:space="preserve">
     <value>Просмотреть...</value>
-  </data>
-  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
-    <value>Удалить шумы в начале и конце треков</value>
-  </data>
-  <data name="lblStartDate.Text" xml:space="preserve">
-    <value>От:</value>
   </data>
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>До:</value>
@@ -257,5 +251,38 @@
   </data>
   <data name="cmbTimeInterval.Items5" xml:space="preserve">
     <value>Пользовательский диапазон</value>
+  </data>
+  <data name="StatusStrip1.Text" xml:space="preserve">
+    <value>STATUSCTRIP1</value>
+  </data>
+  <data name="StatusLabel1.Text" xml:space="preserve">
+    <value>ToolStrip</value>
+  </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>Menustrip1</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
+    <value>mnuselecttooltip</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>Экспорт Videa</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Длина</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Количество треков</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Установите путь ffmpeg</value>
   </data>
 </root>

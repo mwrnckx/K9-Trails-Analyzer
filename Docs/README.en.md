@@ -5,7 +5,7 @@ It allows you to load GPX files from training sessions and analyze them (distanc
 A key part of the project is a library for generating overlay videos (showing dog and trail layer positions) that can be combined with video recordings of the dog’s work. The final video lets you see both the dog's behavior and its real-time position on the trail, including distance from the tracklayer and visualized wind direction and strength!  
 This is a powerful tool for analyzing your dog’s performance.
 
-**K9 Trails Analyzer** is a Windows application that processes GPX files containing GPS tracks of the traillayer and the dog, and provides statistics such as total distance, trail age, and average speed.  
+**K9 Trails Analyzer** is a Windows application that processes GPX files containing GPS tracks of the runner and the dog, and provides statistics such as total distance, trail age, and average speed.  
 Tested with apps like Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, Locus Map, and others.
 
 ---
@@ -15,11 +15,11 @@ Tested with apps like Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, Lo
 - **Reads GPX files**: Load tracks from any selected folder.
 - **Date filtering**: Focus on trails within a selected time window.
 - **Distance calculation**: Compute total and per-track distance.
-- ⏳**Trail aging**: When both the traillayer and dog track are available, the app calculates how old the trail was when the dog followed it.
+- ⏳**Trail aging**: When both the runner and dog track are available, the app calculates how old the trail was when the dog followed it.
 - **Speed analysis**: Calculates the average speed of the dog for each trail.
 - **Export options**: Export results to RTF, TXT, or CSV for printing or further analysis in Excel.
 - **Charts and visualization**: View summaries like total distance, track lengths, trail aging, and dog speed over time.
-- 🎬 **Video generation**: Create transparent overlay videos showing both the traillayer’s and dog’s movements in real-time. A wind arrow visualizes wind direction and strength. This overlay can be combined with action camera footage using an editor like [Shotcut](https://shotcut.org/).
+- 🎬 **Video generation**: Create transparent overlay videos showing both the runner’s and dog’s movements in real-time. A wind arrow visualizes wind direction and strength. This overlay can be combined with action camera footage using an editor like [Shotcut](https://shotcut.org/).
 
 ---
 

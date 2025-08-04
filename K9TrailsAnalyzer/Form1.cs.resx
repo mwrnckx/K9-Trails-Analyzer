@@ -186,7 +186,7 @@
     <value>Exportovat jako soubor RTF</value>
   </data>
   <data name="txtOutput.Text" xml:space="preserve">
-    <value>Tento program slouží ke zpracování vašich záznamů ze stopařské aplikace, například Geo Tracker. </value>
+    <value>Tento program slouží ke zpracování vašich záznamů ze stopařské aplikace, například Geo Tracker.</value>
   </data>
   <data name="btnBrowse.Text" xml:space="preserve">
     <value>Procházet</value>
@@ -208,9 +208,6 @@
   </data>
   <data name="btnBrowseBackup.Text" xml:space="preserve">
     <value>Procházet</value>
-  </data>
-  <data name="mnuTrimGPSNoise.Text1" xml:space="preserve">
-    <value>Odstranit šum GPS na začátku a konci tras</value>
   </data>
   <data name="mnuMergingTracks.Text" xml:space="preserve">
     <value>Spáruj trasy kladeče a psa</value>
@@ -248,9 +245,6 @@
   <data name="mnuExportAs.Text" xml:space="preserve">
     <value>Uložit jako (rtf. txt, CSV)</value>
   </data>
-  <data name="lblStartDate.Text" xml:space="preserve">
-    <value>Od:</value>
-  </data>
   <data name="lblEndDate.Text" xml:space="preserve">
     <value>Do:</value>
   </data>
@@ -277,5 +271,50 @@
   </data>
   <data name="cmbTimeInterval.Items5" xml:space="preserve">
     <value>Vlastní rozsah</value>
+  </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>MenuStrip1!</value>
+  </data>
+  <data name="StatusLabel1.Text" xml:space="preserve">
+    <value>ToolStrip!</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
+    <value>mnuSelecttooltip!</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Konec</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Soubor</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Délka</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Počet tracků</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Statistika</value>
+  </data>
+  <data name="mnuPolish.Text" xml:space="preserve">
+    <value>Polski</value>
+  </data>
+  <data name="mnuRussian.Text" xml:space="preserve">
+    <value>Руский</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Nastavte cestu FFMPEG</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>Export videa</value>
+  </data>
+  <data name="mnuUkrainian.Text" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="mnuGerman.Text" xml:space="preserve">
+    <value>Deutch</value>
   </data>
 </root>

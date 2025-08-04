@@ -24,206 +24,112 @@ Partial Class frmEditComments
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmEditComments))
         lblInfo = New Label()
-        lblDog = New Label()
+        lblPerformance = New Label()
         lblTrail = New Label()
         lblGoal = New Label()
         btnOK = New Button()
         rtbGoal = New RichTextBox()
         rtbTrail = New RichTextBox()
-        rtbDog = New RichTextBox()
-        rtbGoalEng = New RichTextBox()
-        Label1 = New Label()
-        rtbTrailEng = New RichTextBox()
-        Label2 = New Label()
-        rtbDogEng = New RichTextBox()
-        Label3 = New Label()
+        rtbPerformance = New RichTextBox()
+        btnAnotherLang = New Button()
+        lblLanguage = New Label()
+        ComboBox1 = New ComboBox()
         SuspendLayout()
         ' 
         ' lblInfo
         ' 
-        lblInfo.AutoSize = True
-        lblInfo.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblInfo.Location = New Point(34, 51)
+        resources.ApplyResources(lblInfo, "lblInfo")
         lblInfo.Name = "lblInfo"
-        lblInfo.Size = New Size(74, 28)
-        lblInfo.TabIndex = 0
-        lblInfo.Text = "lblInfo"
         ' 
-        ' lblDog
+        ' lblPerformance
         ' 
-        lblDog.AutoSize = True
-        lblDog.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblDog.Location = New Point(38, 556)
-        lblDog.Name = "lblDog"
-        lblDog.Size = New Size(75, 28)
-        lblDog.TabIndex = 2
-        lblDog.Text = "lblDog"
+        resources.ApplyResources(lblPerformance, "lblPerformance")
+        lblPerformance.Name = "lblPerformance"
         ' 
         ' lblTrail
         ' 
-        lblTrail.AutoSize = True
-        lblTrail.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblTrail.Location = New Point(34, 416)
+        resources.ApplyResources(lblTrail, "lblTrail")
         lblTrail.Name = "lblTrail"
-        lblTrail.Size = New Size(77, 28)
-        lblTrail.TabIndex = 3
-        lblTrail.Text = "lblTrail"
         ' 
         ' lblGoal
         ' 
-        lblGoal.AutoSize = True
-        lblGoal.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        lblGoal.Location = New Point(34, 276)
+        resources.ApplyResources(lblGoal, "lblGoal")
         lblGoal.Name = "lblGoal"
-        lblGoal.Size = New Size(79, 28)
-        lblGoal.TabIndex = 4
-        lblGoal.Text = "lblGoal"
         ' 
         ' btnOK
         ' 
+        resources.ApplyResources(btnOK, "btnOK")
         btnOK.BackColor = Color.DarkGoldenrod
-        btnOK.FlatStyle = FlatStyle.Flat
-        btnOK.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        btnOK.Location = New Point(1041, 714)
         btnOK.Name = "btnOK"
-        btnOK.Size = New Size(134, 60)
-        btnOK.TabIndex = 1
-        btnOK.Text = "OK"
         btnOK.UseVisualStyleBackColor = False
         ' 
         ' rtbGoal
         ' 
         rtbGoal.EnableAutoDragDrop = True
-        rtbGoal.Location = New Point(244, 258)
+        resources.ApplyResources(rtbGoal, "rtbGoal")
         rtbGoal.Name = "rtbGoal"
-        rtbGoal.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbGoal.Size = New Size(931, 64)
-        rtbGoal.TabIndex = 7
-        rtbGoal.Text = ""
         ' 
         ' rtbTrail
         ' 
         rtbTrail.EnableAutoDragDrop = True
-        rtbTrail.Location = New Point(244, 398)
+        resources.ApplyResources(rtbTrail, "rtbTrail")
         rtbTrail.Name = "rtbTrail"
-        rtbTrail.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbTrail.Size = New Size(931, 64)
-        rtbTrail.TabIndex = 8
-        rtbTrail.Text = ""
         ' 
-        ' rtbDog
+        ' rtbPerformance
         ' 
-        rtbDog.EnableAutoDragDrop = True
-        rtbDog.Location = New Point(244, 538)
-        rtbDog.Name = "rtbDog"
-        rtbDog.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbDog.Size = New Size(931, 64)
-        rtbDog.TabIndex = 9
-        rtbDog.Text = ""
+        rtbPerformance.EnableAutoDragDrop = True
+        resources.ApplyResources(rtbPerformance, "rtbPerformance")
+        rtbPerformance.Name = "rtbPerformance"
         ' 
-        ' rtbGoalEng
+        ' btnAnotherLang
         ' 
-        rtbGoalEng.EnableAutoDragDrop = True
-        rtbGoalEng.Location = New Point(244, 328)
-        rtbGoalEng.Name = "rtbGoalEng"
-        rtbGoalEng.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbGoalEng.Size = New Size(931, 64)
-        rtbGoalEng.TabIndex = 11
-        rtbGoalEng.Text = ""
+        resources.ApplyResources(btnAnotherLang, "btnAnotherLang")
+        btnAnotherLang.BackColor = Color.Salmon
+        btnAnotherLang.Name = "btnAnotherLang"
+        btnAnotherLang.UseVisualStyleBackColor = False
         ' 
-        ' Label1
+        ' lblLanguage
         ' 
-        Label1.AutoSize = True
-        Label1.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        Label1.Location = New Point(34, 346)
-        Label1.Name = "Label1"
-        Label1.Size = New Size(60, 28)
-        Label1.TabIndex = 10
-        Label1.Text = "Goal:"
+        resources.ApplyResources(lblLanguage, "lblLanguage")
+        lblLanguage.Name = "lblLanguage"
         ' 
-        ' rtbTrailEng
+        ' ComboBox1
         ' 
-        rtbTrailEng.EnableAutoDragDrop = True
-        rtbTrailEng.Location = New Point(244, 468)
-        rtbTrailEng.Name = "rtbTrailEng"
-        rtbTrailEng.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbTrailEng.Size = New Size(931, 64)
-        rtbTrailEng.TabIndex = 13
-        rtbTrailEng.Text = ""
-        ' 
-        ' Label2
-        ' 
-        Label2.AutoSize = True
-        Label2.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        Label2.Location = New Point(34, 486)
-        Label2.Name = "Label2"
-        Label2.Size = New Size(58, 28)
-        Label2.TabIndex = 12
-        Label2.Text = "Trail:"
-        ' 
-        ' rtbDogEng
-        ' 
-        rtbDogEng.EnableAutoDragDrop = True
-        rtbDogEng.Location = New Point(244, 608)
-        rtbDogEng.Name = "rtbDogEng"
-        rtbDogEng.ScrollBars = RichTextBoxScrollBars.Vertical
-        rtbDogEng.Size = New Size(931, 64)
-        rtbDogEng.TabIndex = 15
-        rtbDogEng.Text = ""
-        ' 
-        ' Label3
-        ' 
-        Label3.AutoSize = True
-        Label3.Font = New Font("Segoe UI", 10F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
-        Label3.Location = New Point(38, 626)
-        Label3.Name = "Label3"
-        Label3.Size = New Size(56, 28)
-        Label3.TabIndex = 14
-        Label3.Text = "Dog:"
+        ComboBox1.FormattingEnabled = True
+        resources.ApplyResources(ComboBox1, "ComboBox1")
+        ComboBox1.Name = "ComboBox1"
         ' 
         ' frmEditComments
         ' 
-        AutoScaleDimensions = New SizeF(14F, 32F)
+        resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
-        AutoSize = True
         BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        ClientSize = New Size(1199, 1039)
-        Controls.Add(rtbDogEng)
-        Controls.Add(Label3)
-        Controls.Add(rtbTrailEng)
-        Controls.Add(Label2)
-        Controls.Add(rtbGoalEng)
-        Controls.Add(Label1)
-        Controls.Add(rtbDog)
+        Controls.Add(ComboBox1)
+        Controls.Add(btnAnotherLang)
+        Controls.Add(rtbPerformance)
         Controls.Add(rtbTrail)
         Controls.Add(rtbGoal)
         Controls.Add(btnOK)
         Controls.Add(lblGoal)
         Controls.Add(lblTrail)
-        Controls.Add(lblDog)
+        Controls.Add(lblLanguage)
+        Controls.Add(lblPerformance)
         Controls.Add(lblInfo)
-        Font = New Font("Cascadia Mono", 12F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
-        Icon = CType(resources.GetObject("$this.Icon"), Icon)
-        Margin = New Padding(5)
         Name = "frmEditComments"
-        Text = "Edit comments"
         ResumeLayout(False)
         PerformLayout()
 
     End Sub
 
     Friend WithEvents lblInfo As Label
-    Friend WithEvents lblDog As Label
+    Friend WithEvents lblPerformance As Label
     Friend WithEvents lblTrail As Label
     Friend WithEvents lblGoal As Label
     Friend WithEvents btnOK As Button
     Friend WithEvents rtbGoal As RichTextBox
     Friend WithEvents rtbTrail As RichTextBox
-    Friend WithEvents rtbDog As RichTextBox
-    Friend WithEvents rtbGoalEng As RichTextBox
-    Friend WithEvents Label1 As Label
-    Friend WithEvents rtbTrailEng As RichTextBox
-    Friend WithEvents Label2 As Label
-    Friend WithEvents rtbDogEng As RichTextBox
-    Friend WithEvents Label3 As Label
+    Friend WithEvents rtbPerformance As RichTextBox
+    Friend WithEvents btnAnotherLang As Button
+    Friend WithEvents lblLanguage As Label
+    Friend WithEvents ComboBox1 As ComboBox
 End Class
