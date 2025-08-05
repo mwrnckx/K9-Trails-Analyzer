@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.Windows.Forms
 Imports System.Xml
 
 Public Class TrackPointF
@@ -173,11 +174,20 @@ Public Class TrackAsTrkNode 'track as trkNode
                 Return Nothing
             End Try
             Dim timenode = conv.SelectSingleChildNode("time", firstTrkPt)
-            Dim time As DateTime
+            Dim time As DateTime = DateTime.MinValue
             If timenode IsNot Nothing Then
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
-                Return Nothing
+                Dim trkname As String = conv.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
+                Dim userInput = conv.PromptForStartTime(trkname)
+                If userInput.HasValue Then
+                    Dim localtime = userInput.Value
+                    time = localtime.ToUniversalTime()
+                    conv.CreateAndAddElement(firstTrkPt, "time", time.ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                Else
+                    ' Nezadáno nebo zrušeno
+                    MessageBox.Show("The time has not been completed. The track will be skipped..", "Upozornění", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
             End If
 
             Dim geopoint As New TrackGeoPoint With {
@@ -203,12 +213,22 @@ Public Class TrackAsTrkNode 'track as trkNode
             Catch ex As Exception
                 Return Nothing
             End Try
+
             Dim timenode = conv.SelectSingleChildNode("time", lastTrkPt)
-            Dim time As DateTime
+            Dim time As DateTime = DateTime.MinValue
             If timenode IsNot Nothing Then
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
-                Return Nothing
+                Dim trkname As String = conv.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
+                Dim userInput = conv.PromptForStartTime(trkname)
+                If userInput.HasValue Then
+                    Dim localtime = userInput.Value
+                    time = localtime.ToUniversalTime()
+                    conv.CreateAndAddElement(lastTrkPt, "time", time.ToString("yyyy-MM-ddTHH:mm:ssZ"), False)
+                Else
+                    ' Nezadáno nebo zrušeno
+                    MessageBox.Show("The time has not been completed. The track will be skipped..", "Upozornění", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                End If
             End If
 
             Dim geopoint As New TrackGeoPoint With {

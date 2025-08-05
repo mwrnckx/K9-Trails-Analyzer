@@ -285,4 +285,16 @@
   <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
     <value>Установите путь ffmpeg</value>
   </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Возраст</value>
+  </data>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Создать видео</value>
+  </data>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Создать видео из выбранных файлов</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Статистика</value>
+  </data>
 </root>

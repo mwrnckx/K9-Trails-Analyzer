@@ -288,4 +288,25 @@
   <data name="mnuCzech.Text" xml:space="preserve">
     <value>Česky</value>
   </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Alter</value>
+  </data>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Videos erstellen</value>
+  </data>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Erstellen Sie Videos aus ausgewählten Dateien</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>🎬 Videoexport</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Statistiken</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Ende</value>
+  </data>
 </root>

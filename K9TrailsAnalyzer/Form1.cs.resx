@@ -317,4 +317,13 @@
   <data name="mnuGerman.Text" xml:space="preserve">
     <value>Deutch</value>
   </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Stáří</value>
+  </data>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Vytvářejte videa</value>
+  </data>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Vytvářejte videa z vybraných souborů</value>
+  </data>
 </root>

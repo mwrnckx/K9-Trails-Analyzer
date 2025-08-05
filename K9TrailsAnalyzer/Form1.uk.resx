@@ -276,4 +276,16 @@
   <data name="TabStats.Text" xml:space="preserve">
     <value>Статистика</value>
   </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Вік</value>
+  </data>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Створити відеоролики</value>
+  </data>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Створіть відео з вибраних файлів</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Кількість треків</value>
+  </data>
 </root>

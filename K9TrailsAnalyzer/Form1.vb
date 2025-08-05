@@ -624,11 +624,38 @@ Public Class Form1
 
         currentCulture = Thread.CurrentThread.CurrentUICulture
 
-        Dim resources = New ComponentResourceManager([GetType]())
+        'Dim resources = New ComponentResourceManager([GetType]())
+        Dim resources = New ComponentResourceManager(Me.GetType) ' nebo jiný konkrétní formulář
+
         resources.ApplyResources(Me, "$this")
-        For Each ctrl As Control In Controls
+        Dim stack As New Stack(Of Control)(Controls.Cast(Of Control)())
+
+        ' Procházení všech ovládacích prvků a aplikace zdrojů, je třeba pro překlad textů:
+        While stack.Count > 0
+            Dim ctrl = stack.Pop()
             resources.ApplyResources(ctrl, ctrl.Name)
-        Next
+            If TypeOf ctrl Is ComboBox Then
+                Dim cmb = DirectCast(ctrl, ComboBox)
+                cmb.Items.Clear()
+
+                Dim i As Integer = 0
+                Do
+                    Dim key As String = If(i = 0, $"{cmb.Name}.Items", $"{cmb.Name}.Items{i}")
+                    Dim item As String = resources.GetString(key)
+                    'Dim item = resources.GetString($"{cmb.Name}.Items{i}")
+                    If item Is Nothing Then Exit Do
+                    cmb.Items.Add(item)
+                    i += 1
+                Loop
+                Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
+
+            End If
+
+            For Each child As Control In ctrl.Controls
+                stack.Push(child)
+            Next
+        End While
+
 
         ' Lokalizace položek MenuStrip
 

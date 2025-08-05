@@ -456,6 +456,7 @@ Public Class GPXRecord
 
     Public ReadOnly Property DogFinish As TrackGeoPoint
         Get
+
             Return Me.Tracks.LastOrDefault(Function(t) t.TrackType = TrackType.DogTrack)?.EndTrackGeoPoint
         End Get
     End Property
@@ -745,7 +746,7 @@ Public Class GPXRecord
             Dim RunnerTrailTrk As XmlNode = Nothing ' Inicializace proměnné pro <trk> s <type>RunnerTrail</type>
             ' Najdeme <trk> s <type>RunnerTrail</type>
             For Each trkNode As XmlNode In trkNodes
-                Dim typeNodes As XmlNodeList = Me.Reader.SelectChildNodes(GpxReader.K9_PREFIX & ":" & "type", trkNode)
+                Dim typeNodes As XmlNodeList = Me.Reader.SelectChildNodes(GpxReader.K9_PREFIX & ":" & "TrackType", trkNode)
                 For Each typeNode As XmlNode In typeNodes
                     ' Zkontrolujeme, zda <type> obsahuje "RunnerTrail"
                     ' Pokud ano, uložíme tento <trk> do RunnerTrailTrk
@@ -979,7 +980,7 @@ FoundRunnerTrailTrk:
 
         '            If startTimeNode IsNot Nothing Then
         '                ' Zjisti  typ tracku:
-        '                Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode("type", trkNode)
+        '                Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode("TrackType", trkNode)
         '                If typeNode?.InnerText.Trim().ToLower().Contains(TrackType.RunnerTrail.ToString.ToLower) Then
         '                    If startTimeNode Is Nothing OrElse Not DateTime.TryParse(startTimeNode.InnerText, RunnerStart) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
         '                ElseIf typeNode?.InnerText.Trim().ToLower().Contains(TrackType.DogTrack.ToString.Trim().ToLower()) Then
@@ -1009,73 +1010,6 @@ FoundRunnerTrailTrk:
         '        _isGettingRunnerStart = False
         '    End Try
     End Sub
-
-
-
-
-    '' Function to read and calculate the length of only the first segment from the GPX file
-    'Public Function CalculateRunnerTrailDistance() As Double
-    '    Dim totalLengthOfFirst_trkseg As Double = 0.0
-    '    Dim lat1, lon1, lat2, lon2 As Double
-    '    Dim firstPoint As Boolean = True
-
-    '    ' Select the first track segment (<trkseg>) using the namespace
-    '    Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
-    '    Dim timeNode As XmlNode = Nothing
-
-    '    For Each trkNode As XmlNode In trkNodes
-    '        ' Zkontroluj, jestli tento <trk> má <desc>CrossTrail</desc>
-
-
-
-    '        ' Zjisti  typ tracku:
-    '        Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode("type", trkNode)
-    '        If typeNode.InnerText.Trim().ToLower().Contains(TrackType.RunnerTrail.ToString.Trim().ToLower()) Then
-
-    '            Dim firstSegment As XmlNode = Me.Reader.SelectSingleChildNode("trkseg", trkNode)
-    '            ' If the segment exists, calculate its length
-    '            If firstSegment IsNot Nothing Then
-    '                ' Select all track points in the first segment (<trkpt>)
-    '                Dim trackPoints As XmlNodeList = Me.Reader.SelectChildNodes("trkpt", firstSegment)
-
-    '                ' Calculate the distance between each point in the first segment
-    '                For Each point As XmlNode In trackPoints
-    '                    Try
-    '                        ' Check if attributes exist and load them as Double
-    '                        If point.Attributes("lat") IsNot Nothing AndAlso point.Attributes("lon") IsNot Nothing Then
-    '                            Dim lat As Double = Convert.ToDouble(point.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-    '                            Dim lon As Double = Convert.ToDouble(point.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-
-    '                            If firstPoint Then
-    '                                ' Initialize the first point
-    '                                lat1 = lat
-    '                                lon1 = lon
-    '                                firstPoint = False
-    '                            Else
-    '                                ' Calculate the distance between the previous and current point
-    '                                lat2 = lat
-    '                                lon2 = lon
-    '                                totalLengthOfFirst_trkseg += HaversineDistance(lat1, lon1, lat2, lon2, "km")
-
-    '                                ' Move the current point into lat1, lon1 for the next iteration
-    '                                lat1 = lat2
-    '                                lon1 = lon2
-    '                            End If
-    '                        End If
-    '                    Catch ex As Exception
-    '                        ' Adding a more detailed exception message
-    '                        Debug.WriteLine("Error: " & ex.Message)
-    '                        RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
-    '                    End Try
-    '                Next
-    '            Else
-    '                RaiseEvent WarningOccurred("No tracks found in GPX file: " & Me.Reader.FileName & Environment.NewLine, Color.Red)
-    '            End If
-    '            Exit For ' ukončit - počítá se jen RunnerTrail
-    '        End If
-    '    Next
-    '    Return totalLengthOfFirst_trkseg ' Result in kilometers
-    'End Function
 
 
     Private Function ExtractOriginalText(original As String, foundNorm As String) As String
@@ -1113,8 +1047,8 @@ FoundRunnerTrailTrk:
         Dim g = TrailReport.goalLabel
         Dim t = TrailReport.trailLabel
         Dim p = TrailReport.performanceLabel
-        Dim pattern As String = $"(?:(?:(?<goal>{g}|g:)\s*(?<goalText>.*?))(?=({t}|t:|🐕|p:|🌡|$)))?" &
-                            $"(?:(?:(?<trail>{t}|t:)\s*(?<trailText>.*?))(?=({g}|g:|🐕|p:|🌡|$)))?" &
+        Dim pattern As String = $"(?:(?:(?<goal>{g}|g:)\s*(?<goalText>.*?))(?=({t}|t:|{p}|p:|🌡|$)))?" &
+                            $"(?:(?:(?<trail>{t}|t:)\s*(?<trailText>.*?))(?=({g}|g:|{p}|p:|🌡|$)))?" &
                             $"(?:(?:(?<dog>{p}|p:)\s*(?<dogText>.*?))(?=({g}|g:|{t}|t:|🌡|$)))?"
 
         Dim regex As New Regex(pattern, RegexOptions.Singleline Or RegexOptions.IgnoreCase)
@@ -1202,19 +1136,51 @@ FoundRunnerTrailTrk:
 
     '' Funkce pro sestavení popisu ze všech <trk> uzlů
     Public Async Function BuildSummaryDescription() As Task(Of String)
-        Dim trailDesc As String = ""
-        Dim dogDesc As String = ""
-        Dim crossDescs As New List(Of String)
+
+        'Dim crossDescs As New List(Of String)
         Dim goalDesc As String = ""
 
         Dim SummaryDescription As String = ""
 
-        For Each trkNode As XmlNode In Me.Reader.SelectNodes("trk")
+        For Each track In Me.Tracks
+            Dim trkNode As XmlNode = track.TrkNode
             Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", trkNode)
-            Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "type", extensionsNode)
-            Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "desc", trkNode)
+            Select Case track.TrackType 'tohle kvůli rozdělení pro další editaci v extractDescriptionParts
+                Case TrackType.RunnerTrail
+                    Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "desc", trkNode)
+                    If descNode IsNot Nothing Then
+                        Dim trailDesc As String = descNode.InnerText.Trim()
+                        If Not (trailDesc.Contains(TrailReport.trailLabel) _
+                                Or trailDesc.Contains("t:", StringComparison.InvariantCultureIgnoreCase) _
+                                Or trailDesc.Contains("g:", StringComparison.InvariantCultureIgnoreCase) _
+                                 Or trailDesc.Contains("p:", StringComparison.InvariantCultureIgnoreCase)) Then
+                            SummaryDescription &= TrailReport.trailLabel & trailDesc & " "
+                        Else
+                            SummaryDescription &= trailDesc & " "
+                        End If
+                    End If
+                Case TrackType.DogTrack
+                    Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "desc", trkNode)
+                    If descNode IsNot Nothing Then
+                        Dim dogDesc As String = descNode.InnerText.Trim()
 
-            SummaryDescription &= descNode?.InnerText.Trim() & " " ' Získání textu z <desc> uzlu, pokud existuje
+                        If Not (dogDesc.Contains(TrailReport.performanceLabel) Or dogDesc.Contains("p:", StringComparison.InvariantCultureIgnoreCase)) Then
+                            SummaryDescription &= TrailReport.performanceLabel & dogDesc & " "
+                        Else
+                            SummaryDescription &= dogDesc & " "
+                        End If
+                    End If
+                Case Else
+                    ' Pro ostatní typy tracků, které nejsou RunnerTrail nebo DogTrack, můžeme přidat další logiku
+                    Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "desc", trkNode)
+                    If descNode IsNot Nothing Then
+                        Dim crossDesc As String = descNode.InnerText.Trim()
+                        SummaryDescription &= crossDesc & " "
+                    End If
+            End Select
+            'Dim descNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "desc", trkNode)
+
+            'SummaryDescription &= descNode?.InnerText.Trim() & " " ' Získání textu z <desc> uzlu, pokud existuje
         Next
         Dim lang As String
         'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
@@ -1420,7 +1386,7 @@ FoundRunnerTrailTrk:
         ' Seznam tuple (trkNode, čas)
         'Dim Tracks As New List(Of TrackAsTrkNode) 'List(Of Tuple(Of XmlNode, DateTime, String))()
 
-
+        'projde všechny trkNode:
         For i As Integer = 0 To TrkNodes.Count - 1
             Dim trkNode As XmlNode = TrkNodes(i)
             'najde první <trkseg> v něm první <trkpt> a v něm načte <time>
@@ -1429,15 +1395,11 @@ FoundRunnerTrailTrk:
             Dim timeNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "time", trkpt)
             Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", trkNode)
 
-            Dim datum As DateTime = DateTime.MinValue
-            If timeNode IsNot Nothing Then
-                DateTime.TryParse(timeNode.InnerText, datum)
-            End If
             ' Zjisti  typ tracku:
             Dim trkTypeText As String = "Unknown"
             Dim trkTypeEnum As TrackType = TrackType.Unknown
             If extensionsNode IsNot Nothing Then
-                trkTypeText = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "type", extensionsNode)?.InnerText
+                trkTypeText = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "TrackType", extensionsNode)?.InnerText
             End If
 
 
@@ -1449,12 +1411,9 @@ FoundRunnerTrailTrk:
             'pokud některý track je uknown musí se znovu zpracovat
             If trkTypeEnum = TrackType.Unknown Then _IsAlreadyProcessed = False
 
-
-
             Dim _TrackAstrkNode As New TrackAsTrkNode(trkNode, trkTypeEnum)
 
             Tracks.Add(_TrackAstrkNode)
-
         Next
 
         ' Seřadit podle času
@@ -1510,19 +1469,21 @@ FoundRunnerTrailTrk:
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
     End Sub
 
+
+
     Public Function AddTypeToTrk(trkNode As XmlNode, _trackType As TrackType) As Boolean
         ' Zkontroluj, jestli už <type> existuje
         Dim trackTypeText As String = _trackType.ToString
         Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", trkNode)
 
-        'Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes(Me.Reader.K9TrailsAnalyzer_PREFIX & "type", extensionsNode)
+        'Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes(Me.Reader.K9TrailsAnalyzer_PREFIX & "TrackType", extensionsNode)
         If extensionsNode Is Nothing Then
             extensionsNode = Me.Reader.CreateElement("extensions")
             trkNode.PrependChild(extensionsNode)
         End If
-        Dim trackTypeNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "type", extensionsNode)
+        Dim trackTypeNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "TrackType", extensionsNode)
         If trackTypeNode Is Nothing Then
-            Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "type", _trackType.ToString, False, ,, GpxReader.K9_NAMESPACE_URI)
+            Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "TrackType", _trackType.ToString, False, ,, GpxReader.K9_NAMESPACE_URI)
         Else
             trackTypeNode.InnerText = _trackType.ToString
         End If
@@ -1532,7 +1493,7 @@ FoundRunnerTrailTrk:
 
     Private Function GetTrkType(trkNode As XmlNode) As TrackType
         ' Zkontroluj, jestli už <type> existuje
-        Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes(GpxReader.K9_PREFIX & "type", trkNode)
+        Dim existingTypes As XmlNodeList = Me.Reader.SelectAllChildNodes(GpxReader.K9_PREFIX & "TrackType", trkNode)
         Dim isTheSameType As Boolean = False
         For Each existingtype As XmlNode In existingTypes
             Dim rawText As String = existingtype.InnerText.Trim()
@@ -1817,13 +1778,7 @@ FoundRunnerTrailTrk:
 
 
     Public Sub PrependDateToFilename()
-        Dim newNameWithDate As String = GenerateNewFileNameWithDate()
-        If Me.Reader.FileName <> newNameWithDate Then RenameFile(newNameWithDate)
-    End Sub
 
-
-    ' Funkce pro vytvoření nového jména souboru
-    Public Function GenerateNewFileNameWithDate() As String
         'Dim fileExtension As String = Path.GetExtension(Reader.FilePath)
         'Dim fileNameOhneExt As String = Path.GetFileNameWithoutExtension(Reader.FilePath)
         Dim newFileName As String = Reader.FileName
@@ -1832,15 +1787,16 @@ FoundRunnerTrailTrk:
             ' Smaže datum v názvu souboru (to kvůli převodu na iso formát):
             Dim result As (DateTime?, String) = GetRemoveDateFromName()
             Dim modifiedFileName As String = result.Item2
-            newFileName = $"{RunnerStart:yyyy-MM-dd} {modifiedFileName}"
+            newFileName = $"{TrailStart.Time:yyyy-MM-dd} {modifiedFileName}"
         Catch ex As Exception
             Debug.WriteLine(ex.ToString())
             'ponechá původní jméno, ale přidá datum
             newFileName = $"{RunnerStart:yyyy-MM-dd} {Reader.FileName}"
         End Try
 
-        Return newFileName
-    End Function
+        If Me.Reader.FileName <> newFileName Then RenameFile(newFileName)
+
+    End Sub
 
     ' Funkce pro přejmenování souboru
     Public Function RenameFile(newFileName As String) As Boolean

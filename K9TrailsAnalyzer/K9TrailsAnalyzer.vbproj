@@ -148,6 +148,9 @@
 </ItemGroup>
 
 <ItemGroup>
+  <EmbeddedResource Update="Form1.resx">
+    <Generator></Generator>
+  </EmbeddedResource>
   <EmbeddedResource Update="Resources\Resource1.resx">
     <Generator>ResXFileCodeGenerator</Generator>
     <CustomToolNamespace>My.Resources</CustomToolNamespace>

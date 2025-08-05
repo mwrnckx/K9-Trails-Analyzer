@@ -355,4 +355,16 @@
   <data name="TabStats.Text" xml:space="preserve">
     <value>Statystyka</value>
   </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Wiek</value>
+  </data>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Utwórz filmy</value>
+  </data>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Utwórz filmy z wybranych plików</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Liczba utworów</value>
+  </data>
 </root>

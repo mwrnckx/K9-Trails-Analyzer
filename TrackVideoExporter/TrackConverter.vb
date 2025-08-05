@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
@@ -189,6 +190,64 @@ Public Class TrackConverter
         Return parent.SelectNodes($"gpx:{childName}", nsmgr)
     End Function
 
+    Public Function CreateAndAddElement(parentNode As XmlElement,
+                                XpathchildNodeName As String,
+                                value As String,
+                                insertAfter As Boolean,
+                                Optional attName As String = "",
+                                Optional attValue As String = ""
+                               ) As XmlNode
+
+
+
+        Dim childNodes As XmlNodeList = SelectAllChildNodes(XpathchildNodeName, parentNode)
+
+        ' Kontrola duplicity
+        For Each node As XmlNode In childNodes
+            If (node.Attributes(attName)?.Value = attValue) Then ' zkontroluje zda node s atributem attvalue už neexistuje:
+                'node.RemoveAll() ' odstraní všechny podřízené uzly, pokud existují
+                node.InnerText = value ' nastaví text na nový
+                'If node IsNot Nothing AndAlso node.ParentNode IsNot Nothing Then
+                '    node.ParentNode.RemoveChild(node)
+                'End If
+                Return node ' nalezen existující uzel, končíme
+            End If
+        Next
+
+        ' Pokud jsme žádný nenalezli, tak ho přidáme
+        Dim insertedNode As XmlNode = Nothing
+        Dim childNode As XmlElement = CreateElement(XpathchildNodeName, parentNode)
+        childNode.InnerText = value
+        If attValue <> "" Then childNode.SetAttribute(attName, attValue)
+        Debug.WriteLine($"Přidávám nový uzel {XpathchildNodeName} s atributem {attName}={attValue} a textem '{value}'.")
+
+        If childNodes.Count = 0 OrElse insertAfter Then
+            insertedNode = parentNode.AppendChild(childNode)
+        Else
+            insertedNode = parentNode.InsertBefore(childNode, childNodes(0))
+        End If
+
+        Return insertedNode
+    End Function
+
+    ' Metoda pro rekurentní výběr všech poduzlů z uzlu Node
+    Public Function SelectAllChildNodes(XpathChildName As String, node As XmlNode) As XmlNodeList
+        Dim nsmgr As New XmlNamespaceManager(node.OwnerDocument.NameTable)
+        Dim ns As String = node.GetNamespaceOfPrefix("")
+        nsmgr.AddNamespace("gpx", ns)
+        Return node.SelectNodes(".//" & XpathChildName, nsmgr)
+    End Function
+
+    Public Function CreateElement(nodename As String, parent As XmlNode, Optional _namespaceUri As String = Nothing) As XmlNode
+        Dim xmlDoc As XmlDocument = parent.OwnerDocument
+        If _namespaceUri IsNot Nothing Then
+            ' Pokud je zadán jmenný prostor, použijeme ho
+
+            Return xmlDoc.CreateElement(nodename, _namespaceUri)
+        End If
+        Return xmlDoc.CreateElement(nodename, xmlDoc.DocumentElement.NamespaceURI)
+    End Function
+
 
     Public Function CalculateTrailDistance(trkNode As XmlNode) As Double
         Dim totalLengthOfFirst_trkseg As Double = 0.0
@@ -261,6 +320,33 @@ Public Class TrackConverter
         Const PI As Double = 3.14159265358979
         Return degrees * PI / 180
     End Function
+
+    Public Function PromptForStartTime(trackName As String, Optional maxTries As Integer = 3) As DateTime?
+        Dim input As String
+        Dim parsedDate As DateTime
+        Dim attempt As Integer = 0
+
+        While attempt < maxTries
+            input = InputBox($"There is a missing start time in the {trackName} track." & vbCrLf &
+                         "Enter the time in the format: yyyy-MM-ddTHH:mm:ss",
+                         "Fill in the time",
+                         Now.ToString("yyyy-MM-ddTHH:mm:ss"), MessageBoxIcon.Warning)
+
+            ' Uživatel kliknul "Zrušit" nebo nechal prázdné → přerušit
+            If String.IsNullOrWhiteSpace(input) Then Return Nothing
+
+            If DateTime.TryParse(input, parsedDate) Then
+                Return parsedDate
+            Else
+                MessageBox.Show("Invalid date/time format. Try again.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                attempt += 1
+            End If
+        End While
+
+        ' Pokud se nepodařilo ani na třetí pokus, návrat Nothing
+        Return Nothing
+    End Function
+
 
 
 End Class
