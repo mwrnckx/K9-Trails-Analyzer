@@ -636,6 +636,7 @@ Public Class Form1
             resources.ApplyResources(ctrl, ctrl.Name)
             If TypeOf ctrl Is ComboBox Then
                 Dim cmb = DirectCast(ctrl, ComboBox)
+                Dim selIndex As Integer = cmb.SelectedIndex
                 cmb.Items.Clear()
 
                 Dim i As Integer = 0
@@ -647,7 +648,7 @@ Public Class Form1
                     cmb.Items.Add(item)
                     i += 1
                 Loop
-                Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
+                cmb.SelectedIndex = selIndex 'last 365 days
 
             End If
 
