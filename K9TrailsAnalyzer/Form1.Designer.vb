@@ -52,7 +52,8 @@ Partial Class Form1
         mnuDogName = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
-        FactoryResetToolStripMenuItem = New ToolStripMenuItem()
+        mnuFactoryReset = New ToolStripMenuItem()
+        mnuAbout = New ToolStripMenuItem()
         PictureBox1 = New PictureBox()
         lblScentArtickle = New Label()
         rtbWarnings = New RichTextBox()
@@ -74,6 +75,7 @@ Partial Class Form1
         clmAge = New ColumnHeader()
         clmTrkCount = New ColumnHeader()
         PictureBox3 = New PictureBox()
+        mnuCheckUpdates = New ToolStripMenuItem()
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
         CType(PictureBox1, ISupportInitialize).BeginInit()
@@ -113,7 +115,7 @@ Partial Class Form1
         ' 
         ' MenuStrip1
         ' 
-        MenuStrip1.BackColor = Color.FromArgb(172, 209, 158)
+        MenuStrip1.BackColor = Color.FromArgb(CByte(172), CByte(209), CByte(158))
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
         MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem})
@@ -218,7 +220,7 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuDogName, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, FactoryResetToolStripMenuItem})
+        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuDogName, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset, mnuAbout, mnuCheckUpdates})
         resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
         SToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
@@ -237,10 +239,15 @@ Partial Class Form1
         mnuSetFFmpegPath.Name = "mnuSetFFmpegPath"
         resources.ApplyResources(mnuSetFFmpegPath, "mnuSetFFmpegPath")
         ' 
-        ' FactoryResetToolStripMenuItem
+        ' mnuFactoryReset
         ' 
-        FactoryResetToolStripMenuItem.Name = "FactoryResetToolStripMenuItem"
-        resources.ApplyResources(FactoryResetToolStripMenuItem, "FactoryResetToolStripMenuItem")
+        mnuFactoryReset.Name = "mnuFactoryReset"
+        resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
+        ' 
+        ' mnuAbout
+        ' 
+        mnuAbout.Name = "mnuAbout"
+        resources.ApplyResources(mnuAbout, "mnuAbout")
         ' 
         ' PictureBox1
         ' 
@@ -251,12 +258,12 @@ Partial Class Form1
         ' lblScentArtickle
         ' 
         resources.ApplyResources(lblScentArtickle, "lblScentArtickle")
-        lblScentArtickle.BackColor = Color.FromArgb(237, 240, 213)
+        lblScentArtickle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         lblScentArtickle.Name = "lblScentArtickle"
         ' 
         ' rtbWarnings
         ' 
-        rtbWarnings.BackColor = Color.FromArgb(237, 240, 213)
+        rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         resources.ApplyResources(rtbWarnings, "rtbWarnings")
         rtbWarnings.Name = "rtbWarnings"
         ' 
@@ -282,12 +289,12 @@ Partial Class Form1
         ' rtbOutput
         ' 
         resources.ApplyResources(rtbOutput, "rtbOutput")
-        rtbOutput.BackColor = Color.FromArgb(237, 240, 213)
+        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         rtbOutput.Name = "rtbOutput"
         ' 
         ' gbPeriod
         ' 
-        gbPeriod.BackColor = Color.FromArgb(237, 240, 213)
+        gbPeriod.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         gbPeriod.Controls.Add(cmbTimeInterval)
         gbPeriod.Controls.Add(dtpEndDate)
         gbPeriod.Controls.Add(dtpStartDate)
@@ -298,7 +305,7 @@ Partial Class Form1
         ' 
         ' cmbTimeInterval
         ' 
-        cmbTimeInterval.BackColor = Color.FromArgb(237, 240, 213)
+        cmbTimeInterval.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         cmbTimeInterval.FormattingEnabled = True
         cmbTimeInterval.Items.AddRange(New Object() {resources.GetString("cmbTimeInterval.Items"), resources.GetString("cmbTimeInterval.Items1"), resources.GetString("cmbTimeInterval.Items2"), resources.GetString("cmbTimeInterval.Items3"), resources.GetString("cmbTimeInterval.Items4"), resources.GetString("cmbTimeInterval.Items5")})
         resources.ApplyResources(cmbTimeInterval, "cmbTimeInterval")
@@ -307,14 +314,14 @@ Partial Class Form1
         ' dtpEndDate
         ' 
         resources.ApplyResources(dtpEndDate, "dtpEndDate")
-        dtpEndDate.CalendarMonthBackground = Color.FromArgb(237, 240, 213)
+        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         dtpEndDate.Format = DateTimePickerFormat.Custom
         dtpEndDate.Name = "dtpEndDate"
         ' 
         ' dtpStartDate
         ' 
         resources.ApplyResources(dtpStartDate, "dtpStartDate")
-        dtpStartDate.CalendarMonthBackground = Color.FromArgb(237, 240, 213)
+        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
         dtpStartDate.Format = DateTimePickerFormat.Custom
         dtpStartDate.Name = "dtpStartDate"
@@ -341,7 +348,7 @@ Partial Class Form1
         ' 
         ' TabVideoExport
         ' 
-        TabVideoExport.BackColor = Color.FromArgb(237, 240, 213)
+        TabVideoExport.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
         TabVideoExport.Controls.Add(PictureBox3)
@@ -352,7 +359,7 @@ Partial Class Form1
         ' lvGpxFiles
         ' 
         resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
-        lvGpxFiles.BackColor = Color.FromArgb(237, 240, 213)
+        lvGpxFiles.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         lvGpxFiles.CheckBoxes = True
         lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
         lvGpxFiles.Name = "lvGpxFiles"
@@ -384,6 +391,11 @@ Partial Class Form1
         resources.ApplyResources(PictureBox3, "PictureBox3")
         PictureBox3.Name = "PictureBox3"
         PictureBox3.TabStop = False
+        ' 
+        ' mnuCheckUpdates
+        ' 
+        mnuCheckUpdates.Name = "mnuCheckUpdates"
+        resources.ApplyResources(mnuCheckUpdates, "mnuCheckUpdates")
         ' 
         ' Form1
         ' 
@@ -513,7 +525,7 @@ Partial Class Form1
     Friend WithEvents mnuExportAs As ToolStripMenuItem
     Friend WithEvents mnuMergingTracks As ToolStripMenuItem
     Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
-    Friend WithEvents FactoryResetToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnuFactoryReset As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
     Friend WithEvents mnuDogName As ToolStripMenuItem
     Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
@@ -539,5 +551,7 @@ Partial Class Form1
     Friend WithEvents clmTrkCount As ColumnHeader
     Private WithEvents btnCreateVideos As Button
     Friend WithEvents clmAge As ColumnHeader
+    Friend WithEvents mnuAbout As ToolStripMenuItem
+    Friend WithEvents mnuCheckUpdates As ToolStripMenuItem
 End Class
 

@@ -2,6 +2,7 @@
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection
+Imports System.Text.Json
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
@@ -886,7 +887,7 @@ Public Class Form1
 
     End Sub
 
-    Private Sub FactoryResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles FactoryResetToolStripMenuItem.Click
+    Private Sub FactoryResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuFactoryReset.Click
         If MessageBox.Show("Are you sure you want to clear all your settings?", " ",
         MessageBoxButtons.YesNo) = DialogResult.Yes Then My.Settings.Reset()
 
@@ -1046,6 +1047,41 @@ Public Class Form1
             mboxEx("This tab is not ready yet." & vbCrLf & "First you need to load the gpx files - click on the salmon button!")
             e.Cancel = True
         End If
+    End Sub
+
+    Private Sub mnuAbout_Click(sender As Object, e As EventArgs) Handles mnuAbout.Click
+        Try
+            Process.Start(New ProcessStartInfo With {
+                .FileName = "https://github.com/mwrnckx/K9-Trails-Analyzer",
+                .UseShellExecute = True
+            })
+        Catch ex As Exception
+            MessageBox.Show("Unable to open link: " & ex.Message)
+        End Try
+    End Sub
+
+    Private Sub mnuCheckUpdates_Click(sender As Object, e As EventArgs) Handles mnuCheckUpdates.Click
+        Try
+            Dim url As String = "https://api.github.com/repos/mwrnckx/K9-Trails-Analyzer/releases/latest"
+            Dim client As New Net.WebClient()
+            client.Headers.Add("User-Agent", "K9TrailsAnalyzer")
+            Dim content As String = client.DownloadString(url)
+
+            Dim json As JsonDocument = JsonDocument.Parse(content)
+            Dim root = json.RootElement
+            Dim latestTag = root.GetProperty("tag_name").GetString()
+
+            Dim currentVersion = New Version(Application.ProductVersion)
+            Dim latestVersion = New Version(latestTag.TrimStart("v"c))
+
+            If latestVersion > currentVersion Then
+                MessageBox.Show($"Je dostupná nová verze: {latestVersion.ToString()}", "Aktualizace", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Else
+                MessageBox.Show("Používáš nejnovější verzi.", "Aktualizace", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        Catch ex As Exception
+            MessageBox.Show("Nepodařilo se zjistit dostupnost nové verze." & vbCrLf & ex.Message, "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End Try
     End Sub
 
 
