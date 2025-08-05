@@ -645,7 +645,6 @@ Public Class Form1
                     Dim item As String = resources.GetString(key)
                     'Dim item = resources.GetString($"{cmb.Name}.Items{i}")
                     If item Is Nothing Then Exit Do
-
                     cmb.Items.Add(item)
                     i += 1
                 Loop

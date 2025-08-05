@@ -113,7 +113,7 @@ Partial Class Form1
         ' 
         ' MenuStrip1
         ' 
-        MenuStrip1.BackColor = Color.FromArgb(CByte(172), CByte(209), CByte(158))
+        MenuStrip1.BackColor = Color.FromArgb(172, 209, 158)
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
         MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem})
@@ -251,12 +251,12 @@ Partial Class Form1
         ' lblScentArtickle
         ' 
         resources.ApplyResources(lblScentArtickle, "lblScentArtickle")
-        lblScentArtickle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        lblScentArtickle.BackColor = Color.FromArgb(237, 240, 213)
         lblScentArtickle.Name = "lblScentArtickle"
         ' 
         ' rtbWarnings
         ' 
-        rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        rtbWarnings.BackColor = Color.FromArgb(237, 240, 213)
         resources.ApplyResources(rtbWarnings, "rtbWarnings")
         rtbWarnings.Name = "rtbWarnings"
         ' 
@@ -282,12 +282,12 @@ Partial Class Form1
         ' rtbOutput
         ' 
         resources.ApplyResources(rtbOutput, "rtbOutput")
-        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        rtbOutput.BackColor = Color.FromArgb(237, 240, 213)
         rtbOutput.Name = "rtbOutput"
         ' 
         ' gbPeriod
         ' 
-        gbPeriod.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        gbPeriod.BackColor = Color.FromArgb(237, 240, 213)
         gbPeriod.Controls.Add(cmbTimeInterval)
         gbPeriod.Controls.Add(dtpEndDate)
         gbPeriod.Controls.Add(dtpStartDate)
@@ -298,7 +298,7 @@ Partial Class Form1
         ' 
         ' cmbTimeInterval
         ' 
-        cmbTimeInterval.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        cmbTimeInterval.BackColor = Color.FromArgb(237, 240, 213)
         cmbTimeInterval.FormattingEnabled = True
         cmbTimeInterval.Items.AddRange(New Object() {resources.GetString("cmbTimeInterval.Items"), resources.GetString("cmbTimeInterval.Items1"), resources.GetString("cmbTimeInterval.Items2"), resources.GetString("cmbTimeInterval.Items3"), resources.GetString("cmbTimeInterval.Items4"), resources.GetString("cmbTimeInterval.Items5")})
         resources.ApplyResources(cmbTimeInterval, "cmbTimeInterval")
@@ -307,14 +307,14 @@ Partial Class Form1
         ' dtpEndDate
         ' 
         resources.ApplyResources(dtpEndDate, "dtpEndDate")
-        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpEndDate.CalendarMonthBackground = Color.FromArgb(237, 240, 213)
         dtpEndDate.Format = DateTimePickerFormat.Custom
         dtpEndDate.Name = "dtpEndDate"
         ' 
         ' dtpStartDate
         ' 
         resources.ApplyResources(dtpStartDate, "dtpStartDate")
-        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpStartDate.CalendarMonthBackground = Color.FromArgb(237, 240, 213)
         dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
         dtpStartDate.Format = DateTimePickerFormat.Custom
         dtpStartDate.Name = "dtpStartDate"
@@ -341,7 +341,7 @@ Partial Class Form1
         ' 
         ' TabVideoExport
         ' 
-        TabVideoExport.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabVideoExport.BackColor = Color.FromArgb(237, 240, 213)
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
         TabVideoExport.Controls.Add(PictureBox3)
@@ -352,7 +352,7 @@ Partial Class Form1
         ' lvGpxFiles
         ' 
         resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
-        lvGpxFiles.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        lvGpxFiles.BackColor = Color.FromArgb(237, 240, 213)
         lvGpxFiles.CheckBoxes = True
         lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
         lvGpxFiles.Name = "lvGpxFiles"
@@ -471,7 +471,7 @@ Partial Class Form1
         Me.Text = thisAssemName.Name & "   " & thisAssemName.Version.ToString
 
         Me.btnReadGpxFiles.Focus()
-        Me.btnReadGpxFiles.Select
+        Me.btnReadGpxFiles.Select()
     End Sub
 
     Private Sub ReadHelp()
