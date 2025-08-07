@@ -179,7 +179,7 @@ Public Class TrackAsTrkNode 'track as trkNode
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
                 Dim trkname As String = conv.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
-                Dim userInput = conv.PromptForStartTime(trkname)
+                Dim userInput = conv.PromptForStartTime(trkname, "start")
                 If userInput.HasValue Then
                     Dim localtime = userInput.Value
                     time = localtime.ToUniversalTime()
@@ -220,7 +220,7 @@ Public Class TrackAsTrkNode 'track as trkNode
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
                 Dim trkname As String = conv.SelectSingleChildNode("name", TrkNode).InnerText.Trim()
-                Dim userInput = conv.PromptForStartTime(trkname)
+                Dim userInput = conv.PromptForStartTime(trkname, "end")
                 If userInput.HasValue Then
                     Dim localtime = userInput.Value
                     time = localtime.ToUniversalTime()

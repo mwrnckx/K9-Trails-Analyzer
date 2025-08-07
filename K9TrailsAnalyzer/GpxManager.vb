@@ -3,6 +3,7 @@ Imports System.Globalization
 Imports System.IO
 Imports System.Net.Http
 Imports System.Reflection
+Imports System.Runtime.Intrinsics
 Imports System.Text.Json
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement
@@ -114,7 +115,7 @@ Public Class GpxFileManager
         Try
             For Each gpxFilePath In gpxFilesAllPath
                 Try
-                    'Tady najde RunnerStart 
+                    'Tady najde trailStart 
                     Dim _reader As New GpxReader(gpxFilePath)
 
                     Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
@@ -470,9 +471,10 @@ Public Class GPXRecord
                 ElseIf track.TrackType = TrackType.DogTrack Then
                     Return track.TrackDistance
                 Else
-                    Return 0
+
                 End If
             Next track
+
             Return Nothing 'pokud nenajde žádný RunnerTrail, vrátí Nothing
         End Get
     End Property
@@ -787,7 +789,7 @@ FoundRunnerTrailTrk:
     End Sub
 
     Public Function CalculateSpeed() As Double 'km/h
-        If Me.DogStart Is Nothing Or Me.RunnerStart Is Nothing Then
+        If Me.DogStart Is Nothing Or Me.DogFinish Is Nothing Then
             Return Nothing
         End If
         If Not Me.DogStart.Time = DateTime.MinValue AndAlso Not Me.DogFinish.Time = DateTime.MinValue Then
@@ -941,75 +943,6 @@ FoundRunnerTrailTrk:
         End If
 
     End Function
-
-
-    ' Function to read the time from the first <time> node in the GPX file
-    ' If <time> node doesnt exist tries to read date from file name and creates <time> node
-    Private _isGettingRunnerStart As Boolean = False
-    Public Sub RefreshRunnerDogStartFinish()
-
-        '    If _isGettingRunnerStart Then
-        '        Debug.WriteLine("Ochrana: GetRunnerStart již běží.")
-        '        Return
-        '    End If
-        '    _isGettingRunnerStart = True
-
-        '    Try
-        '        Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
-        '        Dim timeNode As XmlNode = Nothing
-        '        Dim trkptNodes As XmlNodeList
-        '        Dim startTimeNode As XmlNode = Nothing
-        '        Dim finishTimeNode As XmlNode = Nothing
-        '        Dim starttrkptNode As XmlNode = Nothing
-        '        Dim finishtrkptNode As XmlNode = Nothing
-
-        '        For Each trkNode As XmlNode In trkNodes
-
-
-        '            ' Najdi první <trkseg>
-        '            Dim trksegNode As XmlNode = Me.Reader.SelectSingleChildNode("trkseg", trkNode)
-        '            If trksegNode Is Nothing Then Continue For
-
-        '            trkptNodes = Me.Reader.SelectChildNodes("trkpt", trksegNode)
-        '            starttrkptNode = trkptNodes(0) ' první trkpt v trkseg
-        '            finishtrkptNode = trkptNodes(trkptNodes.Count - 1) ' poslední trkpt v trkseg
-        '            If starttrkptNode Is Nothing Then Continue For
-
-        '            startTimeNode = Me.Reader.SelectSingleChildNode("time", starttrkptNode)
-        '            finishTimeNode = Me.Reader.SelectSingleChildNode("time", finishtrkptNode)
-
-        '            If startTimeNode IsNot Nothing Then
-        '                ' Zjisti  typ tracku:
-        '                Dim typeNode As XmlNode = Me.Reader.SelectSingleChildNode("TrackType", trkNode)
-        '                If typeNode?.InnerText.Trim().ToLower().Contains(TrackType.RunnerTrail.ToString.ToLower) Then
-        '                    If startTimeNode Is Nothing OrElse Not DateTime.TryParse(startTimeNode.InnerText, RunnerStart) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
-        '                ElseIf typeNode?.InnerText.Trim().ToLower().Contains(TrackType.DogTrack.ToString.Trim().ToLower()) Then
-        '                    If startTimeNode Is Nothing OrElse Not DateTime.TryParse(startTimeNode.InnerText, DogStart) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
-        '                    If finishTimeNode Is Nothing OrElse Not DateTime.TryParse(finishTimeNode.InnerText, DogFinish) Then Debug.WriteLine("Uzel <time> chybí nebo má neplatný formát.")
-        '                End If
-
-        '                Dim longitude As Double = Convert.ToDouble(starttrkptNode.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-        '                Dim Latitude As Double = Convert.ToDouble(starttrkptNode.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-        '                Dim datum As DateTime = RunnerStart
-        '                ' Pokud DogStart není nastaven, použijeme RunnerStart
-        '                If DogStart <> DateTime.MinValue Then datum = DogStart
-        '                Dim loc As New Coordinates With {
-        '                    .Lat = Latitude,
-        '                    .Lon = longitude
-        '                }
-        '                trailStart = New TrackGeoPoint With {
-        '                    .Location = loc,
-        '                    .Time = datum
-        '                }
-
-        '            End If
-        '        Next
-
-
-        '    Finally
-        '        _isGettingRunnerStart = False
-        '    End Try
-    End Sub
 
 
     Private Function ExtractOriginalText(original As String, foundNorm As String) As String
@@ -1184,12 +1117,15 @@ FoundRunnerTrailTrk:
         Next
         Dim lang As String
         'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
-        If Not Me.IsAlreadyProcessed OrElse Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
+        If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then Me.IsAlreadyProcessed = False
+        If Not Me.IsAlreadyProcessed Then
+
             Dim newDescription As String = ""
             If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
                 Dim desc = ExtractDescriptionParts(SummaryDescription)
                 lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant() 'todo
                 Me.LocalisedReports.Add(lang, desc)
+                newDescription = Await BuildDescription(desc)
             End If
 
             Dim firstLocalisedReport As KeyValuePair(Of String, TrailReport) = Me.LocalisedReports.FirstOrDefault()
@@ -1197,7 +1133,7 @@ FoundRunnerTrailTrk:
             Dim keys = LocalisedReports.Keys.ToList()
             Dim totalCount = keys.Count
 
-            For i = 0 To 3
+            For i = 0 To 3 'dočasně přeskakuji!!
                 Dim frm As frmEditComments
                 Dim report As TrailReport
                 Dim result As DialogResult
@@ -1425,40 +1361,42 @@ FoundRunnerTrailTrk:
         Next
 
         ' --- Doplnění <type> ---
-        If Tracks.Count = 1 Then
-            ' Zde volání nějaké funkce, která vrátí typ trků
-            If Not Me.IsAlreadyProcessed AndAlso AskUserWhichTrackIsWhich(Tracks, Me.FileName) Then
-                'ales is in ordnung
-            Else
-                Throw New ArgumentException("Exception Occured")
-            End If
 
-            Dim trk = Tracks(0).TrkNode
-            Dim type = Tracks(0).TrackType
-            AddTypeToTrk(trk, type)
+        Using dlg As New frmCrossTrailSelector(Tracks, Me.FileName)
+            'pokud nejsou vybrány typy trků, nebo pokud už nebyl soubor zpracován, tak se ptá
+            If Not dlg.ValidateTrailTypes Or (Not Me.IsAlreadyProcessed) Then
 
-        ElseIf Tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
-            AddTypeToTrk(Tracks(0).TrkNode, TrackType.RunnerTrail)
-            Tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
-            AddTypeToTrk(Tracks(1).TrkNode, TrackType.DogTrack)
-            Tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
-        ElseIf Tracks.Count > 2 Then
-            Try
-                Tracks(Tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
-                ' Zde volání nějaké funkce, která vrátí typ trků
-                If Not Me.IsAlreadyProcessed AndAlso AskUserWhichTrackIsWhich(Tracks, Me.FileName) Then
-                    'ales is in ordnung
-                End If
+                If Tracks.Count = 1 Then
+                    ' Zde volání  funkce, která vrátí typ trků
 
-                For i As Integer = 0 To Tracks.Count - 1
-                    Dim trk = Tracks(i).TrkNode
-                    Dim type = Tracks(i).TrackType
+                    dlg.ShowDialog()
+                    Tracks(0).TrackType = TrackType.DogTrack
+                    Dim trk = Tracks(0).TrkNode
+                    Dim type = Tracks(0).TrackType
                     AddTypeToTrk(trk, type)
-                Next
-            Catch ex As Exception
-                RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
-            End Try
-        End If
+
+                ElseIf Tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
+                    AddTypeToTrk(Tracks(0).TrkNode, TrackType.RunnerTrail)
+                    Tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
+                    AddTypeToTrk(Tracks(1).TrkNode, TrackType.DogTrack)
+                    Tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
+                ElseIf Tracks.Count > 2 Then
+                    Try
+                        Tracks(Tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
+                        ' Zde volání nějaké funkce, která vrátí typ trků
+                        dlg.ShowDialog()
+
+                        For i As Integer = 0 To Tracks.Count - 1
+                            Dim trk = Tracks(i).TrkNode
+                            Dim type = Tracks(i).TrackType
+                            AddTypeToTrk(trk, type)
+                        Next
+                    Catch ex As Exception
+                        RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
+                    End Try
+                End If
+            End If
+        End Using
 
         ' Přidat zpět ve správném pořadí
         For Each t In Tracks
@@ -1527,30 +1465,6 @@ FoundRunnerTrailTrk:
     End Function
 
 
-    '' Function to convert degrees to radians
-    'Private Function DegToRad(degrees As Double) As Double
-    '    Const PI As Double = 3.14159265358979
-    '    Return degrees * PI / 180
-    'End Function
-
-    '' Function to calculate the distance in km between two GPS points using the Haversine formula
-    'Private Function HaversineDistance(lat1 As Double, lon1 As Double, lat2 As Double, lon2 As Double, units As String) As Double
-    '    Dim dLat As Double = DegToRad(lat2 - lat1)
-    '    Dim dLon As Double = DegToRad(lon2 - lon1)
-    '    ' Constants for converting degrees to radians and Earth's radius
-    '    Const EARTH_RADIUS As Double = 6371 ' Earth's radius in kilometers
-
-    '    Dim a As Double = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) + Math.Cos(DegToRad(lat1)) * Math.Cos(DegToRad(lat2)) * Math.Sin(dLon / 2) * Math.Sin(dLon / 2)
-    '    Dim c As Double = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a))
-
-    '    If units = "km" Then
-    '        Return EARTH_RADIUS * c ' Result in kilometers
-    '    ElseIf units = "m" Then
-    '        Return EARTH_RADIUS * c * 1000 'result in metres
-    '    Else
-    '        Return EARTH_RADIUS * c ' Result in kilometers
-    '    End If
-    'End Function
 
     Public Sub TrimGPSnoise(minDistance As Integer)
         'clip the start and end of both <trk>, i.e., the Runner and the dog, which was recorded after (or before) the end of the trail. Useful when the GPS doesn't turn off right away.
@@ -1791,7 +1705,7 @@ FoundRunnerTrailTrk:
         Catch ex As Exception
             Debug.WriteLine(ex.ToString())
             'ponechá původní jméno, ale přidá datum
-            newFileName = $"{RunnerStart:yyyy-MM-dd} {Reader.FileName}"
+            newFileName = $"{TrailStart:yyyy-MM-dd} {Reader.FileName}"
         End Try
 
         If Me.Reader.FileName <> newFileName Then RenameFile(newFileName)

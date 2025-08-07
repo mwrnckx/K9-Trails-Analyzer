@@ -321,13 +321,13 @@ Public Class TrackConverter
         Return degrees * PI / 180
     End Function
 
-    Public Function PromptForStartTime(trackName As String, Optional maxTries As Integer = 3) As DateTime?
+    Public Function PromptForStartTime(trackName As String, start_end As String, Optional maxTries As Integer = 3) As DateTime?
         Dim input As String
         Dim parsedDate As DateTime
         Dim attempt As Integer = 0
 
         While attempt < maxTries
-            input = InputBox($"There is a missing start time in the {trackName} track." & vbCrLf &
+            input = InputBox($"There is a missing {start_end} time in the {trackName} track." & vbCrLf &
                          "Enter the time in the format: yyyy-MM-ddTHH:mm:ss",
                          "Fill in the time",
                          Now.ToString("yyyy-MM-ddTHH:mm:ss"), MessageBoxIcon.Warning)

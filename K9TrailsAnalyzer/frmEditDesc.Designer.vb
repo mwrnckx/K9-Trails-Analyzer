@@ -83,16 +83,19 @@ Partial Class frmEditComments
         ' 
         ' txtGoal
         ' 
+        txtGoal.AllowDrop = True
         resources.ApplyResources(txtGoal, "txtGoal")
         txtGoal.Name = "txtGoal"
         ' 
         ' txtPerformance
         ' 
+        txtPerformance.AllowDrop = True
         resources.ApplyResources(txtPerformance, "txtPerformance")
         txtPerformance.Name = "txtPerformance"
         ' 
         ' txtTrail
         ' 
+        txtTrail.AllowDrop = True
         resources.ApplyResources(txtTrail, "txtTrail")
         txtTrail.Name = "txtTrail"
         ' 

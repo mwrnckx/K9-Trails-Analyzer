@@ -1,17 +1,27 @@
-﻿Imports System.Xml
+﻿Imports System.ComponentModel
+Imports System.Xml
 Imports TrackVideoExporter
 
 Public Class frmCrossTrailSelector
     Inherits System.Windows.Forms.Form
 
 
-    Dim trkList As List(Of TrackastrkNode) 'List(Of Tuple(Of XmlNode, DateTime, String))
-    Public Sub New(_trkList As List(Of TrackastrkNode), filename As String)
+    Dim trkList As List(Of TrackAsTrkNode) 'List(Of Tuple(Of XmlNode, DateTime, String))
+    Public Sub New(_trkList As List(Of TrackAsTrkNode), filename As String)
         InitializeComponent()
         Me.trkList = _trkList
         Me.Text = "Select types of the tracks "
         Me.txtInfo.Text = String.Format(My.Resources.Resource1.CrossTrail_IntroText, filename, trkList.Count)
 
+
+    End Sub
+
+    Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
+
+        Me.Close()
+    End Sub
+
+    Private Sub frmCrossTrailSelector_Load(sender As Object, e As EventArgs) Handles Me.Load
         ' Sloupec s typem trasy
         ' Připrav seznam KeyValuePair pro ComboBox
         Dim trackTypeItems As New List(Of KeyValuePair(Of TrackType, String))()
@@ -41,48 +51,6 @@ Public Class frmCrossTrailSelector
             Case Else ' Poslední řádek je přednastaven jako dogtrack
                 If dgvTracks.Rows(dgvTracks.Rows.Count - 1).Cells("TypeColumn").Value = TrackType.Unknown Then dgvTracks.Rows(dgvTracks.Rows.Count - 1).Cells("TypeColumn").Value = TrackType.DogTrack
         End Select
-    End Sub
-
-    Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
-        Try
-            Dim RunnerTrailsCount As Integer = 0
-            Dim dogtracksCount As Integer = 0
-
-
-            For i = 0 To dgvTracks.Rows.Count - 1
-                Dim row = dgvTracks.Rows(i)
-                Dim selectedType = CType(row.Cells("TypeColumn").Value, TrackType)
-                trkList(i).TrackType = selectedType
-                If selectedType = TrackType.RunnerTrail Then
-                    RunnerTrailsCount += 1
-                ElseIf selectedType = TrackType.DogTrack Then
-                    dogtracksCount += 1
-                ElseIf selectedType = TrackType.Unknown Then
-                    mboxEx("For each track you have to choose its type!")
-                    Return
-                End If
-            Next
-
-
-            If RunnerTrailsCount > 1 Then
-                mboxEx("There can be only one Runner trail.")
-                Return ' Zabrání uzavření formuláře
-            ElseIf dogtracksCount > 1 Then
-                mboxEx("There can be only one dog track.")
-                Return ' Zabrání uzavření formuláře
-            End If
-
-
-            Me.DialogResult = DialogResult.OK
-            Me.Close()
-
-        Catch
-            MessageBox.Show("Selection processing error.")
-        End Try
-
-    End Sub
-
-    Private Sub frmCrossTrailSelector_Load(sender As Object, e As EventArgs) Handles Me.Load
 
         If dgvTracks.Rows.Count > 0 Then
             dgvTracks.CurrentCell = dgvTracks.Rows(0).Cells("typeColumn") ' nebo Cells(1) pokud chceš podle indexu
@@ -90,6 +58,84 @@ Public Class frmCrossTrailSelector
         End If
     End Sub
 
+    Private Sub frmCrossTrailSelector_Closing(sender As Object, e As CancelEventArgs) Handles Me.Closing
+        Try
+            'Dim RunnerTrailsCount As Integer = 0
+            'Dim dogtracksCount As Integer = 0
+
+
+            'For i = 0 To dgvTracks.Rows.Count - 1
+            '    Dim row = dgvTracks.Rows(i)
+            '    Dim selectedType = CType(row.Cells("TypeColumn").Value, TrackType)
+            '    trkList(i).TrackType = selectedType
+            '    If selectedType = TrackType.RunnerTrail Then
+            '        RunnerTrailsCount += 1
+            '    ElseIf selectedType = TrackType.DogTrack Then
+            '        dogtracksCount += 1
+            '    ElseIf selectedType = TrackType.Unknown Then
+            '        mboxEx("For each track you have to choose its type!")
+            '        e.Cancel = True ' Zabrání uzavření formuláře
+            '        Return
+            '    End If
+            'Next
+
+
+            'If RunnerTrailsCount > 1 Then
+            '    mboxEx("There can be only one Runner trail.")
+            '    e.Cancel = True ' Zabrání uzavření formuláře
+            '    Return ' Zabrání uzavření formuláře
+            'ElseIf dogtracksCount > 1 Then
+            '    mboxEx("There can be only one dog track.")
+            '    e.Cancel = True ' Zabrání uzavření formuláře
+            '    Return ' Zabrání uzavření formuláře
+            'End If
+            If Me.ValidateTrailTypes() Then
+
+                Me.DialogResult = DialogResult.OK
+            Else
+                e.Cancel = True
+            End If
+
+
+        Catch
+            MessageBox.Show("Selection processing error.")
+        End Try
+    End Sub
+
+
+    Public Function ValidateTrailTypes() As Boolean
+
+        Dim RunnerTrailsCount As Integer = 0
+        Dim dogtracksCount As Integer = 0
+
+
+        For i = 0 To dgvTracks.Rows.Count - 1
+            Dim row = dgvTracks.Rows(i)
+            Dim selectedType = CType(row.Cells("TypeColumn").Value, TrackType)
+            trkList(i).TrackType = selectedType
+            If selectedType = TrackType.RunnerTrail Then
+                RunnerTrailsCount += 1
+            ElseIf selectedType = TrackType.DogTrack Then
+                dogtracksCount += 1
+            ElseIf selectedType = TrackType.Unknown Then
+                mboxEx("For each track you have to choose its type!")
+                Return False
+            End If
+        Next
+
+
+        If RunnerTrailsCount > 1 Then
+            mboxEx("There can be only one Runner trail.")
+
+            Return False ' Zabrání uzavření formuláře
+        ElseIf dogtracksCount > 1 Then
+            mboxEx("There can be only one dog track.")
+
+            Return False ' Zabrání uzavření formuláře
+        End If
+
+        Return True
+    End Function
 
 End Class
 

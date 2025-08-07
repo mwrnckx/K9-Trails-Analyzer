@@ -148,10 +148,10 @@ Public Class Form1
 
         Dim manySpaces As String = "                                                 "
         Me.rtbOutput.AppendText(("    " & My.Resources.Resource1.outgpxFileName & manySpaces).Substring(0, 35))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 14))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 20))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 18))
         Me.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         Me.rtbOutput.AppendText(vbCrLf)
 
@@ -415,7 +415,7 @@ Public Class Form1
 
                         ' Write each row in the CSV file
                         writer.Write($"{fileName};")
-                        writer.Write($"{ .RunnerStart.ToString("yyyy-MM-dd")};")
+                        writer.Write($"{ .TrailStart.ToString("yyyy-MM-dd")};")
                         writer.Write($"{_age};")
                         writer.Write($"{ .TrailDistance:F2};")
                         If Not .DogSpeed = 0 Then writer.Write($"{ .DogSpeed:F2};") Else writer.Write(";")
@@ -512,10 +512,10 @@ Public Class Form1
                     Select(Function(offset) dtpStartDate.Value.AddMonths(offset)).
                     Select(Function(d) New DateTime(d.Year, d.Month, 1))
 
-        ' Použijeme Left Join pro zahrnutí všech měsíců, i těch bez dat a použijeme runnerStart
+        ' Použijeme Left Join pro zahrnutí všech měsíců, i těch bez dat a použijeme trailStart
         Dim monthlySumsWithEmpty = From month In allMonths
                                    Group Join ms In (From record In gpxRecords
-                                                     Group record By Month = New DateTime(record.RunnerStart.Time.Year, record.RunnerStart.Time.Month, 1) Into grp = Group
+                                                     Group record By Month = New DateTime(record.TrailStart.Time.Year, record.TrailStart.Time.Month, 1) Into grp = Group
                                                      Select New With {Month, .TotalDistance = grp.Sum(Function(r) r.TrailDistance)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {month, .TotalDistance = 0.0})
                                    Select subMs
 
@@ -560,48 +560,6 @@ Public Class Form1
 
 
 
-    'Public Function GetGraphDataOld(Of T)(gpxRecords As List(Of GPXRecord), propertyName As String) As Tuple(Of DateTime(), T())
-    '    If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
-    '        Dim propertyInfo As PropertyInfo = GetType(GPXRecord).GetProperty(propertyName)
-
-    '        If propertyInfo IsNot Nothing Then
-    '            Dim filteredData = gpxRecords.
-    '            Where(Function(record)
-    '                      Dim propertyValue = propertyInfo.GetValue(record)
-    '                      If propertyValue IsNot Nothing Then
-    '                          If GetType(T) = GetType(TimeSpan) Then
-    '                              Return DirectCast(propertyValue, TimeSpan).TotalHours <> 0 ' Přímé porovnání TotalHours s 0
-    '                          ElseIf GetType(T) = GetType(Double) Then
-    '                              Return CDbl(propertyValue) <> 0
-    '                          ElseIf GetType(T) = GetType(Integer) Then
-    '                              Return CInt(propertyValue) <> 0
-    '                          ElseIf GetType(T) = GetType(Long) Then
-    '                              Return CLng(propertyValue) <> 0
-    '                          ElseIf GetType(T) = GetType(Single) Then
-    '                              Return CSng(propertyValue) <> 0
-    '                          Else
-    '                              Throw New ArgumentException($"Typ T musí být numerický (Double, Integer, Long, Single).")
-    '                          End If
-    '                      Else
-    '                          Return False ' Ošetření pro null hodnoty
-    '                      End If
-    '                  End Function).
-    '            Select(Function(record) New With {.X = record.runnerStart, .Y = DirectCast(propertyInfo.GetValue(record), T)})
-
-    '            If filteredData.Any() Then
-    '                Return New Tuple(Of DateTime(), T())(filteredData.Select(Function(item.time) item.time.X).ToArray(), filteredData.Select(Function(item.time) item.time.Y).ToArray())
-    '            Else
-    '                Debug.WriteLine($"Po filtrování pro vlastnost '{propertyName}' nezůstala žádná data. Graf nebude zobrazen.")
-    '                Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
-    '            End If
-    '        Else
-    '            Throw New ArgumentException($"Vlastnost '{propertyName}' neexistuje ve třídě GPXRecord.")
-    '        End If
-    '    Else
-    '        Debug.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
-    '        Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
-    '    End If
-    'End Function
 
     Public Sub CloseGrafs()
         ' Zavření grafů
@@ -644,7 +602,6 @@ Public Class Form1
                 Do
                     Dim key As String = If(i = 0, $"{cmb.Name}.Items", $"{cmb.Name}.Items{i}")
                     Dim item As String = resources.GetString(key)
-                    'Dim item = resources.GetString($"{cmb.Name}.Items{i}")
                     If item Is Nothing Then Exit Do
                     cmb.Items.Add(item)
                     i += 1
@@ -657,6 +614,18 @@ Public Class Form1
                 stack.Push(child)
             Next
         End While
+
+        'lokalizace ListView:
+        ' 
+        resources.ApplyResources(clmFileName, "clmFileName")
+
+        resources.ApplyResources(clmDate, "clmDate")
+
+        resources.ApplyResources(clmLength, "clmLength")
+
+        resources.ApplyResources(clmAge, "clmAge")
+
+        resources.ApplyResources(clmTrkCount, "clmTrkCount")
 
 
         ' Lokalizace položek MenuStrip
@@ -1072,15 +1041,18 @@ Public Class Form1
             Dim latestTag = root.GetProperty("tag_name").GetString()
 
             Dim currentVersion = New Version(Application.ProductVersion)
+            'nebo??:
+            currentVersion = GetType(Form1).Assembly.GetName.Version
             Dim latestVersion = New Version(latestTag.TrimStart("v"c))
 
+
             If latestVersion > currentVersion Then
-                MessageBox.Show($"Je dostupná nová verze: {latestVersion.ToString()}", "Aktualizace", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show($"A new version is available: {latestVersion.ToString()}", "Updates", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Else
-                MessageBox.Show("Používáš nejnovější verzi.", "Aktualizace", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show("You're using the latest version.", "Updates", MessageBoxButtons.OK, MessageBoxIcon.Information)
             End If
         Catch ex As Exception
-            MessageBox.Show("Nepodařilo se zjistit dostupnost nové verze." & vbCrLf & ex.Message, "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            MessageBox.Show("The availability of the new version could not be ascertained." & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try
     End Sub
 
