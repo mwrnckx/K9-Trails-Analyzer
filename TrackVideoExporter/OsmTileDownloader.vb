@@ -41,7 +41,7 @@ Public Class OsmTileDownloader
             For y = yMin To yMax
                 For x = xMin To xMax
                     Dim url = $"https://tile.openstreetmap.org/{zoom}/{x}/{y}.png"
-                    Console.WriteLine($"Stahuji: {url}")
+                    Debug.WriteLine($"Stahuji: {url}")
 
 
                     Try
@@ -59,7 +59,7 @@ Public Class OsmTileDownloader
                         End Using
                     Catch ex As Exception
                         ' Když tile neexistuje nebo je problém, přeskočíme
-                        Console.WriteLine($"Chyba při stahování dlaždice: {ex.Message}")
+                        Debug.WriteLine($"Error downloading a tile: {ex.Message}")
                     End Try
                 Next
             Next

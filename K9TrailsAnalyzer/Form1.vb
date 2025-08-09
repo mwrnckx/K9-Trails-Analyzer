@@ -1040,14 +1040,26 @@ Public Class Form1
             Dim root = json.RootElement
             Dim latestTag = root.GetProperty("tag_name").GetString()
 
-            Dim currentVersion = New Version(Application.ProductVersion)
-            'nebo??:
+            Dim currentVersion '= New Version(Application.ProductVersion)
             currentVersion = GetType(Form1).Assembly.GetName.Version
             Dim latestVersion = New Version(latestTag.TrimStart("v"c))
 
 
             If latestVersion > currentVersion Then
-                MessageBox.Show($"A new version is available: {latestVersion.ToString()}", "Updates", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                If mboxq($"A new version is available: {latestVersion.ToString()}" & vbCrLf & "Should I try to download it now?", MessageBoxDefaultButton.Button1) = DialogResult.Yes Then
+                    ' Získat pole assets
+                    Dim assets = root.GetProperty("assets")
+                    Dim downloadUrl As String
+                    If assets.GetArrayLength() > 0 Then
+                        Dim firstAsset = assets(0)
+                        downloadUrl = firstAsset.GetProperty("browser_download_url").GetString()
+                        ' Otevře URL v defaultním browseru
+                        Process.Start(New ProcessStartInfo(downloadUrl) With {.UseShellExecute = True})
+                        Debug.WriteLine("Download URL: " & downloadUrl)
+                    Else
+                        Debug.WriteLine("The download failed.")
+                    End If
+                End If
             Else
                 MessageBox.Show("You're using the latest version.", "Updates", MessageBoxButtons.OK, MessageBoxIcon.Information)
             End If

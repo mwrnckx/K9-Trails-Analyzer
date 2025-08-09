@@ -1154,7 +1154,7 @@ FoundRunnerTrailTrk:
                 If i < totalCount Then ' Existující položky
                     lang = keys(i)
                     report = LocalisedReports(lang)
-                    Console.WriteLine($"{i + 1}. {lang} – {report.Goal.Text}")
+                    Debug.WriteLine($"{i + 1}. {lang} – {report.Goal.Text}")
 
                     frm = New frmEditComments With {.TrailDescription = report,
                                                         .GpxFileName = Me.Reader.FileName,
@@ -1165,7 +1165,7 @@ FoundRunnerTrailTrk:
                     If lang <> frm.Language Then ' aktualizace jazyka
                         LocalisedReports.Remove(lang) ' odstranění starého jazyka
                         lang = frm.Language ' aktualizace jazyka
-                        Console.WriteLine($"Jazyk změněn na: {lang}")
+                        Debug.WriteLine($"Jazyk změněn na: {lang}")
                         Me.LocalisedReports.Add(lang, frm.TrailDescription) ' přidání nového jazyka
                     Else
                         Me.LocalisedReports(lang) = frm.TrailDescription ' aktualizace existujícího reportu
@@ -1182,9 +1182,9 @@ FoundRunnerTrailTrk:
                                             firstLocalisedReport.Value.Trail.Text,
                                             firstLocalisedReport.Value.Performance.Text)
                     ' Nová položka – prázdná, připravená k vyplnění
-                    Console.WriteLine($"{i + 1}. [Nový záznam]")
+                    Debug.WriteLine($"{i + 1}. [Nový záznam]")
                     ' Např. prompt pro uživatele: "Zadej kód jazyka:"
-                    ' Dim newLang = Console.ReadLine()
+                    ' Dim newLang = debug.ReadLine()
                     ' LocalisedReports.Add(newLang, New TrailReport() With {.Goal = "Zadej cíl..."})
 
 
