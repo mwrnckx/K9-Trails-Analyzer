@@ -1,0 +1,74 @@
+name: Build and Release EXE
+
+on:
+  push:
+    branches:
+      - master  # nebo 'main', podle toho, jak se jmenuje tvoje hlavní větev
+  workflow_dispatch: # umožní ruční spuštění
+permissions:
+  contents: write
+  packages: write
+  # (add other permissions if needed)  
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up MSBuild
+        uses: microsoft/setup-msbuild@v2
+        
+      - name: Restore NuGet packages
+        run: dotnet restore K9-Trails-Analyzer.sln
+        
+      - name: Update AssemblyVersion from release tag
+        run: |
+          $tag = "v1.0.${{ github.run_number }}" #"${{ github.ref_name }}"
+          if ($tag -match "^v(\d+)\.(\d+)\.(\d+)$") {
+            $version = "$($Matches[1]).$($Matches[2]).$($Matches[3]).0"
+            (Get-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj) `
+              -replace '<AssemblyVersion>.*?</AssemblyVersion>', "<AssemblyVersion>$version</AssemblyVersion>" |
+              Set-Content K9TrailsAnalyzer\K9TrailsAnalyzer.vbproj
+          } else {
+            Write-Error "Tag name '$tag' is not in expected format vX.Y.Z"
+            exit 1
+          }
+
+
+      - name: Build solution
+        run: msbuild K9-Trails-Analyzer.sln /p:Configuration=Release
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+
+        with:
+          name: K9TrailsAnalyzer
+          path: |
+            K9TrailsAnalyzer\bin\Release\
+            
+      - name: Download FFmpeg
+        run: |
+          curl -L -o ffmpeg.zip https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip
+          7z x ffmpeg.zip -offmpeg-temp
+          copy "ffmpeg-temp\ffmpeg-*-essentials_build\bin\ffmpeg.exe" K9TrailsAnalyzer\bin\Release\net8.0-windows\
+
+      - name: Zip binaries into folder
+        run: |
+          $dest = "K9-Trails-Analyzer-Package\K9TrailsAnalyzer"
+          New-Item -ItemType Directory -Force -Path $dest
+          Copy-Item -Path "K9TrailsAnalyzer\bin\Release\net8.0-windows\*" -Destination $dest -Recurse
+          Compress-Archive -Path "K9-Trails-Analyzer-Package\*" -DestinationPath "K9-Trails-Analyzer.zip"
+
+
+     
+      - name: Upload zipped build
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          files: K9-Trails-Analyzer.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

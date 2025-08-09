@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="txtWarnings.Text" xml:space="preserve">
+    <value>Помилки та журнали:</value>
+  </data>
+  <data name="btnChartDistances.Text" xml:space="preserve">
+    <value>Створити графік:</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
+    <value>Виберіть директорію, де знаходяться gpx-файли</value>
+  </data>
+  <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
+    <value>Виберіть каталог для резервного копіювання gpx-файлів</value>
+  </data>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="mnuPrependDateToFileName.Text" xml:space="preserve">
+    <value>Додавання дати до імені gpx-файлу</value>
+  </data>
+  <data name="mnuTrimGPSNoise.Text" xml:space="preserve">
+    <value>Видалити шум GPS на початку та в кінці треків</value>
+  </data>
+  <data name="mnuSettings.Text" xml:space="preserve">
+    <value>Обробка GPX</value>
+  </data>
+  <data name="mnuLanguage.Text" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="gbPeriod.Text" xml:space="preserve">
+    <value>Вибір періоду</value>
+  </data>
+  <data name="lblScentArtickle.Text" xml:space="preserve">
+    <value>зразок запаху</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Ман-трейлінг: статистика та аналіз файлів GPX</value>
+  </data>
+  <data name="rbTotDistance.Text" xml:space="preserve">
+    <value>Пройдено за вибраний період</value>
+  </data>
+  <data name="rbDistances.Text" xml:space="preserve">
+    <value>Довжина окремих маршрутів</value>
+  </data>
+  <data name="rbAge.Text" xml:space="preserve">
+    <value>Вік маршрутів</value>
+  </data>
+  <data name="rbSpeed.Text" xml:space="preserve">
+    <value>Швидкість собаки на маршрутах</value>
+  </data>
+  <data name="mnuSaveAsCsvFile.Text" xml:space="preserve">
+    <value>Експорт у файл CSV</value>
+  </data>
+  <data name="btnBrowse.Text" xml:space="preserve">
+    <value>Перегляд</value>
+  </data>
+  <data name="lblDirectory.Text" xml:space="preserve">
+    <value>Каталог:</value>
+  </data>
+  <data name="chbDateToName.Text" xml:space="preserve">
+    <value>Додати дату на початок назв файлів</value>
+  </data>
+  <data name="btnOpenDataFile.Text" xml:space="preserve">
+    <value>Створити та відкрити файл CSV</value>
+  </data>
+  <data name="lblBackupDirectory.Text" xml:space="preserve">
+    <value>Резервна копія:</value>
+  </data>
+  <data name="lblEndDate.Text" xml:space="preserve">
+    <value>До:</value>
+  </data>
+  <data name="rbDistances.Text1" xml:space="preserve">
+    <value>Довжина окремих маршрутів</value>
+  </data>
+  <data name="btnCharts.Text" xml:space="preserve">
+    <value>Показати графіки</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Каталоги можна встановити в меню "Файл"</value>
+  </data>
+  <data name="StatusStrip1.ToolTip" xml:space="preserve">
+    <value>Каталоги можна встановити в меню "Файл"</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Виберіть каталог, щоб зберегти відео накладення</value>
+  </data>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Експорт як (Rtf. TXT, CSV)</value>
+  </data>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Матч -бігун та доріжки собак</value>
+  </data>
+  <data name="mnuProcessProcessed.Text" xml:space="preserve">
+    <value>Обробка вже оброблених файлів</value>
+  </data>
+  <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
+    <value>Обробка файлів, які вже обробляються</value>
+  </data>
+  <data name="mnuDogName.Text" xml:space="preserve">
+    <value>Назва собаки</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Уподобання</value>
+  </data>
+  <data name="mnuAskForVideo.Text" xml:space="preserve">
+    <value>Створіть накладне відео</value>
+  </data>
+  <data name="btnReadGpxFiles.Text" xml:space="preserve">
+    <value>Завантажте дані з файлів gpx у вибраній папці</value>
+  </data>
+  <data name="mnuSaveAsRtf.Text" xml:space="preserve">
+    <value>Експорт як файл RTF</value>
+  </data>
+  <data name="txtOutput.Text" xml:space="preserve">
+    <value>Ця програма використовується для обробки ваших записів із програми відстеження, наприклад, Geo Tracker.</value>
+  </data>
+  <data name="txtDirectory.ToolTip" xml:space="preserve">
+    <value>Каталог, де розташовані файли GPX</value>
+  </data>
+  <data name="btnBrowseBackup.Text" xml:space="preserve">
+    <value>Перегляд</value>
+  </data>
+  <data name="cmbTimeInterval.Items" xml:space="preserve">
+    <value>Останні 7 днів</value>
+  </data>
+  <data name="cmbTimeInterval.Items1" xml:space="preserve">
+    <value>Останні 30 днів</value>
+  </data>
+  <data name="cmbTimeInterval.Items2" xml:space="preserve">
+    <value>Останні 365 днів (за замовчуванням)</value>
+  </data>
+  <data name="cmbTimeInterval.Items3" xml:space="preserve">
+    <value>Поточний рік</value>
+  </data>
+  <data name="cmbTimeInterval.Items4" xml:space="preserve">
+    <value>Минулого року</value>
+  </data>
+  <data name="cmbTimeInterval.Items5" xml:space="preserve">
+    <value>Спеціальний діапазон</value>
+  </data>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Вихід</value>
+  </data>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Встановіть шлях FFMPEG</value>
+  </data>
+  <data name="TabVideoExport.Text" xml:space="preserve">
+    <value>Експорт Videa</value>
+  </data>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Довжина</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Статистика</value>
+  </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Вік</value>
+  </data>
+  <data name="btnCreateVideos.Text" xml:space="preserve">
+    <value>Створити відеоролики</value>
+  </data>
+  <data name="btnCreateVideos.ToolTip" xml:space="preserve">
+    <value>Створіть відео з вибраних файлів</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Кількість треків</value>
+  </data>
+</root>
