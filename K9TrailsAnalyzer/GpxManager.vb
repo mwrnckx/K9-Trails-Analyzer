@@ -47,147 +47,232 @@ Public Class GpxFileManager
 
     Public Sub New()
         gpxRemoteDirectory = My.Settings.Directory
-        'BackupDirectory = My.Settings.BackupDirectory
-        'If Not Directory.Exists(BackupDirectory) Then
-        '    Try
-        '        Directory.CreateDirectory(BackupDirectory)
-        '    Catch ex As Exception
-
-        '    End Try
-
-        'End If
         maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
         trimGPS_Noise = My.Settings.TrimGPSnoise
-        'mergeDecisions = My.Settings.MergeDecisions
-
     End Sub
 
     Public Async Function Main() As Task(Of Boolean)
-        Dim _gpxFilesSortedAndFiltered As List(Of GPXRecord) = GetGPXFilesWithinInterval()
-        Dim _gpxFilesMerged As List(Of GPXRecord) = MergeGpxFiles(_gpxFilesSortedAndFiltered)
-        Me.TotalDistance = 0 'resetuje celkovou vzdálenost
+        Try
 
-        For Each _gpxRecord As GPXRecord In _gpxFilesMerged
-            Try
-                If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
-                    _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
-                    If prependDateToName Then _gpxRecord.PrependDateToFilename()
-                    If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
-                End If
-                Me.TotalDistance += _gpxRecord.TrailDistance
-                _gpxRecord.TotalDistance = Me.TotalDistance 'tohle není vlastnost recordu, záleží na zvoleném období
-                _gpxRecord.Description = Await _gpxRecord.BuildSummaryDescription() 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
-                _gpxRecord.TrailAge = _gpxRecord.GetAge
 
-                If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
-                    _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku Runner
-                    _gpxRecord.WriteLocalizedReports() 'zapíše popis do DogTracku
-                    _gpxRecord.Save()
-                End If
+            Dim localFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(False) 'seznam starých souborů, které už byly zpracovány
+            Dim allFiles As New List(Of GPXRecord)  ' Načte všechny staré GPX soubory v pracovním adresáři
+            allFiles.AddRange(localFiles) 'přidá staré soubory
 
-                _gpxRecord.IsAlreadyProcessed = True 'už byl soubor zpracován
-                'a nakonec
-                _gpxRecord.SetCreatedModifiedDate()
+            Dim remoteFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(True)
+            Dim gpxFilesMerged As New List(Of GPXRecord)
+            If remoteFiles.Count > 0 Then
+                RaiseEvent WarningOccurred($"Found {remoteFiles.Count} new GPX files.", Color.DarkGreen)
+                gpxFilesMerged = MergeGpxFiles(remoteFiles)
+            End If
 
-            Catch ex As Exception
-                MessageBox.Show($"Reading or processing of the file {_gpxRecord.Reader.FileName} failed.")
-            End Try
+            allFiles.AddRange(gpxFilesMerged) 'přidá nové soubory
 
-        Next _gpxRecord
+            Dim gpxFilesSortedAndFiltered As List(Of GPXRecord) = GetGPXFilesWithinInterval(allFiles)
+            If gpxFilesSortedAndFiltered.Count = 0 Then
+                RaiseEvent WarningOccurred("No GPX files found within the specified date interval.", Color.Red)
+                Return False 'vrátí false, pokud nejsou žádné soubory v zadaném intervalu
+            End If
 
-        GpxRecords = _gpxFilesMerged
-        If GpxRecords IsNot Nothing And GpxRecords.Count > 0 Then
-            Return True
-        Else
+            Me.TotalDistance = 0 'resetuje celkovou vzdálenost
+
+            ' Zpracování každého GPX souboru
+            For Each _gpxRecord As GPXRecord In gpxFilesSortedAndFiltered
+                Try
+                    If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+                        _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
+                        If prependDateToName Then _gpxRecord.PrependDateToFilename()
+                        If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
+                    End If
+                    Me.TotalDistance += _gpxRecord.TrailDistance
+                    _gpxRecord.TotalDistance = Me.TotalDistance 'tohle není vlastnost recordu, záleží na zvoleném období
+                    _gpxRecord.Description = Await _gpxRecord.BuildSummaryDescription() 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
+                    _gpxRecord.TrailAge = _gpxRecord.GetAge
+
+                    If _gpxRecord.IsAlreadyProcessed = False Then 'možno přeskočit, už to proběhlo...
+                        _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku Runner
+                        _gpxRecord.WriteLocalizedReports() 'zapíše popis do DogTracku
+                        _gpxRecord.IsAlreadyProcessed = True 'už byl soubor zpracován
+                        _gpxRecord.Save()
+                    End If
+
+
+                    'a nakonec
+                    _gpxRecord.SetCreatedModifiedDate()
+
+                Catch ex As Exception
+                    MessageBox.Show($"Reading or processing of the file {_gpxRecord.Reader.FileName} failed.")
+                End Try
+
+            Next _gpxRecord
+
+            GpxRecords = gpxFilesSortedAndFiltered
+            If GpxRecords IsNot Nothing And GpxRecords.Count > 0 Then
+                Return True
+            Else
+                Return False
+            End If
+        Catch ex As Exception 'tohle aby to nezamrzlo, když se něco nepovede
+            RaiseEvent WarningOccurred("Something went wrong", Color.Red)
             Return False
-        End If
+
+        End Try
     End Function
 
 
 
 
 
-    Public Function GetGPXFilesWithinInterval() As List(Of GPXRecord)
-        Dim gpxFilesWithinInterval As New List(Of GPXRecord)
+    Private Function GetdAndProcessGPXFiles(remoteFiles As Boolean) As List(Of GPXRecord)
+        Dim GPXFRecords As New List(Of GPXRecord)
 
-        Dim tracker As New FileTracker("processed.json")
-        'Dim gpxdirectory = "C:\Users\Víťa\GoogleDrive\GPX"
-        Dim i As Integer = 0
-        For Each file In Directory.GetFiles(gpxRemoteDirectory, "*.gpx")
-            If tracker.IsNewOrChanged(file) Then
-                Console.WriteLine("Zpracovávám: " & Path.GetFileName(file))
-                ' Pokud je soubor nový nebo změněný, zpracujeme ho
-                IO.File.Copy(file, Path.Combine(GpxLocalDirectory, Path.GetFileName(file)), False)
-                i += 1
-                tracker.MarkAsProcessed(file)
-            Else
-                Console.WriteLine("Přeskakuji: " & Path.GetFileName(file))
-            End If
-        Next
+        If remoteFiles Then
+            Dim tracker As New FileTracker("processed.json")
 
-        RaiseEvent WarningOccurred($"Found {i} new yet unprocessed files.", Color.OrangeRed)
-
-        ' Načteme všechny GPX soubory
-        Dim gpxFilesAllPath As List(Of String) = Directory.GetFiles(GpxLocalDirectory, "*.gpx").ToList()
-
-
-        If gpxFilesAllPath.Count = 0 Then
-            RaiseEvent WarningOccurred("No GPX files found in my working directory.", Color.Red)
-            Return gpxFilesWithinInterval 'vrátí prázdný list, pokud nejsou žádné soubory
-        Else
-            RaiseEvent WarningOccurred($"Found {gpxFilesAllPath.Count} GPX files in my working directory.", Color.DarkGreen)
-        End If
-        'Dim backup As Boolean = False
-        Try
-            For Each gpxFilePath In gpxFilesAllPath
+            Dim Files As List(Of String) = Directory.GetFiles(gpxRemoteDirectory, "*.gpx").ToList()
+            Dim i As Integer = 0
+            For Each remoteFilePath In Files
                 Try
-                    'Tady najde trailStart 
-                    Dim _reader As New GpxReader(gpxFilePath)
-
-                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
-
-                    If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
-                        If (_gpxRecord.IsAlreadyProcessed) Then
-                            'pokud je forceProcess, tak se zpracuje i již zpracovaný soubor
-                            RaiseEvent WarningOccurred($"File {_gpxRecord.Reader.FileName} has already been processed, but will be processed again.", Color.DarkOrange)
+                    If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
+                        Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
+                        ' Pokud je soubor nový nebo změněný, zpracujeme ho
+                        Dim localFilePath As String = Path.Combine(GpxLocalDirectory, Path.GetFileName(remoteFilePath))
+                        If File.Exists(localFilePath) Then
+                            RaiseEvent WarningOccurred($"File  {Path.GetFileName(localFilePath)} already exists in local directory!", Color.Red)
+                            tracker.MarkAsProcessed(remoteFilePath)
+                            Continue For
+                        Else
+                            IO.File.Copy(remoteFilePath, localFilePath, False)
                         End If
-                        _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
+
+                        i += 1
+                        tracker.MarkAsProcessed(remoteFilePath)
+                        Try
+                            Dim _reader As New GpxReader(localFilePath)
+                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
+                            _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
+                            _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
+                            _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
+                            GPXFRecords.Add(_gpxRecord)
+                        Catch ex As Exception
+                            'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
+                            RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(remoteFilePath)}: {ex.Message}", Color.Red)
+                        End Try
+
+                    Else 'zpracované soubory
+                        Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
                     End If
-                    _gpxRecord.CreateAndSortTracks()
-
-                    If _gpxRecord.TrailStart.Time.Date >= dateFrom.Date And _gpxRecord.TrailStart.Time.Date <= dateTo.Date Then
-
-                        AddHandler _gpxRecord.WarningOccurred, AddressOf WriteRTBWarning
-                        'Dim _backup As Boolean = _gpxRecord.Backup()
-                        'kvůli výpisu, pokud se žádný soubor nezazálohuje, výpis se nedělá:
-                        'If Not backup Then backup = _backup
-                        gpxFilesWithinInterval.Add(_gpxRecord)
-
-                    End If
-
-                Catch ex As ArgumentException
-                    RaiseEvent WarningOccurred(ex.Message, Color.Red)
-                    Debug.WriteLine(ex.ToString())
-                Catch ex As XmlException
-                    RaiseEvent WarningOccurred(ex.Message, Color.Red)
-                    Debug.WriteLine(ex.ToString())
                 Catch ex As Exception
-                    RaiseEvent WarningOccurred(ex.Message, Color.Red)
-                    Debug.WriteLine(ex.ToString())
 
                 End Try
-
-
             Next
-            'If backup Then
-            '    Debug.WriteLine($"Soubory gpx byly úspěšně zálohovány do: {BackupDirectory }")
-            '    RaiseEvent WarningOccurred($"{vbCrLf}{Resource1.logBackupOfFiles}   {BackupDirectory }{vbCrLf}", Color.DarkGreen)
-            'End If
+            RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
 
-        Catch ex As Exception
-            Debug.WriteLine($"Chyba při zálohování souborů: {ex.Message}")
-        End Try
+        Else 'local files
+            Dim Files As List(Of String) = Directory.GetFiles(GpxLocalDirectory, "*.gpx").ToList()
+            For Each filePath In Files
+                Try
+                    Dim _reader As New GpxReader(filePath)
+                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
+                    _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
+                    GPXFRecords.Add(_gpxRecord)
+                Catch ex As Exception
+                    'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
+                    RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(filePath)}: {ex.Message}", Color.Red)
+                End Try
+            Next
+
+        End If
+
+        Return GPXFRecords
+    End Function
+
+    'Public Function GetOldGPXFiles() As List(Of GPXRecord)
+    '    Dim oldFiles As New List(Of GPXRecord)
+
+    '    For Each gpxFilePath In Directory.GetFiles(GpxLocalDirectory, "*.gpx")
+    '        Try
+    '            Dim _reader As New GpxReader(gpxFilePath)
+    '            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
+    '            oldFiles.Add(_gpxRecord)
+    '        Catch ex As ArgumentException
+    '            RaiseEvent WarningOccurred(ex.Message, Color.Red)
+    '            Debug.WriteLine(ex.ToString())
+    '        Catch ex As XmlException
+    '            RaiseEvent WarningOccurred(ex.Message, Color.Red)
+    '            Debug.WriteLine(ex.ToString())
+    '        Catch ex As Exception
+    '            RaiseEvent WarningOccurred(ex.Message, Color.Red)
+    '            Debug.WriteLine(ex.ToString())
+
+    '        End Try
+    '    Next
+
+    '    If oldFiles.Count = 0 Then
+    '        RaiseEvent WarningOccurred("No GPX files found in working directory.", Color.Red)
+    '    Else
+    '        RaiseEvent WarningOccurred($"Found {oldFiles.Count} GPX files in working directory.", Color.DarkGreen)
+    '    End If
+    '    Return oldFiles
+    'End Function
+
+
+    'Public Function CreateAndSortTracksInFiles(_records As List(Of GPXRecord)) As List(Of GPXRecord)
+
+    '    If _records.Count = 0 Then
+    '        RaiseEvent WarningOccurred("No new GPX files found.", Color.Red)
+    '        Return _records 'vrátí prázdný list, pokud nejsou žádné soubory
+    '    Else
+    '        RaiseEvent WarningOccurred($"Found {_records.Count}  GPX files.", Color.DarkGreen)
+    '    End If
+
+    '    For Each _gpxRecord In _records
+    '        Try
+
+    '            If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
+    '                If (_gpxRecord.IsAlreadyProcessed) Then
+    '                    'pokud je forceProcess, tak se zpracuje i již zpracovaný soubor
+    '                    RaiseEvent WarningOccurred($"File {_gpxRecord.Reader.FileName} has already been processed, but will be processed again.", Color.DarkOrange)
+    '                End If
+    '                _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
+    '            End If
+    '            _gpxRecord.CreateAndSortTracks()
+    '            '_gpxRecord.Save()
+    '        Catch ex As Exception
+    '            RaiseEvent WarningOccurred($"Error processing file {_gpxRecord.FileName}}: {ex.Message}", Color.Red)
+    '            Debug.WriteLine($"Error processing file {_gpxRecord.FileName}: {ex.ToString()}")
+    '            Continue For 'pokračuje na další soubor, pokud došlo k chybě'todo - neměl by se soubor odebrat z listu???
+    '        End Try
+    '    Next
+    '    Return _records
+    'End Function
+
+    Public Function GetGPXFilesWithinInterval(_records As List(Of GPXRecord)) As List(Of GPXRecord)
+        Dim gpxFilesWithinInterval As New List(Of GPXRecord)
+
+        For Each _gpxRecord In _records 'Directory.GetFiles(GpxLocalDirectory, "*.gpx")
+
+            Try
+
+                If _gpxRecord.TrailStart.Time.Date >= dateFrom.Date And _gpxRecord.TrailStart.Time.Date <= dateTo.Date Then
+                    AddHandler _gpxRecord.WarningOccurred, AddressOf WriteRTBWarning
+                    gpxFilesWithinInterval.Add(_gpxRecord)
+                End If
+
+            Catch ex As ArgumentException
+                RaiseEvent WarningOccurred(ex.Message, Color.Red)
+                Debug.WriteLine(ex.ToString())
+            Catch ex As XmlException
+                RaiseEvent WarningOccurred(ex.Message, Color.Red)
+                Debug.WriteLine(ex.ToString())
+            Catch ex As Exception
+                RaiseEvent WarningOccurred(ex.Message, Color.Red)
+                Debug.WriteLine(ex.ToString())
+
+            End Try
+        Next
+
         ' Seřazení podle data
         gpxFilesWithinInterval.Sort(Function(x, y) x.TrailStart.Time.CompareTo(y.TrailStart.Time))
         If gpxFilesWithinInterval.Count = 0 Then
@@ -1357,9 +1442,9 @@ FoundRunnerTrailTrk:
             'pokud některý track je uknown musí se znovu zpracovat
             If trkTypeEnum = TrackType.Unknown Then _IsAlreadyProcessed = False
 
-            Dim _TrackAstrkNode As New TrackAsTrkNode(trkNode, trkTypeEnum)
+            Dim _TrackAsTrkNode As New TrackAsTrkNode(trkNode, trkTypeEnum)
 
-            Tracks.Add(_TrackAstrkNode)
+            Tracks.Add(_TrackAsTrkNode)
         Next
 
         ' Seřadit podle času
@@ -2224,8 +2309,13 @@ Public Class FileTracker
     Public Sub New(storageFile As String)
         savePath = storageFile
         If File.Exists(savePath) Then
-            Dim json = File.ReadAllText(savePath)
-            processedFiles = JsonSerializer.Deserialize(Of Dictionary(Of String, FileRecord))(json)
+            Try
+                Dim json = File.ReadAllText(savePath)
+                processedFiles = JsonSerializer.Deserialize(Of Dictionary(Of String, FileRecord))(json)
+            Catch ex As Exception 'kdyby byl poškozený soubor
+                processedFiles = New Dictionary(Of String, FileRecord)()
+            End Try
+
         Else
             processedFiles = New Dictionary(Of String, FileRecord)()
         End If
