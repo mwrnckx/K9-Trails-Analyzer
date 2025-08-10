@@ -34,21 +34,21 @@ Public Class Form1
             End If
         End If
 
-        Dim backupDir = My.Settings.BackupDirectory
-        If String.IsNullOrWhiteSpace(backupDir) OrElse Not Directory.Exists(backupDir) Then
-            ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku  vedle exe
-            Dim defaultDir = Path.Combine(Application.StartupPath, "gpxFilesBackup")
+        ''Dim backupDir = My.Settings.BackupDirectory
+        'If String.IsNullOrWhiteSpace(backupDir) OrElse Not Directory.Exists(backupDir) Then
+        '    ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku  vedle exe
+        '    Dim defaultDir = Path.Combine(Application.StartupPath, "gpxFilesBackup")
 
-            If Directory.Exists(defaultDir) Then
-                backupDir = defaultDir
-                My.Settings.BackupDirectory = backupDir
-                My.Settings.Save()
-            Else
-                ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
-                MessageBox.Show("Backup Directory was not set up correctly!")
-                Return
-            End If
-        End If
+        '    If Directory.Exists(defaultDir) Then
+        '        backupDir = defaultDir
+        '        My.Settings.BackupDirectory = backupDir
+        '        My.Settings.Save()
+        '    Else
+        '        ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
+        '        MessageBox.Show("Backup Directory was not set up correctly!")
+        '        Return
+        '    End If
+        'End If
 
 
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
@@ -214,7 +214,7 @@ Public Class Form1
         Me.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
         Me.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
-                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & _gpxFilesManager.gpxDirectory & vbCrLf & vbCrLf)
+                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & _gpxFilesManager.gpxLocalDirectory & vbCrLf & vbCrLf)
 
         Dim manydots As String = "...................................................................."
         Dim labelLength As Integer = 40
@@ -730,7 +730,7 @@ Public Class Form1
         ' Nastavení ToolTip pro jednotlivé ovládací prvky
 
         mnuSelect_directory_gpx_files.ToolTipText = Resource1.Tooltip_mnuDirectory
-        mnuSelectBackupDirectory.ToolTipText = Resource1.Tooltip_mnuBackupDirectory
+        'mnuSelectBackupDirectory.ToolTipText = Resource1.Tooltip_mnuBackupDirectory
         mnuExportAs.ToolTipText = Resource1.Tooltip_ExportAs
         mnuPrependDateToFileName.ToolTipText = Resource1.Tooltip_mnuPrependDate
         'mnuTrimGPSNoise.ToolTipText = Resource1.Tooltip_mnuTrim
@@ -768,22 +768,22 @@ Public Class Form1
 
 
 
-    Private Sub mnuSelect_directory_gpx_files_Click(sender As Object, e As EventArgs) Handles mnuSelect_directory_gpx_files.Click, mnuSelectBackupDirectory.Click, mnuSelectADirectoryToSaveVideo.Click
+    Private Sub mnuSelect_directory_gpx_files_Click(sender As Object, e As EventArgs) Handles mnuSelect_directory_gpx_files.Click, mnuSelectADirectoryToSaveVideo.Click
         Dim folderDialog As New FolderBrowserDialog
 
         If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
             If My.Settings.Directory = "" Then
-                My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
+                My.Settings.Directory = Directory.GetParent(Application.StartupPath).ToString
             End If
             folderDialog.SelectedPath = My.Settings.Directory
-        ElseIf sender Is mnuSelectBackupDirectory Then
-            folderDialog.ShowNewFolderButton = True
-            If My.Settings.BackupDirectory = "" Then
-                folderDialog.SelectedPath = My.Settings.Directory
-            Else
-                ' Pokud je nastavená záložní složka, použij ji
-                folderDialog.SelectedPath = My.Settings.BackupDirectory
-            End If
+            'ElseIf sender Is mnuSelectBackupDirectory Then
+            '    folderDialog.ShowNewFolderButton = True
+            '    If My.Settings.BackupDirectory = "" Then
+            '        folderDialog.SelectedPath = My.Settings.Directory
+            '    Else
+            '        ' Pokud je nastavená záložní složka, použij ji
+            '        folderDialog.SelectedPath = My.Settings.BackupDirectory
+            '    End If
         ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
             folderDialog.ShowNewFolderButton = True
             If My.Settings.VideoDirectory = "" Then
@@ -800,13 +800,13 @@ Public Class Form1
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 My.Settings.Directory = folderDialog.SelectedPath
-            ElseIf sender Is mnuSelectBackupDirectory Then
-                If folderDialog.SelectedPath <> My.Settings.Directory Then
-                    My.Settings.BackupDirectory = folderDialog.SelectedPath
-                Else
-                    MessageBox.Show(Resource1.mBoxBackupDirectorySameAsGpxDirectory, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                    Return ' Pokud je záložní složka stejná jako hlavní složka, neukládej ji    
-                End If
+                'ElseIf sender Is mnuSelectBackupDirectory Then
+                '    If folderDialog.SelectedPath <> My.Settings.Directory Then
+                '        My.Settings.BackupDirectory = folderDialog.SelectedPath
+                '    Else
+                '        MessageBox.Show(Resource1.mBoxBackupDirectorySameAsGpxDirectory, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                '        Return ' Pokud je záložní složka stejná jako hlavní složka, neukládej ji    
+                '    End If
 
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
@@ -817,7 +817,7 @@ Public Class Form1
         End If
 
         My.Settings.Save()
-        StatusLabel1.Text = $"Directory: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Backup Directory: {ZkratCestu(My.Settings.BackupDirectory, 130)}"
+        StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
 
     End Sub
 

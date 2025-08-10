@@ -225,9 +225,6 @@
   <data name="FactoryResetToolStripMenuItem.Text" xml:space="preserve">
     <value>Fabrikreset</value>
   </data>
-  <data name="SToolStripMenuItem.Text" xml:space="preserve">
-    <value>Vorlieben</value>
-  </data>
   <data name="btnReadGpxFiles.Text" xml:space="preserve">
     <value>Laden Sie Daten aus GPX -Dateien im ausgewählten Ordner</value>
   </data>
@@ -308,5 +305,8 @@
   </data>
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Ende</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Einstellungen</value>
   </data>
 </root>

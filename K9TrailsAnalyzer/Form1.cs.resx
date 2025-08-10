@@ -233,9 +233,6 @@
   <data name="mnuDogName.Text" xml:space="preserve">
     <value>Jméno psa</value>
   </data>
-  <data name="SToolStripMenuItem.Text" xml:space="preserve">
-    <value>Preference</value>
-  </data>
   <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
     <value>Vyberte adresář pro uložení overlay videa</value>
   </data>
@@ -325,5 +322,8 @@
   </data>
   <data name="btnCreateVideos.ToolTip" xml:space="preserve">
     <value>Vytvářejte videa z vybraných souborů</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Nastavení</value>
   </data>
 </root>

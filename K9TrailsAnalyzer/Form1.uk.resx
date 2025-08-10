@@ -216,9 +216,6 @@
   <data name="mnuDogName.Text" xml:space="preserve">
     <value>Назва собаки</value>
   </data>
-  <data name="SToolStripMenuItem.Text" xml:space="preserve">
-    <value>Уподобання</value>
-  </data>
   <data name="mnuAskForVideo.Text" xml:space="preserve">
     <value>Створіть накладне відео</value>
   </data>
@@ -287,5 +284,8 @@
   </data>
   <data name="clmTrkCount.Text" xml:space="preserve">
     <value>Кількість треків</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Налаштування</value>
   </data>
 </root>

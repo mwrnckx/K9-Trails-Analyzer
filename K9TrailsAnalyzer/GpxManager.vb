@@ -1,23 +1,35 @@
-﻿Imports System.CodeDom.Compiler
-Imports System.Globalization
+﻿Imports System.Globalization
 Imports System.IO
 Imports System.Net.Http
-Imports System.Reflection
-Imports System.Runtime.Intrinsics
 Imports System.Text.Json
 Imports System.Text.RegularExpressions
-Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
-Imports TrackVideoExporter.TrackVideoExporter
 
 
 Public Class GpxFileManager
     'obsahuje seznam souborů typu gpxRecord a funkce na jejich vytvoření a zpracování
-    Public ReadOnly Property gpxDirectory As String
-    Private ReadOnly Property BackupDirectory As String
+    Dim _gpxlocalDirectory
+    Public ReadOnly Property GpxLocalDirectory As String
+        Get
+            _gpxlocalDirectory = IO.Path.Combine(Application.StartupPath, "gpx") 'adresář, kam se ukládají gpx soubory
+            If Directory.Exists(_gpxlocalDirectory) Then
+                Return _gpxlocalDirectory
+            Else
+                Try
+                    IO.Directory.CreateDirectory(_gpxlocalDirectory)
+                Catch ex As Exception
+                    RaiseEvent WarningOccurred($"Error creating local GPX directory: {ex.Message}", Color.Red)
+                End Try
+                Return Nothing
+            End If
+        End Get
+    End Property
+
+    Public ReadOnly Property gpxRemoteDirectory As String
+    'Private ReadOnly Property BackupDirectory As String
     Public dateFrom As Date
     Public dateTo As Date
     Public Property ForceProcess As Boolean = False ' 'pokud je True, zpracuje všechny soubory, i ty, které už byly zpracovány (přepíše popis a další věci)
@@ -34,16 +46,16 @@ Public Class GpxFileManager
     Public Event WarningOccurred(message As String, _color As Color)
 
     Public Sub New()
-        gpxDirectory = My.Settings.Directory
-        BackupDirectory = My.Settings.BackupDirectory
-        If Not Directory.Exists(BackupDirectory) Then
-            Try
-                Directory.CreateDirectory(BackupDirectory)
-            Catch ex As Exception
+        gpxRemoteDirectory = My.Settings.Directory
+        'BackupDirectory = My.Settings.BackupDirectory
+        'If Not Directory.Exists(BackupDirectory) Then
+        '    Try
+        '        Directory.CreateDirectory(BackupDirectory)
+        '    Catch ex As Exception
 
-            End Try
+        '    End Try
 
-        End If
+        'End If
         maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
         trimGPS_Noise = My.Settings.TrimGPSnoise
@@ -98,15 +110,35 @@ Public Class GpxFileManager
 
     Public Function GetGPXFilesWithinInterval() As List(Of GPXRecord)
         Dim gpxFilesWithinInterval As New List(Of GPXRecord)
+
+        Dim tracker As New FileTracker("processed.json")
+        'Dim gpxdirectory = "C:\Users\Víťa\GoogleDrive\GPX"
+        Dim i As Integer = 0
+        For Each file In Directory.GetFiles(gpxRemoteDirectory, "*.gpx")
+            If tracker.IsNewOrChanged(file) Then
+                Console.WriteLine("Zpracovávám: " & Path.GetFileName(file))
+                ' Pokud je soubor nový nebo změněný, zpracujeme ho
+                IO.File.Copy(file, Path.Combine(GpxLocalDirectory, Path.GetFileName(file)), False)
+                i += 1
+                tracker.MarkAsProcessed(file)
+            Else
+                Console.WriteLine("Přeskakuji: " & Path.GetFileName(file))
+            End If
+        Next
+
+        RaiseEvent WarningOccurred($"Found {i} new yet unprocessed files.", Color.OrangeRed)
+
         ' Načteme všechny GPX soubory
-        Dim gpxFilesAllPath As List(Of String) = Directory.GetFiles(gpxDirectory, "*.gpx").ToList()
+        Dim gpxFilesAllPath As List(Of String) = Directory.GetFiles(GpxLocalDirectory, "*.gpx").ToList()
+
+
         If gpxFilesAllPath.Count = 0 Then
-            RaiseEvent WarningOccurred("No GPX files found in the specified directory.", Color.Red)
+            RaiseEvent WarningOccurred("No GPX files found in my working directory.", Color.Red)
             Return gpxFilesWithinInterval 'vrátí prázdný list, pokud nejsou žádné soubory
         Else
-            RaiseEvent WarningOccurred($"Found {gpxFilesAllPath.Count} GPX files in the specified directory.", Color.DarkGreen)
+            RaiseEvent WarningOccurred($"Found {gpxFilesAllPath.Count} GPX files in my working directory.", Color.DarkGreen)
         End If
-        Dim backup As Boolean = False
+        'Dim backup As Boolean = False
         Try
             For Each gpxFilePath In gpxFilesAllPath
                 Try
@@ -127,9 +159,9 @@ Public Class GpxFileManager
                     If _gpxRecord.TrailStart.Time.Date >= dateFrom.Date And _gpxRecord.TrailStart.Time.Date <= dateTo.Date Then
 
                         AddHandler _gpxRecord.WarningOccurred, AddressOf WriteRTBWarning
-                        Dim _backup As Boolean = _gpxRecord.Backup()
+                        'Dim _backup As Boolean = _gpxRecord.Backup()
                         'kvůli výpisu, pokud se žádný soubor nezazálohuje, výpis se nedělá:
-                        If Not backup Then backup = _backup
+                        'If Not backup Then backup = _backup
                         gpxFilesWithinInterval.Add(_gpxRecord)
 
                     End If
@@ -148,10 +180,10 @@ Public Class GpxFileManager
 
 
             Next
-            If backup Then
-                Debug.WriteLine($"Soubory gpx byly úspěšně zálohovány do: {BackupDirectory }")
-                RaiseEvent WarningOccurred($"{vbCrLf}{Resource1.logBackupOfFiles}   {BackupDirectory }{vbCrLf}", Color.DarkGreen)
-            End If
+            'If backup Then
+            '    Debug.WriteLine($"Soubory gpx byly úspěšně zálohovány do: {BackupDirectory }")
+            '    RaiseEvent WarningOccurred($"{vbCrLf}{Resource1.logBackupOfFiles}   {BackupDirectory }{vbCrLf}", Color.DarkGreen)
+            'End If
 
         Catch ex As Exception
             Debug.WriteLine($"Chyba při zálohování souborů: {ex.Message}")
@@ -393,42 +425,6 @@ Be carefull with this!!!!!"
 End Class
 
 
-
-'Public Enum TrackType
-'    Unknown = 0
-'    RunnerTrail
-'    DogTrack
-'    CrossTrail
-'End Enum
-
-Public Class TrackAstrkNodeOld
-    Public Sub New(node As XmlNode, time As DateTime, trackType As TrackType)
-        Me.Node = node
-        Me.Datum = time
-        Me.TrackType = trackType
-    End Sub
-
-    Public ReadOnly Property Color As Color
-        Get
-            Select Case Me.TrackType
-                Case TrackType.RunnerTrail : Return Color.Blue
-                Case TrackType.DogTrack : Return Color.Red
-                Case TrackType.CrossTrail : Return Color.Green
-                Case Else : Return Color.Black
-            End Select
-        End Get
-    End Property
-    Public Property Node As XmlNode 'trkNode
-    Public Property Datum As DateTime
-    Public Property TrackType As TrackType
-End Class
-
-
-
-
-
-
-
 Public Class GPXRecord
 
     Public Event WarningOccurred(_message As String, _color As Color)
@@ -579,7 +575,7 @@ Public Class GPXRecord
     Public Property WeatherData As (_temperature As Double, _windSpeed As Double, _windDirection As Double, _precipitation As Double, _relHumidity As Double, _cloudCover As Double)
 
     Private ReadOnly Property gpxDirectory As String
-    Private ReadOnly Property BackupDirectory As String
+    'Private ReadOnly Property BackupDirectory As String
 
     Private Const NBSP As String = ChrW(160)
 
@@ -595,11 +591,11 @@ Public Class GPXRecord
 
     Public Sub New(_reader As GpxReader, forceProcess As Boolean)
         gpxDirectory = My.Settings.Directory
-        BackupDirectory = My.Settings.BackupDirectory
+        'BackupDirectory = My.Settings.BackupDirectory
 
-        If Not Directory.Exists(BackupDirectory) Then
-            Directory.CreateDirectory(BackupDirectory)
-        End If
+        'If Not Directory.Exists(BackupDirectory) Then
+        '    Directory.CreateDirectory(BackupDirectory)
+        'End If
         Me.Reader = _reader
         If forceProcess Then
             _IsAlreadyProcessed = False
@@ -1665,26 +1661,26 @@ FoundRunnerTrailTrk:
     'End Function
 
 
-    Public Function Backup() As Boolean
-        ' Vytvoření kompletní cílové cesty
-        Dim backupFilePath As String = Path.Combine(BackupDirectory, Me.Reader.FileName)
+    'Public Function Backup() As Boolean
+    '    ' Vytvoření kompletní cílové cesty
+    '    'Dim backupFilePath As String = Path.Combine(BackupDirectory, Me.Reader.FileName)
 
-        If Not IO.File.Exists(backupFilePath) Then
-            ' Kopírování souboru
-            Try
-                IO.File.Copy(Me.Reader.FilePath, backupFilePath, False)
-                Return True
-            Catch ex As Exception
-                ' Zpracování jakýchkoli neočekávaných chyb
-                Debug.WriteLine($"Chyba při kopírování souboru {Reader.FileName}: {ex.Message}")
-                Return False
-            End Try
-        Else
-            ' Soubor již existuje, přeskočíme
-            Debug.WriteLine($"Soubor {Reader.FileName} již existuje, přeskočeno.")
-            Return False
-        End If
-    End Function
+    '    If Not IO.File.Exists(backupFilePath) Then
+    '        ' Kopírování souboru
+    '        Try
+    '            IO.File.Copy(Me.Reader.FilePath, backupFilePath, False)
+    '            Return True
+    '        Catch ex As Exception
+    '            ' Zpracování jakýchkoli neočekávaných chyb
+    '            Debug.WriteLine($"Chyba při kopírování souboru {Reader.FileName}: {ex.Message}")
+    '            Return False
+    '        End Try
+    '    Else
+    '        ' Soubor již existuje, přeskočíme
+    '        Debug.WriteLine($"Soubor {Reader.FileName} již existuje, přeskočeno.")
+    '        Return False
+    '    End If
+    'End Function
 
 
     Public Sub RenamewptNode(newname As String)
@@ -2217,5 +2213,69 @@ xmlns:          namespaceManager.AddNamespace("locus", "https://www.locusmap.app
     Public Sub Save(_FilePath As String)
         xmlDoc.Save(_FilePath)
     End Sub
+End Class
+
+
+Public Class FileTracker
+
+    Private processedFiles As Dictionary(Of String, FileRecord)
+    Private ReadOnly savePath As String
+
+    Public Sub New(storageFile As String)
+        savePath = storageFile
+        If File.Exists(savePath) Then
+            Dim json = File.ReadAllText(savePath)
+            processedFiles = JsonSerializer.Deserialize(Of Dictionary(Of String, FileRecord))(json)
+        Else
+            processedFiles = New Dictionary(Of String, FileRecord)()
+        End If
+    End Sub
+
+    ' Struktura pro metadata
+    Public Class FileRecord
+        Public Property LastWriteTime As DateTime
+        Public Property Length As Long
+    End Class
+
+    ' Vrátí True, pokud je soubor nový nebo změněný
+    Public Function IsNewOrChanged(filePath As String) As Boolean
+        Dim fi As New FileInfo(filePath)
+        Dim fileName = fi.Name
+
+        If Not processedFiles.ContainsKey(fileName) Then
+            ' Nový soubor
+            Return True
+        End If
+
+        Dim rec = processedFiles(fileName)
+        If rec.LastWriteTime <> fi.LastWriteTimeUtc OrElse rec.Length <> fi.Length Then
+            ' Soubor změněn
+            Return True
+        End If
+
+        ' Stejný jako dříve
+        Return False
+    End Function
+
+    ' Uloží info o souboru jako zpracovaném
+    Public Sub MarkAsProcessed(filePath As String)
+        Dim fi As New FileInfo(filePath)
+        Dim fileName = fi.Name
+        Dim rec As New FileRecord With {
+            .LastWriteTime = fi.LastWriteTimeUtc,
+            .Length = fi.Length
+        }
+
+        processedFiles(fileName) = rec
+        Save()
+    End Sub
+
+    ' Uloží JSON
+    Private Sub Save()
+        Dim options As New JsonSerializerOptions With {.WriteIndented = True}
+        Dim json = JsonSerializer.Serialize(processedFiles, options)
+        File.WriteAllText(savePath, json)
+    End Sub
+
 End Class
 

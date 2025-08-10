@@ -33,7 +33,6 @@ Partial Class Form1
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
         mnuSelect_directory_gpx_files = New ToolStripMenuItem()
-        mnuSelectBackupDirectory = New ToolStripMenuItem()
         mnuExportAs = New ToolStripMenuItem()
         mnuExit = New ToolStripMenuItem()
         mnuSettings = New ToolStripMenuItem()
@@ -123,7 +122,7 @@ Partial Class Form1
         ' 
         ' mnuFile
         ' 
-        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuSelectBackupDirectory, mnuExportAs, mnuExit})
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuExportAs, mnuExit})
         resources.ApplyResources(mnuFile, "mnuFile")
         mnuFile.Name = "mnuFile"
         ' 
@@ -131,11 +130,6 @@ Partial Class Form1
         ' 
         mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
         resources.ApplyResources(mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
-        ' 
-        ' mnuSelectBackupDirectory
-        ' 
-        mnuSelectBackupDirectory.Name = "mnuSelectBackupDirectory"
-        resources.ApplyResources(mnuSelectBackupDirectory, "mnuSelectBackupDirectory")
         ' 
         ' mnuExportAs
         ' 
@@ -451,10 +445,10 @@ Partial Class Form1
         '    My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
         'End If
 
-        If My.Settings.BackupDirectory = "" Then
-            My.Settings.BackupDirectory = System.IO.Path.Combine(My.Settings.Directory, "gpxFilesBackup")
-        End If
-        My.Settings.Save()
+        'If My.Settings.BackupDirectory = "" Then
+        '    My.Settings.BackupDirectory = System.IO.Path.Combine(My.Settings.Directory, "gpxFilesBackup")
+        'End If
+        'My.Settings.Save()
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
         'Me.dtpEndDate.Value = Now
@@ -462,7 +456,7 @@ Partial Class Form1
         'Me.dtpStartDate.Value = Me.dtpStartDate.Value.AddDays(1)
 
 
-        Me.StatusLabel1.Text = $"Directory: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Backup Directory: {ZkratCestu(My.Settings.BackupDirectory, 130)}"
+        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
         Dim resources = New ComponentResourceManager(Me.GetType())
         LocalizeMenuItems(MenuStrip1.Items, resources)
         SetTooltips()
@@ -510,7 +504,6 @@ Partial Class Form1
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents mnuFile As ToolStripMenuItem
     Friend WithEvents mnuSelect_directory_gpx_files As ToolStripMenuItem
-    Friend WithEvents mnuSelectBackupDirectory As ToolStripMenuItem
     Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents StatusLabel1 As ToolStripStatusLabel
