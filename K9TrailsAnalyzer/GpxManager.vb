@@ -516,6 +516,18 @@ Public Class GPXRecord
 
     Public Property Tracks As New List(Of TrackAsTrkNode)
 
+
+    Public ReadOnly Property WptNodes As TrackAsTrkPts
+        Get
+            If Me.Reader Is Nothing Then
+                Throw New InvalidOperationException("Reader nebyl nastaven.")
+            End If
+            Dim _wptNodes As XmlNodeList = Me.Reader.SelectNodes("wpt")
+            Return New TrackAsTrkPts(TrackType.Artickle, _wptNodes) 'vrací seznam všech wpt, které jsou v souboru
+        End Get
+    End Property
+
+
     Public ReadOnly Property RunnerStart As TrackGeoPoint
         Get
             Return Me.Tracks.FirstOrDefault(Function(t) t.TrackType = TrackType.RunnerTrail)?.StartTrackGeoPoint
@@ -674,6 +686,7 @@ Public Class GPXRecord
     End Property
 
 
+
     Public Sub New(_reader As GpxReader, forceProcess As Boolean)
         gpxDirectory = My.Settings.Directory
         'BackupDirectory = My.Settings.BackupDirectory
@@ -705,84 +718,6 @@ Public Class GPXRecord
         RaiseEvent WarningOccurred(_message, _color)
     End Sub
 
-    'Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord) As Task(Of Boolean)
-    '    'Dim RunnerNodes, dogNodes As XmlNodeList
-    '    'Dim allTracks As New List(Of TrackAsTrkPts)
-
-    '    'For Each trkNode As XmlNode In Me.TrkNodes 'Me.Reader.SelectNodes("trk")
-    '    '    Dim TrackAsTrkptsList As XmlNodeList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
-
-    '    '    Dim isMoving As Boolean = False 'defaultně pro ostatní trasy
-    '    '    Dim trackColor As Color = Color.Green ' Default color for other tracks
-    '    '    Dim trkType = Me.GetTrkType(trkNode)
-    '    '    Dim datum As DateTime = DateTime.MinValue
-    '    '    If trkType = TrackType.DogTrack Then
-    '    '        datum = DogStart
-    '    '        isMoving = True
-    '    '        trackColor = Color.Red
-    '    '    ElseIf trkType = TrackType.RunnerTrail Then
-    '    '        datum = RunnerStart
-    '    '        trackColor = Color.Blue
-    '    '    End If
-    '    '    TrackAsTrkptsList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
-    '    '    allTracks.Add(New TrackAsTrkPts(trkType, TrackAsTrkptsList))
-    '    'Next trkNode
-
-    '    ' Create a video from the dog track and save it in the video directory
-    '    ' Zjisti název souboru bez přípony
-    '    Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.FileName)
-    '    ' Sestav cestu k novému adresáři
-    '    If My.Settings.VideoDirectory = "" Then My.Settings.VideoDirectory = My.Settings.Directory
-    '    Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
-    '    ' Pokud adresář neexistuje, vytvoř ho
-    '    If Not directory.Exists Then directory.Create()
-    '    Dim FFmpegPath As String = FindAnSaveFfmpegPath()
-    '    Dim videoCreator As New VideoExportManager(FFmpegPath, directory, WeatherData._windDirection, WeatherData._windSpeed)
-    '    AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
-
-    '    Dim waitForm As New frmPleaseWait()
-    '    waitForm.Show()
-
-    '    ' Spustíme na pozadí, aby nezamrzlo UI
-    '    Await Task.Run(Async Function()
-    '                       ' Spustíme tvůj dlouhý proces
-    '                       Dim success = Await videoCreator.CreateVideoFromTrkNodes(GPXRecord.Tracks, DescriptionParts, DescriptionPartsEng)
-
-    '                       ' Po dokončení se vrať na UI thread a proveď akce
-    '                       waitForm.Invoke(Sub()
-    '                                           waitForm.Close()
-
-    '                                           If success Then
-    '                                               Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.webm")
-    '                                               Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "TrailsOnMap.png")
-    '                                               Dim form As New frmVideoDone(videopath, bgPNGPath)
-    '                                               form.ShowDialog()
-    '                                               form.Dispose()
-    '                                           Else
-    '                                               MessageBox.Show("Video creation failed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-    '                                           End If
-    '                                       End Sub)
-    '                   End Function)
-
-    '    Return False
-    'End Function
-
-    '' Function to read the <link> description from the first <trk> node in the GPX file
-    'Friend Function Getlink()
-    '    ' Načtení více uzlů, např. <trkseg>
-    '    Dim linkNodes As XmlNodeList = Me.Reader.SelectNodes("link")
-
-    '    For Each linkNode As XmlNode In linkNodes
-    '        ' Zpracování každého uzlu <link>
-    '        If linkNode IsNot Nothing AndAlso linkNode.Attributes("href") IsNot Nothing Then
-    '            Dim linkHref As String = linkNode.Attributes("href").Value
-    '            If linkHref.Contains("youtu") Then
-    '                Return linkHref
-    '            End If
-    '        End If
-    '    Next
-    '    Return Nothing
-    'End Function
 
     Public Function GetAgeFromTime() As TimeSpan
         Dim ageFromTime As TimeSpan
@@ -851,10 +786,10 @@ Public Class GPXRecord
 
         If Not String.IsNullOrWhiteSpace(Me.Description) Then
             ' Find the first <trk> node and its <desc> subnode
-            Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
+            'Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
             Dim RunnerTrailTrk As XmlNode = Nothing ' Inicializace proměnné pro <trk> s <type>RunnerTrail</type>
             ' Najdeme <trk> s <type>RunnerTrail</type>
-            For Each trkNode As XmlNode In trkNodes
+            For Each trkNode As XmlNode In Me.TrkNodes
                 Dim typeNodes As XmlNodeList = Me.Reader.SelectChildNodes(GpxReader.K9_PREFIX & ":" & "TrackType", trkNode)
                 For Each typeNode As XmlNode In typeNodes
                     ' Zkontrolujeme, zda <type> obsahuje "RunnerTrail"
@@ -1381,9 +1316,9 @@ FoundRunnerTrailTrk:
     End Function
 
     Public Sub SplitSegmentsIntoTracks()
-        Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
+        'Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
 
-        For Each trkNode As XmlNode In trkNodes
+        For Each trkNode As XmlNode In Me.TrkNodes
             Dim trkSegNodes As XmlNodeList = Me.Reader.SelectChildNodes(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "trkseg", trkNode)
 
             If trkSegNodes.Count > 1 Then
@@ -1411,15 +1346,12 @@ FoundRunnerTrailTrk:
     Public Sub CreateAndSortTracks()
         Tracks.Clear() ' Vyčistit seznam tracků
         'Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
-        Dim parentNode As XmlNode = TrkNodes(0)?.ParentNode
+        Dim parentNode As XmlNode = Me.TrkNodes(0)?.ParentNode
         If parentNode Is Nothing Then Exit Sub
 
-        ' Seznam tuple (trkNode, čas)
-        'Dim Tracks As New List(Of TrackAsTrkNode) 'List(Of Tuple(Of XmlNode, DateTime, String))()
-
         'projde všechny trkNode:
-        For i As Integer = 0 To TrkNodes.Count - 1
-            Dim trkNode As XmlNode = TrkNodes(i)
+        For i As Integer = 0 To Me.TrkNodes.Count - 1
+            Dim trkNode As XmlNode = Me.TrkNodes(i)
             'najde první <trkseg> v něm první <trkpt> a v něm načte <time>
             Dim trkseg As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "trkseg", trkNode)
             Dim trkpt As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "trkpt", trkseg)
@@ -1497,8 +1429,6 @@ FoundRunnerTrailTrk:
         For Each t In Tracks
             parentNode.AppendChild(t.TrkNode)
         Next
-
-        'Me.Save()
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
     End Sub
 
@@ -2031,6 +1961,7 @@ Module TrackDisplayLogic
             Case TrackType.RunnerTrail : Return My.Resources.Resource1.RunnerTrail
             Case TrackType.DogTrack : Return My.Resources.Resource1.dogTrack
             Case TrackType.CrossTrail : Return My.Resources.Resource1.CrossingTrail
+            Case TrackType.Artickle : Return My.Resources.Resource1.Artickle
             Case Else : Return My.Resources.Resource1.txtUnknown
         End Select
     End Function

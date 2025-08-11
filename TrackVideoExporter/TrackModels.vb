@@ -42,6 +42,7 @@ Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentuj
                 Case TrackType.RunnerTrail : Return Color.Blue
                 Case TrackType.DogTrack : Return Color.Red
                 Case TrackType.CrossTrail : Return Color.Green
+                Case TrackType.Artickle : Return Color.Orange
                 Case Else : Return Color.Black
             End Select
         End Get
@@ -105,7 +106,6 @@ Public Class TrackAsPointsF
     ''' <summary>
     ''' Initializes a new instance of the TrackAsPointsF class.
     ''' </summary>
-    ''' <param name="datum">The date and time of the track.</param>
     ''' <param name="trackType">The type of the track.</param>
     ''' <param name="trackPointsF">A list of 2D points (pixel coordinates and timestamps) for the track.</param>
     Public Sub New(trackType As TrackType, trackPointsF As List(Of TrackPointF))
@@ -125,7 +125,6 @@ Public Class TrackAsTrkPts 'track as trackPoints
     ''' <summary>
     ''' Initializes a new instance of the TrackAsTrkPts class.
     ''' </summary>
-    ''' <param name="datum">The date and time of the track.</param>
     ''' <param name="trackType">The type of the track.</param>
     ''' <param name="trackPoints">A list of XML nodes representing track points in the GPX file.</param>
     Public Sub New(trackType As TrackType, trackPoints As XmlNodeList)
@@ -269,6 +268,7 @@ Public Enum TrackType
     RunnerTrail
     DogTrack
     CrossTrail
+    Artickle 'scent artickle
 End Enum
 
 ''' <summary>

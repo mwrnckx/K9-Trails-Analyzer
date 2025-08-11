@@ -1,10 +1,12 @@
 ﻿
+Imports System.DirectoryServices.ActiveDirectory
 Imports System.Drawing
 Imports System.Drawing.Imaging
 Imports System.Drawing.Text
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection.Metadata
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 
 Public Class PngSequenceCreator
     Private renderer As PngRenderer
@@ -136,7 +138,7 @@ Public Class PngRenderer
     ''' <param name="tracksAsPointsF">A list of tracks to be rendered as points.</param>
     ''' <param name="backgroundTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static map background.</returns>
-    Public Function RenderStaticMapBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single)) As Bitmap
+    Public Function RenderStaticMapBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Bitmap
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
 
@@ -152,11 +154,9 @@ Public Class PngRenderer
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
                 g.DrawLines(New Pen(track.Color, penWidth), TrackPoints.ToArray)
+
                 ' popis, poslední bod atd.
                 Dim time As String = track.TrackPointsF.Last.Time.ToString("HH:mm")
-
-
-
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
                 g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
 
@@ -175,6 +175,28 @@ Public Class PngRenderer
                 DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
 
             Next
+
+            If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
+                Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
+                Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+                For Each wpt In TrackPoints
+                    Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
+                    Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
+                    g.FillEllipse(brush, wpt.X - radius / 2, wpt.Y - radius / 2, radius, radius)
+                    Dim popis As String = waypointsAsPointsF.Label
+                    Dim textSize = g.MeasureString(popis, font)
+                    Dim textoffsetX As Single
+                    If wpt.X - textSize.Width - radius < 0 Then
+                        ' není místo vlevo, napiš text vpravo od elipsy
+                        textoffsetX = radius
+                    Else
+                        ' je místo, napiš text vlevo
+                        textoffsetX = -textSize.Width - radius
+                    End If
+                    Dim textPos As New PointF(wpt.X + textoffsetX, wpt.Y - textSize.Height / 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
+                Next
+            End If
         End Using
 
         Return backgroundMap
@@ -187,7 +209,9 @@ Public Class PngRenderer
     ''' <param name="backgroundTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.
     ''' The dimensions of bgmap are used to determine the size of the resulting transparent bitmap.</param>
     ''' <returns>A <see cref="Bitmap"/> with a transparent background, containing the rendered tracks, wind arrow, and labels.</returns>
-    Public Function RenderStaticTransparentBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single)) As Bitmap
+    Public Function RenderStaticTransparentBackground(tracksAsPointsF As List(Of TrackAsPointsF),
+                                                      backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single),
+                                                      Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Bitmap
         ' Vykresli statické stopy, šipku větru, popisky
 
         Dim staticBmp As New Bitmap(backgroundTiles.bgmap.Width, backgroundTiles.bgmap.Height, PixelFormat.Format32bppArgb)
@@ -200,7 +224,6 @@ Public Class PngRenderer
                 Dim arrowlength As Single = 0.06 * diagonal
                 DrawWindArrow(g, center, arrowlength, windDirection.GetValueOrDefault(0), Color.Orange)
             End If
-
 
 
             For Each track As TrackAsPointsF In tracksAsPointsF
@@ -235,6 +258,28 @@ Public Class PngRenderer
                 If Not track.IsMoving Then DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
 
             Next
+
+            If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
+                Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
+                Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+                For Each wpt In TrackPoints
+                    Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
+                    Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
+                    g.FillEllipse(brush, wpt.X - radius / 2, wpt.Y - radius / 2, radius, radius)
+                    Dim popis As String = waypointsAsPointsF.Label
+                    Dim textSize = g.MeasureString(popis, font)
+                    Dim textoffsetX As Single
+                    If wpt.X - textSize.Width - radius < 0 Then
+                        ' není místo vlevo, napiš text vpravo od elipsy
+                        textoffsetX = radius
+                    Else
+                        ' je místo, napiš text vlevo
+                        textoffsetX = -textSize.Width - radius
+                    End If
+                    Dim textPos As New PointF(wpt.X + textoffsetX, wpt.Y - textSize.Height / 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
+                Next
+            End If
         End Using
 
         Return staticBmp
@@ -243,8 +288,7 @@ Public Class PngRenderer
     ''' <summary>
     ''' Renders static text onto a new bitmap with a white background. The text will wrap and adjust font size to fit within the specified area.
     ''' </summary>
-    ''' <param name="textParts">A list of tuples, each containing the text string, its color, and font style.</param>
-    ''' <param name="width">With of the new text bitmap.</param>
+    '' <param name="width">With of the new text bitmap.</param>
     ''' <param name="height">height of the new text bitmap.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
     Public Function RenderStaticText(trailReport As TrailReport, Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap

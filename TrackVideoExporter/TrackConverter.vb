@@ -66,30 +66,37 @@ Public Class TrackConverter
     Public Function ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts As List(Of TrackAsTrkPts)) As List(Of TrackAsGeoPoints)
         Dim tracksAsGeoPoints As New List(Of TrackAsGeoPoints)
         For Each track In _tracksAsTrkPts
-            Dim trackGeoPoints As New List(Of TrackGeoPoint)
-            For Each trkptnode As XmlNode In track.TrackPoints
-                Dim lat = Double.Parse(trkptnode.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-                Dim lon = Double.Parse(trkptnode.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
-                Dim timenode = SelectSingleChildNode("time", trkptnode)
-                Dim time As DateTime
-                If timenode IsNot Nothing Then
-                    time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
-                Else
-                    Throw New Exception("Time node not found in trkpt.")
-                End If
 
-                Dim geopoint As New TrackGeoPoint With {
-                    .Location = New Coordinates With {.Lat = lat, .Lon = lon},
-                    .Time = time
-                }
-                trackGeoPoints.Add(geopoint)
-            Next
+            Dim _TrackAsGeoPoints = ConvertTrackTrkPtsToGeoPoints(track)
 
-            Dim _TrackAsGeoPoints As New TrackAsGeoPoints(track.TrackType, trackGeoPoints)
             tracksAsGeoPoints.Add(_TrackAsGeoPoints)
         Next
         Return tracksAsGeoPoints
     End Function
+
+    Public Function ConvertTrackTrkPtsToGeoPoints(track As TrackAsTrkPts) As TrackAsGeoPoints
+        Dim trackGeoPoints As New List(Of TrackGeoPoint)
+        For Each trkptnode As XmlNode In track.TrackPoints
+            Dim lat = Double.Parse(trkptnode.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim lon = Double.Parse(trkptnode.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim timenode = SelectSingleChildNode("time", trkptnode)
+            Dim time As DateTime
+            If timenode IsNot Nothing Then
+                time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
+            Else
+                Throw New Exception("Time node not found in trkpt.")
+            End If
+
+            Dim geopoint As New TrackGeoPoint With {
+                .Location = New Coordinates With {.Lat = lat, .Lon = lon},
+                .Time = time
+            }
+            trackGeoPoints.Add(geopoint)
+        Next
+        Dim _TrackAsGeoPoints As New TrackAsGeoPoints(track.TrackType, trackGeoPoints)
+        Return _TrackAsGeoPoints
+    End Function
+
 
     ''' <summary>
     ''' Calculates bounding box (min/max lat/lon) from a list of geographical tracks.
@@ -123,19 +130,23 @@ Public Class TrackConverter
 
         Dim _tracksAsPointsF As New List(Of TrackAsPointsF)
         For Each Track In _tracksAsGeoPoints
-            Dim _TrackAsPointsF As New TrackAsPointsF(Track.TrackType, New List(Of TrackPointF))
-
-            For Each geoPoint As TrackGeoPoint In Track.TrackGeoPoints
-                Dim pt = LatLonToPixel(geoPoint.Location.Lat, geoPoint.Location.Lon, zoom, minTileX, minTileY)
-                Dim _trackpointF As New TrackPointF With {
-                    .Location = New PointF With {.X = pt.X, .Y = pt.Y},
-                    .Time = geoPoint.Time
-                }
-                _TrackAsPointsF.TrackPointsF.Add(_trackpointF)
-            Next
+            Dim _TrackAsPointsF = ConvertTrackGeoPointsToPointsF(Track, minTileX, minTileY, zoom)
             _tracksAsPointsF.Add(_TrackAsPointsF)
         Next
         Return _tracksAsPointsF
+    End Function
+
+    Public Function ConvertTrackGeoPointsToPointsF(track As TrackAsGeoPoints, minTileX As Single, minTileY As Single, zoom As Integer) As TrackAsPointsF
+        Dim _TrackAsPointsF As New TrackAsPointsF(track.TrackType, New List(Of TrackPointF))
+        For Each geoPoint As TrackGeoPoint In track.TrackGeoPoints
+            Dim pt = LatLonToPixel(geoPoint.Location.Lat, geoPoint.Location.Lon, zoom, minTileX, minTileY)
+            Dim _trackpointF As New TrackPointF With {
+                .Location = New PointF With {.X = pt.X, .Y = pt.Y},
+                .Time = geoPoint.Time
+            }
+            _TrackAsPointsF.TrackPointsF.Add(_trackpointF)
+        Next
+        Return _TrackAsPointsF
     End Function
 
     ''' <summary>

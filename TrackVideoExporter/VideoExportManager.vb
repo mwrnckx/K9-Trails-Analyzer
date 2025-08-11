@@ -56,12 +56,10 @@ Namespace TrackVideoExporter
         ''' </summary>
         '''<param name="localisedReports"></param>
         '''<param name="_tracksAsTrkNode"> </param>
-        Public Async Function CreateVideoFromTrkNodes(_tracksAsTrkNode As List(Of TrackAsTrkNode),
-                LocalisedReports As Dictionary(Of String, TrailReport)) As Task(Of Boolean)
-
+        Public Async Function CreateVideoFromTrkNodes(_tracksAsTrkNode As List(Of TrackAsTrkNode), Optional waypoints As TrackAsTrkPts = Nothing, Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing) As Task(Of Boolean)
             Dim tracksAsTrkPts = converter.ConvertTracksAsTrkNodesToTrackAsTrkPts(_tracksAsTrkNode)
             Me.LocalisedReports = LocalisedReports
-            Return Await CreateVideoFromTrkPts(tracksAsTrkPts, Me.LocalisedReports)
+            Return Await CreateVideoFromTrkPts(tracksAsTrkPts, waypoints, Me.LocalisedReports)
         End Function
 
         ''' <summary>
@@ -72,12 +70,12 @@ Namespace TrackVideoExporter
         ''' <returns>True if video was successfully created.</returns>
         Public Async Function CreateVideoFromTrkPts(
             _tracksAsTrkPts As List(Of TrackAsTrkPts),
+            waypoints As TrackAsTrkPts,
                LocalisedReports As Dictionary(Of String, TrailReport)) As Task(Of Boolean)
-
+            Dim wayPointsAsGeoPoints As TrackAsGeoPoints = converter.ConvertTrackTrkPtsToGeoPoints(waypoints)
             Dim tracksAsGeoPoints As List(Of TrackAsGeoPoints) = converter.ConvertTracksTrkPtsToGeoPoints(_tracksAsTrkPts)
             Me.LocalisedReports = LocalisedReports
-            Return Await CreateVideoFromGeoPoints(tracksAsGeoPoints)
-
+            Return Await CreateVideoFromGeoPoints(tracksAsGeoPoints, wayPointsAsGeoPoints)
         End Function
 
         ''' <summary>
@@ -86,13 +84,11 @@ Namespace TrackVideoExporter
         ''' <param name="_tracksAsGeoPoints">List of tracks with geographic coordinates.</param>
         ''' <returns>True if video was successfully created.</returns>
         Public Async Function CreateVideoFromGeoPoints(
-            _tracksAsGeoPoints As List(Of TrackAsGeoPoints)) As Task(Of Boolean)
-
+            _tracksAsGeoPoints As List(Of TrackAsGeoPoints),
+          Optional waypointsAsGeoPoints As TrackAsGeoPoints = Nothing) As Task(Of Boolean)
 
             Dim zoom As Integer = 18
-
             converter.SetCoordinatesBounds(_tracksAsGeoPoints)
-
             Dim downloader As New OsmTileDownloader()
             backgroundTiles = Await downloader.GetMapBitmap(
                 converter.minLat, converter.maxLat,
@@ -101,8 +97,11 @@ Namespace TrackVideoExporter
             Dim _TracksAsPointsF As List(Of TrackAsPointsF) =
                 converter.ConvertTracksGeoPointsToPointsF(
                     _tracksAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
+            Dim wayPointsAsPointsF As TrackAsPointsF =
+                converter.ConvertTrackGeoPointsToPointsF(
+                    waypointsAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
 
-            Return Await CreateVideoFromPointsF(_TracksAsPointsF)
+            Return Await CreateVideoFromPointsF(_TracksAsPointsF, wayPointsAsPointsF)
 
         End Function
 
@@ -112,7 +111,8 @@ Namespace TrackVideoExporter
         ''' <param name="_tracksAsPointsF">List of 2D track points with timing information.</param>
         ''' <returns>True if video was successfully created.</returns>
         Public Async Function CreateVideoFromPointsF(
-            _tracksAsPointsF As List(Of TrackAsPointsF)) As Task(Of Boolean)
+            _tracksAsPointsF As List(Of TrackAsPointsF),
+            Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Task(Of Boolean)
 
             Dim pngDir As DirectoryInfo = Nothing
             Dim pngCreator As PngSequenceCreator = Nothing
@@ -121,8 +121,8 @@ Namespace TrackVideoExporter
 
                                Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles)
 
-                               Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles)
-                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles)
+                               Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
+                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
 
 
                                pngCreator = New PngSequenceCreator(renderer)

@@ -776,14 +776,6 @@ Public Class Form1
                 My.Settings.Directory = Directory.GetParent(Application.StartupPath).ToString
             End If
             folderDialog.SelectedPath = My.Settings.Directory
-            'ElseIf sender Is mnuSelectBackupDirectory Then
-            '    folderDialog.ShowNewFolderButton = True
-            '    If My.Settings.BackupDirectory = "" Then
-            '        folderDialog.SelectedPath = My.Settings.Directory
-            '    Else
-            '        ' Pokud je nastavená záložní složka, použij ji
-            '        folderDialog.SelectedPath = My.Settings.BackupDirectory
-            '    End If
         ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
             folderDialog.ShowNewFolderButton = True
             If My.Settings.VideoDirectory = "" Then
@@ -800,13 +792,7 @@ Public Class Form1
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 My.Settings.Directory = folderDialog.SelectedPath
-                'ElseIf sender Is mnuSelectBackupDirectory Then
-                '    If folderDialog.SelectedPath <> My.Settings.Directory Then
-                '        My.Settings.BackupDirectory = folderDialog.SelectedPath
-                '    Else
-                '        MessageBox.Show(Resource1.mBoxBackupDirectorySameAsGpxDirectory, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning)
-                '        Return ' Pokud je záložní složka stejná jako hlavní složka, neukládej ji    
-                '    End If
+
 
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
@@ -923,6 +909,13 @@ Public Class Form1
             End If
         End If
 
+        ' Zkontroluj, zda je nastavená složka pro videa
+        Dim videoDir = My.Settings.VideoDirectory
+        If String.IsNullOrWhiteSpace(videoDir) OrElse Not Directory.Exists(videoDir) Then
+            ' Cesta není nastavená nebo složka neexistuje 
+            mnuSelect_directory_gpx_files_Click(btnCreateVideos, New EventArgs)
+        End If
+
         Dim selectedFiles As New List(Of GPXRecord)
         For Each item As ListViewItem In lvGpxFiles.CheckedItems
             ' Předpoklad: Tag obsahuje plnou cestu k souboru
@@ -939,10 +932,10 @@ Public Class Form1
             Return
         End If
 
-        ' Pro test: vypiš vybrané cesty
-        For Each record In selectedFiles
-            Debug.WriteLine(record)
 
+        For Each record In selectedFiles
+            ' Pro test: vypiš vybrané cesty
+            Debug.WriteLine(record)
             Try
                 Await CreateVideoFromGPXRecord(record)
             Catch ex As Exception
@@ -957,7 +950,7 @@ Public Class Form1
         ' Zjisti název souboru bez přípony
         Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.FileName)
         ' Sestav cestu k novému adresáři
-        If My.Settings.VideoDirectory = "" Then My.Settings.VideoDirectory = My.Settings.Directory
+
         Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
@@ -971,7 +964,7 @@ Public Class Form1
         ' Spustíme na pozadí, aby nezamrzlo UI
         Await Task.Run(Async Function()
                            ' Spustíme tvůj dlouhý proces
-                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.LocalisedReports)
+                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports)
 
                            ' Po dokončení se vrať na UI thread a proveď akce
                            waitForm.Invoke(Sub()
