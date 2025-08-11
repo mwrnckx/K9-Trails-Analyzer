@@ -290,4 +290,7 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="RunnerTrail" xml:space="preserve">
     <value>Runner's trail</value>
   </data>
+  <data name="Artickle" xml:space="preserve">
+    <value>Scent Artickle</value>
+  </data>
 </root>

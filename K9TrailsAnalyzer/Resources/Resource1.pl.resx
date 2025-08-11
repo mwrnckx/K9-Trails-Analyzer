@@ -258,20 +258,14 @@
   <data name="txtTrailLabel" xml:space="preserve">
     <value>Ścieżka</value>
   </data>
+  <data name="txtperformanceLabel" xml:space="preserve">
+    <value>Wydajność zespołu K9</value>
+  </data>
   <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
     <value>Katalog kopii zapasowej jest taki sam jak główny katalog - nie może być!</value>
   </data>
   <data name="txtUnknown" xml:space="preserve">
     <value>Nieznany</value>
-  </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value />
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Przejażdżący szlak</value>
   </data>
   <data name="CrossTrail_IntroText" xml:space="preserve">
     <value>Plik GPX {0} zawiera trasy {1}.
@@ -281,7 +275,16 @@ Aby uzyskać dalsze przetwarzanie, musisz zdecydować, który tor odpowiada
 -&gt; Inne osoby przekraczające.
 Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczny, druga to droga psa. Ale jeśli jest tylko jeden utwór lub więcej niż dwa, musisz zdecydować.</value>
   </data>
-  <data name="txtperformanceLabel" xml:space="preserve">
-    <value>Wydajność zespołu K9</value>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Przejażdżący szlak</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Artickle" xml:space="preserve">
+    <value>Zapach Artyckle</value>
   </data>
 </root>

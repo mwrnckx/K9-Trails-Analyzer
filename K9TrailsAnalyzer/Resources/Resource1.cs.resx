@@ -281,13 +281,16 @@ Pro další zpracování je třeba rozhodnout, která trasa odpovídá
 -&gt; křížení.
 Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče, druhá je trasa psa. Ale pokud je trasa jen jedna nebo jich je více než dvě musíte to rozhodnout vy. Aplikace se to pokusí odhadnout, ale nemusí se vždy trefit 😉!</value>
   </data>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Křížení</value>
+  </data>
   <data name="dogTrack" xml:space="preserve">
     <value>Trasa psa</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>Trasa kladeče</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Křížení</value>
+  <data name="Artickle" xml:space="preserve">
+    <value>předmět</value>
   </data>
 </root>

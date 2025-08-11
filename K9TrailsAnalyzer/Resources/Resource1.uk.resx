@@ -258,20 +258,14 @@
   <data name="txtTrailLabel" xml:space="preserve">
     <value>Слід</value>
   </data>
+  <data name="txtperformanceLabel" xml:space="preserve">
+    <value>Виконання команди K9</value>
+  </data>
   <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
     <value>Каталог резервного копіювання такий же, як і головний каталог - це не може бути!</value>
   </data>
   <data name="txtUnknown" xml:space="preserve">
     <value>Невідомий</value>
-  </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Доріжка собаки</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>Слід бігуна</value>
-  </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Перетинка</value>
   </data>
   <data name="CrossTrail_IntroText" xml:space="preserve">
     <value>Файл gpx {0} містить {1} маршрути.
@@ -281,7 +275,16 @@
 -&gt; Інші люди переправи.
 Якщо є лише два маршрути, це досить просто - перший - це предметний слід, другий - це маршрут собаки. Але якщо є лише один трек або більше двох, ви повинні вирішити.</value>
   </data>
-  <data name="txtperformanceLabel" xml:space="preserve">
-    <value>Виконання команди K9</value>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Перетинка</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Доріжка собаки</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>Слід бігуна</value>
+  </data>
+  <data name="Artickle" xml:space="preserve">
+    <value>Аромат артику</value>
   </data>
 </root>

@@ -258,6 +258,9 @@
   <data name="txtTrailLabel" xml:space="preserve">
     <value>Pfad</value>
   </data>
+  <data name="txtperformanceLabel" xml:space="preserve">
+    <value>K9 -Teamleistung</value>
+  </data>
   <data name="txtRunner" xml:space="preserve">
     <value>runner</value>
   </data>
@@ -267,15 +270,6 @@
   <data name="txtUnknown" xml:space="preserve">
     <value>Unbekannt</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Hundespur</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value />
-  </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Übergangsweg</value>
-  </data>
   <data name="CrossTrail_IntroText" xml:space="preserve">
     <value>Die GPX -Datei {0} enthält {1} Routen.
 Zur weiteren Verarbeitung müssen Sie entscheiden, welcher Spur entspricht
@@ -284,7 +278,16 @@ Zur weiteren Verarbeitung müssen Sie entscheiden, welcher Spur entspricht
 -&gt; Andere Personen kreuzen.
 Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der Subjektweg, der zweite ist die Hundestrecke. Aber wenn es nur einen Track oder mehr als zwei gibt, müssen Sie sich entscheiden.</value>
   </data>
-  <data name="txtperformanceLabel" xml:space="preserve">
-    <value>K9 -Teamleistung</value>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Übergangsweg</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Hundespur</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Artickle" xml:space="preserve">
+    <value>Duftkunst</value>
   </data>
 </root>

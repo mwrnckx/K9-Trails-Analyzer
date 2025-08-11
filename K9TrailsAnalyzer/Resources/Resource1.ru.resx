@@ -258,6 +258,9 @@
   <data name="txtTrailLabel" xml:space="preserve">
     <value>След</value>
   </data>
+  <data name="txtperformanceLabel" xml:space="preserve">
+    <value>Работа команды</value>
+  </data>
   <data name="txtRunner" xml:space="preserve">
     <value>следопрокладчик</value>
   </data>
@@ -267,15 +270,6 @@
   <data name="txtUnknown" xml:space="preserve">
     <value>Неизвестный</value>
   </data>
-  <data name="dogTrack" xml:space="preserve">
-    <value>Трек собаки</value>
-  </data>
-  <data name="RunnerTrail" xml:space="preserve">
-    <value>След следопрокладчикa</value>
-  </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Пересечение тропы</value>
-  </data>
   <data name="CrossTrail_IntroText" xml:space="preserve">
     <value>Файл gpx {0} содержит {1} маршруты.
 Для дальнейшей обработки вам необходимо решить, какой трек соответствует
@@ -284,7 +278,16 @@
 -&gt; Другие люди, пересекающие.
 Если есть только два маршрута, это довольно просто - первая - это тропа субъекта, вторая - это маршрут для собак. Но если есть только один трек или более двух, вы должны решить.</value>
   </data>
-  <data name="txtperformanceLabel" xml:space="preserve">
-    <value>Работа команды</value>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>Пересечение тропы</value>
+  </data>
+  <data name="dogTrack" xml:space="preserve">
+    <value>Трек собаки</value>
+  </data>
+  <data name="RunnerTrail" xml:space="preserve">
+    <value>След следопрокладчикa</value>
+  </data>
+  <data name="Artickle" xml:space="preserve">
+    <value>Аромат артикл</value>
   </data>
 </root>

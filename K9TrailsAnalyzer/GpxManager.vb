@@ -1961,7 +1961,7 @@ Module TrackDisplayLogic
             Case TrackType.RunnerTrail : Return My.Resources.Resource1.RunnerTrail
             Case TrackType.DogTrack : Return My.Resources.Resource1.dogTrack
             Case TrackType.CrossTrail : Return My.Resources.Resource1.CrossingTrail
-            Case TrackType.Artickle : Return My.Resources.Resource1.Artickle
+            Case TrackType.Artickle : Return My.Resources.Resource1.article
             Case Else : Return My.Resources.Resource1.txtUnknown
         End Select
     End Function
