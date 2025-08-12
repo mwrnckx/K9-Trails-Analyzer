@@ -163,7 +163,7 @@
     <value>Nazwa pliku GPX</value>
   </data>
   <data name="outAge" xml:space="preserve">
-    <value>wiek śladu</value>
+    <value>Wiek</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Prędkość psa</value>

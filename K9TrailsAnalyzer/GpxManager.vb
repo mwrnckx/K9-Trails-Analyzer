@@ -1,6 +1,9 @@
-﻿Imports System.Globalization
+﻿Imports System.DirectoryServices.ActiveDirectory
+Imports System.Globalization
 Imports System.IO
 Imports System.Net.Http
+Imports System.Text
+Imports System.Text.Encodings.Web
 Imports System.Text.Json
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
@@ -11,25 +14,18 @@ Imports TrackVideoExporter
 
 Public Class GpxFileManager
     'obsahuje seznam souborů typu gpxRecord a funkce na jejich vytvoření a zpracování
-    Dim _gpxlocalDirectory
-    Public ReadOnly Property GpxLocalDirectory As String
+    Dim _dogInfo As DogInfo 'informace o psovi, pro kterého se zpracovávají soubory
+    Public Property DogInfo As DogInfo 'informace o psovi, pro kterého se zpracovávají soubory
         Get
-            _gpxlocalDirectory = IO.Path.Combine(Application.StartupPath, "gpx") 'adresář, kam se ukládají gpx soubory
-            If Directory.Exists(_gpxlocalDirectory) Then
-                Return _gpxlocalDirectory
-            Else
-                Try
-                    IO.Directory.CreateDirectory(_gpxlocalDirectory)
-                Catch ex As Exception
-                    RaiseEvent WarningOccurred($"Error creating local GPX directory: {ex.Message}", Color.Red)
-                End Try
-                Return Nothing
-            End If
+            Return _dogInfo
         End Get
+        Set(value As DogInfo)
+            _dogInfo = value
+        End Set
     End Property
 
-    Public ReadOnly Property gpxRemoteDirectory As String
-    'Private ReadOnly Property BackupDirectory As String
+    Public Property NumberOfDogs As Integer 'počet psů
+
     Public dateFrom As Date
     Public dateTo As Date
     Public Property ForceProcess As Boolean = False ' 'pokud je True, zpracuje všechny soubory, i ty, které už byly zpracovány (přepíše popis a další věci)
@@ -46,7 +42,7 @@ Public Class GpxFileManager
     Public Event WarningOccurred(message As String, _color As Color)
 
     Public Sub New()
-        gpxRemoteDirectory = My.Settings.Directory
+        'gpxRemoteDirectory = My.Settings.Directory
         maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
         trimGPS_Noise = My.Settings.TrimGPSnoise
@@ -57,17 +53,31 @@ Public Class GpxFileManager
 
 
             Dim localFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(False) 'seznam starých souborů, které už byly zpracovány
-            Dim allFiles As New List(Of GPXRecord)  ' Načte všechny staré GPX soubory v pracovním adresáři
+            Dim allFiles As New List(Of GPXRecord)  ' všechny soubory v pracovním adresáři
             allFiles.AddRange(localFiles) 'přidá staré soubory
 
             Dim remoteFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(True)
             Dim gpxFilesMerged As New List(Of GPXRecord)
+            If remoteFiles.Count > 0 AndAlso Me.NumberOfDogs > 1 Then
+                Dim response = mboxQEx($"Found {remoteFiles.Count} new GPX files in remote directory:" & vbCrLf & $"{DogInfo.RemoteDirectory}." & vbCrLf & $"Do you really want to import them for the dog{DogInfo.Name}?")
+                If response = DialogResult.No Then
+                    RaiseEvent WarningOccurred("Import of new GPX files was cancelled by user.", Color.Red)
+                    Return False 'vrátí false, pokud uživatel zrušil import
+                End If
+            End If
+
+            'pokud jsou nějaké nové soubory, tak je spojí do jednoho listu
             If remoteFiles.Count > 0 Then
                 RaiseEvent WarningOccurred($"Found {remoteFiles.Count} new GPX files.", Color.DarkGreen)
                 gpxFilesMerged = MergeGpxFiles(remoteFiles)
             End If
 
             allFiles.AddRange(gpxFilesMerged) 'přidá nové soubory
+
+            If allFiles.Count = 0 Then
+                RaiseEvent WarningOccurred("No GPX files found!", Color.Red)
+                Return False 'vrátí false, pokud nejsou žádné soubory v zadaném intervalu
+            End If
 
             Dim gpxFilesSortedAndFiltered As List(Of GPXRecord) = GetGPXFilesWithinInterval(allFiles)
             If gpxFilesSortedAndFiltered.Count = 0 Then
@@ -121,36 +131,37 @@ Public Class GpxFileManager
     End Function
 
 
-
-
-
     Private Function GetdAndProcessGPXFiles(remoteFiles As Boolean) As List(Of GPXRecord)
         Dim GPXFRecords As New List(Of GPXRecord)
 
         If remoteFiles Then
             Dim tracker As New FileTracker("processed.json")
 
-            Dim Files As List(Of String) = Directory.GetFiles(gpxRemoteDirectory, "*.gpx").ToList()
+            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
             Dim i As Integer = 0
             For Each remoteFilePath In Files
                 Try
                     If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
                         Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
                         ' Pokud je soubor nový nebo změněný, zpracujeme ho
-                        Dim localFilePath As String = Path.Combine(GpxLocalDirectory, Path.GetFileName(remoteFilePath))
-                        If File.Exists(localFilePath) Then
-                            RaiseEvent WarningOccurred($"File  {Path.GetFileName(localFilePath)} already exists in local directory!", Color.Red)
-                            tracker.MarkAsProcessed(remoteFilePath)
-                            Continue For
+                        'zkopíruje soubor do lokálních adresářů
+                        Dim localOriginalsFilePath As String = Path.Combine(DogInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
+                        If File.Exists(localOriginalsFilePath) Then
+                            RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
                         Else
-                            IO.File.Copy(remoteFilePath, localFilePath, False)
+                            IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
                         End If
+
+                        Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, Path.GetFileName(remoteFilePath))
 
                         i += 1
                         tracker.MarkAsProcessed(remoteFilePath)
                         Try
-                            Dim _reader As New GpxReader(localFilePath)
-                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
+                            'načte z Originals:
+                            Dim _reader As New GpxReader(localOriginalsFilePath)
+                            'Ukládat bude do Processed!
+                            _reader.FilePath = localProcessedFilePath
+                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
                             _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
                             _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
                             _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
@@ -170,11 +181,11 @@ Public Class GpxFileManager
             RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
 
         Else 'local files
-            Dim Files As List(Of String) = Directory.GetFiles(GpxLocalDirectory, "*.gpx").ToList()
+            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.ProcessedDirectory, "*.gpx").ToList()
             For Each filePath In Files
                 Try
                     Dim _reader As New GpxReader(filePath)
-                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
+                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
                     _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
                     GPXFRecords.Add(_gpxRecord)
                 Catch ex As Exception
@@ -188,65 +199,6 @@ Public Class GpxFileManager
         Return GPXFRecords
     End Function
 
-    'Public Function GetOldGPXFiles() As List(Of GPXRecord)
-    '    Dim oldFiles As New List(Of GPXRecord)
-
-    '    For Each gpxFilePath In Directory.GetFiles(GpxLocalDirectory, "*.gpx")
-    '        Try
-    '            Dim _reader As New GpxReader(gpxFilePath)
-    '            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess)
-    '            oldFiles.Add(_gpxRecord)
-    '        Catch ex As ArgumentException
-    '            RaiseEvent WarningOccurred(ex.Message, Color.Red)
-    '            Debug.WriteLine(ex.ToString())
-    '        Catch ex As XmlException
-    '            RaiseEvent WarningOccurred(ex.Message, Color.Red)
-    '            Debug.WriteLine(ex.ToString())
-    '        Catch ex As Exception
-    '            RaiseEvent WarningOccurred(ex.Message, Color.Red)
-    '            Debug.WriteLine(ex.ToString())
-
-    '        End Try
-    '    Next
-
-    '    If oldFiles.Count = 0 Then
-    '        RaiseEvent WarningOccurred("No GPX files found in working directory.", Color.Red)
-    '    Else
-    '        RaiseEvent WarningOccurred($"Found {oldFiles.Count} GPX files in working directory.", Color.DarkGreen)
-    '    End If
-    '    Return oldFiles
-    'End Function
-
-
-    'Public Function CreateAndSortTracksInFiles(_records As List(Of GPXRecord)) As List(Of GPXRecord)
-
-    '    If _records.Count = 0 Then
-    '        RaiseEvent WarningOccurred("No new GPX files found.", Color.Red)
-    '        Return _records 'vrátí prázdný list, pokud nejsou žádné soubory
-    '    Else
-    '        RaiseEvent WarningOccurred($"Found {_records.Count}  GPX files.", Color.DarkGreen)
-    '    End If
-
-    '    For Each _gpxRecord In _records
-    '        Try
-
-    '            If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
-    '                If (_gpxRecord.IsAlreadyProcessed) Then
-    '                    'pokud je forceProcess, tak se zpracuje i již zpracovaný soubor
-    '                    RaiseEvent WarningOccurred($"File {_gpxRecord.Reader.FileName} has already been processed, but will be processed again.", Color.DarkOrange)
-    '                End If
-    '                _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
-    '            End If
-    '            _gpxRecord.CreateAndSortTracks()
-    '            '_gpxRecord.Save()
-    '        Catch ex As Exception
-    '            RaiseEvent WarningOccurred($"Error processing file {_gpxRecord.FileName}}: {ex.Message}", Color.Red)
-    '            Debug.WriteLine($"Error processing file {_gpxRecord.FileName}: {ex.ToString()}")
-    '            Continue For 'pokračuje na další soubor, pokud došlo k chybě'todo - neměl by se soubor odebrat z listu???
-    '        End Try
-    '    Next
-    '    Return _records
-    'End Function
 
     Public Function GetGPXFilesWithinInterval(_records As List(Of GPXRecord)) As List(Of GPXRecord)
         Dim gpxFilesWithinInterval As New List(Of GPXRecord)
@@ -515,7 +467,7 @@ Public Class GPXRecord
     Public Event WarningOccurred(_message As String, _color As Color)
 
     Public Property Tracks As New List(Of TrackAsTrkNode)
-
+    Public Property DogName As String
 
     Public ReadOnly Property WptNodes As TrackAsTrkPts
         Get
@@ -533,8 +485,6 @@ Public Class GPXRecord
             Return Me.Tracks.FirstOrDefault(Function(t) t.TrackType = TrackType.RunnerTrail)?.StartTrackGeoPoint
         End Get
     End Property
-
-
 
 
     Public ReadOnly Property DogStart As TrackGeoPoint
@@ -671,7 +621,7 @@ Public Class GPXRecord
     'Private Property WindDirection As Double = 0.0 ' Směr větru v stupních
     Public Property WeatherData As (_temperature As Double, _windSpeed As Double, _windDirection As Double, _precipitation As Double, _relHumidity As Double, _cloudCover As Double)
 
-    Private ReadOnly Property gpxDirectory As String
+    'Private ReadOnly Property gpxDirectory As String
     'Private ReadOnly Property BackupDirectory As String
 
     Private Const NBSP As String = ChrW(160)
@@ -687,14 +637,10 @@ Public Class GPXRecord
 
 
 
-    Public Sub New(_reader As GpxReader, forceProcess As Boolean)
-        gpxDirectory = My.Settings.Directory
-        'BackupDirectory = My.Settings.BackupDirectory
-
-        'If Not Directory.Exists(BackupDirectory) Then
-        '    Directory.CreateDirectory(BackupDirectory)
-        'End If
+    Public Sub New(_reader As GpxReader, forceProcess As Boolean, _dogname As String)
+        'gpxDirectory = 
         Me.Reader = _reader
+        Me.DogName = _dogname
         If forceProcess Then
             _IsAlreadyProcessed = False
         Else
@@ -1060,7 +1006,7 @@ FoundRunnerTrailTrk:
 
         End If
 
-        Return New TrailReport(My.Settings.DogName, goalPart, trailPart, dogPart)
+        Return New TrailReport(Me.dogName, goalPart, trailPart, dogPart)
     End Function
 
 
@@ -1739,6 +1685,7 @@ FoundRunnerTrailTrk:
 
     ' Funkce pro přejmenování souboru
     Public Function RenameFile(newFileName As String) As Boolean
+        Dim gpxDirectory As String = Directory.GetParent(Me.Reader.FilePath).ToString
         Dim newFilePath As String = Path.Combine(gpxDirectory, newFileName)
         Dim extension As String = Path.GetExtension(newFileName)
 
@@ -2159,50 +2106,6 @@ xmlns:          namespaceManager.AddNamespace("locus", "https://www.locusmap.app
     End Function
 
 
-    'Public Function CreateAndAddElement(parentNode As XmlElement,
-    '                               XpathchildNodeName As String,
-    '                               value As String,
-    '                               insertAfter As Boolean,
-    '                               Optional attName As String = "",
-    '                               Optional attValue As String = "",
-    '                              Optional namespaceUriToUse As String = GPX_NAMESPACE_URI
-    '                               ) As XmlNode ' 
-    '    Dim insertedNode As XmlNode
-    '    Dim childNode As XmlElement = CreateElement(XpathchildNodeName, namespaceUriToUse)
-    '    childNode.InnerText = value
-
-    '    If attValue <> "" Then childNode.SetAttribute(attName, attValue)
-
-    '    Dim childNodes As XmlNodeList = Me.SelectAllChildNodes(XpathchildNodeName, parentNode)
-    '    ' Kontrola, zda existuje alespoň jeden uzel <childnodename>
-    '    If childNodes.Count = 0 Then
-    '        ' Uzel <childnodename> neexistuje, můžeme ho vytvořit a vložit
-    '        ' Pokud parent nemá žádné podřízené uzly, jednoduše ho přidáme jako první 
-    '        insertedNode = parentNode.InsertBefore(childNode, parentNode.FirstChild)
-
-    '    Else
-    '        'kontrola duplicity:
-    '        For Each node As XmlNode In childNodes
-    '            'zkontroluje zda node s hodnotou 'value' a s atributem attvalue už neexistuje:
-    '            If node.Attributes IsNot Nothing AndAlso node.Attributes(attName)?.Value = attValue AndAlso node.InnerText.IndexOf(value, StringComparison.OrdinalIgnoreCase) >= 0 Then
-    '                Debug.WriteLine($"Uzel {XpathchildNodeName} s atributem {attName}={attValue} již existuje, nepřidávám nový.")
-    '                Debug.WriteLine($"Uzel {XpathchildNodeName} s textem {value} již existuje, nepřidávám nový.")
-    '                insertedNode = node
-    '                Exit For
-    '            Else
-    '                Debug.WriteLine($"Uzel {XpathchildNodeName} s jiným textem již existuje, přidávám nový.")
-    '                If insertAfter Then
-    '                    insertedNode = parentNode.AppendChild(childNode)
-    '                Else
-    '                    'vložíme nový uzel PŘED prvního podřízeného
-    '                    insertedNode = parentNode.InsertBefore(childNode, childNodes(0))
-    '                End If
-    '            End If
-    '        Next
-    '    End If
-    '    Return insertedNode
-    'End Function
-
     Public Sub DeleteElements(XpathNodelist As XmlNodeList,
                               Optional namespaceUriToUse As String = GPX_NAMESPACE_URI) ' 
         ' Odstraní zadaný uzel z dokumentu
@@ -2241,7 +2144,7 @@ Public Class FileTracker
         savePath = storageFile
         If File.Exists(savePath) Then
             Try
-                Dim json = File.ReadAllText(savePath)
+                Dim json = File.ReadAllText(savePath, Encoding.UTF8)
                 processedFiles = JsonSerializer.Deserialize(Of Dictionary(Of String, FileRecord))(json)
             Catch ex As Exception 'kdyby byl poškozený soubor
                 processedFiles = New Dictionary(Of String, FileRecord)()
@@ -2293,9 +2196,11 @@ Public Class FileTracker
 
     ' Uloží JSON
     Private Sub Save()
-        Dim options As New JsonSerializerOptions With {.WriteIndented = True}
+        Dim options As New JsonSerializerOptions With {.WriteIndented = True,
+                 .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
+        }
         Dim json = JsonSerializer.Serialize(processedFiles, options)
-        File.WriteAllText(savePath, json)
+        File.WriteAllText(savePath, json, Encoding.UTF8)
     End Sub
 
 End Class

@@ -163,7 +163,7 @@
     <value>GPX file name</value>
   </data>
   <data name="outAge" xml:space="preserve">
-    <value>Trail Age</value>
+    <value>Age</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Dog's Speed</value>

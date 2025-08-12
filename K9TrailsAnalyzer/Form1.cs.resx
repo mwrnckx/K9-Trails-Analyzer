@@ -123,12 +123,6 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Vytvoř grafy</value>
   </data>
-  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Vyber adresář ve kterém jsou soubory gpx</value>
-  </data>
-  <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
-    <value>Vyber adresář do kterého se mají zálohovat soubory gpx</value>
-  </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>Soubor</value>
   </data>
@@ -276,7 +270,7 @@
     <value>ToolStrip!</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>mnuSelecttooltip!</value>
+    <value>Změň adresář ve kterém jsou gpx soubory aktuálního psa</value>
   </data>
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Konec</value>
@@ -325,5 +319,20 @@
   </data>
   <data name="SToolStripMenuItem.Text" xml:space="preserve">
     <value>Nastavení</value>
+  </data>
+  <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
+    <value>Zkontrolujte aktualizace</value>
+  </data>
+  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Pomoc</value>
+  </data>
+  <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
+    <value>Odstranit aktuální pes</value>
+  </data>
+  <data name="mnuAddDog.Text" xml:space="preserve">
+    <value>Přidejte dalšího psa</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
+    <value>Změň adresář s gpx soubory</value>
   </data>
 </root>

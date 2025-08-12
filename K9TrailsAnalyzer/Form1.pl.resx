@@ -151,12 +151,6 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Pokaż wykresy</value>
   </data>
-  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Wybierz katalog, w którym znajdują się pliki gpx</value>
-  </data>
-  <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
-    <value>Wybierz katalog do utworzenia kopii zapasowej plików gpx</value>
-  </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>Plik</value>
   </data>
@@ -363,5 +357,26 @@
   </data>
   <data name="clmTrkCount.Text" xml:space="preserve">
     <value>Liczba utworów</value>
+  </data>
+  <data name="SToolStripMenuItem.Text" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
+    <value>Sprawdź aktualizacje</value>
+  </data>
+  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Pomoc</value>
+  </data>
+  <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
+    <value>Usuń obecny pies</value>
+  </data>
+  <data name="mnuAddDog.Text" xml:space="preserve">
+    <value>Dodaj innego psa</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
+    <value>Zmień katalog, w którym znajdują się pliki GPX obecnego psa</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
+    <value>Zmień katalog za pomocą plików GPX</value>
   </data>
 </root>

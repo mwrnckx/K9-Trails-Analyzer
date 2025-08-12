@@ -212,7 +212,7 @@ Partial Class frmChart
             dialog.Filter = "PNG (*.png)|*.png|JPEG (*.jpeg)|*.jpeg"
             'dialog.CheckFileExists = True 'když existuje zeptá se 
             dialog.AddExtension = True
-            dialog.InitialDirectory = My.Settings.Directory
+            dialog.InitialDirectory = IO.Directory.GetParent(Application.StartupPath).ToString
             dialog.Title = "Save as"
             dialog.FileName = Me.Text.Replace("/", " per ")
 

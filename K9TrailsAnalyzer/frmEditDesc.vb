@@ -14,7 +14,7 @@ Public Class frmEditComments
 
     Public ReadOnly Property AllParts As TrailReport
         Get
-            Return New TrailReport(My.Settings.DogName, Me.GoalPart, Me.TrailPart, Me.DogPart)
+            Return New TrailReport(My.Settings.ActiveDog, Me.GoalPart, Me.TrailPart, Me.DogPart)
         End Get
     End Property
 
@@ -78,7 +78,7 @@ Public Class frmEditComments
         txtGoal.AllowDrop = True
         txtTrail.AllowDrop = True
 
-        Me.lblGoal.Text = TrailReport.dogLabel & Me.lblGoal.Text
+        Me.lblGoal.Text = TrailReport.goalLabel & Me.lblGoal.Text
         Me.lblTrail.Text = TrailReport.trailLabel & Me.lblTrail.Text
         Me.lblPerformance.Text = TrailReport.performanceLabel & Me.lblPerformance.Text
 

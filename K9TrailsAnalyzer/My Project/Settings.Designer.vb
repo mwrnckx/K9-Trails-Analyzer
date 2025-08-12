@@ -56,30 +56,6 @@ Namespace My
         
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("BackupDirectory")>  _
-        Public Property BackupDirectory() As String
-            Get
-                Return CType(Me("BackupDirectory"),String)
-            End Get
-            Set
-                Me("BackupDirectory") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
-         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property Directory() As String
-            Get
-                Return CType(Me("Directory"),String)
-            End Get
-            Set
-                Me("Directory") = value
-            End Set
-        End Property
-        
-        <Global.System.Configuration.UserScopedSettingAttribute(),  _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property PrependDateToName() As Boolean
             Get
@@ -117,12 +93,12 @@ Namespace My
         <Global.System.Configuration.UserScopedSettingAttribute(),  _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
          Global.System.Configuration.DefaultSettingValueAttribute("")>  _
-        Public Property DogName() As String
+        Public Property ActiveDog() As String
             Get
-                Return CType(Me("DogName"),String)
+                Return CType(Me("ActiveDog"),String)
             End Get
             Set
-                Me("DogName") = value
+                Me("ActiveDog") = value
             End Set
         End Property
         

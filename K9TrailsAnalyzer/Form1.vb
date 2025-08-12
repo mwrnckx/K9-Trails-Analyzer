@@ -2,31 +2,46 @@
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection
+Imports System.Text
+Imports System.Text.Encodings.Web
 Imports System.Text.Json
+Imports System.Text.Json.Serialization
 Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
+Imports Microsoft.VisualBasic.Logging
 Imports TrackVideoExporter.TrackVideoExporter
 
 
+
 Public Class Form1
-    'Private gpxCalculator As GPXDistanceCalculator
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
+    Private ReadOnly DogsFilePath As String = Path.Combine(Application.StartupPath, "dogs.json")
+    Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "config.json")
+    'Private ReadOnly DogsRootPath As String = Path.Combine(Application.StartupPath, "Dogs")
+
+    Private DogsList As List(Of DogInfo)
+    Private ActiveDogId As String = String.Empty
+    Private ReadOnly Property ActiveDog As DogInfo
+        Get
+            Return DogsList.FirstOrDefault(Function(d) d.Id = ActiveDogId)
+        End Get
+    End Property
 
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
         Enabled = False
 
-        Dim gpxDir = My.Settings.Directory
+        Dim gpxDir = ActiveDog.RemoteDirectory 'My.Settings.Directory
         If String.IsNullOrWhiteSpace(gpxDir) OrElse Not Directory.Exists(gpxDir) Then
             ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku Samples vedle exe
             Dim defaultDir = Path.Combine(Application.StartupPath, "Samples")
 
             If Directory.Exists(defaultDir) Then
                 gpxDir = defaultDir
-                My.Settings.Directory = gpxDir
-                My.Settings.Save()
+                ActiveDog.RemoteDirectory = gpxDir
+                'My.Settings.Save()
             Else
                 ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
                 mnuSelect_directory_gpx_files_Click(btnReadGpxFiles, New EventArgs)
@@ -34,21 +49,6 @@ Public Class Form1
             End If
         End If
 
-        ''Dim backupDir = My.Settings.BackupDirectory
-        'If String.IsNullOrWhiteSpace(backupDir) OrElse Not Directory.Exists(backupDir) Then
-        '    ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku  vedle exe
-        '    Dim defaultDir = Path.Combine(Application.StartupPath, "gpxFilesBackup")
-
-        '    If Directory.Exists(defaultDir) Then
-        '        backupDir = defaultDir
-        '        My.Settings.BackupDirectory = backupDir
-        '        My.Settings.Save()
-        '    Else
-        '        ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
-        '        MessageBox.Show("Backup Directory was not set up correctly!")
-        '        Return
-        '    End If
-        'End If
 
 
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
@@ -61,9 +61,11 @@ Public Class Form1
         GPXFilesManager.dateFrom = dtpStartDate.Value
         GPXFilesManager.dateTo = dtpEndDate.Value
 
+        GPXFilesManager.DogInfo = ActiveDog
+        GPXFilesManager.NumberOfDogs = DogsList.Count
+
 
         Try
-
             If Await GPXFilesManager.Main Then
                 Enabled = True
                 WriteRTBOutput(GPXFilesManager)
@@ -214,7 +216,7 @@ Public Class Form1
         Me.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
         Me.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
-                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & _gpxFilesManager.gpxLocalDirectory & vbCrLf & vbCrLf)
+                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & ActiveDog.ProcessedDirectory & vbCrLf & vbCrLf)
 
         Dim manydots As String = "...................................................................."
         Dim labelLength As Integer = 40
@@ -333,7 +335,7 @@ Public Class Form1
             dialog.Filter = "Soubory csv|*.csv"
             dialog.CheckFileExists = True 'když existuje zeptá se 
             dialog.AddExtension = True
-            dialog.InitialDirectory = My.Settings.Directory
+            dialog.InitialDirectory = My.Settings.VideoDirectory
             dialog.Title = "Save as CSV"
             dialog.FileName = FileName
 
@@ -365,7 +367,7 @@ Public Class Form1
             dialog.Filter = "Rich Text Format (*.rtf)|*.rtf|Text (*.txt)|*.txt|Comma-separated values (*.csv)|*.csv"
             'dialog.CheckFileExists = True 'když existuje zeptá se 
             dialog.AddExtension = True
-            dialog.InitialDirectory = My.Settings.Directory
+            dialog.InitialDirectory = My.Settings.VideoDirectory
             dialog.Title = "Save as"
             dialog.FileName = FileName
 
@@ -415,7 +417,7 @@ Public Class Form1
 
                         ' Write each row in the CSV file
                         writer.Write($"{fileName};")
-                        writer.Write($"{ .TrailStart.ToString("yyyy-MM-dd")};")
+                        writer.Write($"{ .TrailStart.Time.ToString("yyyy-MM-dd")};")
                         writer.Write($"{_age};")
                         writer.Write($"{ .TrailDistance:F2};")
                         If Not .DogSpeed = 0 Then writer.Write($"{ .DogSpeed:F2};") Else writer.Write(";")
@@ -466,7 +468,7 @@ Public Class Form1
         yAxisData = speedData.Item2
         yAxisLabel = Resource1.Y_AxisLabelSpeed
         GrafText = yAxisLabel
-        chart1 = New frmChart(My.Settings.DogName, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -481,7 +483,7 @@ Public Class Form1
         Next
         yAxisLabel = Resource1.Y_AxisLabelAge
         GrafText = Resource1.Y_AxisLabelAge
-        chart1 = New frmChart(My.Settings.DogName, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -492,7 +494,7 @@ Public Class Form1
         yAxisData = distanceData.Item2
         yAxisLabel = Resource1.Y_AxisLabelLength
         GrafText = yAxisLabel
-        chart1 = New frmChart(My.Settings.DogName, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -502,7 +504,7 @@ Public Class Form1
         yAxisData = totDistanceData.Item2
         yAxisLabel = Resource1.Y_AxisLabelTotalLength
         GrafText = yAxisLabel
-        chart1 = New frmChart(My.Settings.DogName, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -532,7 +534,7 @@ Public Class Form1
 
         Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y
         Dim monthlyGrafText = monthlyYAxisLabel ' Např. "Měsíční vzdálenost"
-        Dim MonthlyChart1 = New frmChart(My.Settings.DogName, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
+        Dim MonthlyChart1 = New frmChart(ActiveDog.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
 
@@ -772,10 +774,10 @@ Public Class Form1
         Dim folderDialog As New FolderBrowserDialog
 
         If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
-            If My.Settings.Directory = "" Then
-                My.Settings.Directory = Directory.GetParent(Application.StartupPath).ToString
+            If ActiveDog.RemoteDirectory = "" Then
+                ActiveDog.RemoteDirectory = Directory.GetParent(Application.StartupPath).ToString
             End If
-            folderDialog.SelectedPath = My.Settings.Directory
+            folderDialog.SelectedPath = ActiveDog.RemoteDirectory
             folderDialog.Description = "Selecting the folder from where to load gpx files!"
             folderDialog.UseDescriptionForTitle = True
         ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
@@ -783,7 +785,7 @@ Public Class Form1
             folderDialog.Description = "Selecting the folder to save the video!"
             folderDialog.UseDescriptionForTitle = True
             If My.Settings.VideoDirectory = "" Then
-                folderDialog.SelectedPath = My.Settings.Directory
+                folderDialog.SelectedPath = Directory.GetParent(Application.StartupPath).ToString
             Else
                 folderDialog.SelectedPath = My.Settings.VideoDirectory
             End If
@@ -795,17 +797,18 @@ Public Class Form1
         If folderDialog.ShowDialog = DialogResult.OK Then
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
-                My.Settings.Directory = folderDialog.SelectedPath
+                ActiveDog.RemoteDirectory = folderDialog.SelectedPath
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
+                My.Settings.Save()
             Else
                 Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu
             End If
 
         End If
 
-        My.Settings.Save()
-        StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
+        SaveDogs()
+        StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDog.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
 
     End Sub
 
@@ -856,10 +859,153 @@ Public Class Form1
         CloseGrafs()
     End Sub
 
-    Private Sub mnuDogName_Click(sender As Object, e As EventArgs) Handles mnuDogName.Click
-        My.Settings.DogName = InputBox("Set name of the dog:", Application.ProductName, My.Settings.DogName)
-        My.Settings.Save()
+    'Private Sub mnuDogName_Click(sender As Object, e As EventArgs) Handles mnuDogName.Click
+    '    My.Settings.DogName = InputBox("Set name of the dog:", Application.ProductName, My.Settings.DogName)
+    '    My.Settings.Save()
+    'End Sub
+
+    ' ----- načtení a uložení dogs.json -----
+    Private Sub LoadDogs()
+        If File.Exists(DogsFilePath) Then
+            Dim json = File.ReadAllText(DogsFilePath, Encoding.UTF8)
+            Dim opts = New JsonSerializerOptions With {
+                .PropertyNameCaseInsensitive = True
+            }
+            DogsList = JsonSerializer.Deserialize(Of List(Of DogInfo))(json, opts)
+        Else
+            DogsList = New List(Of DogInfo)()
+        End If
     End Sub
+
+    Private Sub SaveDogs()
+        Dim options As New JsonSerializerOptions With {
+            .WriteIndented = True,
+            .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
+        }
+        Directory.CreateDirectory(Path.GetDirectoryName(DogsFilePath))
+        File.WriteAllText(DogsFilePath, JsonSerializer.Serialize(DogsList, options), Encoding.UTF8)
+    End Sub
+
+    ' ----- načtení a uložení config.json (aktivní pes) -----
+    Private Sub LoadConfig()
+        If File.Exists(ConfigPath) Then
+            Dim json = File.ReadAllText(ConfigPath, Encoding.UTF8)
+            Dim cfg = JsonSerializer.Deserialize(Of AppConfig)(json)
+            If cfg IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(cfg.ActiveDogId) Then
+                ActiveDogId = cfg.ActiveDogId
+            End If
+        End If
+    End Sub
+
+    Private Sub SaveConfig()
+        Dim options As New JsonSerializerOptions With {
+            .WriteIndented = True,
+            .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        }
+        Dim cfg As New AppConfig With {.ActiveDogId = ActiveDogId}
+        File.WriteAllText(ConfigPath, JsonSerializer.Serialize(cfg, options), Encoding.UTF8)
+    End Sub
+
+    ' ----- naplnění ToolStripComboBoxu objekty DogInfo -----
+    Private Sub PopulateDogsToolStrip()
+        mnucbActiveDog.ComboBox.Items.Clear()
+
+        For Each d As DogInfo In DogsList
+            mnucbActiveDog.ComboBox.Items.Add(d) ' zobrazí se Name díky ToString()
+        Next
+
+        ' pokud je nastaven ActiveDogId, vyber ho; jinak vyber první
+        Dim selectedIndex As Integer = -1
+        If Not String.IsNullOrEmpty(ActiveDogId) Then
+            For i As Integer = 0 To mnucbActiveDog.ComboBox.Items.Count - 1
+                Dim item As DogInfo = CType(mnucbActiveDog.ComboBox.Items(i), DogInfo)
+                If item.Id = ActiveDogId Then
+                    selectedIndex = i
+                    Exit For
+                End If
+            Next
+        End If
+
+        If selectedIndex = -1 AndAlso mnucbActiveDog.ComboBox.Items.Count > 0 Then selectedIndex = 0
+
+        If selectedIndex >= 0 Then
+            mnucbActiveDog.ComboBox.SelectedIndex = selectedIndex
+            ' zajistí, že ActiveDogId drží hodnotu
+            Dim sel = TryCast(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+            If sel IsNot Nothing Then
+                ActiveDogId = sel.Id
+                'lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
+            End If
+        Else
+            'lblActiveDog.Text = "Aktivní pes: (není)"
+        End If
+    End Sub
+
+    ' ----- handler při změně výběru v ToolStripComboBoxu -----
+    Private Sub mnucbActiveDog_SelectedIndexChanged(sender As Object, e As EventArgs) Handles mnucbActiveDog.SelectedIndexChanged
+        Dim sel = TryCast(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+        If sel Is Nothing Then Return
+        SetScrollState(1, sel.Id) ' nastavíme scroll state pro aktivního psa
+        ActiveDogId = sel.Id
+        My.Settings.ActiveDog = sel.Id ' uložíme jméno psa do nastavení
+        'lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
+        My.Settings.Save()
+        ' uložíme config (aby se volba pamatovala)
+        SaveConfig()
+
+        ' tady můžeš volat další inicializace pro aktivního psa
+        ' e.g. RefreshOriginalsFolderForActiveDog()
+    End Sub
+
+    ' ----- příklad: přidání nového psa (mnuAddDog click) -----
+    Private Sub mnuAddDog_Click(sender As Object, e As EventArgs) Handles mnuAddDog.Click
+        Dim dogName = InputBox("Enter the name of the new dog:", "New dog")
+        If String.IsNullOrWhiteSpace(dogName) Then
+            MessageBox.Show("The name of the dog was not given.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+            Return
+        End If
+
+        ' vytvoříme nové ID (trojciferné)
+        Dim newId As String = If(DogsList.Count = 0, "001", (DogsList.Select(Function(d) Integer.Parse(d.Id)).Max() + 1).ToString("D3"))
+        ' vytvoříme složky
+        'Dim dogLocalBasePath = Path.Combine(DogsRootPath, newId)
+
+        Dim dogRemotePath = ActiveDog.RemoteDirectory 'Path.Combine(My.Settings.Directory, dogName)
+        Dim folderDialog As New FolderBrowserDialog()
+        folderDialog.SelectedPath = dogRemotePath
+        folderDialog.Description = $"Selecting the folder from where to load gpx files for the dog {dogName}."
+        folderDialog.UseDescriptionForTitle = True
+        If False = (folderDialog.ShowDialog() = DialogResult.OK) Then
+            ' pokud uživatel zrušil výběr, skončíme
+            MessageBox.Show("The dog was not added.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            Return
+        ElseIf Directory.Exists(folderDialog.SelectedPath) Then
+            dogRemotePath = folderDialog.SelectedPath
+        Else
+            MessageBox.Show("The selected folder does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        ' přidáme do seznamu a uložíme
+        DogsList.Add(New DogInfo With {.Id = newId,
+                     .Name = dogName,
+                     .RemoteDirectory = dogRemotePath})
+
+        SaveDogs()
+
+
+
+        ' refresh UI: vložíme nového psa do comboboxu a vybereme ho
+        PopulateDogsToolStrip()
+        ' vybrat nového psa:
+        For i As Integer = 0 To mnucbActiveDog.ComboBox.Items.Count - 1
+            Dim d As DogInfo = CType(mnucbActiveDog.ComboBox.Items(i), DogInfo)
+            If d.Id = newId Then mnucbActiveDog.ComboBox.SelectedIndex = i : Exit For
+        Next
+
+        MessageBox.Show($"Pes '{dogName}' přidán s ID {newId}.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information)
+    End Sub
+
 
 
     Private Sub mnuSetFFmpegPath_Click(sender As Object, e As EventArgs) Handles mnuSetFFmpegPath.Click
@@ -874,6 +1020,7 @@ Public Class Form1
             My.Settings.Save()
         End If
     End Sub
+
 
     Private Sub mnuExit_Click(sender As Object, e As EventArgs) Handles mnuExit.Click
         Me.Close() ' Zavře aplikaci
@@ -1024,7 +1171,7 @@ Public Class Form1
         End Try
     End Sub
 
-    Private Sub mnuCheckUpdates_Click(sender As Object, e As EventArgs) Handles mnuCheckUpdates.Click
+    Private Sub mnuCheckUpdates_Click(sender As Object, e As EventArgs) Handles mnuCheckForUpdates1.Click
         Try
             Dim url As String = "https://api.github.com/repos/mwrnckx/K9-Trails-Analyzer/releases/latest"
             Dim client As New Net.WebClient()
@@ -1066,6 +1213,119 @@ Public Class Form1
     Private Sub Form1_ResizeEnd(sender As Object, e As EventArgs) Handles Me.ResizeEnd
         My.Settings.WindowSize = Me.Size
     End Sub
+
+    Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteCurrentDogToolStripMenuItem.Click
+        ' Najdi psa podle ID
+        Dim dogId As String = ActiveDogId
+        Dim dogToRemove = DogsList.FirstOrDefault(Function(d) d.Id = dogId)
+        If dogToRemove Is Nothing Then
+            MessageBox.Show("Dog not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+
+        ' Potvrzení od uživatele
+        Dim result = MessageBox.Show(
+        $"You really want to delete the dog '{dogToRemove.Name}'? (Local gpx files will be preserved.)",
+        "Confirmation of deletion",
+        MessageBoxButtons.YesNo,
+        MessageBoxIcon.Warning)
+
+        If result <> DialogResult.Yes Then Return
+
+        '' Smazání lokální složky
+        'Try
+        '    If Directory.Exists(dogToRemove.LocalBaseDirectory) Then
+        '        Directory.Delete(dogToRemove.LocalBaseDirectory, True) ' True = smaže i obsah
+        '    End If
+        'Catch ex As Exception
+        '    MessageBox.Show($"Nepodařilo se smazat složku psa: {ex.Message}",
+        '                "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        '    ' Rozhodni, jestli máš přesto pokračovat
+        'End Try
+
+        ' Odebrání psa ze seznamu
+        DogsList.Remove(dogToRemove)
+
+        ' Ulož seznam zpět do JSON
+        SaveDogs()
+
+        ' Pokud byl aktivní, přepnout na jiného
+        If ActiveDogId = dogId Then
+            ActiveDogId = If(DogsList.Count > 0, DogsList(0).Id, String.Empty)
+        End If
+
+        ' Obnov UI (combo box apod.)
+        PopulateDogsToolStrip()
+
+        MessageBox.Show($"The dog '{dogToRemove.Name}' has been deleted.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+    End Sub
 End Class
 
 
+
+' --- model psa ---
+Public Class DogInfo
+    <JsonPropertyName("id")>
+    Public Property Id As String
+
+    <JsonPropertyName("name")>
+    Public Property Name As String
+
+    <JsonPropertyName("remotedirectory")>
+    Dim _remoteDirectory As String
+    Public Property RemoteDirectory As String
+        Get
+            If (String.IsNullOrWhiteSpace(_remoteDirectory)) Then
+                ' pokud není nastaveno, použije se výchozí cesta
+
+                _remoteDirectory = Path.Combine(Application.StartupPath, "Samples")
+                End If
+            Return _remoteDirectory
+        End Get
+        Set(value As String)
+            _remoteDirectory = value
+        End Set
+    End Property
+
+
+
+    <JsonIgnore>
+    Public ReadOnly Property LocalBaseDirectory As String
+        Get
+            Dim _directory = Path.Combine(Application.StartupPath, "Dogs", Id)
+            Directory.CreateDirectory(_directory)
+            Return _directory
+        End Get
+    End Property
+
+    <JsonIgnore>
+    Public ReadOnly Property ProcessedDirectory As String
+        Get
+            Dim _directory = Path.Combine(LocalBaseDirectory, "Processed")
+            Directory.CreateDirectory(_directory)
+            Return _directory
+        End Get
+    End Property
+
+    <JsonIgnore>
+    Public ReadOnly Property OriginalsDirectory As String
+        Get
+            Dim _directory = Path.Combine(LocalBaseDirectory, "Originals")
+            Directory.CreateDirectory(_directory)
+            Return _directory
+        End Get
+    End Property
+
+    Public Overrides Function ToString() As String
+        Return Name & " (" & Id & ")"
+    End Function
+End Class
+
+
+' --- jednoduchá konfigurace pro aktivního psa ---
+Public Class AppConfig
+    <JsonPropertyName("activeDogId")>
+    Public Property ActiveDogId As String
+End Class

@@ -1,5 +1,7 @@
 ﻿Imports System.ComponentModel
+Imports System.IO
 Imports System.Reflection
+Imports System.Text.Json
 Imports System.Threading
 Imports TrackVideoExporter
 
@@ -48,12 +50,15 @@ Partial Class Form1
         mnuPolish = New ToolStripMenuItem()
         mnuRussian = New ToolStripMenuItem()
         SToolStripMenuItem = New ToolStripMenuItem()
-        mnuDogName = New ToolStripMenuItem()
+        mnucbActiveDog = New ToolStripComboBox()
+        mnuAddDog = New ToolStripMenuItem()
+        DeleteCurrentDogToolStripMenuItem = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
         mnuFactoryReset = New ToolStripMenuItem()
+        HelpToolStripMenuItem = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
-        mnuCheckUpdates = New ToolStripMenuItem()
+        mnuCheckForUpdates1 = New ToolStripMenuItem()
         PictureBox1 = New PictureBox()
         lblScentArtickle = New Label()
         rtbWarnings = New RichTextBox()
@@ -117,7 +122,7 @@ Partial Class Form1
         MenuStrip1.BackColor = Color.FromArgb(CByte(172), CByte(209), CByte(158))
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem, HelpToolStripMenuItem})
         MenuStrip1.Name = "MenuStrip1"
         ' 
         ' mnuFile
@@ -214,14 +219,24 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuDogName, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset, mnuAbout, mnuCheckUpdates})
+        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuAddDog, DeleteCurrentDogToolStripMenuItem, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
         resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
         SToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
-        ' mnuDogName
+        ' mnucbActiveDog
         ' 
-        mnuDogName.Name = "mnuDogName"
-        resources.ApplyResources(mnuDogName, "mnuDogName")
+        resources.ApplyResources(mnucbActiveDog, "mnucbActiveDog")
+        mnucbActiveDog.Name = "mnucbActiveDog"
+        ' 
+        ' mnuAddDog
+        ' 
+        mnuAddDog.Name = "mnuAddDog"
+        resources.ApplyResources(mnuAddDog, "mnuAddDog")
+        ' 
+        ' DeleteCurrentDogToolStripMenuItem
+        ' 
+        DeleteCurrentDogToolStripMenuItem.Name = "DeleteCurrentDogToolStripMenuItem"
+        resources.ApplyResources(DeleteCurrentDogToolStripMenuItem, "DeleteCurrentDogToolStripMenuItem")
         ' 
         ' mnuSelectADirectoryToSaveVideo
         ' 
@@ -238,15 +253,21 @@ Partial Class Form1
         mnuFactoryReset.Name = "mnuFactoryReset"
         resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
         ' 
+        ' HelpToolStripMenuItem
+        ' 
+        HelpToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1})
+        HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
+        resources.ApplyResources(HelpToolStripMenuItem, "HelpToolStripMenuItem")
+        ' 
         ' mnuAbout
         ' 
         mnuAbout.Name = "mnuAbout"
         resources.ApplyResources(mnuAbout, "mnuAbout")
         ' 
-        ' mnuCheckUpdates
+        ' mnuCheckForUpdates1
         ' 
-        mnuCheckUpdates.Name = "mnuCheckUpdates"
-        resources.ApplyResources(mnuCheckUpdates, "mnuCheckUpdates")
+        mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
+        resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
         ' 
         ' PictureBox1
         ' 
@@ -435,28 +456,22 @@ Partial Class Form1
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        ' načteme data + config + naplníme combobox
+        LoadDogs()
+        LoadConfig()
+        PopulateDogsToolStrip()
+
         WriteRTBWarning("Logs:", Color.Maroon)
 
 
         mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
+        mnucbActiveDog.SelectedItem = My.Settings.ActiveDog
 
-        'If My.Settings.Directory = "" Then
-        '    My.Settings.Directory = IO.Directory.GetParent(Application.StartupPath).ToString
-        'End If
-
-        'If My.Settings.BackupDirectory = "" Then
-        '    My.Settings.BackupDirectory = System.IO.Path.Combine(My.Settings.Directory, "gpxFilesBackup")
-        'End If
-        'My.Settings.Save()
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
-        'Me.dtpEndDate.Value = Now
-        'Me.dtpStartDate.Value = Me.dtpEndDate.Value.AddYears(-1)
-        'Me.dtpStartDate.Value = Me.dtpStartDate.Value.AddDays(1)
 
-
-        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(My.Settings.Directory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
+        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDog.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
         Dim resources = New ComponentResourceManager(Me.GetType())
         LocalizeMenuItems(MenuStrip1.Items, resources)
         SetTooltips()
@@ -482,6 +497,8 @@ Partial Class Form1
         Me.btnReadGpxFiles.Focus()
         Me.btnReadGpxFiles.Select()
     End Sub
+
+
 
     Private Sub ReadHelp()
         Select Case currentCulture.TwoLetterISOLanguageName
@@ -523,7 +540,7 @@ Partial Class Form1
     Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents mnuFactoryReset As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
-    Friend WithEvents mnuDogName As ToolStripMenuItem
+    Friend WithEvents mnuAddDog As ToolStripMenuItem
     Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
     Friend WithEvents mnuSelectADirectoryToSaveVideo As ToolStripMenuItem
     Friend WithEvents mnuSetFFmpegPath As ToolStripMenuItem
@@ -547,7 +564,11 @@ Partial Class Form1
     Friend WithEvents clmTrkCount As ColumnHeader
     Private WithEvents btnCreateVideos As Button
     Friend WithEvents clmAge As ColumnHeader
-    Friend WithEvents mnuAbout As ToolStripMenuItem
     Friend WithEvents mnuCheckUpdates As ToolStripMenuItem
+    Friend WithEvents HelpToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnuAbout As ToolStripMenuItem
+    Friend WithEvents mnuCheckForUpdates1 As ToolStripMenuItem
+    Friend WithEvents mnucbActiveDog As ToolStripComboBox
+    Friend WithEvents DeleteCurrentDogToolStripMenuItem As ToolStripMenuItem
 End Class
 

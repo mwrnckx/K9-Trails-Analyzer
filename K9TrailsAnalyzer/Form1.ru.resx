@@ -123,12 +123,6 @@
   <data name="btnChartDistances.Text" xml:space="preserve">
     <value>Показать диаграммы</value>
   </data>
-  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Выберите каталог, в котором находятся файлы gpx</value>
-  </data>
-  <data name="mnuSelectBackupDirectory.Text" xml:space="preserve">
-    <value>Выберите каталог для резервного копирования файлов gpx</value>
-  </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>Файл</value>
   </data>
@@ -258,9 +252,6 @@
   <data name="MenuStrip1.Text" xml:space="preserve">
     <value>Menustrip1</value>
   </data>
-  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>mnuselecttooltip</value>
-  </data>
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Выход</value>
   </data>
@@ -296,5 +287,23 @@
   </data>
   <data name="SToolStripMenuItem.Text" xml:space="preserve">
     <value>Настройки</value>
+  </data>
+  <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
+    <value>Проверьте наличие обновлений</value>
+  </data>
+  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Помощь</value>
+  </data>
+  <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
+    <value>Удалить нынешнюю собаку</value>
+  </data>
+  <data name="mnuAddDog.Text" xml:space="preserve">
+    <value>Добавить еще одну собаку</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
+    <value>Измените каталог, в котором файлы GPX текущей собаки</value>
+  </data>
+  <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
+    <value>Изменить каталог с файлами GPX</value>
   </data>
 </root>

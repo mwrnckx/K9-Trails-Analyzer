@@ -163,7 +163,7 @@
     <value>GPX-Dateiname</value>
   </data>
   <data name="outAge" xml:space="preserve">
-    <value>Fährtenalte</value>
+    <value>Alte</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Tempo des Hundes</value>
