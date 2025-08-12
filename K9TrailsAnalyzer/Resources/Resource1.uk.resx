@@ -165,9 +165,6 @@
   <data name="outAge" xml:space="preserve">
     <value>Вік</value>
   </data>
-  <data name="article" xml:space="preserve">
-    <value>Стаття</value>
-  </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Швидкість собаки</value>
   </data>
@@ -275,16 +272,16 @@
 -&gt; Інші люди переправи.
 Якщо є лише два маршрути, це досить просто - перший - це предметний слід, другий - це маршрут собаки. Але якщо є лише один трек або більше двох, ви повинні вирішити.</value>
   </data>
-  <data name="CrossingTrail" xml:space="preserve">
-    <value>Перетинка</value>
-  </data>
   <data name="dogTrack" xml:space="preserve">
     <value>Доріжка собаки</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
     <value>Слід бігуна</value>
   </data>
-  <data name="Artickle" xml:space="preserve">
-    <value>Аромат артику</value>
+  <data name="artickle" xml:space="preserve">
+    <value>предмет</value>
+  </data>
+  <data name="CrossingTrail" xml:space="preserve">
+    <value>перетин сліду</value>
   </data>
 </root>

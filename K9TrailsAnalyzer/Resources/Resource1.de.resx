@@ -163,10 +163,7 @@
     <value>GPX-Dateiname</value>
   </data>
   <data name="outAge" xml:space="preserve">
-    <value>Alter</value>
-  </data>
-  <data name="article" xml:space="preserve">
-    <value>Artikel</value>
+    <value>Fährtenalte</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Tempo des Hundes</value>
@@ -256,13 +253,13 @@
     <value>Trainingsziel</value>
   </data>
   <data name="txtTrailLabel" xml:space="preserve">
-    <value>Pfad</value>
+    <value> Fährte</value>
   </data>
   <data name="txtperformanceLabel" xml:space="preserve">
     <value>K9 -Teamleistung</value>
   </data>
   <data name="txtRunner" xml:space="preserve">
-    <value>runner</value>
+    <value>Zielperson</value>
   </data>
   <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
     <value>Das Backup -Verzeichnis entspricht dem Hauptverzeichnis - es kann nicht sein!</value>
@@ -279,7 +276,7 @@ Zur weiteren Verarbeitung müssen Sie entscheiden, welcher Spur entspricht
 Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der Subjektweg, der zweite ist die Hundestrecke. Aber wenn es nur einen Track oder mehr als zwei gibt, müssen Sie sich entscheiden.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>Übergangsweg</value>
+    <value>Spurkreuzung</value>
   </data>
   <data name="dogTrack" xml:space="preserve">
     <value>Hundespur</value>
@@ -287,7 +284,7 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="RunnerTrail" xml:space="preserve">
     <value />
   </data>
-  <data name="Artickle" xml:space="preserve">
-    <value>Duftkunst</value>
+  <data name="artickle" xml:space="preserve">
+    <value>Gegenstand</value>
   </data>
 </root>

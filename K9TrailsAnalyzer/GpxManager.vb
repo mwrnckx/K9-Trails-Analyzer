@@ -81,7 +81,7 @@ Public Class GpxFileManager
             For Each _gpxRecord As GPXRecord In gpxFilesSortedAndFiltered
                 Try
                     If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
-                        _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "artickle"
+                        _gpxRecord.RenamewptNode(My.Resources.Resource1.artickle) 'renaming wpt to "artickle"
                         If prependDateToName Then _gpxRecord.PrependDateToFilename()
                         If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                     End If
@@ -1961,7 +1961,7 @@ Module TrackDisplayLogic
             Case TrackType.RunnerTrail : Return My.Resources.Resource1.RunnerTrail
             Case TrackType.DogTrack : Return My.Resources.Resource1.dogTrack
             Case TrackType.CrossTrail : Return My.Resources.Resource1.CrossingTrail
-            Case TrackType.Artickle : Return My.Resources.Resource1.article
+            Case TrackType.Artickle : Return My.Resources.Resource1.artickle
             Case Else : Return My.Resources.Resource1.txtUnknown
         End Select
     End Function

@@ -163,10 +163,7 @@
     <value>Nazwa pliku GPX</value>
   </data>
   <data name="outAge" xml:space="preserve">
-    <value>Wiek</value>
-  </data>
-  <data name="article" xml:space="preserve">
-    <value>Artykuł</value>
+    <value>wiek śladu</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Prędkość psa</value>
@@ -256,7 +253,7 @@
     <value>Cel treningowy</value>
   </data>
   <data name="txtTrailLabel" xml:space="preserve">
-    <value>Ścieżka</value>
+    <value>ślad</value>
   </data>
   <data name="txtperformanceLabel" xml:space="preserve">
     <value>Wydajność zespołu K9</value>
@@ -276,7 +273,7 @@ Aby uzyskać dalsze przetwarzanie, musisz zdecydować, który tor odpowiada
 Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczny, druga to droga psa. Ale jeśli jest tylko jeden utwór lub więcej niż dwa, musisz zdecydować.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>Przejażdżący szlak</value>
+    <value>przecięcie śladu</value>
   </data>
   <data name="dogTrack" xml:space="preserve">
     <value />
@@ -284,7 +281,7 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="RunnerTrail" xml:space="preserve">
     <value />
   </data>
-  <data name="Artickle" xml:space="preserve">
-    <value>Zapach Artyckle</value>
+  <data name="artickle" xml:space="preserve">
+    <value>przedmiot</value>
   </data>
 </root>

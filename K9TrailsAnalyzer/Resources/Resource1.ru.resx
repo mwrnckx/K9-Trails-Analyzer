@@ -165,9 +165,6 @@
   <data name="outAge" xml:space="preserve">
     <value>Возраст</value>
   </data>
-  <data name="article" xml:space="preserve">
-    <value>Статья</value>
-  </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Скорость собаки</value>
   </data>
@@ -279,7 +276,7 @@
 Если есть только два маршрута, это довольно просто - первая - это тропа субъекта, вторая - это маршрут для собак. Но если есть только один трек или более двух, вы должны решить.</value>
   </data>
   <data name="CrossingTrail" xml:space="preserve">
-    <value>Пересечение тропы</value>
+    <value>пересечение следа</value>
   </data>
   <data name="dogTrack" xml:space="preserve">
     <value>Трек собаки</value>
@@ -287,7 +284,7 @@
   <data name="RunnerTrail" xml:space="preserve">
     <value>След следопрокладчикa</value>
   </data>
-  <data name="Artickle" xml:space="preserve">
-    <value>Аромат артикл</value>
+  <data name="artickle" xml:space="preserve">
+    <value>предмет</value>
   </data>
 </root>

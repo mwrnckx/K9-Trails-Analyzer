@@ -776,8 +776,12 @@ Public Class Form1
                 My.Settings.Directory = Directory.GetParent(Application.StartupPath).ToString
             End If
             folderDialog.SelectedPath = My.Settings.Directory
-        ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
+            folderDialog.Description = "Selecting the folder from where to load gpx files!"
+            folderDialog.UseDescriptionForTitle = True
+        ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
             folderDialog.ShowNewFolderButton = True
+            folderDialog.Description = "Selecting the folder to save the video!"
+            folderDialog.UseDescriptionForTitle = True
             If My.Settings.VideoDirectory = "" Then
                 folderDialog.SelectedPath = My.Settings.Directory
             Else
@@ -792,9 +796,7 @@ Public Class Form1
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 My.Settings.Directory = folderDialog.SelectedPath
-
-
-            ElseIf sender Is mnuSelectADirectoryToSaveVideo Then
+            ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
             Else
                 Return ' Pokud není žádná z očekávaných položek menu, ukonči metodu

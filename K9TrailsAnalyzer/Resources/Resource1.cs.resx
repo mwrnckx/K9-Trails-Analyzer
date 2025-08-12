@@ -163,10 +163,7 @@
     <value>Jméno souboru gpx</value>
   </data>
   <data name="outAge" xml:space="preserve">
-    <value>Stáří</value>
-  </data>
-  <data name="article" xml:space="preserve">
-    <value>předmět</value>
+    <value>Stáří stopy</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
     <value>Rychlost psa</value>
@@ -290,7 +287,7 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="RunnerTrail" xml:space="preserve">
     <value>Trasa kladeče</value>
   </data>
-  <data name="Artickle" xml:space="preserve">
+  <data name="artickle" xml:space="preserve">
     <value>předmět</value>
   </data>
 </root>

@@ -67,18 +67,9 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Scent Artickle.
         '''</summary>
-        Friend Shared ReadOnly Property Artickle() As String
+        Friend Shared ReadOnly Property artickle() As String
             Get
-                Return ResourceManager.GetString("Artickle", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Article.
-        '''</summary>
-        Friend Shared ReadOnly Property article() As String
-            Get
-                Return ResourceManager.GetString("article", resourceCulture)
+                Return ResourceManager.GetString("artickle", resourceCulture)
             End Get
         End Property
         
