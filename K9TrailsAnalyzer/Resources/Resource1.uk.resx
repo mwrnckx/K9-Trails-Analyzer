@@ -132,9 +132,6 @@
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Дата</value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Завантаження файлів gpx з вибраного каталогу не вдалося</value>
-  </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Помилка під час створення CSV</value>
   </data>
@@ -283,5 +280,11 @@
   </data>
   <data name="CrossingTrail" xml:space="preserve">
     <value>перетин сліду</value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Не вдалося знайти жодних файлів GPX!</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Відредагуйте коментарі до тренувального Сесіона. Ці коментарі будуть збережені у файлі GPX та відображатись у таких програмах, як gpxsee.org та накладні відео. Якщо ви пишете коментарі у своєму додатку GPS, додайте "G:" Перед описом мети "T:" Перед описом сліду та "D:" До опису роботи команди. Ви можете написати переклад англійською мовою у другому ряду, якщо бажаєте.</value>
   </data>
 </root>

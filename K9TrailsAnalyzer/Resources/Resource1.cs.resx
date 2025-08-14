@@ -133,7 +133,8 @@
     <value>Datum  </value>
   </data>
   <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Načtení souborů gpx ze zvoleného adresáře selhalo</value>
+    <value>Nepodařilo se najít žádné gpx soubory!
+</value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Chyba při tvorbě CSV souboru</value>

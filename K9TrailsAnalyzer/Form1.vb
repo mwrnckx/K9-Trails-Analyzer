@@ -17,8 +17,8 @@ Imports TrackVideoExporter.TrackVideoExporter
 Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
-    Private ReadOnly DogsFilePath As String = Path.Combine(Application.StartupPath, "dogs.json")
-    Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "config.json")
+    Private ReadOnly DogsFilePath As String = Path.Combine(Application.StartupPath, "AppData", "dogs.json")
+    Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "AppData", "config.json")
     'Private ReadOnly DogsRootPath As String = Path.Combine(Application.StartupPath, "Dogs")
 
     Private DogsList As List(Of DogInfo)
@@ -216,7 +216,7 @@ Public Class Form1
         Me.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
         Me.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
-                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & ActiveDog.ProcessedDirectory & vbCrLf & vbCrLf)
+                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & ActiveDog.RemoteDirectory & vbCrLf & vbCrLf)
 
         Dim manydots As String = "...................................................................."
         Dim labelLength As Integer = 40
@@ -852,7 +852,6 @@ Public Class Form1
     Private Sub FactoryResetToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuFactoryReset.Click
         If MessageBox.Show("Are you sure you want to clear all your settings?", " ",
         MessageBoxButtons.YesNo) = DialogResult.Yes Then My.Settings.Reset()
-
     End Sub
 
     Private Sub dtpStartDate_ValueChanged(sender As Object, e As EventArgs) Handles dtpStartDate.ValueChanged, dtpEndDate.ValueChanged
@@ -1265,6 +1264,24 @@ Public Class Form1
 
         MessageBox.Show($"The dog '{dogToRemove.Name}' has been deleted.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
 
+
+    End Sub
+
+    Private Sub mnuRenameCurrentDog_Click(sender As Object, e As EventArgs) Handles mnuRenameCurrentDog.Click
+        Dim selectedDog As DogInfo = CType(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+        If selectedDog IsNot Nothing Then
+            Dim newName As String = InputBox("Enter the dog's new name:", "Rename the dog", selectedDog.Name)
+            If Not String.IsNullOrWhiteSpace(newName) AndAlso newName <> selectedDog.Name Then
+                If DogsList.Any(Function(d) d.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)) Then
+                    MessageBox.Show("A dog with this name already exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+                Else
+                    selectedDog.Name = newName
+                    ' případně uložit do JSON
+                    SaveDogs()
+                    PopulateDogsToolStrip()
+                End If
+            End If
+        End If
 
     End Sub
 End Class

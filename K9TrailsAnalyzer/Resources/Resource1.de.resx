@@ -132,9 +132,6 @@
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Datum  </value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Das Laden von GPX -Dateien aus dem ausgewählten Verzeichnis fehlgeschlagen</value>
-  </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Fehler beim Erstellen von CSV</value>
   </data>
@@ -286,5 +283,11 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   </data>
   <data name="artickle" xml:space="preserve">
     <value>Gegenstand</value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Es konnte keine GPX -Dateien finden!</value>
+  </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Bearbeiten Sie die Kommentare zur Trainingssesion. Diese Kommentare werden in der GPX -Datei gespeichert und in Anwendungen wie gpxsee.org und Overlay -Videos angezeigt. Wenn Sie die Kommentare in Ihrer GPS -App schreiben, fügen Sie "G:" vor der Beschreibung des Ziels "t:" vor der Beschreibung des Trails und "D:" vor der Beschreibung der Teamarbeit hinzu. Sie können eine englische Übersetzung in der zweiten Reihe schreiben, wenn Sie möchten.</value>
   </data>
 </root>

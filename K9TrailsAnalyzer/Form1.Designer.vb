@@ -56,6 +56,7 @@ Partial Class Form1
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
         mnuFactoryReset = New ToolStripMenuItem()
+        mnuRenameCurrentDog = New ToolStripMenuItem()
         HelpToolStripMenuItem = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
@@ -223,7 +224,7 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuAddDog, mnuDeleteCurrentDog, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
+        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuRenameCurrentDog, mnuAddDog, mnuDeleteCurrentDog, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
         resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
         SToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
@@ -256,6 +257,11 @@ Partial Class Form1
         ' 
         mnuFactoryReset.Name = "mnuFactoryReset"
         resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
+        ' 
+        ' mnuRenameCurrentDog
+        ' 
+        mnuRenameCurrentDog.Name = "mnuRenameCurrentDog"
+        resources.ApplyResources(mnuRenameCurrentDog, "mnuRenameCurrentDog")
         ' 
         ' HelpToolStripMenuItem
         ' 
@@ -461,6 +467,18 @@ Partial Class Form1
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         ' načteme data + config + naplníme combobox
+        'při prvním spuštění se načtou data z defaults:
+        Dim defaultDir As String = Path.Combine(Application.StartupPath, "defaults")
+        Dim appdataDir = Path.Combine(Application.StartupPath, "AppData")
+        Directory.CreateDirectory(appdataDir)
+        For Each file In Directory.GetFiles(defaultDir)
+            Dim appdataPath = Path.Combine(Application.StartupPath, "AppData", Path.GetFileName(file))
+            If IO.Path.Exists(appdataPath) Then
+                Continue For
+            End If
+            IO.File.Move(file, appdataDir) 'pokud tam už něco je nepřepisuje se!
+        Next
+
         LoadDogs()
         LoadConfig()
         PopulateDogsToolStrip()
@@ -574,5 +592,6 @@ Partial Class Form1
     Friend WithEvents mnuCheckForUpdates1 As ToolStripMenuItem
     Friend WithEvents mnucbActiveDog As ToolStripComboBox
     Friend WithEvents mnuDeleteCurrentDog As ToolStripMenuItem
+    Friend WithEvents mnuRenameCurrentDog As ToolStripMenuItem
 End Class
 

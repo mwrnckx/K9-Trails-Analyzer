@@ -62,6 +62,7 @@ Public Class GpxFileManager
                     Return False 'vrátí false, pokud uživatel zrušil import
                 End If
             End If
+
             'pokud jsou nějaké nové soubory, tak je spojí do jednoho listu
             Dim gpxFilesMerged As New List(Of GPXRecord)
             If remoteFiles.Count > 0 Then
@@ -136,55 +137,59 @@ Public Class GpxFileManager
         Dim GPXFRecords As New List(Of GPXRecord)
 
         If remoteFiles Then
-            Dim tracker As New FileTracker("processed.json")
-            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
-            Dim i As Integer = 0
-            For Each remoteFilePath In Files
+            Dim downloadedPath = Path.Combine(Application.StartupPath, "AppData", "downloaded.json")
+            'If Not File.Exists(downloadedPath) Then
+            '    File.Copy(dowloadedDefault, downloadedPath)
+            'End If
+            Dim tracker As New FileTracker(downloadedPath)
+                Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
+                Dim i As Integer = 0
+                For Each remoteFilePath In Files
 
-                'tracker.MarkAsProcessed(remoteFilePath) 'toto připraveno pro tiché zpracování Originals
-                'Continue For '
-                Try
-                    If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
-                        Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
-                        ' Pokud je soubor nový nebo změněný, zpracujeme ho
-                        'zkopíruje soubor do lokálních adresářů
-                        Dim localOriginalsFilePath As String = Path.Combine(DogInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
-                        If File.Exists(localOriginalsFilePath) Then
-                            RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
-                        Else
-                            IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
+                    'tracker.MarkAsProcessed(remoteFilePath) 'toto připraveno pro tiché zpracování Originals
+                    'Continue For '
+                    Try
+                        If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
+                            Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
+                            ' Pokud je soubor nový nebo změněný, zpracujeme ho
+                            'zkopíruje soubor do lokálních adresářů
+                            Dim localOriginalsFilePath As String = Path.Combine(DogInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
+                            If File.Exists(localOriginalsFilePath) Then
+                                RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
+                            Else
+                                IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
+                            End If
+
+                            Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, Path.GetFileName(remoteFilePath))
+
+                            i += 1
+                            tracker.MarkAsProcessed(remoteFilePath)
+                            Try
+                                'načte z Originals:
+                                Dim _reader As New GpxReader(localOriginalsFilePath)
+                                'Ukládat bude do Processed!
+                                _reader.FilePath = localProcessedFilePath
+                                Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
+                                _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
+                                _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
+                                _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
+                                GPXFRecords.Add(_gpxRecord)
+                            Catch ex As Exception
+                                'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
+                                RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(remoteFilePath)}: {ex.Message}", Color.Red)
+                            End Try
+
+                        Else 'zpracované soubory
+                            Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
                         End If
+                    Catch ex As Exception
 
-                        Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, Path.GetFileName(remoteFilePath))
+                    End Try
+                Next
+                RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
 
-                        i += 1
-                        tracker.MarkAsProcessed(remoteFilePath)
-                        Try
-                            'načte z Originals:
-                            Dim _reader As New GpxReader(localOriginalsFilePath)
-                            'Ukládat bude do Processed!
-                            _reader.FilePath = localProcessedFilePath
-                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
-                            _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
-                            _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
-                            _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
-                            GPXFRecords.Add(_gpxRecord)
-                        Catch ex As Exception
-                            'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
-                            RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(remoteFilePath)}: {ex.Message}", Color.Red)
-                        End Try
-
-                    Else 'zpracované soubory
-                        Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
-                    End If
-                Catch ex As Exception
-
-                End Try
-            Next
-            RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
-
-        Else 'local files
-            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.ProcessedDirectory, "*.gpx").ToList()
+            Else 'local files
+                Dim Files As List(Of String) = Directory.GetFiles(DogInfo.ProcessedDirectory, "*.gpx").ToList()
             For Each filePath In Files
                 Try
                     Dim _reader As New GpxReader(filePath)
@@ -705,16 +710,6 @@ Public Class GPXRecord
 
     End Function
 
-    'Public Sub WriteProcessed()
-    '    Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", Me.Reader.rootNode)
-    '    If extensionsNode Is Nothing Then
-    '        extensionsNode = Me.Reader.CreateElement("extensions")
-    '        Me.Reader.rootNode.PrependChild(extensionsNode)
-    '    End If
-    '    Dim value As DateTime = DateTime.Now
-    '    Me.Reader.CreateAndAddElement(extensionsNode, "processed", value, False, True)
-
-    'End Sub
 
     Public Function IsProcessed() As Boolean
         Try
@@ -2159,7 +2154,7 @@ End Class
 
 Public Class FileTracker
 
-    Private processedFiles As Dictionary(Of String, FileRecord)
+    Private downloadedFiles As Dictionary(Of String, FileRecord)
     Private ReadOnly savePath As String
 
     Public Sub New(storageFile As String)
@@ -2167,13 +2162,13 @@ Public Class FileTracker
         If File.Exists(savePath) Then
             Try
                 Dim json = File.ReadAllText(savePath, Encoding.UTF8)
-                processedFiles = JsonSerializer.Deserialize(Of Dictionary(Of String, FileRecord))(json)
+                downloadedFiles = JsonSerializer.Deserialize(Of Dictionary(Of String, FileRecord))(json)
             Catch ex As Exception 'kdyby byl poškozený soubor
-                processedFiles = New Dictionary(Of String, FileRecord)()
+                downloadedFiles = New Dictionary(Of String, FileRecord)()
             End Try
 
         Else
-            processedFiles = New Dictionary(Of String, FileRecord)()
+            downloadedFiles = New Dictionary(Of String, FileRecord)()
         End If
     End Sub
 
@@ -2188,12 +2183,12 @@ Public Class FileTracker
         Dim fi As New FileInfo(filePath)
         Dim fileName = fi.Name
 
-        If Not processedFiles.ContainsKey(fileName) Then
+        If Not downloadedFiles.ContainsKey(fileName) Then
             ' Nový soubor
             Return True
         End If
 
-        Dim rec = processedFiles(fileName)
+        Dim rec = downloadedFiles(fileName)
         If rec.LastWriteTime <> fi.LastWriteTimeUtc OrElse rec.Length <> fi.Length Then
             ' Soubor změněn
             Return True
@@ -2212,7 +2207,7 @@ Public Class FileTracker
             .Length = fi.Length
         }
 
-        processedFiles(fileName) = rec
+        downloadedFiles(fileName) = rec
         Save()
     End Sub
 
@@ -2221,7 +2216,7 @@ Public Class FileTracker
         Dim options As New JsonSerializerOptions With {.WriteIndented = True,
                  .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
         }
-        Dim json = JsonSerializer.Serialize(processedFiles, options)
+        Dim json = JsonSerializer.Serialize(downloadedFiles, options)
         File.WriteAllText(savePath, json, Encoding.UTF8)
     End Sub
 
