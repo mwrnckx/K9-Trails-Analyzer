@@ -91,13 +91,22 @@
     <None Update="processed.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\2024-10-25 Sedlec.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\2024-10-25 Sedlec_Hedvika.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2024-10-28 Větrolam_Samo_2.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\2024-12-02 Cim._Ud_Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\2024-12-02 Čim._Úd_Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-01-25 Kostoprtsky Samo.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-01-25 Kostoprtský Samo.gpx">
@@ -109,10 +118,16 @@
     <None Update="Samples\2025-02-15 Křivenická Samo.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\2025-02-27 Vojenske stavby.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\2025-02-27 Vojenské stavby Samo_Medlin.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-03-09 Větrolam Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-03-14 Drahan Samo.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-03-14 Draháň Samo.gpx">
@@ -133,13 +148,22 @@
     <None Update="Samples\2025-06-23 Statek_Samo.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\2025-06-30 Rez.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\2025-06-30 Řež_Hedvika_1.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-06-30_Řež_Hedvika_001.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Samples\2025-07-02 CrossTrail.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Samples\2025-07-08 Draháň Samo.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-07-10 Cim._Ud._Samo.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-07-10 Čim._Úd._Samo.gpx">
@@ -164,6 +188,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-08-06 Bot._zahrada_Eda.gpx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Samples\2025-08-07 K_mlynu_Samo.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Samples\2025-08-07 K_mlýnu_Samo.gpx">

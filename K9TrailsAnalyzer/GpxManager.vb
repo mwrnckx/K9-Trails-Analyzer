@@ -50,28 +50,24 @@ Public Class GpxFileManager
 
     Public Async Function Main() As Task(Of Boolean)
         Try
-
-
-            Dim localFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(False) 'seznam starých souborů, které už byly zpracovány
             Dim allFiles As New List(Of GPXRecord)  ' všechny soubory v pracovním adresáři
+            Dim localFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(False) 'seznam starých souborů, které už byly zpracovány
             allFiles.AddRange(localFiles) 'přidá staré soubory
 
             Dim remoteFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(True)
-            Dim gpxFilesMerged As New List(Of GPXRecord)
             If remoteFiles.Count > 0 AndAlso Me.NumberOfDogs > 1 Then
-                Dim response = mboxQEx($"Found {remoteFiles.Count} new GPX files in remote directory:" & vbCrLf & $"{DogInfo.RemoteDirectory}." & vbCrLf & $"Do you really want to import them for the dog{DogInfo.Name}?")
+                Dim response = mboxQEx($"Found {remoteFiles.Count} new GPX files in remote directory:" & vbCrLf & $"{DogInfo.RemoteDirectory}." & vbCrLf & $"Do you really want to import them for the dog {DogInfo.Name}?")
                 If response = DialogResult.No Then
                     RaiseEvent WarningOccurred("Import of new GPX files was cancelled by user.", Color.Red)
                     Return False 'vrátí false, pokud uživatel zrušil import
                 End If
             End If
-
             'pokud jsou nějaké nové soubory, tak je spojí do jednoho listu
+            Dim gpxFilesMerged As New List(Of GPXRecord)
             If remoteFiles.Count > 0 Then
                 RaiseEvent WarningOccurred($"Found {remoteFiles.Count} new GPX files.", Color.DarkGreen)
                 gpxFilesMerged = MergeGpxFiles(remoteFiles)
             End If
-
             allFiles.AddRange(gpxFilesMerged) 'přidá nové soubory
 
             If allFiles.Count = 0 Then
@@ -97,7 +93,12 @@ Public Class GpxFileManager
                     End If
                     Me.TotalDistance += _gpxRecord.TrailDistance
                     _gpxRecord.TotalDistance = Me.TotalDistance 'tohle není vlastnost recordu, záleží na zvoleném období
-                    _gpxRecord.Description = Await _gpxRecord.BuildSummaryDescription() 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
+                    _gpxRecord.Description = _gpxRecord.BuildSummaryDescription() 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
+                    'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
+                    If _gpxRecord.LocalisedReports Is Nothing OrElse _gpxRecord.LocalisedReports.Count = 0 Then _gpxRecord.IsAlreadyProcessed = False
+                    If Not _gpxRecord.IsAlreadyProcessed Then
+                        _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description)
+                    End If
                     _gpxRecord.TrailAge = _gpxRecord.GetAge
 
                     If _gpxRecord.IsAlreadyProcessed = False Then 'možno přeskočit, už to proběhlo...
@@ -136,10 +137,12 @@ Public Class GpxFileManager
 
         If remoteFiles Then
             Dim tracker As New FileTracker("processed.json")
-
             Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
             Dim i As Integer = 0
             For Each remoteFilePath In Files
+
+                'tracker.MarkAsProcessed(remoteFilePath) 'toto připraveno pro tiché zpracování Originals
+                'Continue For '
                 Try
                     If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
                         Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
@@ -195,7 +198,8 @@ Public Class GpxFileManager
             Next
 
         End If
-
+        ' Seřazení podle data
+        GPXFRecords.Sort(Function(x, y) x.TrailStart.Time.CompareTo(y.TrailStart.Time))
         Return GPXFRecords
     End Function
 
@@ -619,7 +623,7 @@ Public Class GPXRecord
     'Private pperformanceLabel As String = "🐕"
     Public LocalisedReports As New Dictionary(Of String, TrailReport)
     'Private Property WindDirection As Double = 0.0 ' Směr větru v stupních
-    Public Property WeatherData As (_temperature As Double, _windSpeed As Double, _windDirection As Double, _precipitation As Double, _relHumidity As Double, _cloudCover As Double)
+    Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
 
     'Private ReadOnly Property gpxDirectory As String
     'Private ReadOnly Property BackupDirectory As String
@@ -736,7 +740,9 @@ Public Class GPXRecord
             Dim RunnerTrailTrk As XmlNode = Nothing ' Inicializace proměnné pro <trk> s <type>RunnerTrail</type>
             ' Najdeme <trk> s <type>RunnerTrail</type>
             For Each trkNode As XmlNode In Me.TrkNodes
-                Dim typeNodes As XmlNodeList = Me.Reader.SelectChildNodes(GpxReader.K9_PREFIX & ":" & "TrackType", trkNode)
+                Dim extensions As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", trkNode)
+
+                Dim typeNodes As XmlNodeList = Me.Reader.SelectChildNodes(GpxReader.K9_PREFIX & ":" & "TrackType", extensions)
                 For Each typeNode As XmlNode In typeNodes
                     ' Zkontrolujeme, zda <type> obsahuje "RunnerTrail"
                     ' Pokud ano, uložíme tento <trk> do RunnerTrailTrk
@@ -1001,7 +1007,7 @@ FoundRunnerTrailTrk:
                 trailPart = "📏:" & NBSP & Me.TrailDistance.ToString("F1") & NBSP & "km"
             End If
             If ageFromTime.TotalHours > 0 Then
-                trailPart = "⏳:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
+                trailPart &= "  ⏳:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
             End If
 
         End If
@@ -1016,16 +1022,13 @@ FoundRunnerTrailTrk:
         Dim performancePart As String = desc.Performance.Text
         Dim crlf As String = "<br>"
 
-
-        '' 🔧 Lokálně nastav labely 
-        'Dim goalLabel As String = "📍" 'My.Resources.Resource1.txtGoalLabel 'cíl
-        'Dim trailLabel As String = "👣" 'My.Resources.Resource1.txtTrailLabel '"Trail:"
-        'Dim pperformanceLabel As String = "🐕" 'My.Resources.Resource1.txtpperformanceLabel '"Pes:"
-
         ' 🌧🌦☀ Počasí
         'Wheather() 'získá počasí
         WeatherData = Await Wheather()
-        Dim strWeather As String = $"🌡{WeatherData._temperature.ToString("0.#")}{NBSP}°C  💨{NBSP}{WeatherData._windSpeed.ToString("0.#")}{NBSP}m/s {windDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity}{NBSP}%   💧{WeatherData._precipitation}{NBSP}mm/h ⛅{WeatherData._cloudCover}{NBSP}%"
+        Dim strWeather As String = $"🌡{CDbl(WeatherData._temperature).ToString("0.#")}{NBSP}°C  💨{NBSP}{CDbl(WeatherData._windSpeed).ToString("0.#")}{NBSP}m/s {WindDirectionToText(WeatherData._windDirection)} 💧{WeatherData._relHumidity}{NBSP}%   💧{WeatherData._precipitation}{NBSP}mm/h ⛅{WeatherData._cloudCover}{NBSP}%"
+        If WeatherData._temperature Is Nothing Then 'pokud se nenačetla data o počasí
+            strWeather = ""
+        End If
         desc.weather.Text = strWeather
 
 
@@ -1035,8 +1038,6 @@ FoundRunnerTrailTrk:
         sb.Append(TrailReport.trailLabel & " " & trailPart & crlf)
         If performancePart <> "" Then sb.Append(TrailReport.performanceLabel & " " & performancePart & crlf)
 
-        If WeatherData._temperature.ToString = "100" Then Return sb.ToString().Trim()
-
         sb.Append(strWeather)
 
         Return sb.ToString().Trim()
@@ -1044,7 +1045,7 @@ FoundRunnerTrailTrk:
 
 
     '' Funkce pro sestavení popisu ze všech <trk> uzlů
-    Public Async Function BuildSummaryDescription() As Task(Of String)
+    Public Function BuildSummaryDescription() As String
 
         'Dim crossDescs As New List(Of String)
         Dim goalDesc As String = ""
@@ -1091,89 +1092,86 @@ FoundRunnerTrailTrk:
 
             'SummaryDescription &= descNode?.InnerText.Trim() & " " ' Získání textu z <desc> uzlu, pokud existuje
         Next
+
+
+        Return SummaryDescription.ToString().Trim()
+
+
+    End Function
+
+    Public Async Function BuildLocalisedDescriptionAsync(summaryDescription As String) As Task(Of String)
         Dim lang As String
-        'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
-        If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then Me.IsAlreadyProcessed = False
-        If Not Me.IsAlreadyProcessed Then
-
-            Dim newDescription As String = ""
-            If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
-                Dim desc = ExtractDescriptionParts(SummaryDescription)
-                lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant() 'todo
-                Me.LocalisedReports.Add(lang, desc)
-                newDescription = Await BuildDescription(desc)
-            End If
-
-            Dim firstLocalisedReport As KeyValuePair(Of String, TrailReport) = Me.LocalisedReports.FirstOrDefault()
-
-            Dim keys = LocalisedReports.Keys.ToList()
-            Dim totalCount = keys.Count
-
-            For i = 0 To 3 'dočasně přeskakuji!!
-                Dim frm As frmEditComments
-                Dim report As TrailReport
-                Dim result As DialogResult
-                If i < totalCount Then ' Existující položky
-                    lang = keys(i)
-                    report = LocalisedReports(lang)
-                    Debug.WriteLine($"{i + 1}. {lang} – {report.Goal.Text}")
-
-                    frm = New frmEditComments With {.TrailDescription = report,
-                                                        .GpxFileName = Me.Reader.FileName,
-                                                        .Language = lang
-                                                  }
-                    result = frm.ShowDialog()
-                    newDescription = Await BuildDescription(frm.TrailDescription)
-                    If lang <> frm.Language Then ' aktualizace jazyka
-                        LocalisedReports.Remove(lang) ' odstranění starého jazyka
-                        lang = frm.Language ' aktualizace jazyka
-                        Debug.WriteLine($"Jazyk změněn na: {lang}")
-                        Me.LocalisedReports.Add(lang, frm.TrailDescription) ' přidání nového jazyka
-                    Else
-                        Me.LocalisedReports(lang) = frm.TrailDescription ' aktualizace existujícího reportu
-                    End If
-
-                    Select Case result
-                        Case DialogResult.Retry ' třeba tlačítko "Znovu" nebo "Pokračovat"
-                            ' smyčka poběží dál
-                        Case Else
-                            Exit For
-                    End Select
-                Else 'přidáme nový jazyk!!!!
-                    report = New TrailReport(firstLocalisedReport.Value.DogName.Text, firstLocalisedReport.Value.Goal.Text,
-                                            firstLocalisedReport.Value.Trail.Text,
-                                            firstLocalisedReport.Value.Performance.Text)
-                    ' Nová položka – prázdná, připravená k vyplnění
-                    Debug.WriteLine($"{i + 1}. [Nový záznam]")
-                    ' Např. prompt pro uživatele: "Zadej kód jazyka:"
-                    ' Dim newLang = debug.ReadLine()
-                    ' LocalisedReports.Add(newLang, New TrailReport() With {.Goal = "Zadej cíl..."})
-
-
-                    frm = New frmEditComments With {.TrailDescription = report,
-                                                        .GpxFileName = Me.Reader.FileName,
-                                                        .Language = Nothing
-                                                  }
-
-                    result = frm.ShowDialog()
-                    lang = frm.Language
-                    If Not LocalisedReports.ContainsKey(lang) Then
-                        LocalisedReports.Add(lang, frm.TrailDescription)
-                        newDescription = Await BuildDescription(frm.TrailDescription)
-                    End If
-                    Select Case result
-                        Case DialogResult.Retry ' třeba tlačítko "Znovu" nebo "Pokračovat"
-                            ' smyčka poběží dál
-                        Case Else
-                            Exit For
-                    End Select
-                End If
-            Next i
-
-            Return newDescription.ToString().Trim()
-        Else
-            Return SummaryDescription.ToString().Trim()
+        Dim newDescription As String = ""
+        If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
+            Dim desc = ExtractDescriptionParts(summaryDescription)
+            lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant() 'todo
+            Me.LocalisedReports.Add(lang, desc)
+            newDescription = Await BuildDescription(desc)
         End If
+
+        Dim firstLocalisedReport As KeyValuePair(Of String, TrailReport) = Me.LocalisedReports.FirstOrDefault()
+
+        Dim keys = LocalisedReports.Keys.ToList()
+        Dim totalCount = keys.Count
+
+        For i = 0 To 3 'dočasně přeskakuji!!
+            Dim frm As frmEditComments
+            Dim report As TrailReport
+            Dim result As DialogResult
+            If i < totalCount Then ' Existující položky
+                lang = keys(i)
+                report = LocalisedReports(lang)
+                Debug.WriteLine($"{i + 1}. {lang} – {report.Goal.Text}")
+
+                frm = New frmEditComments With {.TrailDescription = report,
+                                                    .GpxFileName = Me.Reader.FileName,
+                                                    .Language = lang
+                                              }
+                result = frm.ShowDialog()
+                newDescription = Await BuildDescription(frm.TrailDescription)
+                If lang <> frm.Language Then ' aktualizace jazyka
+                    LocalisedReports.Remove(lang) ' odstranění starého jazyka
+                    lang = frm.Language ' aktualizace jazyka
+                    Debug.WriteLine($"Jazyk změněn na: {lang}")
+                    Me.LocalisedReports.Add(lang, frm.TrailDescription) ' přidání nového jazyka
+                Else
+                    Me.LocalisedReports(lang) = frm.TrailDescription ' aktualizace existujícího reportu
+                End If
+
+                Select Case result
+                    Case DialogResult.Retry ' třeba tlačítko "Znovu" nebo "Pokračovat"
+                        ' smyčka poběží dál
+                    Case Else
+                        Exit For
+                End Select
+            Else 'přidáme nový jazyk!!!!
+                report = New TrailReport(firstLocalisedReport.Value.DogName.Text, firstLocalisedReport.Value.Goal.Text,
+                                        firstLocalisedReport.Value.Trail.Text,
+                                        firstLocalisedReport.Value.Performance.Text)
+                ' Nová položka – prázdná, připravená k vyplnění
+                Debug.WriteLine($"{i + 1}. [Nový záznam]")
+
+                frm = New frmEditComments With {.TrailDescription = report,
+                                                    .GpxFileName = Me.Reader.FileName,
+                                                    .Language = Nothing
+                                              }
+
+                result = frm.ShowDialog()
+                lang = frm.Language
+                If Not LocalisedReports.ContainsKey(lang) Then
+                    LocalisedReports.Add(lang, frm.TrailDescription)
+                    newDescription = Await BuildDescription(frm.TrailDescription)
+                End If
+                Select Case result
+                    Case DialogResult.Retry ' třeba tlačítko "Znovu" nebo "Pokračovat"
+                        ' smyčka poběží dál
+                    Case Else
+                        Exit For
+                End Select
+            End If
+        Next i
+
+        Return newDescription.ToString().Trim()
 
     End Function
 
@@ -1182,8 +1180,10 @@ FoundRunnerTrailTrk:
     Private Function MergeFileNames(record1 As GPXRecord, record2 As GPXRecord) As String
 
         ' Extrakce jmen 
-        Dim names1 As New List(Of String)(record1.FileName.Split({"_", "."}, StringSplitOptions.RemoveEmptyEntries))
-        Dim names2 As New List(Of String)(record2.FileName.Split({"_", "."}, StringSplitOptions.RemoveEmptyEntries))
+        Dim name1 As String = Path.GetFileNameWithoutExtension(record1.Reader.FilePath)
+        Dim name2 As String = Path.GetFileNameWithoutExtension(record2.Reader.FilePath)
+        Dim names1 As New List(Of String)(name1.Split({"_", "."}, StringSplitOptions.RemoveEmptyEntries))
+        Dim names2 As New List(Of String)(name2.Split({"_", "."}, StringSplitOptions.RemoveEmptyEntries))
 
         ' Odstranění čísel
         names1.RemoveAll(Function(s) Regex.IsMatch(s, "^\d+$")) ' Odstraní prvky, které obsahují pouze čísla
@@ -1197,9 +1197,9 @@ FoundRunnerTrailTrk:
         names1 = names1.Select(Function(s) Regex.Replace(s, "[-._]", "")).ToList()
         names2 = names2.Select(Function(s) Regex.Replace(s, "[-._]", "")).ToList()
 
-        ' Odstranění gpx
-        names1.RemoveAll(Function(s) Regex.IsMatch(s, "gpx")) ' 
-        names2.RemoveAll(Function(s) Regex.IsMatch(s, "gpx")) ' 
+        '' Odstranění gpx
+        'names1.RemoveAll(Function(s) Regex.IsMatch(s, "gpx")) ' 
+        'names2.RemoveAll(Function(s) Regex.IsMatch(s, "gpx")) ' 
 
         names1.RemoveAll(Function(s) Regex.IsMatch(s, "T")) ' 
         names2.RemoveAll(Function(s) Regex.IsMatch(s, "T")) '
@@ -1219,7 +1219,7 @@ FoundRunnerTrailTrk:
         finalnames.AddRange(names2)
 
         ' Sestavení nového názvu
-        Dim newName As String = $"{String.Join("_", finalnames)}.gpx".Trim
+        Dim newName As String = $"{String.Join("_", finalnames)}_merged.gpx".Trim
 
         Return newName
     End Function
@@ -1247,8 +1247,8 @@ FoundRunnerTrailTrk:
             'spojené trasy se uloží do souboru kladeče
             'když je nové jméno stejné jako jméno kladeče nepřejmenovává se
             If Me.Reader.FileName = newName OrElse RenameFile(newName) Then
-                Me.Save()
-                IO.File.Delete(dog.Reader.FilePath) 'pes se smaže
+                'Me.Save()
+                IO.File.Delete(dog.Reader.FilePath) 'pes se smaže pokud existuje (neměl by)
                 RaiseEvent WarningOccurred($"Tracks in files {Me.Reader.FileName} and {dog.Reader.FileName} were successfully merged in file {Me.Reader.FileName} {vbCrLf}File {dog.Reader.FileName}  was deleted.{vbCrLf}", Color.DarkGreen)
             End If
 
@@ -1281,12 +1281,18 @@ FoundRunnerTrailTrk:
                     newTrk.AppendChild(trkSeg)
 
                     trkNode.ParentNode.InsertAfter(newTrk, trkNode)
+                    RaiseEvent WarningOccurred($"Track {trkNode.Name} in file {Me.Reader.FileName}, which had two segments, has been split into two tracks.", Color.DarkGreen)
+                    Dim newFileName As String = Path.GetFileNameWithoutExtension(Me.Reader.FileName) & "_split" & ".gpx"
+                    If RenameFile(newFileName) Then
+                    Else
+                        RaiseEvent WarningOccurred($"Failed to rename file {Me.Reader.FileName} to {newFileName}.", Color.Red)
+                    End If
+                    RaiseEvent WarningOccurred($"Track {trkNode.Name} in file {Me.Reader.FileName}, which had two segments, has been split into two tracks.", Color.DarkGreen)
                 Next
             End If
         Next
 
-        'Me.Save()
-        RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were split.", Color.DarkGreen)
+
     End Sub
 
     Public Sub CreateAndSortTracks()
@@ -1343,7 +1349,6 @@ FoundRunnerTrailTrk:
                     ' Zde volání  funkce, která vrátí typ trků
 
                     dlg.ShowDialog()
-                    Tracks(0).TrackType = TrackType.DogTrack
                     Dim trk = Tracks(0).TrkNode
                     Dim type = Tracks(0).TrackType
                     AddTypeToTrk(trk, type)
@@ -1685,22 +1690,24 @@ FoundRunnerTrailTrk:
 
     ' Funkce pro přejmenování souboru
     Public Function RenameFile(newFileName As String) As Boolean
+        Dim extension As String = Path.GetExtension(Me.Reader.FilePath)
         Dim gpxDirectory As String = Directory.GetParent(Me.Reader.FilePath).ToString
         Dim newFilePath As String = Path.Combine(gpxDirectory, newFileName)
-        Dim extension As String = Path.GetExtension(newFileName)
+
 
         Try
             'neptá se přejmenuje automaticky
             Dim romanNumeralIndex As Integer = 1
             While IO.File.Exists(newFilePath)
-                Dim nameWithoutExtension As String = Path.GetFileNameWithoutExtension(newFilePath)
+                'Dim nameWithoutExtension As String = Path.GetFileNameWithoutExtension(newFilePath)
                 Dim romanNumeral As String = ToRoman(romanNumeralIndex)
-                newFileName = $"{nameWithoutExtension}_{romanNumeral}{extension}"
+                Dim newFileNameWithoutExtension As String = Path.GetFileNameWithoutExtension(newFileName)
+                newFileName = $"{newFileNameWithoutExtension}_{romanNumeral}{extension}"
                 romanNumeralIndex += 1
                 newFilePath = Path.Combine(gpxDirectory, newFileName)
             End While
 
-            IO.File.Move(Reader.FilePath, newFilePath)
+            'IO.File.Move(Reader.FilePath, newFilePath)
 
             Debug.WriteLine($"Renamed file to {newFileName}.{Environment.NewLine}")
             RaiseEvent WarningOccurred($"File {Reader.FileName} was renamed to {newFileName}.{Environment.NewLine}", Color.DarkGreen)
@@ -1753,78 +1760,93 @@ FoundRunnerTrailTrk:
             url = $"https://archive-api.open-meteo.com/v1/archive?latitude={TrailStart.Location.Lat.ToString(CultureInfo.InvariantCulture)}&longitude={TrailStart.Location.Lon.ToString(CultureInfo.InvariantCulture)}&start_date={datum}&end_date={datum}&hourly=temperature_2m,wind_speed_10m,soil_temperature_0_to_7cm,wind_direction_10m,relative_humidity_2m,cloud_cover,precipitation&wind_speed_unit=ms"
         End If
 
-
-        Dim response As HttpResponseMessage = Await client.GetAsync(url)
-        Dim content As String = Await response.Content.ReadAsStringAsync()
-        If Not response.IsSuccessStatusCode Then
-            RaiseEvent WarningOccurred($"Failed to fetch weather data: {response.ReasonPhrase}", Color.Red)
-            Return (100, 0, 0, 0, 0, 0)
-        End If
-        Dim json As JsonDocument = JsonDocument.Parse(content)
-
-        ' Získej kořenový element
-        Dim root = json.RootElement
-
-        ' Najdi pole časů
-        Dim times = root.GetProperty("hourly").GetProperty("time")
-
-        Dim localTime As DateTime = Me.TrailStart.Time ' ten načtený čas
-        Dim utcTime As DateTime = TrailStart.Time.ToUniversalTime()
-        Dim hledanyCasUTC As String = $"{utcTime:yyyy-MM-ddThh:00}"
-
-        ' Teď projdeme všechny časy a najdeme index, kde čas == hledaný čas
-        Dim index As Integer = -1
-        For i As Integer = 0 To times.GetArrayLength() - 1
-            If times(i).GetString() = hledanyCasUTC Then
-                index = i
-                Exit For
+        Try
+            Dim response As HttpResponseMessage = Await client.GetAsync(url)
+            If Not response.IsSuccessStatusCode Then
+                RaiseEvent WarningOccurred($"Failed to fetch weather data: {response.ReasonPhrase}", Color.Red)
+                Return (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing)
             End If
-        Next
-
-        If index = -1 Then
-            Debug.WriteLine("Čas nenalezen")
-        Else
-            ' Najdi další pole
-            Dim temps = root.GetProperty("hourly").GetProperty("temperature_2m")
-            Dim windSpeeds = root.GetProperty("hourly").GetProperty("wind_speed_10m")
-            Dim windDirs = root.GetProperty("hourly").GetProperty("wind_direction_10m")
-            Dim rains = root.GetProperty("hourly").GetProperty("precipitation")
-            Dim relHumidities = root.GetProperty("hourly").GetProperty("relative_humidity_2m")
-            Dim cloud_covers = root.GetProperty("hourly").GetProperty("cloud_cover")
-            Try
+            Dim content As String = Await response.Content.ReadAsStringAsync()
+            Dim json As JsonDocument = JsonDocument.Parse(content)
 
 
-                ' Vytáhni hodnoty
-                Dim temperature = temps(index).GetDouble()
-                Dim windSpeed = windSpeeds(index).GetDouble()
-                Dim windDir = windDirs(index).GetDouble()
-                Dim precipitation = rains(index).GetDouble
-                Dim relHumidity = relHumidities(index).GetDouble
-                Dim cloude_cover = cloud_covers(index).GetDouble
+            ' Získej kořenový element
+            Dim root = json.RootElement
 
-                Debug.Write("Pro čas " & hledanyCasUTC & ": ")
-                Debug.Write("Teplota: " & temperature.ToString())
-                Debug.Write(" Oblačnost:  " & cloude_cover.ToString())
-                Debug.Write(" Srážky (mm/h):  " & precipitation.ToString())
-                Debug.Write(" Vítr (m/s): " & windSpeed.ToString())
-                Debug.WriteLine(" Vítr: " & windDirectionToText(windDir))
-                Return (temperature, windSpeed, windDir, precipitation, relHumidity, cloude_cover)
-            Catch ex As Exception
-                Return (100, 0, 0, 0, 0, 0)
-            End Try
-        End If
+            ' Najdi pole časů
+            Dim times = root.GetProperty("hourly").GetProperty("time")
 
-        Return (100, 0, 0, 0, 0, 0)
+            Dim localTime As DateTime = Me.TrailStart.Time ' ten načtený čas
+            Dim utcTime As DateTime = TrailStart.Time.ToUniversalTime()
+            Dim hledanyCasUTC As String = $"{utcTime:yyyy-MM-ddThh:00}"
+
+            ' Teď projdeme všechny časy a najdeme index, kde čas == hledaný čas
+            Dim index As Integer = -1
+            For i As Integer = 0 To times.GetArrayLength() - 1
+                If times(i).GetString() = hledanyCasUTC Then
+                    index = i
+                    Exit For
+                End If
+            Next
+
+            If index = -1 Then
+                Debug.WriteLine("Čas nenalezen")
+            Else
+                ' Najdi další pole
+                Dim temps = root.GetProperty("hourly").GetProperty("temperature_2m")
+                Dim windSpeeds = root.GetProperty("hourly").GetProperty("wind_speed_10m")
+                Dim windDirs = root.GetProperty("hourly").GetProperty("wind_direction_10m")
+                Dim rains = root.GetProperty("hourly").GetProperty("precipitation")
+                Dim relHumidities = root.GetProperty("hourly").GetProperty("relative_humidity_2m")
+                Dim cloud_covers = root.GetProperty("hourly").GetProperty("cloud_cover")
+                Try
+
+
+                    ' Vytáhni hodnoty
+                    Dim temperature = temps(index).GetDouble()
+                    Dim windSpeed = windSpeeds(index).GetDouble()
+                    Dim windDir = windDirs(index).GetDouble()
+                    Dim precipitation = rains(index).GetDouble
+                    Dim relHumidity = relHumidities(index).GetDouble
+                    Dim cloude_cover = cloud_covers(index).GetDouble
+
+                    Debug.Write("Pro čas " & hledanyCasUTC & ": ")
+                    Debug.Write("Teplota: " & temperature.ToString())
+                    Debug.Write(" Oblačnost:  " & cloude_cover.ToString())
+                    Debug.Write(" Srážky (mm/h):  " & precipitation.ToString())
+                    Debug.Write(" Vítr (m/s): " & windSpeed.ToString())
+                    Debug.WriteLine(" Vítr: " & windDirectionToText(windDir))
+                    Return (temperature, windSpeed, windDir, precipitation, relHumidity, cloude_cover)
+                Catch ex As Exception
+                    Return (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing)
+                End Try
+            End If
+
+
+        Catch ex As Exception
+            RaiseEvent WarningOccurred($"Failed to fetch weather data: {ex.ToString}", Color.Red)
+            Return (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing)
+        End Try
+
+
+
+
+        Return (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing)
     End Function
 
-    Function windDirectionToText(direction As Double) As String
+    Function WindDirectionToText(direction As Double?) As String
         Dim windDir = {
     "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
     "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"
             }
+        If direction IsNot Nothing Then
+            Dim index As Integer = CInt((direction + 11.25) \ 22.5) Mod 16
+            Return windDir(index)
+        Else
+            Return ""
+        End If
         ' Každý díl má 22.5°
-        Dim index As Integer = CInt((direction + 11.25) \ 22.5) Mod 16
-        Return windDir(index)
+
     End Function
 
     ''' <summary>

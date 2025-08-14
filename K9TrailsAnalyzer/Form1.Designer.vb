@@ -52,7 +52,7 @@ Partial Class Form1
         SToolStripMenuItem = New ToolStripMenuItem()
         mnucbActiveDog = New ToolStripComboBox()
         mnuAddDog = New ToolStripMenuItem()
-        DeleteCurrentDogToolStripMenuItem = New ToolStripMenuItem()
+        mnuDeleteCurrentDog = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
         mnuFactoryReset = New ToolStripMenuItem()
@@ -154,13 +154,17 @@ Partial Class Form1
         ' 
         ' mnuPrependDateToFileName
         ' 
+        mnuPrependDateToFileName.Checked = True
         mnuPrependDateToFileName.CheckOnClick = True
+        mnuPrependDateToFileName.CheckState = CheckState.Checked
         mnuPrependDateToFileName.Name = "mnuPrependDateToFileName"
         resources.ApplyResources(mnuPrependDateToFileName, "mnuPrependDateToFileName")
         ' 
         ' mnuTrimGPSNoise
         ' 
+        mnuTrimGPSNoise.Checked = True
         mnuTrimGPSNoise.CheckOnClick = True
+        mnuTrimGPSNoise.CheckState = CheckState.Checked
         mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
         resources.ApplyResources(mnuTrimGPSNoise, "mnuTrimGPSNoise")
         ' 
@@ -219,7 +223,7 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuAddDog, DeleteCurrentDogToolStripMenuItem, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
+        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuAddDog, mnuDeleteCurrentDog, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
         resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
         SToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
@@ -233,10 +237,10 @@ Partial Class Form1
         mnuAddDog.Name = "mnuAddDog"
         resources.ApplyResources(mnuAddDog, "mnuAddDog")
         ' 
-        ' DeleteCurrentDogToolStripMenuItem
+        ' mnuDeleteCurrentDog
         ' 
-        DeleteCurrentDogToolStripMenuItem.Name = "DeleteCurrentDogToolStripMenuItem"
-        resources.ApplyResources(DeleteCurrentDogToolStripMenuItem, "DeleteCurrentDogToolStripMenuItem")
+        mnuDeleteCurrentDog.Name = "mnuDeleteCurrentDog"
+        resources.ApplyResources(mnuDeleteCurrentDog, "mnuDeleteCurrentDog")
         ' 
         ' mnuSelectADirectoryToSaveVideo
         ' 
@@ -569,6 +573,6 @@ Partial Class Form1
     Friend WithEvents mnuAbout As ToolStripMenuItem
     Friend WithEvents mnuCheckForUpdates1 As ToolStripMenuItem
     Friend WithEvents mnucbActiveDog As ToolStripComboBox
-    Friend WithEvents DeleteCurrentDogToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnuDeleteCurrentDog As ToolStripMenuItem
 End Class
 

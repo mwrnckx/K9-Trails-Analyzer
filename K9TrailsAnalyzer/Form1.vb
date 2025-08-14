@@ -778,7 +778,7 @@ Public Class Form1
                 ActiveDog.RemoteDirectory = Directory.GetParent(Application.StartupPath).ToString
             End If
             folderDialog.SelectedPath = ActiveDog.RemoteDirectory
-            folderDialog.Description = "Selecting the folder from where to load gpx files!"
+            folderDialog.Description = $"Select a folder from where to load gpx files for dog {ActiveDog.Name}"
             folderDialog.UseDescriptionForTitle = True
         ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
             folderDialog.ShowNewFolderButton = True
@@ -798,6 +798,8 @@ Public Class Form1
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 ActiveDog.RemoteDirectory = folderDialog.SelectedPath
+                mbox($"The gpx files for the dog {ActiveDog.Name} will be imported from the {ActiveDog.RemoteDirectory} folder.")
+                SaveDogs()
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
                 My.Settings.Save()
@@ -807,7 +809,7 @@ Public Class Form1
 
         End If
 
-        SaveDogs()
+
         StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDog.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
 
     End Sub
@@ -1214,12 +1216,16 @@ Public Class Form1
         My.Settings.WindowSize = Me.Size
     End Sub
 
-    Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles DeleteCurrentDogToolStripMenuItem.Click
+    Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuDeleteCurrentDog.Click
         ' Najdi psa podle ID
         Dim dogId As String = ActiveDogId
         Dim dogToRemove = DogsList.FirstOrDefault(Function(d) d.Id = dogId)
         If dogToRemove Is Nothing Then
             MessageBox.Show("Dog not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            Return
+        End If
+        If DogsList.Count = 1 Then
+            MessageBox.Show("You cannot delete the last dog. Please add another one first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
         End If
 

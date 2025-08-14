@@ -29,6 +29,8 @@ Partial Class frmCrossTrailSelector
         btnOK = New Button()
         txtInfo = New TextBox()
         dgvTracks = New DataGridView()
+        nameColumn = New DataGridViewTextBoxColumn()
+        startColumn = New DataGridViewTextBoxColumn()
         descColumn = New DataGridViewTextBoxColumn()
         typeColumn = New DataGridViewComboBoxColumn()
         CType(dgvTracks, ComponentModel.ISupportInitialize).BeginInit()
@@ -48,13 +50,12 @@ Partial Class frmCrossTrailSelector
         ' 
         ' txtInfo
         ' 
-        resources.ApplyResources(txtInfo, "txtInfo")
         txtInfo.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        resources.ApplyResources(txtInfo, "txtInfo")
         txtInfo.Name = "txtInfo"
         ' 
         ' dgvTracks
         ' 
-        resources.ApplyResources(dgvTracks, "dgvTracks")
         dgvTracks.AllowUserToAddRows = False
         dgvTracks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dgvTracks.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
@@ -70,7 +71,7 @@ Partial Class frmCrossTrailSelector
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
         dgvTracks.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         dgvTracks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        dgvTracks.Columns.AddRange(New DataGridViewColumn() {descColumn, typeColumn})
+        dgvTracks.Columns.AddRange(New DataGridViewColumn() {nameColumn, startColumn, descColumn, typeColumn})
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
         DataGridViewCellStyle2.BackColor = SystemColors.Window
         DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
@@ -79,8 +80,21 @@ Partial Class frmCrossTrailSelector
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
         dgvTracks.DefaultCellStyle = DataGridViewCellStyle2
+        resources.ApplyResources(dgvTracks, "dgvTracks")
         dgvTracks.Name = "dgvTracks"
         dgvTracks.RowHeadersVisible = False
+        ' 
+        ' nameColumn
+        ' 
+        resources.ApplyResources(nameColumn, "nameColumn")
+        nameColumn.Name = "nameColumn"
+        nameColumn.ReadOnly = True
+        ' 
+        ' startColumn
+        ' 
+        resources.ApplyResources(startColumn, "startColumn")
+        startColumn.Name = "startColumn"
+        startColumn.ReadOnly = True
         ' 
         ' descColumn
         ' 
@@ -113,6 +127,8 @@ Partial Class frmCrossTrailSelector
     Friend WithEvents btnOK As Button
     Friend WithEvents txtInfo As TextBox
     Friend WithEvents dgvTracks As DataGridView
+    Friend WithEvents nameColumn As DataGridViewTextBoxColumn
+    Friend WithEvents startColumn As DataGridViewTextBoxColumn
     Friend WithEvents descColumn As DataGridViewTextBoxColumn
     Friend WithEvents typeColumn As DataGridViewComboBoxColumn
 End Class

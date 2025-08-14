@@ -40,7 +40,7 @@ Namespace TrackVideoExporter
         ''' <param name="LocalisedReports">Optional dictionary of localised trail reports.</param>
         Public Sub New(FFMpegPath As String, outputDir As DirectoryInfo,
                        Optional windDir As Double? = Nothing,
-                       Optional windSpeed As Double = 0,
+                       Optional windSpeed As Double? = Nothing,
                          Optional LocalisedReports As Dictionary(Of String, TrailReport) = Nothing)
             Me.FFMpegPath = FFMpegPath
             Me.outputDir = outputDir

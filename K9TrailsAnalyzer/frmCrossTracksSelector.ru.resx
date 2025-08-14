@@ -117,10 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="nameColumn.HeaderText" xml:space="preserve">
+    <value>Название трека</value>
+  </data>
   <data name="typeColumn.HeaderText" xml:space="preserve">
-    <value>Тип трека</value>
+    <value>Тип</value>
   </data>
   <data name="descColumn.HeaderText" xml:space="preserve">
-    <value>Трек</value>
+    <value>Описание</value>
   </data>
 </root>

@@ -118,9 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="descColumn.HeaderText" xml:space="preserve">
-    <value>Trasa</value>
+    <value>Popis</value>
   </data>
   <data name="typeColumn.HeaderText" xml:space="preserve">
     <value>Typ </value>
+  </data>
+  <data name="nameColumn.HeaderText" xml:space="preserve">
+    <value>Název trasy</value>
+  </data>
+  <data name="startColumn.HeaderText" xml:space="preserve">
+    <value>Start</value>
   </data>
 </root>

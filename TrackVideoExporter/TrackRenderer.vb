@@ -100,7 +100,7 @@ End Class
 Public Class PngRenderer
     Private minVideoSize As Single
     Private windDirection As Double?
-    Private windSpeed As Double
+    Private windSpeed As Double?
     Private trackBounds As RectangleF
 
     Dim diagonal As Single
@@ -417,48 +417,50 @@ Public Class PngRenderer
             Dim headY2 As Single = endY + arrowHeadSize * Math.Sin(headAngle2)
             g.DrawLine(pen, endX, endY, headX1, headY1)
             g.DrawLine(pen, endX, endY, headX2, headY2)
-            'popis šipky
-            ' Text k šipce
-            Dim windText As String = windSpeed.ToString("0.0", CultureInfo.InvariantCulture) & " m/s "
-            Dim textSize = g.MeasureString(windText, font)
 
-            ' Chceme text nakreslit kousek za šipku
-            Dim popisOffset As Single = 10
+            If windSpeed IsNot Nothing Then
+                'popis šipky
+                ' Text k šipce
+                Dim windText As String = CDbl(windSpeed).ToString("0.0", CultureInfo.InvariantCulture) & " m/s "
+                Dim textSize = g.MeasureString(windText, font)
 
-            ' Bod, kde bude text - spočítáme ho jako bod za endPoint
-            Dim textX As Single = position.X '+ offset * Math.Cos(angle)
-            Dim textY As Single = position.Y - popisOffset '* Math.Sin(angle)
+                ' Chceme text nakreslit kousek za šipku
+                Dim popisOffset As Single = 10
 
-            ' Uložíme transformaci
-            Dim oldState = g.Save()
+                ' Bod, kde bude text - spočítáme ho jako bod za endPoint
+                Dim textX As Single = position.X '+ offset * Math.Cos(angle)
+                Dim textY As Single = position.Y - popisOffset '* Math.Sin(angle)
 
-            ' Přesuneme se do bodu textu
-            g.TranslateTransform(textX, textY)
+                ' Uložíme transformaci
+                Dim oldState = g.Save()
 
-            ' Vypočítáme úhel v rozmezí -180 až 180
-            Dim angleDeg As Single = -CSng(angleRad * 180 / Math.PI)
-            If angleDeg < -180 Then angleDeg += 360
-            If angleDeg > 180 Then angleDeg -= 360
-            Dim textPos As New PointF(0, -textSize.Height)
-            ' Pokud by text byl vzhůru nohama, otočíme ho o 180°
-            If angleDeg > 90 Or angleDeg < -90 Then
-                angleDeg += 180
-                textY += textSize.Height ' posuneme text o výšku dolů, aby nebyl přeházený
-                ' Text zarovnáme tak, aby byl středem na ose šipky
-                textPos.X -= textSize.Width
+                ' Přesuneme se do bodu textu
+                g.TranslateTransform(textX, textY)
+
+                ' Vypočítáme úhel v rozmezí -180 až 180
+                Dim angleDeg As Single = -CSng(angleRad * 180 / Math.PI)
+                If angleDeg < -180 Then angleDeg += 360
+                If angleDeg > 180 Then angleDeg -= 360
+                Dim textPos As New PointF(0, -textSize.Height)
+                ' Pokud by text byl vzhůru nohama, otočíme ho o 180°
+                If angleDeg > 90 Or angleDeg < -90 Then
+                    angleDeg += 180
+                    textY += textSize.Height ' posuneme text o výšku dolů, aby nebyl přeházený
+                    ' Text zarovnáme tak, aby byl středem na ose šipky
+                    textPos.X -= textSize.Width
+                End If
+
+                ' Otočíme souřadnicový systém podle směru šipky
+                g.RotateTransform(angleDeg)
+
+
+                ' Nakreslíme text (s outline)
+                Dim contrastColor As Color = GetContrastColor(Color.Black)
+                DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
+
+                ' Vrátíme původní transformaci
+                g.Restore(oldState)
             End If
-
-            ' Otočíme souřadnicový systém podle směru šipky
-            g.RotateTransform(angleDeg)
-
-
-            ' Nakreslíme text (s outline)
-            Dim contrastColor As Color = GetContrastColor(Color.Black)
-            DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
-
-            ' Vrátíme původní transformaci
-            g.Restore(oldState)
-
         End Using
     End Sub
 
