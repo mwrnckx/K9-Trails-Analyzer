@@ -1237,17 +1237,6 @@ Public Class Form1
 
         If result <> DialogResult.Yes Then Return
 
-        '' Smazání lokální složky
-        'Try
-        '    If Directory.Exists(dogToRemove.LocalBaseDirectory) Then
-        '        Directory.Delete(dogToRemove.LocalBaseDirectory, True) ' True = smaže i obsah
-        '    End If
-        'Catch ex As Exception
-        '    MessageBox.Show($"Nepodařilo se smazat složku psa: {ex.Message}",
-        '                "Chyba", MessageBoxButtons.OK, MessageBoxIcon.Error)
-        '    ' Rozhodni, jestli máš přesto pokračovat
-        'End Try
-
         ' Odebrání psa ze seznamu
         DogsList.Remove(dogToRemove)
 

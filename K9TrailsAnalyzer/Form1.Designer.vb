@@ -476,7 +476,7 @@ Partial Class Form1
             If IO.Path.Exists(appdataPath) Then
                 Continue For
             End If
-            IO.File.Move(file, appdataDir) 'pokud tam už něco je nepřepisuje se!
+            IO.File.Move(file, appdataPath) 'pokud tam už něco je nepřepisuje se!
         Next
 
         LoadDogs()
