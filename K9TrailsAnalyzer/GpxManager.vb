@@ -98,7 +98,7 @@ Public Class GpxFileManager
                     'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
                     If _gpxRecord.LocalisedReports Is Nothing OrElse _gpxRecord.LocalisedReports.Count = 0 Then _gpxRecord.IsAlreadyProcessed = False
                     If Not _gpxRecord.IsAlreadyProcessed Then
-                        _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description)
+                        _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description) 'async kvůli počasí!
                     End If
                     _gpxRecord.TrailAge = _gpxRecord.GetAge
 
@@ -119,8 +119,8 @@ Public Class GpxFileManager
 
             Next _gpxRecord
 
-            GpxRecords = gpxFilesSortedAndFiltered
-            If GpxRecords IsNot Nothing And GpxRecords.Count > 0 Then
+            Me.GpxRecords = gpxFilesSortedAndFiltered
+            If Me.GpxRecords IsNot Nothing And GpxRecords.Count > 0 Then
                 Return True
             Else
                 Return False
@@ -146,9 +146,9 @@ Public Class GpxFileManager
                 Dim i As Integer = 0
                 For Each remoteFilePath In Files
 
-                    'tracker.MarkAsProcessed(remoteFilePath) 'toto připraveno pro tiché zpracování Originals
-                    'Continue For '
-                    Try
+                'tracker.MarkAsProcessed(remoteFilePath) 'toto připraveno pro tiché zpracování Originals
+                'Continue For '
+                Try
                         If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
                             Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
                             ' Pokud je soubor nový nebo změněný, zpracujeme ho
@@ -213,7 +213,6 @@ Public Class GpxFileManager
         Dim gpxFilesWithinInterval As New List(Of GPXRecord)
 
         For Each _gpxRecord In _records 'Directory.GetFiles(GpxLocalDirectory, "*.gpx")
-
             Try
 
                 If _gpxRecord.TrailStart.Time.Date >= dateFrom.Date And _gpxRecord.TrailStart.Time.Date <= dateTo.Date Then
@@ -311,6 +310,7 @@ Public Class GpxFileManager
                         If TryMerge(_gpxRecords(j), gpxFilesMerged(lastAddedIndex)) Then
                             usedIndexes.Add(j)
                             ' lastAddedIndex zůstává stejný, protože mergujeme do stejného objektu
+                            gpxFilesMerged(lastAddedIndex).CreateAndSortTracks() 'seřadí trk podle času!!
                         End If
                     End If
                 End If
@@ -1007,7 +1007,7 @@ FoundRunnerTrailTrk:
 
         End If
 
-        Return New TrailReport(Me.dogName, goalPart, trailPart, dogPart)
+        Return New TrailReport(Me.DogName, goalPart, trailPart, dogPart, (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
     End Function
 
 
@@ -1128,8 +1128,10 @@ FoundRunnerTrailTrk:
                     LocalisedReports.Remove(lang) ' odstranění starého jazyka
                     lang = frm.Language ' aktualizace jazyka
                     Debug.WriteLine($"Jazyk změněn na: {lang}")
+                    frm.TrailDescription.WeatherData = Me.WeatherData
                     Me.LocalisedReports.Add(lang, frm.TrailDescription) ' přidání nového jazyka
                 Else
+                    frm.TrailDescription.WeatherData = Me.WeatherData ' aktualizace počasí
                     Me.LocalisedReports(lang) = frm.TrailDescription ' aktualizace existujícího reportu
                 End If
 
@@ -1142,7 +1144,8 @@ FoundRunnerTrailTrk:
             Else 'přidáme nový jazyk!!!!
                 report = New TrailReport(firstLocalisedReport.Value.DogName.Text, firstLocalisedReport.Value.Goal.Text,
                                         firstLocalisedReport.Value.Trail.Text,
-                                        firstLocalisedReport.Value.Performance.Text)
+                                        firstLocalisedReport.Value.Performance.Text,
+                                         (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
                 ' Nová položka – prázdná, připravená k vyplnění
                 Debug.WriteLine($"{i + 1}. [Nový záznam]")
 
@@ -1154,6 +1157,7 @@ FoundRunnerTrailTrk:
                 result = frm.ShowDialog()
                 lang = frm.Language
                 If Not LocalisedReports.ContainsKey(lang) Then
+                    frm.TrailDescription.WeatherData = Me.WeatherData
                     LocalisedReports.Add(lang, frm.TrailDescription)
                     newDescription = Await BuildDescription(frm.TrailDescription)
                 End If
@@ -1873,7 +1877,8 @@ FoundRunnerTrailTrk:
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trail", localizedReport.Trail.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)
-            Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            Me.WriteWeatherDataToXml(reportNode, weatherNode, localizedReport.WeatherData)
         Next
         Return True
     End Function
@@ -1898,10 +1903,20 @@ FoundRunnerTrailTrk:
                 Dim trailNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "trail", reportNode)
                 Dim performanceNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "performance", reportNode)
                 Dim weatherNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weather", reportNode)
+                'Dim weatherDataNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weatherdata", reportNode)
+                Dim weatherData As (temperature As Double?,
+                                                  windSpeed As Double?,
+                                                  windDirection As Double?,
+                                                  precipitation As Double?,
+                                                  relHumidity As Double?,
+                                                  cloudCover As Double?)
+                weatherData = ReadWeatherDataFromXml(weatherNode)
+                Me.WeatherData = weatherData
                 Dim localizedReport As New TrailReport(If(dogNameNode?.InnerText, ""),
                    If(goalNode?.InnerText, ""),
                     If(trailNode?.InnerText, ""),
                     If(performanceNode?.InnerText, ""),
+                   weatherData,
                     If(weatherNode?.InnerText, ""))
 
                 If Not reports.ContainsKey(lang) Then reports.Add(lang, localizedReport)
@@ -1912,6 +1927,64 @@ FoundRunnerTrailTrk:
             Return reports
         End Try
 
+    End Function
+
+    ' Uloží tuple do XML elementu pomocí CreateAndAddElement
+    Private Sub WriteWeatherDataToXml(parentNode As XmlElement, weatherNode As XmlNode,
+                                  weatherData As (temperature As Double?,
+                                                  windSpeed As Double?,
+                                                  windDirection As Double?,
+                                                  precipitation As Double?,
+                                                  relHumidity As Double?,
+                                                  cloudCover As Double?))
+
+        '' 1️⃣ Vytvoříme prázdný element <weatherdata> v tvém namespace
+        'Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(parentNode,
+        '                                                GpxReader.K9_PREFIX & ":weatherdata",
+        '                                                "",
+        '                                                True,
+        '                                                "",
+        '                                                "",
+        '                                                GpxReader.K9_NAMESPACE_URI)
+
+        ' 2️⃣ Funkce pro zápis atributu
+        Dim setAttr = Sub(name As String, value As Double?)
+                          If value.HasValue Then
+                              CType(weatherNode, XmlElement).SetAttribute(name, value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                          Else
+                              CType(weatherNode, XmlElement).SetAttribute(name, "")
+                          End If
+                      End Sub
+
+        ' 3️⃣ Nastavení atributů
+        setAttr("temperature", weatherData.temperature)
+        setAttr("windSpeed", weatherData.windSpeed)
+        setAttr("windDirection", weatherData.windDirection)
+        setAttr("precipitation", weatherData.precipitation)
+        setAttr("relHumidity", weatherData.relHumidity)
+        setAttr("cloudCover", weatherData.cloudCover)
+    End Sub
+
+    ' Načte tuple z XML elementu
+    Private Function ReadWeatherDataFromXml(weatherDataNode As XmlNode) As (Double?, Double?, Double?, Double?, Double?, Double?)
+        Dim parseNullable = Function(text As String) As Double?
+                                If String.IsNullOrWhiteSpace(text) Then Return Nothing
+                                Dim result As Double
+                                If Double.TryParse(text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, result) Then
+                                    Return result
+                                Else
+                                    Return Nothing
+                                End If
+                            End Function
+
+        Dim t = parseNullable(weatherDataNode?.Attributes("temperature")?.Value)
+        Dim ws = parseNullable(weatherDataNode?.Attributes("windSpeed")?.Value)
+        Dim wd = parseNullable(weatherDataNode?.Attributes("windDirection")?.Value)
+        Dim p = parseNullable(weatherDataNode?.Attributes("precipitation")?.Value)
+        Dim rh = parseNullable(weatherDataNode?.Attributes("relHumidity")?.Value)
+        Dim cc = parseNullable(weatherDataNode?.Attributes("cloudCover")?.Value)
+
+        Return (t, ws, wd, p, rh, cc)
     End Function
 
 
@@ -2097,11 +2170,7 @@ xmlns:          namespaceManager.AddNamespace("locus", "https://www.locusmap.app
         ' Kontrola duplicity
         For Each node As XmlNode In childNodes
             If (node.Attributes(attName)?.Value = attValue) Then ' zkontroluje zda node s atributem attvalue už neexistuje:
-                'node.RemoveAll() ' odstraní všechny podřízené uzly, pokud existují
                 node.InnerText = value ' nastaví text na nový
-                'If node IsNot Nothing AndAlso node.ParentNode IsNot Nothing Then
-                '    node.ParentNode.RemoveChild(node)
-                'End If
                 Return node ' nalezen existující uzel, končíme
             End If
         Next

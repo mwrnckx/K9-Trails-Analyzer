@@ -86,6 +86,7 @@ Public Class Form1
         ' Naplnění ListView s daty
         FillListViewWithGpxRecords()
         Enabled = True
+        Me.AcceptButton = Me.btnCharts
     End Sub
 
 
@@ -537,7 +538,8 @@ Public Class Form1
         Dim MonthlyChart1 = New frmChart(ActiveDog.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
-
+        ' Nastavení AcceptButton pro formulář, aby se při stisku Enter spustil btnReadGpxFiles_Click
+        Me.AcceptButton = Me.btnReadGpxFiles
 
     End Sub
 
@@ -1273,6 +1275,7 @@ Public Class Form1
         End If
 
     End Sub
+
 End Class
 
 

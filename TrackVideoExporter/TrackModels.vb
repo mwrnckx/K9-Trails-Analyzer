@@ -355,7 +355,7 @@ Public Class TrailReport
 
     Public Property weather As StyledText
 
-
+    Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
     ''' <summary>
     ''' Initializes a new instance of the TrailDescription class with destination, trail and performance descriptions.
     ''' </summary>
@@ -366,12 +366,13 @@ Public Class TrailReport
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
     ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
-    Public Sub New(dogName As String, goal As String, trail As String, performance As String, Optional weather As String = " ")
-        Me.DogName = New StyledText(dogName, Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), doglabel)
+    Public Sub New(dogName As String, goal As String, trail As String, performance As String, _weatherdata As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?), Optional weather As String = " ")
+        Me.DogName = New StyledText(dogName, Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), dogLabel)
         Me.Goal = New StyledText(goal, Color.DarkGreen, New Font("Cascadia Code", 12, FontStyle.Bold), goalLabel)
         Me.Trail = New StyledText(trail, Color.Blue, New Font("Cascadia Code", 12, FontStyle.Bold), trailLabel)
         Me.Performance = New StyledText(performance, Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), performanceLabel)
         Me.weather = New StyledText(weather, Color.Maroon, New Font("Cascadia Code", 12, FontStyle.Bold), "")
+        Me.WeatherData = _weatherdata
     End Sub
     Public Sub New()
         ' Default constructor for serialization or other purposes

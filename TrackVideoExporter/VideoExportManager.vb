@@ -18,7 +18,7 @@ Namespace TrackVideoExporter
         ''' </summary>
         Private outputDir As DirectoryInfo
         Private windDirection As Double?
-        Private windSpeed As Double
+        Private windSpeed As Double?
 
         Private backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single) = (Nothing, 0, 0)
         Private LocalisedReports As New Dictionary(Of String, TrailReport)

@@ -51,17 +51,15 @@ Partial Class Form1
         mnuRussian = New ToolStripMenuItem()
         SToolStripMenuItem = New ToolStripMenuItem()
         mnucbActiveDog = New ToolStripComboBox()
+        mnuRenameCurrentDog = New ToolStripMenuItem()
         mnuAddDog = New ToolStripMenuItem()
         mnuDeleteCurrentDog = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
         mnuFactoryReset = New ToolStripMenuItem()
-        mnuRenameCurrentDog = New ToolStripMenuItem()
         HelpToolStripMenuItem = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
-        PictureBox1 = New PictureBox()
-        lblScentArtickle = New Label()
         rtbWarnings = New RichTextBox()
         TabControl1 = New TabControl()
         TabStats = New TabPage()
@@ -83,7 +81,6 @@ Partial Class Form1
         PictureBox3 = New PictureBox()
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
-        CType(PictureBox1, ISupportInitialize).BeginInit()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
         gbPeriod.SuspendLayout()
@@ -233,6 +230,11 @@ Partial Class Form1
         resources.ApplyResources(mnucbActiveDog, "mnucbActiveDog")
         mnucbActiveDog.Name = "mnucbActiveDog"
         ' 
+        ' mnuRenameCurrentDog
+        ' 
+        mnuRenameCurrentDog.Name = "mnuRenameCurrentDog"
+        resources.ApplyResources(mnuRenameCurrentDog, "mnuRenameCurrentDog")
+        ' 
         ' mnuAddDog
         ' 
         mnuAddDog.Name = "mnuAddDog"
@@ -258,11 +260,6 @@ Partial Class Form1
         mnuFactoryReset.Name = "mnuFactoryReset"
         resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
         ' 
-        ' mnuRenameCurrentDog
-        ' 
-        mnuRenameCurrentDog.Name = "mnuRenameCurrentDog"
-        resources.ApplyResources(mnuRenameCurrentDog, "mnuRenameCurrentDog")
-        ' 
         ' HelpToolStripMenuItem
         ' 
         HelpToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1})
@@ -278,18 +275,6 @@ Partial Class Form1
         ' 
         mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
         resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
-        ' 
-        ' PictureBox1
-        ' 
-        resources.ApplyResources(PictureBox1, "PictureBox1")
-        PictureBox1.Name = "PictureBox1"
-        PictureBox1.TabStop = False
-        ' 
-        ' lblScentArtickle
-        ' 
-        resources.ApplyResources(lblScentArtickle, "lblScentArtickle")
-        lblScentArtickle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        lblScentArtickle.Name = "lblScentArtickle"
         ' 
         ' rtbWarnings
         ' 
@@ -307,6 +292,7 @@ Partial Class Form1
         ' 
         ' TabStats
         ' 
+        TabStats.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         TabStats.Controls.Add(rtbOutput)
         TabStats.Controls.Add(gbPeriod)
         TabStats.Controls.Add(btnCharts)
@@ -314,7 +300,6 @@ Partial Class Form1
         TabStats.Controls.Add(PictureBox2)
         resources.ApplyResources(TabStats, "TabStats")
         TabStats.Name = "TabStats"
-        TabStats.UseVisualStyleBackColor = True
         ' 
         ' rtbOutput
         ' 
@@ -425,20 +410,17 @@ Partial Class Form1
         ' Form1
         ' 
         resources.ApplyResources(Me, "$this")
-        AutoScaleMode = AutoScaleMode.Font
+        AutoScaleMode = AutoScaleMode.Dpi
         Controls.Add(TabControl1)
         Controls.Add(rtbWarnings)
-        Controls.Add(lblScentArtickle)
         Controls.Add(StatusStrip1)
         Controls.Add(MenuStrip1)
-        Controls.Add(PictureBox1)
         MainMenuStrip = MenuStrip1
         Name = "Form1"
         StatusStrip1.ResumeLayout(False)
         StatusStrip1.PerformLayout()
         MenuStrip1.ResumeLayout(False)
         MenuStrip1.PerformLayout()
-        CType(PictureBox1, ISupportInitialize).EndInit()
         TabControl1.ResumeLayout(False)
         TabStats.ResumeLayout(False)
         gbPeriod.ResumeLayout(False)
@@ -459,9 +441,9 @@ Partial Class Form1
 
         'nastavuje logiku pro zobrazení názvu trasy v seznamu
         TrackTypeResolvers.LabelResolver = AddressOf ResolveLabel
-        If My.Settings.WindowSize <> New Drawing.Size(0, 0) Then
-            Me.Size = My.Settings.WindowSize
-        End If
+        'If My.Settings.WindowSize <> New Drawing.Size(0, 0) Then
+        '    Me.Size = My.Settings.WindowSize
+        'End If
     End Sub
 
 
@@ -516,8 +498,10 @@ Partial Class Form1
         'verze se nastaví v AssamblyInfo.vb nebo v My Project -> Aplikace -> Informace o sestavení!!!!!!!!!!!!!!!!
         Me.Text = thisAssemName.Name & "   " & thisAssemName.Version.ToString
 
-        Me.btnReadGpxFiles.Focus()
-        Me.btnReadGpxFiles.Select()
+        Me.AcceptButton = Me.btnReadGpxFiles
+        'Application.DoEvents()
+        Me.AutoScrollPosition = New Point(0, 0)
+
     End Sub
 
 
@@ -543,7 +527,6 @@ Partial Class Form1
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents mnuFile As ToolStripMenuItem
     Friend WithEvents mnuSelect_directory_gpx_files As ToolStripMenuItem
-    Friend WithEvents PictureBox1 As PictureBox
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents StatusLabel1 As ToolStripStatusLabel
     Friend WithEvents mnuSettings As ToolStripMenuItem
@@ -555,7 +538,6 @@ Partial Class Form1
     Friend WithEvents mnuGerman As ToolStripMenuItem
     Friend WithEvents mnuRussian As ToolStripMenuItem
     Friend WithEvents mnuPolish As ToolStripMenuItem
-    Friend WithEvents lblScentArtickle As Label
     Friend WithEvents mnuTrimGPSNoise As ToolStripMenuItem
     Friend WithEvents mnuExportAs As ToolStripMenuItem
     Friend WithEvents mnuMergingTracks As ToolStripMenuItem

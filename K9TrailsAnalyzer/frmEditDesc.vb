@@ -14,7 +14,7 @@ Public Class frmEditComments
 
     Public ReadOnly Property AllParts As TrailReport
         Get
-            Return New TrailReport(My.Settings.ActiveDog, Me.GoalPart, Me.TrailPart, Me.DogPart)
+            Return New TrailReport(My.Settings.ActiveDog, Me.GoalPart, Me.TrailPart, Me.DogPart, (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
         End Get
     End Property
 
