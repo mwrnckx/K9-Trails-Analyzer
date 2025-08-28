@@ -2,14 +2,14 @@
 <gpx xmlns:k9="https://github.com/mwrnckx/K9-Trails-Analyzer/gpxextenze/1.0" version="1.1" creator="K9TrailsAnalyzer" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStatsExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:locus="https://www.locusmap.app">
   <metadata>
     <extensions>
-      <k9:processed>14.08.2025 8:39:55</k9:processed>
+      <k9:processed>28.08.2025 20:33:14</k9:processed>
       <k9:report lang="en">
         <k9:dogName>Medlin</k9:dogName>
         <k9:goal>Cíl: crossing with an older track</k9:goal>
         <k9:trail>📏: 0,0 km,  0,5 h forest</k9:trail>
         <k9:performance>
         </k9:performance>
-        <k9:weather>🌡17,9 °C  💨 1,2 m/s SE 💧60 %   💧0 mm/h ⛅0 %</k9:weather>
+        <k9:weather temperature="17.9" windSpeed="1.24" windDirection="133" precipitation="0" relHumidity="60" cloudCover="0">🌡17,9 °C  💨 1,2 m/s SE 💧60 %   💧0 mm/h ⛅0 %</k9:weather>
       </k9:report>
     </extensions>
     <desc>File with points/tracks from Locus Map/4.30.1</desc>

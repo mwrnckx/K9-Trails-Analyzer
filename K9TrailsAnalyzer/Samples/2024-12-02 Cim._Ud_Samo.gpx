@@ -2,13 +2,13 @@
 <gpx xmlns:k9="https://github.com/mwrnckx/K9-Trails-Analyzer/gpxextenze/1.0" xmlns="http://www.topografix.com/GPX/1/1" xmlns:geotracker="http://ilyabogdanovich.com/gpx/extensions/geotracker" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" version="1.1" creator="K9TrailsAnalyzer">
   <metadata>
     <extensions>
-      <k9:processed>14.08.2025 8:39:08</k9:processed>
+      <k9:processed>28.08.2025 20:32:31</k9:processed>
       <k9:report lang="en">
         <k9:dogName>Rex</k9:dogName>
         <k9:goal>length of the trail</k9:goal>
         <k9:trail>📏: 0,7 km,   👣 0,9 h, single knowing, forest crossing paths, crossed by Eva and Medlin in the valley, 0 °C</k9:trail>
         <k9:performance> no great interest, huh?</k9:performance>
-        <k9:weather>🌡0,1 °C  💨 1,6 m/s SSE 💧84 %   💧0 mm/h ⛅28 %</k9:weather>
+        <k9:weather temperature="0.1" windSpeed="1.57" windDirection="149" precipitation="0" relHumidity="84" cloudCover="28">🌡0,1 °C  💨 1,6 m/s SSE 💧84 %   💧0 mm/h ⛅28 %</k9:weather>
       </k9:report>
     </extensions>
     <name>2024-12-02Čim. Úd Sam</name>

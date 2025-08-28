@@ -2,13 +2,13 @@
 <gpx xmlns:k9="https://github.com/mwrnckx/K9-Trails-Analyzer/gpxextenze/1.0" version="1.1" creator="K9TrailsAnalyzer" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStatsExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:locus="https://www.locusmap.app">
   <metadata>
     <extensions>
-      <k9:processed>14.08.2025 8:39:29</k9:processed>
+      <k9:processed>28.08.2025 20:33:12</k9:processed>
       <k9:report lang="en">
         <k9:dogName>Rex</k9:dogName>
         <k9:goal>length, crossroads</k9:goal>
         <k9:trail>📏: 0.7 km, ⏳0.7 h</k9:trail>
         <k9:performance>problems at one crossroad, but she managed it on her own</k9:performance>
-        <k9:weather>🌡20,5 °C  💨 2,5 m/s N 💧43 %   💧0 mm/h ⛅0 %</k9:weather>
+        <k9:weather temperature="20.5" windSpeed="2.47" windDirection="7" precipitation="0" relHumidity="43" cloudCover="0">🌡20,5 °C  💨 2,5 m/s N 💧43 %   💧0 mm/h ⛅0 %</k9:weather>
       </k9:report>
     </extensions>
     <desc>File with points/tracks from Locus Map/4.30.1</desc>

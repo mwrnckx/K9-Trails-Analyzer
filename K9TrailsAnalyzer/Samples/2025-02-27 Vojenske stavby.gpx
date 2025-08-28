@@ -8,9 +8,9 @@
         <k9:trail>📏: 1,1 km, 0,4 h Double knowing</k9:trail>
         <k9:performance>
         </k9:performance>
-        <k9:weather>🌡2,7 °C  💨 2,5 m/s WSW 💧93 %   💧0 mm/h ⛅99 %</k9:weather>
+        <k9:weather temperature="2.7" windSpeed="2.49" windDirection="240" precipitation="0" relHumidity="93" cloudCover="99">🌡2,7 °C  💨 2,5 m/s WSW 💧93 %   💧0 mm/h ⛅99 %</k9:weather>
       </k9:report>
-      <k9:processed>14.08.2025 8:39:22</k9:processed>
+      <k9:processed>28.08.2025 20:33:03</k9:processed>
     </extensions>
   </metadata>
   <trk>

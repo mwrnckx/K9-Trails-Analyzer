@@ -2,13 +2,13 @@
 <gpx xmlns:k9="https://github.com/mwrnckx/K9-Trails-Analyzer/gpxextenze/1.0" version="1.1" creator="K9TrailsAnalyzer" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtrkx="http://www.garmin.com/xmlschemas/TrackStatsExtension/v1" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" xmlns:locus="https://www.locusmap.app">
   <metadata>
     <extensions>
-      <k9:processed>14.08.2025 8:40:00</k9:processed>
+      <k9:processed>28.08.2025 20:33:17</k9:processed>
       <k9:report lang="en">
         <k9:dogName>Rex</k9:dogName>
         <k9:goal>length</k9:goal>
         <k9:trail> 1,4 h  Double knowing, 🌡18 °C  💨4,4 m/s NW  💧0 mm/h ⛅100 %</k9:trail>
         <k9:performance> ending tasteless and off the trail - a rabbit' Maybe I accidentally pulled it off the trail?</k9:performance>
-        <k9:weather>🌡16,9 °C  💨 4,6 m/s NNW 💧66 %   💧0 mm/h ⛅99 %</k9:weather>
+        <k9:weather temperature="16.9" windSpeed="4.61" windDirection="331" precipitation="0" relHumidity="66" cloudCover="99">🌡16,9 °C  💨 4,6 m/s NNW 💧66 %   💧0 mm/h ⛅99 %</k9:weather>
       </k9:report>
     </extensions>
   </metadata>

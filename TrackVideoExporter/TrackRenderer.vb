@@ -31,12 +31,6 @@ Public Class PngSequenceCreator
 
         Next key
 
-        '' Vytvoříme statický obrázek s anglickým textem
-        'If textPartsEng IsNot Nothing Then
-        '    Dim staticTextbmp = renderer.RenderStaticText(textPartsEng)
-        '    Dim filename = IO.Path.Combine(outputDir.FullName, "TrailDescriptionENG.png")
-        '    staticTextbmp.Save(filename, ImageFormat.Png)
-        'End If
 
         ' Vytvoříme statický obrázek s mapou 
         If staticbgMap IsNot Nothing Then
@@ -98,7 +92,7 @@ End Class
 ''' Provides functionality for rendering PNG images with track data, wind information, and text.
 ''' </summary>
 Public Class PngRenderer
-    Private minVideoSize As Single
+    'Private minVideoSize As Single
     Private windDirection As Double?
     Private windSpeed As Double?
     Private trackBounds As RectangleF
@@ -116,7 +110,7 @@ Public Class PngRenderer
     ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
     ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
     Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single))
-        Me.minVideoSize = minVideoSize
+        'Me.minVideoSize = minVideoSize
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
@@ -147,9 +141,9 @@ Public Class PngRenderer
         Using g As Graphics = Graphics.FromImage(backgroundMap)
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
-                Dim center As New PointF(backgroundTiles.bgmap.Width / 2, backgroundTiles.bgmap.Height / 2) ' střed růžice
-                Dim arrowlength As Single = 0.06 * diagonal
-                DrawWindArrow(g, center, arrowlength, windDirection.GetValueOrDefault(0), Color.Orange)
+                Dim center As New PointF(backgroundTiles.bgmap.Width, 0) ' střed růžice
+                Dim arrowlength As Single = 0.08 * diagonal
+                DrawWindArrow(g, center, arrowlength, Color.Orange, windDirection, windSpeed)
             End If
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
@@ -220,9 +214,9 @@ Public Class PngRenderer
 
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
-                Dim center As New PointF(backgroundTiles.bgmap.Width / 2, backgroundTiles.bgmap.Height / 2) ' střed růžice
-                Dim arrowlength As Single = 0.06 * diagonal
-                DrawWindArrow(g, center, arrowlength, windDirection.GetValueOrDefault(0), Color.Orange)
+                Dim center As New PointF(backgroundTiles.bgmap.Width, 0) ' střed růžice
+                Dim arrowlength As Single = 0.08 * diagonal
+                DrawWindArrow(g, center, arrowlength, Color.Orange, windDirection, windSpeed)
             End If
 
 
@@ -387,82 +381,107 @@ Public Class PngRenderer
 
     End Function
 
-    '---
-    '## Private Helpers
-    '---
 
     ''' <summary>
-    ''' Draws a wind arrow on the graphics context.
+    ''' Draws a simplified wind arrow with speed text and a semi-transparent background.
     ''' </summary>
     ''' <param name="g">The Graphics object to draw on.</param>
-    ''' <param name="position">The center position of the wind arrow.</param>
-    ''' <param name="arrowLength">The length of the main arrow line.</param>
-    ''' <param name="direction">The direction of the wind in degrees (0-360).</param>
+    ''' <param name="position">The top-right position of the wind arrow widget.</param>
+    ''' <param name="size">The size of the wind arrow widget.</param>
     ''' <param name="color">The color of the wind arrow.</param>
-    Private Sub DrawWindArrow(g As Graphics, position As PointF, arrowLength As Single, direction As Double, color As Color)
-        ' Vykreslí šipku větru
+    ''' <param name="windDirection">The direction from which the wind is blowing in degrees (0-360).</param>
+    ''' <param name="windSpeed">The wind speed in m/s.</param>
+    Private Sub DrawWindArrow(g As Graphics, position As PointF, size As Single, color As Color, windDirection As Double, windSpeed As Double)
+        color = GetWindColor(windSpeed)
+        Dim arrowSize As Single = size * 0.4 ' Velikost šipky
+        Dim text As String = CDbl(windSpeed).ToString("0.0", CultureInfo.InvariantCulture) & " m/s"
+        Dim arrowWidth As Single = arrowSize * 2
 
-        Dim angleRad = -(direction - 270) * Math.PI / 180.0 'převod na radiány
-        Dim endX As Single = position.X + arrowLength * Math.Cos(angleRad)
-        Dim endY As Single = position.Y - arrowLength * Math.Sin(angleRad) ' Y je obráceně v grafice
-        Using pen As New Pen(color, penWidth)
-            g.DrawLine(pen, position.X, position.Y, endX, endY)
-            ' Kreslení šipky na konci
-            Dim arrowHeadSize = 0.3 * arrowLength ' velikost hlavy šipky
-            Dim headAngle1 = angleRad + Math.PI / 6 ' 30 stupňů
-            Dim headAngle2 = angleRad - Math.PI / 6 ' -30 stupňů
-            Dim headX1 As Single = endX - arrowHeadSize * Math.Cos(headAngle1)
-            Dim headY1 As Single = endY + arrowHeadSize * Math.Sin(headAngle1)
-            Dim headX2 As Single = endX - arrowHeadSize * Math.Cos(headAngle2)
-            Dim headY2 As Single = endY + arrowHeadSize * Math.Sin(headAngle2)
-            g.DrawLine(pen, endX, endY, headX1, headY1)
-            g.DrawLine(pen, endX, endY, headX2, headY2)
+        Dim baseFont As New Font("Cascadia Code Semibold", 12, FontStyle.Bold)
+        Dim baseSize As SizeF = g.MeasureString(text, baseFont)
 
-            If windSpeed IsNot Nothing Then
-                'popis šipky
-                ' Text k šipce
-                Dim windText As String = CDbl(windSpeed).ToString("0.0", CultureInfo.InvariantCulture) & " m/s "
-                Dim textSize = g.MeasureString(windText, font)
+        ' Jaký poměr má mít šířka textu vůči arrowWidth
+        Dim scale As Single = arrowWidth / baseSize.Width
 
-                ' Chceme text nakreslit kousek za šipku
-                Dim popisOffset As Single = 10
+        ' Nový font podle poměru (ale limituj minimální a maximální velikost)
+        Dim fontSize As Single = Math.Max(8, Math.Min(40, baseFont.Size * scale))
+        Dim font As New Font("Cascadia Code Semibold", fontSize, FontStyle.Bold)
 
-                ' Bod, kde bude text - spočítáme ho jako bod za endPoint
-                Dim textX As Single = position.X '+ offset * Math.Cos(angle)
-                Dim textY As Single = position.Y - popisOffset '* Math.Sin(angle)
-
-                ' Uložíme transformaci
-                Dim oldState = g.Save()
-
-                ' Přesuneme se do bodu textu
-                g.TranslateTransform(textX, textY)
-
-                ' Vypočítáme úhel v rozmezí -180 až 180
-                Dim angleDeg As Single = -CSng(angleRad * 180 / Math.PI)
-                If angleDeg < -180 Then angleDeg += 360
-                If angleDeg > 180 Then angleDeg -= 360
-                Dim textPos As New PointF(0, -textSize.Height)
-                ' Pokud by text byl vzhůru nohama, otočíme ho o 180°
-                If angleDeg > 90 Or angleDeg < -90 Then
-                    angleDeg += 180
-                    textY += textSize.Height ' posuneme text o výšku dolů, aby nebyl přeházený
-                    ' Text zarovnáme tak, aby byl středem na ose šipky
-                    textPos.X -= textSize.Width
-                End If
-
-                ' Otočíme souřadnicový systém podle směru šipky
-                g.RotateTransform(angleDeg)
+        Dim textSize As SizeF = g.MeasureString(text, font)
 
 
-                ' Nakreslíme text (s outline)
-                Dim contrastColor As Color = GetContrastColor(Color.Black)
-                DrawTextWithOutline(g, windText, font, Color.Black, contrastColor, textPos, 1)
+        ' Vypočítáme polohu a rozměry pozadí
+        Dim padding As Single = size * 0.1
+        Dim arrowHeight As Single = arrowSize * 2
+        Dim totalWidth As Single = Math.Max(arrowWidth, textSize.Width) + padding * 2
+        Dim totalHeight As Single = arrowHeight + textSize.Height + padding * 2
+        Dim backgroundRect As New RectangleF(position.X - totalWidth, position.Y, totalWidth, totalHeight)
 
-                ' Vrátíme původní transformaci
-                g.Restore(oldState)
-            End If
+        ' Vykreslíme poloprůhledný bílý obdélník
+        Using bgBrush As New SolidBrush(Color.FromArgb(75, Color.White))
+            g.FillRectangle(bgBrush, backgroundRect)
+        End Using
+
+        ' Vypočítáme pozice šipky a textu
+        Dim arrowX As Single = position.X - totalWidth / 2
+        Dim arrowY As Single = position.Y + totalHeight / 2 - textSize.Height / 2
+        Dim textX As Single = position.X - totalWidth / 2 - textSize.Width / 2
+        Dim textY As Single = arrowY + arrowSize + padding
+
+        ' Kreslení šipky s otočením o 180 stupňů
+        Using arrowBrush As New SolidBrush(color)
+            Dim oldState = g.Save()
+            g.TranslateTransform(arrowX, arrowY)
+            g.RotateTransform(CSng(windDirection + 180)) ' Otočí o 180°
+
+            ' Vykreslení těla šipky (trojúhelník)
+            Dim arrowPoints() As PointF = {
+            New PointF(0, -arrowSize),
+            New PointF(-arrowSize * 0.5F, arrowSize * 0.5F),
+            New PointF(0, 0),
+            New PointF(arrowSize * 0.5F, arrowSize * 0.5F)
+        }
+            g.FillPolygon(arrowBrush, arrowPoints)
+            arrowPoints = {
+            New PointF(0, -arrowSize),
+            New PointF(-arrowSize * 0.5F, arrowSize * 0.5F),
+            New PointF(0, 0),
+            New PointF(arrowSize * 0.5F, arrowSize * 0.5F),
+            New PointF(0, -arrowSize)
+        }
+            g.DrawLines(New Pen(Color.Black), arrowPoints)
+            g.Restore(oldState)
+        End Using
+
+        ' Vykreslení textu (rychlost větru)
+        Using font
+            Using brush As New SolidBrush(Color.Black)
+                g.DrawString(text, font, brush, textX, textY)
+            End Using
         End Using
     End Sub
+
+
+
+    Private Function GetWindColor(speed As Double) As Color
+        Select Case speed
+            Case < 2
+                Return Color.LightGreen
+            Case < 3
+                Return Color.Green
+            Case < 4
+                Return Color.Blue
+            Case < 5
+                Return Color.DarkBlue
+            Case < 6
+                Return Color.Orange
+            Case < 7
+                Return Color.DarkOrange
+            Case Else
+                Return Color.Red
+        End Select
+    End Function
+
 
     ''' <summary>
     ''' Draws a text string containing Czech diacritics and emojis, with proper word wrapping, within a given rectangle.

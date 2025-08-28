@@ -10,9 +10,9 @@
         <k9:trail>⏳: 1,7 h</k9:trail>
         <k9:performance> Very unfocused work, ignoring artickles
         </k9:performance>
-        <k9:weather>🌡11,2 °C  💨 1,2 m/s E 💧81 %   💧0 mm/h ⛅87 %</k9:weather>
+        <k9:weather temperature="11.2" windSpeed="1.15" windDirection="85" precipitation="0" relHumidity="81" cloudCover="87">🌡11,2 °C  💨 1,2 m/s E 💧81 %   💧0 mm/h ⛅87 %</k9:weather>
       </k9:report>
-      <k9:processed>14.08.2025 8:40:02</k9:processed>
+      <k9:processed>28.08.2025 20:33:19</k9:processed>
     </extensions>
   </metadata>
   <wpt lat="50.1453850" lon="14.4230983">
