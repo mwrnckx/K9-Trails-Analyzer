@@ -246,6 +246,9 @@ Public Class TrackAsTrkNode 'track as trkNode
     End Property
 
 
+
+
+
     ''' <summary>
     ''' Converts the current TrackAsTrkNode to a TrackAsTrkPts object.
     ''' </summary>
@@ -256,7 +259,13 @@ Public Class TrackAsTrkNode 'track as trkNode
         Dim _trackAsTrkPts As TrackAsTrkPts = converter.ConvertTrackAsTrkNodeToTrkPts(Me)
         Return _trackAsTrkPts
     End Function
+
+    Public Function calculateDeviation(anotherTrack As TrackAsTrkNode) As Double?
+        Dim conv As New TrackConverter()
+        Return conv.calculateDeviation(Me.TrkNode, anotherTrack.TrkNode)
+    End Function
 End Class
+
 ''' <summary>
 ''' TrackType enumeration defines the types of tracks that can be represented.
 ''' </summary>

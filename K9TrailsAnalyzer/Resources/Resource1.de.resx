@@ -129,8 +129,15 @@
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
     <value>Tempo des Hundes (km/h)</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelDeviation" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Datum  </value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Es konnte keine GPX -Dateien finden!</value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Fehler beim Erstellen von CSV</value>
@@ -258,6 +265,9 @@
   <data name="txtRunner" xml:space="preserve">
     <value>Zielperson</value>
   </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Bearbeiten Sie die Kommentare zur Trainingssesion. Diese Kommentare werden in der GPX -Datei gespeichert und in Anwendungen wie gpxsee.org und Overlay -Videos angezeigt. Wenn Sie die Kommentare in Ihrer GPS -App schreiben, fügen Sie "G:" vor der Beschreibung des Ziels "t:" vor der Beschreibung des Trails und "D:" vor der Beschreibung der Teamarbeit hinzu. Sie können eine englische Übersetzung in der zweiten Reihe schreiben, wenn Sie möchten.</value>
+  </data>
   <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
     <value>Das Backup -Verzeichnis entspricht dem Hauptverzeichnis - es kann nicht sein!</value>
   </data>
@@ -284,10 +294,7 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="artickle" xml:space="preserve">
     <value>Gegenstand</value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Es konnte keine GPX -Dateien finden!</value>
-  </data>
-  <data name="txtEditDescLabel" xml:space="preserve">
-    <value>Bearbeiten Sie die Kommentare zur Trainingssesion. Diese Kommentare werden in der GPX -Datei gespeichert und in Anwendungen wie gpxsee.org und Overlay -Videos angezeigt. Wenn Sie die Kommentare in Ihrer GPS -App schreiben, fügen Sie "G:" vor der Beschreibung des Ziels "t:" vor der Beschreibung des Trails und "D:" vor der Beschreibung der Teamarbeit hinzu. Sie können eine englische Übersetzung in der zweiten Reihe schreiben, wenn Sie möchten.</value>
+  <data name="Y-AxisLabelDeviation" xml:space="preserve">
+    <value>Abweichung des Trails (m)</value>
   </data>
 </root>

@@ -6,6 +6,7 @@ Imports System.Drawing.Text
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection.Metadata
+Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 
 Public Class PngSequenceCreator
@@ -96,6 +97,7 @@ Public Class PngRenderer
     Private windDirection As Double?
     Private windSpeed As Double?
     Private trackBounds As RectangleF
+    Private myWindArrow As Bitmap
 
     Dim diagonal As Single
     Dim radius As Single ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
@@ -141,9 +143,10 @@ Public Class PngRenderer
         Using g As Graphics = Graphics.FromImage(backgroundMap)
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
-                Dim center As New PointF(backgroundTiles.bgmap.Width, 0) ' střed růžice
-                Dim arrowlength As Single = 0.07 * diagonal
-                DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
+                Dim position As New PointF(backgroundTiles.bgmap.Width, 0) ' pravý horní roh růžice
+                Dim scale As Single = 0.15
+                DrawWindArrow(g, position, scale, myWindArrow)
+                'DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
             End If
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
@@ -214,9 +217,10 @@ Public Class PngRenderer
 
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
-                Dim center As New PointF(backgroundTiles.bgmap.Width, 0) ' střed růžice
-                Dim arrowlength As Single = 0.07 * diagonal
-                DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
+                Dim position As New PointF(backgroundTiles.bgmap.Width, 0) ' pravý horní roh růžice
+                Dim scale As Single = 0.15
+                DrawWindArrow(g, position, scale, myWindArrow)
+                'DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
             End If
 
 
@@ -389,10 +393,9 @@ Public Class PngRenderer
     ''' <param name="g">The Graphics object to draw on.</param>
     ''' <param name="position">The top-right position of the wind arrow widget.</param>
     ''' <param name="arrowSize">The size of the wind arrow.</param>
-    ''' <param name="color">The color of the wind arrow.</param>
     ''' <param name="windDirection">The direction from which the wind is blowing in degrees (0-360).</param>
     ''' <param name="windSpeed">The wind speed in m/s.</param>
-    Private Sub DrawWindArrow(g As Graphics, position As PointF, arrowSize As Single, windDirection As Double, windSpeed As Double)
+    Private Sub DrawWindArrowOld(g As Graphics, position As PointF, arrowSize As Single, windDirection As Double, windSpeed As Double)
         ' Dynamická barva šipky
         ' Předpokládáme, že funkce GetWindColor je implementována
         Dim Color = GetWindColor(windSpeed)
@@ -442,11 +445,11 @@ Public Class PngRenderer
 
             ' Vykreslení těla šipky (trojúhelník)
             Dim arrowPoints() As PointF = {
-            New PointF(0, -arrowSize * 2.0F / 3.0F),
-            New PointF(-arrowSize / 3.0F, arrowSize / 3.0F),
-            New PointF(0, 0),
-            New PointF(arrowSize / 3.0F, arrowSize / 3.0F),
-            New PointF(0, -arrowSize * 2.0F / 3.0F)
+            New PointF(0, -arrowSize / 2.0F),
+            New PointF(-arrowSize / 3.0F, arrowSize / 2.0F),
+            New PointF(0, arrowSize / 3.0F),
+            New PointF(arrowSize / 3.0F, arrowSize / 2.0F),
+            New PointF(0, -arrowSize / 2.0F)
         }
             g.FillPolygon(arrowBrush, arrowPoints)
             g.DrawLines(New Pen(Color.Black), arrowPoints)
@@ -481,6 +484,117 @@ Public Class PngRenderer
                 Return Color.Red
         End Select
     End Function
+
+    ''' <summary>
+    ''' Creates a bitmap with the wind arrow widget drawn on it.
+    ''' </summary>
+    Public Sub CreateWindArrowBitmap(outputDir As DirectoryInfo)
+        Dim arrowSize As Single = 100
+        ' Dynamická barva šipky
+        Dim Color As System.Drawing.Color = GetWindColor(windSpeed)
+
+        Dim text As String = CDbl(windSpeed).ToString("0.0", CultureInfo.InvariantCulture) & " m/s"
+        Dim baseFont As New Font("Cascadia Code Semibold", 12, FontStyle.Bold)
+
+        Dim tempBitmap As New Bitmap(1, 1) ' Dočasná bitmapa pro měření
+        Dim tempGraphics As Graphics = Graphics.FromImage(tempBitmap)
+
+        Dim baseSize As SizeF = tempGraphics.MeasureString(text, baseFont)
+
+        ' Dynamická velikost fontu podle šířky šipky
+        Dim scale As Single = arrowSize / baseSize.Width
+        Dim fontSize As Single = Math.Max(8, Math.Min(40, baseFont.Size * scale))
+        Dim font As New Font("Cascadia Code Semibold", fontSize, FontStyle.Bold)
+        Dim textSize As SizeF = tempGraphics.MeasureString(text, font)
+
+        tempGraphics.Dispose()
+        tempBitmap.Dispose()
+
+        ' Vypočítáme rozměry bitmapy
+        Dim padding As Single = arrowSize * 0.2
+        Dim totalWidth As Single = Math.Max(arrowSize, textSize.Width) + padding * 2
+        Dim totalHeight As Single = arrowSize + textSize.Height + padding * 2
+
+        ' Vytvoříme finální bitmapu
+        Dim bmp As New Bitmap(CInt(totalWidth), CInt(totalHeight))
+        Using g As Graphics = Graphics.FromImage(bmp)
+            g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias
+
+            ' Vykreslíme poloprůhledný bílý obdélník s kulatými rohy
+            Dim bgRect As New RectangleF(0, 0, totalWidth, totalHeight)
+            Using bgBrush As New SolidBrush(System.Drawing.Color.FromArgb(75, System.Drawing.Color.White))
+                Using path As New System.Drawing.Drawing2D.GraphicsPath()
+                    Dim radius As Single = bgRect.Width / 4.0F
+                    path.AddArc(bgRect.X, bgRect.Y, radius, radius, 180, 90)
+                    path.AddArc(bgRect.X + bgRect.Width - radius, bgRect.Y, radius, radius, 270, 90)
+                    path.AddArc(bgRect.X + bgRect.Width - radius, bgRect.Y + bgRect.Height - radius, radius, radius, 0, 90)
+                    path.AddArc(bgRect.X, bgRect.Y + bgRect.Height - radius, radius, radius, 90, 90)
+                    path.CloseFigure()
+                    g.FillPath(bgBrush, path)
+                End Using
+            End Using
+
+            ' Vypočítáme pozice šipky a textu
+            Dim arrowX As Single = totalWidth / 2
+            Dim arrowY As Single = padding + arrowSize / 2
+            Dim textX As Single = totalWidth / 2 - textSize.Width / 2
+            Dim textY As Single = arrowY + arrowSize / 2 + padding
+
+            ' Kreslení šipky s otočením o 180 stupňů
+            Using arrowBrush As New SolidBrush(Color)
+                Dim oldState = g.Save()
+                g.TranslateTransform(arrowX, arrowY)
+                g.RotateTransform(CSng(windDirection + 180))
+                Dim arrowPoints() As PointF = {
+                New PointF(0, -arrowSize / 2.0F),
+                New PointF(-arrowSize / 3.0F, arrowSize / 2.0F),
+                New PointF(0, arrowSize / 3.0F),
+                New PointF(arrowSize / 3.0F, arrowSize / 2.0F),
+                New PointF(0, -arrowSize / 2.0F)
+            }
+                g.FillPolygon(arrowBrush, arrowPoints)
+                g.DrawLines(New Pen(System.Drawing.Color.Black), arrowPoints)
+                g.Restore(oldState)
+            End Using
+
+            ' Vykreslení textu
+            Using font
+                Using brush As New SolidBrush(System.Drawing.Color.Black)
+                    g.DrawString(text, font, brush, textX, textY)
+                End Using
+            End Using
+        End Using
+        Me.myWindArrow = bmp
+        Dim filename = IO.Path.Combine(outputDir.FullName, "windRose.png")
+        Me.myWindArrow.Save(filename, ImageFormat.Png)
+    End Sub
+
+    ''' <summary>
+    ''' Draws the pre-rendered wind arrow bitmap onto the main graphics context with a scaled size.
+    ''' </summary>
+    ''' <param name="g">The Graphics object to draw on.</param>
+    ''' <param name="position">The top-right position of the wind arrow widget.</param>
+    ''' <param name="windArrowBitmap">The pre-rendered bitmap of the wind arrow.</param>
+    Public Sub DrawWindArrow(ByVal g As Graphics, ByVal position As PointF, scale As Single, ByVal windArrowBitmap As Bitmap)
+        ' Získejte šířku grafického kontextu
+        Dim graphicsDiagonal As Single = Math.Sqrt(g.VisibleClipBounds.Height ^ 2 + g.VisibleClipBounds.Width ^ 2)
+
+        ' Vypočítejte cílovou diagonálu jako x % diagonály grafického kontextu
+        Dim targetDiagonal As Single = graphicsDiagonal * scale
+
+
+        ' Vypočítejte cílovou výšku s ohledem na zachování poměru stran
+        Dim aspectRatio As Single = CSng(windArrowBitmap.Height) / CSng(windArrowBitmap.Width)
+        ' Vypočítejte cílovou šířku a výšku z diagonály a aspect ratio
+        Dim targetWidth As Single = targetDiagonal / Math.Sqrt(1 + Math.Pow(aspectRatio, 2))
+        Dim targetHeight As Single = targetWidth * aspectRatio
+
+        ' Vytvořte cílový obdélník pro vykreslení
+        Dim targetRect As New RectangleF(position.X - targetWidth, position.Y, targetWidth, targetHeight)
+
+        ' Vykreslete bitmapu do hlavního grafického kontextu s novou velikostí
+        g.DrawImage(windArrowBitmap, targetRect)
+    End Sub
 
 
     ''' <summary>

@@ -129,8 +129,15 @@
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
     <value>Prędkość psa na śladu (km/h)</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelDeviation" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Data</value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Nie można znaleźć żadnych plików GPX!</value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Błąd podczas tworzenia pliku CSV</value>
@@ -255,6 +262,9 @@
   <data name="txtperformanceLabel" xml:space="preserve">
     <value>Wydajność zespołu K9</value>
   </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Edytuj komentarze do Sesji Szkolenia. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „D:” przed opisem zespołu. Jeśli chcesz, możesz napisać tłumaczenie na angielski w drugim rzędzie.</value>
+  </data>
   <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
     <value>Katalog kopii zapasowej jest taki sam jak główny katalog - nie może być!</value>
   </data>
@@ -281,10 +291,7 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="artickle" xml:space="preserve">
     <value>przedmiot</value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Nie można znaleźć żadnych plików GPX!</value>
-  </data>
-  <data name="txtEditDescLabel" xml:space="preserve">
-    <value>Edytuj komentarze do Sesji Szkolenia. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „D:” przed opisem zespołu. Jeśli chcesz, możesz napisać tłumaczenie na angielski w drugim rzędzie.</value>
+  <data name="Y-AxisLabelDeviation" xml:space="preserve">
+    <value>Odchylenie szlaku (m)</value>
   </data>
 </root>

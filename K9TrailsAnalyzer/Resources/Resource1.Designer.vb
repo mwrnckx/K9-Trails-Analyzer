@@ -196,7 +196,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Loading GPX files from the selected directory failed.
+        '''  Vyhledá lokalizovaný řetězec podobný Could not find any gpx files!.
         '''</summary>
         Friend Shared ReadOnly Property mBoxDataRetrievalFailed() As String
             Get
@@ -534,6 +534,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property Y_AxisLabelAge() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelAge", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Deviation of the trail (m).
+        '''</summary>
+        Friend Shared ReadOnly Property Y_AxisLabelDeviation() As String
+            Get
+                Return ResourceManager.GetString("Y-AxisLabelDeviation", resourceCulture)
             End Get
         End Property
         

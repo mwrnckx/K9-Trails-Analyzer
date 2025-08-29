@@ -129,8 +129,15 @@
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
     <value>Скорость собаки на следy (км/ч)</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelDeviation" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Дата</value>
+  </data>
+  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
+    <value>Не удалось найти никаких файлов GPX!</value>
   </data>
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Ошибка при создании CSV</value>
@@ -258,6 +265,9 @@
   <data name="txtRunner" xml:space="preserve">
     <value>следопрокладчик</value>
   </data>
+  <data name="txtEditDescLabel" xml:space="preserve">
+    <value>Отредактируйте комментарии к обучающему сейю. Эти комментарии будут сохранены в файле GPX и отображаются в таких приложениях, как gpxsee.org и видеоролики. Если вы пишете комментарии в своем приложении GPS, добавьте «g:» перед описанием цели «t:» до описания тропы и «D:» до описания команды. Вы можете написать английский перевод во втором ряду, если хотите.</value>
+  </data>
   <data name="mBoxBackupDirectorySameAsGpxDirectory" xml:space="preserve">
     <value>Справочник резервного копирования такой же, как основной каталог - это не может быть!</value>
   </data>
@@ -284,10 +294,7 @@
   <data name="artickle" xml:space="preserve">
     <value>предмет</value>
   </data>
-  <data name="mBoxDataRetrievalFailed" xml:space="preserve">
-    <value>Не удалось найти никаких файлов GPX!</value>
-  </data>
-  <data name="txtEditDescLabel" xml:space="preserve">
-    <value>Отредактируйте комментарии к обучающему сейю. Эти комментарии будут сохранены в файле GPX и отображаются в таких приложениях, как gpxsee.org и видеоролики. Если вы пишете комментарии в своем приложении GPS, добавьте «g:» перед описанием цели «t:» до описания тропы и «D:» до описания команды. Вы можете написать английский перевод во втором ряду, если хотите.</value>
+  <data name="Y-AxisLabelDeviation" xml:space="preserve">
+    <value>Отклонение тропы (м)</value>
   </data>
 </root>

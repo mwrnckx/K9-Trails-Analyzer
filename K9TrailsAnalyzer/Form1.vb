@@ -105,7 +105,7 @@ Public Class Form1
             End If
             item.SubItems.Add(record.TrailStart.Time.ToString("yyyy-MM-dd HH:mm")) ' např. datum
             item.SubItems.Add($"{record.TrailDistance:F2} km") ' délka trasy
-            item.SubItems.Add($"{record.TrailAge.TotalHours:F1} h") ' věk trasy v hodinách
+            item.SubItems.Add($"{record.TrailAge?.TotalHours:F1} h") ' věk trasy v hodinách
             item.SubItems.Add($"{record.Tracks.Count}") ' počet tras
             item.Tag = record ' pro pozdější použití (např. vytvoření videa)
 
@@ -174,13 +174,14 @@ Public Class Form1
                 Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
                 Me.rtbOutput.AppendText(_gpxRecord.TrailStart.Time.ToString("dd.MM.yy") & "    ")
                 Me.rtbOutput.AppendText(_gpxRecord.TrailDistance.ToString("F2") & " km" & "     ")
-                If _gpxRecord.TrailAge.TotalHours > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
+                If _gpxRecord.TrailAge?.TotalHours > 0 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.TrailAge?.TotalHours.ToString("F1") & " h" & "   ")
                 Else
                     Me.rtbOutput.AppendText("         ")
                 End If
-                If _gpxRecord.DogSpeed > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.DogSpeed.ToString("F1") & " km/h" & "   ")
+
+                If _gpxRecord.DogSpeed.HasValue AndAlso _gpxRecord.DogSpeed > 0.2 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.DogSpeed?.ToString("F1") & " km/h" & "   ")
                 Else
                     Me.rtbOutput.AppendText("           ")
                 End If
@@ -251,7 +252,7 @@ Public Class Form1
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageTrailAge As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailAge.TotalHours)
+        Dim averageTrailAge As Double = GetAverage(Of TimeSpan?)(_gpxRecords, Function(r) r.TrailAge)
         Me.rtbOutput.AppendText(averageTrailAge.ToString("F2") & " h " & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
@@ -285,43 +286,40 @@ Public Class Form1
     'End Function
 
     Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord),
-                                 selector As Func(Of GPXRecord, T),
-                                 Optional ignoreZeros As Boolean = False) As Double
+                                  selector As Func(Of GPXRecord, T),
+                                  Optional ignoreZeros As Boolean = False) As Double
 
         If gpxRecords Is Nothing OrElse Not gpxRecords.Any() Then
             Debug.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
             Return 0
         End If
 
-        ' Vyber hodnoty a převedeme je na Double
-        Dim values As IEnumerable(Of Double) =
-        gpxRecords.Select(Function(r) Convert.ToDouble(selector(r)))
+        ' Vyber platné hodnoty a převedeme je na Double
+        Dim values As IEnumerable(Of Double) = gpxRecords _
+        .Select(Function(r) selector(r)) _
+        .Where(Function(v) v IsNot Nothing) _
+        .Select(Function(v)
+                    If TypeOf v Is TimeSpan Then
+                        ' Pokud je typ TimeSpan, bezpečně ho převeď na TimeSpan
+                        Return CType(Convert.ChangeType(v, GetType(TimeSpan)), TimeSpan).TotalHours
+                    Else
+                        ' Pro ostatní typy, které Convert.ToDouble umí
+                        Return Convert.ToDouble(v)
+                    End If
+                End Function)
 
         If ignoreZeros Then
             values = values.Where(Function(v) v <> 0)
         End If
 
         If Not values.Any() Then
-            Debug.WriteLine("Nejsou žádné nenulové hodnoty k průměrování.")
+            Debug.WriteLine("Nejsou žádné hodnoty k průměrování.")
             Return 0
         End If
 
         Return values.Average()
     End Function
 
-
-    Private Function AverageOf(y As List(Of Double)) As Double
-        Dim suma As Double = 0
-        Dim n As Integer = 0
-        For Each number In y
-            If number > 0 Then
-                suma += number
-                n += 1
-            End If
-        Next
-        If n > 0 Then Return suma / n Else Return 0
-
-    End Function
 
 
     Private Sub SaveCSVFile(sender As Object, e As EventArgs)
@@ -412,8 +410,8 @@ Public Class Form1
                         Dim fileName As String = IO.Path.GetFileNameWithoutExtension(.Reader.FilePath)
 
                         Dim _age As String = ""
-                        If .TrailAge > TimeSpan.Zero Then
-                            _age = .TrailAge.TotalHours.ToString("F1")
+                        If .TrailAge IsNot Nothing AndAlso .TrailAge > TimeSpan.Zero Then
+                            _age = .TrailAge?.TotalHours.ToString("F1")
                         End If
 
                         ' Write each row in the CSV file
@@ -464,7 +462,12 @@ Public Class Form1
         Dim chart1 As frmChart
 
         ' Získání dat pro graf rychlosti
-        Dim speedData = GetGraphData(Of Double)(gpxRecords, Function(r) r.DogSpeed)
+        'Dim speedData = GetGraphData(Of Double)(gpxRecords, Function(r) r.DogSpeed)
+        Dim speedData = GetGraphData(Of Double)(
+    gpxRecords,
+    Function(r) If(r.DogSpeed.HasValue, r.DogSpeed.Value, Double.NaN)
+)
+
         xAxisData = speedData.Item1
         yAxisData = speedData.Item2
         yAxisLabel = Resource1.Y_AxisLabelSpeed
@@ -474,16 +477,26 @@ Public Class Form1
         Charts.Add(chart1)
 
 
-        ' Získání dat pro graf věku trasy
-        Dim trailAgeData = GetGraphData(Of TimeSpan)(gpxRecords, Function(r) r.TrailAge)
+        ' Získání dat pro graf stáří trasy
+        Dim trailAgeData = GetGraphData(Of Double)(
+    gpxRecords,
+    Function(r) If(r.TrailAge.HasValue, r.TrailAge.Value.TotalHours, Double.NaN)
+)
         xAxisData = trailAgeData.Item1
-        ReDim yAxisData(trailAgeData.Item2.Length - 1)
-        For i = 0 To trailAgeData.Item2.Length - 1
-            ' Převod TimeSpan na Double (např. v hodinách)
-            yAxisData(i) = trailAgeData.Item2(i).TotalHours ' Nebo TotalMinutes, TotalSeconds, atd. podle potřeby
-        Next
+        yAxisData = trailAgeData.Item2
+
         yAxisLabel = Resource1.Y_AxisLabelAge
         GrafText = Resource1.Y_AxisLabelAge
+        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
+
+        ' Získání dat pro graf přesnosti trasy
+        Dim trailDeviationData = GetGraphData(Of Double)(gpxRecords, Function(r) If(r.TrailDeviation.HasValue, r.TrailDeviation.Value, Double.NaN))
+        xAxisData = trailDeviationData.Item1
+        yAxisData = trailDeviationData.Item2
+        yAxisLabel = Resource1.Y_AxisLabelDeviation
+        GrafText = Resource1.Y_AxisLabelDeviation
         chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
         chart1.Show()
         Charts.Add(chart1)
@@ -543,7 +556,7 @@ Public Class Form1
 
     End Sub
 
-    Public Function GetGraphData(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
+    Public Function GetGraphDataOld(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
         If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
             Dim timestamps As New List(Of DateTime)
             Dim values As New List(Of T)
@@ -559,6 +572,52 @@ Public Class Form1
         Else
             Debug.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
             Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
+        End If
+    End Function
+
+    Public Function GetGraphData(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
+        If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
+            Dim timestamps As New List(Of DateTime)
+            Dim values As New List(Of T)
+
+            For Each rec In gpxRecords
+                If rec?.TrailStart IsNot Nothing Then
+                    Dim selectedValue As T = selector(rec)
+
+                    Dim numericValue As Double = 0
+
+                    ' Zkontrolujeme, zda se jedná o Nullable typ
+                    Dim underlyingType As Type = GetType(T)
+                    If underlyingType.IsGenericType AndAlso underlyingType.GetGenericTypeDefinition() Is GetType(Nullable(Of )) Then
+                        underlyingType = Nullable.GetUnderlyingType(underlyingType)
+                    End If
+
+                    If TypeOf selectedValue Is TimeSpan Then
+                        ' Pokud je typ TimeSpan, bezpečně ho převeď na TimeSpan
+                        numericValue = CType(Convert.ChangeType(selectedValue, GetType(TimeSpan)), TimeSpan).TotalHours
+                    ElseIf underlyingType IsNot Nothing AndAlso (underlyingType = GetType(Double) OrElse underlyingType = GetType(Single)) Then
+                        ' Pokud je to Double, Single nebo jejich Nullable verze, bezpečně převeď na Double
+                        numericValue = Convert.ToDouble(selectedValue)
+                    Else
+                        ' Jiné typy (např. String, Integer) ignorujeme
+                        Continue For
+                    End If
+
+                    If numericValue > 0 Then
+                        timestamps.Add(rec.TrailStart.Time)
+                        values.Add(selectedValue)
+                    End If
+                End If
+            Next
+
+            If values.Any() Then
+                Return Tuple.Create(timestamps.ToArray(), values.ToArray())
+            Else
+                Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {})
+            End If
+
+        Else
+            Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {})
         End If
     End Function
 

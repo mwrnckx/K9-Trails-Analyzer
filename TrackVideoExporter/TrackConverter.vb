@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.Runtime.CompilerServices.RuntimeHelpers
 Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
@@ -306,6 +307,55 @@ Public Class TrackConverter
         End If
 
         Return totalLengthOfFirst_trkseg ' Result in kilometers
+    End Function
+
+    Public Function calculateDeviation(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) As Double?
+        Dim totalDeviation As Double = 0.0
+        Dim lat1, lon1, lat2, lon2 As Double
+
+        Dim timeNode As XmlNode = Nothing
+
+        Dim dogSegment As XmlNode = SelectSingleChildNode("trkseg", dogTrkNode)
+        Dim runnerSegment As XmlNode = SelectSingleChildNode("trkseg", runnerTrkNode)
+        ' If the segment exists, calculate its length
+        If dogSegment IsNot Nothing AndAlso runnerSegment IsNot Nothing Then
+            ' Select all track points in the first segment (<trkpt>)
+            Dim dogTrackPoints As XmlNodeList = SelectChildNodes("trkpt", dogSegment)
+            Dim runnerTrackPoints As XmlNodeList = SelectChildNodes("trkpt", runnerSegment)
+
+            ' Calculate the distance between each point in the first segment
+            For Each dpoint As XmlNode In dogTrackPoints
+                Try
+                    ' Check if attributes exist and load them as Double
+                    If dpoint.Attributes("lat") IsNot Nothing AndAlso dpoint.Attributes("lon") IsNot Nothing Then
+                        lat1 = Convert.ToDouble(dpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+                        lon1 = Convert.ToDouble(dpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+
+                        Dim deviationForThisPoint As Double = Double.MaxValue
+                        For Each rpoint As XmlNode In runnerTrackPoints
+                            ' Check if attributes exist and load them as Double
+                            If rpoint.Attributes("lat") IsNot Nothing AndAlso rpoint.Attributes("lon") IsNot Nothing Then
+                                lat2 = Convert.ToDouble(rpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+                                lon2 = Convert.ToDouble(rpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+
+                                ' Calculate the distance between the previous and current point
+                                Dim deviationForThisRunnerPoint As Double = HaversineDistance(lat1, lon1, lat2, lon2, "m")
+                                If deviationForThisRunnerPoint < deviationForThisPoint Then
+                                    deviationForThisPoint = deviationForThisRunnerPoint
+                                End If
+                            End If
+                        Next
+                        totalDeviation += deviationForThisPoint
+                    End If
+                Catch ex As Exception
+                    ' Adding a more detailed exception message
+                    Debug.WriteLine("Error: " & ex.Message)
+                    'RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
+                End Try
+            Next
+            Return totalDeviation / dogTrackPoints.Count ' Average deviation in meters
+        End If
+        Return Nothing
     End Function
 
     ' Function to calculate the distance in km between two GPS points using the Haversine formula

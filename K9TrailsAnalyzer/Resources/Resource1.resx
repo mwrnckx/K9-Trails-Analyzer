@@ -129,6 +129,9 @@
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
     <value>Speed of the dog on the trails (km/h)</value>
   </data>
+  <data name="Y-AxisLabelDeviation" xml:space="preserve">
+    <value>Trail deviation (m)</value>
+  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Date  </value>
   </data>
