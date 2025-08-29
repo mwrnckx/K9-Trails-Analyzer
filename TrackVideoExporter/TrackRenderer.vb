@@ -142,8 +142,8 @@ Public Class PngRenderer
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
                 Dim center As New PointF(backgroundTiles.bgmap.Width, 0) ' střed růžice
-                Dim arrowlength As Single = 0.08 * diagonal
-                DrawWindArrow(g, center, arrowlength, Color.Orange, windDirection, windSpeed)
+                Dim arrowlength As Single = 0.07 * diagonal
+                DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
             End If
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
@@ -215,8 +215,8 @@ Public Class PngRenderer
             'first the direction of the wind:
             If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
                 Dim center As New PointF(backgroundTiles.bgmap.Width, 0) ' střed růžice
-                Dim arrowlength As Single = 0.08 * diagonal
-                DrawWindArrow(g, center, arrowlength, Color.Orange, windDirection, windSpeed)
+                Dim arrowlength As Single = 0.07 * diagonal
+                DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
             End If
 
 
@@ -382,73 +382,73 @@ Public Class PngRenderer
     End Function
 
 
+
     ''' <summary>
     ''' Draws a simplified wind arrow with speed text and a semi-transparent background.
     ''' </summary>
     ''' <param name="g">The Graphics object to draw on.</param>
     ''' <param name="position">The top-right position of the wind arrow widget.</param>
-    ''' <param name="size">The size of the wind arrow widget.</param>
+    ''' <param name="arrowSize">The size of the wind arrow.</param>
     ''' <param name="color">The color of the wind arrow.</param>
     ''' <param name="windDirection">The direction from which the wind is blowing in degrees (0-360).</param>
     ''' <param name="windSpeed">The wind speed in m/s.</param>
-    Private Sub DrawWindArrow(g As Graphics, position As PointF, size As Single, color As Color, windDirection As Double, windSpeed As Double)
-        color = GetWindColor(windSpeed)
-        Dim arrowSize As Single = size * 0.4 ' Velikost šipky
+    Private Sub DrawWindArrow(g As Graphics, position As PointF, arrowSize As Single, windDirection As Double, windSpeed As Double)
+        ' Dynamická barva šipky
+        ' Předpokládáme, že funkce GetWindColor je implementována
+        Dim Color = GetWindColor(windSpeed)
+
         Dim text As String = CDbl(windSpeed).ToString("0.0", CultureInfo.InvariantCulture) & " m/s"
-        Dim arrowWidth As Single = arrowSize * 2
 
         Dim baseFont As New Font("Cascadia Code Semibold", 12, FontStyle.Bold)
         Dim baseSize As SizeF = g.MeasureString(text, baseFont)
 
-        ' Jaký poměr má mít šířka textu vůči arrowWidth
-        Dim scale As Single = arrowWidth / baseSize.Width
-
-        ' Nový font podle poměru (ale limituj minimální a maximální velikost)
+        ' Dynamická velikost fontu podle šířky šipky
+        Dim scale As Single = arrowSize / baseSize.Width
         Dim fontSize As Single = Math.Max(8, Math.Min(40, baseFont.Size * scale))
         Dim font As New Font("Cascadia Code Semibold", fontSize, FontStyle.Bold)
-
         Dim textSize As SizeF = g.MeasureString(text, font)
 
-
-        ' Vypočítáme polohu a rozměry pozadí
-        Dim padding As Single = size * 0.1
-        Dim arrowHeight As Single = arrowSize * 2
-        Dim totalWidth As Single = Math.Max(arrowWidth, textSize.Width) + padding * 2
-        Dim totalHeight As Single = arrowHeight + textSize.Height + padding * 2
+        ' Vypočítáme rozměry a polohu pozadí
+        Dim padding As Single = arrowSize * 0.2 ' Zvýšený padding pro větší přesah
+        Dim totalWidth As Single = Math.Max(arrowSize, textSize.Width) + padding * 2
+        Dim totalHeight As Single = arrowSize + textSize.Height + padding * 2 ' Přidán prostor pro šipku
         Dim backgroundRect As New RectangleF(position.X - totalWidth, position.Y, totalWidth, totalHeight)
 
-        ' Vykreslíme poloprůhledný bílý obdélník
+        ' Vykreslíme poloprůhledný bílý obdélník s kulatými rohy
         Using bgBrush As New SolidBrush(Color.FromArgb(75, Color.White))
-            g.FillRectangle(bgBrush, backgroundRect)
+            ' Použijeme GraphicsPath pro zakulacení rohů
+            Using path As New System.Drawing.Drawing2D.GraphicsPath()
+                Dim radius As Integer = backgroundRect.Width / 4.0F ' Poloměr zakulacení
+                path.AddArc(backgroundRect.X, backgroundRect.Y, radius, radius, 180, 90)
+                path.AddArc(backgroundRect.X + backgroundRect.Width - radius, backgroundRect.Y, radius, radius, 270, 90)
+                path.AddArc(backgroundRect.X + backgroundRect.Width - radius, backgroundRect.Y + backgroundRect.Height - radius, radius, radius, 0, 90)
+                path.AddArc(backgroundRect.X, backgroundRect.Y + backgroundRect.Height - radius, radius, radius, 90, 90)
+                path.CloseFigure()
+                g.FillPath(bgBrush, path)
+            End Using
         End Using
 
-        ' Vypočítáme pozice šipky a textu
-        Dim arrowX As Single = position.X - totalWidth / 2
-        Dim arrowY As Single = position.Y + totalHeight / 2 - textSize.Height / 2
-        Dim textX As Single = position.X - totalWidth / 2 - textSize.Width / 2
-        Dim textY As Single = arrowY + arrowSize + padding
+        ' Vypočítáme pozice šipky a textu vzhledem k pozadí
+        Dim arrowX As Single = backgroundRect.X + totalWidth / 2
+        Dim arrowY As Single = backgroundRect.Y + padding + arrowSize / 2
+        Dim textX As Single = backgroundRect.X + totalWidth / 2 - textSize.Width / 2
+        Dim textY As Single = arrowY + arrowSize / 2 + padding
 
         ' Kreslení šipky s otočením o 180 stupňů
-        Using arrowBrush As New SolidBrush(color)
+        Using arrowBrush As New SolidBrush(Color)
             Dim oldState = g.Save()
             g.TranslateTransform(arrowX, arrowY)
             g.RotateTransform(CSng(windDirection + 180)) ' Otočí o 180°
 
             ' Vykreslení těla šipky (trojúhelník)
             Dim arrowPoints() As PointF = {
-            New PointF(0, -arrowSize),
-            New PointF(-arrowSize * 0.5F, arrowSize * 0.5F),
+            New PointF(0, -arrowSize * 2.0F / 3.0F),
+            New PointF(-arrowSize / 3.0F, arrowSize / 3.0F),
             New PointF(0, 0),
-            New PointF(arrowSize * 0.5F, arrowSize * 0.5F)
+            New PointF(arrowSize / 3.0F, arrowSize / 3.0F),
+            New PointF(0, -arrowSize * 2.0F / 3.0F)
         }
             g.FillPolygon(arrowBrush, arrowPoints)
-            arrowPoints = {
-            New PointF(0, -arrowSize),
-            New PointF(-arrowSize * 0.5F, arrowSize * 0.5F),
-            New PointF(0, 0),
-            New PointF(arrowSize * 0.5F, arrowSize * 0.5F),
-            New PointF(0, -arrowSize)
-        }
             g.DrawLines(New Pen(Color.Black), arrowPoints)
             g.Restore(oldState)
         End Using

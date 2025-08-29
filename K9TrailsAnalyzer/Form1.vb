@@ -1089,6 +1089,16 @@ Public Class Form1
             ' Pro test: vypiš vybrané cesty
             Debug.WriteLine(record)
             Try
+                record.Description = Await record.BuildLocalisedDescriptionAsync(record.Description) 'async kvůli počasí!
+                record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
+                record.WriteLocalizedReports() 'zapíše popis do DogTracku
+                record.IsAlreadyProcessed = True 'už byl soubor zpracován
+                record.Save()
+            Catch ex As Exception
+
+            End Try
+
+            Try
                 Await CreateVideoFromGPXRecord(record)
             Catch ex As Exception
                 mboxEx($"Creating a video from a file {record.FileName} failed." & vbCrLf & $"Message: {ex}")
