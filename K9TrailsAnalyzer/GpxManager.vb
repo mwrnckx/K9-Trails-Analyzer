@@ -525,8 +525,12 @@ Public Class GPXRecord
         End Get
     End Property
 
-    Public ReadOnly Property TrailDeviation As Double?
+    Dim _trailDeviation As Double = -1
+    Public ReadOnly Property TrailDeviation As Double
         Get
+            If _trailDeviation >= 0 Then 'cache
+                Return _trailDeviation
+            End If
             If Me.Tracks.Count < 2 Then Return Nothing
             Dim dogtrack, runnerTrail As TrackAsTrkNode
             For Each track As TrackAsTrkNode In Me.Tracks
@@ -537,7 +541,8 @@ Public Class GPXRecord
                 End If
             Next track
             If dogtrack IsNot Nothing AndAlso runnerTrail IsNot Nothing Then
-                Return dogtrack.calculateDeviation(runnerTrail)
+                _trailDeviation = dogtrack.calculateDeviation(runnerTrail)
+                Return _trailDeviation
             End If
             Return Nothing 'pokud nenajde žádnýdogTrail, vrátí Nothing
         End Get
@@ -562,8 +567,8 @@ Public Class GPXRecord
     End Property
 
     'Public Property TrkNodes As XmlNodeList
-    Public Property TrailAge As TimeSpan?
-    Public Property TotalDistance As Double
+    Public Property TrailAge As TimeSpan = TimeSpan.Zero
+    Public Property TotalDistance As Double = CDbl(0) 'celková vzdálenost všech zpracovaných trailů, záleží na zvoleném období
     Public Property Description As String
     'Public Property DescriptionParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle))
 
@@ -585,15 +590,34 @@ Public Class GPXRecord
         End Get
     End Property
 
-
-    Public ReadOnly Property DogSpeed As Double?
+    Dim _DogSpeed As Double = -1
+    Public ReadOnly Property DogSpeed As Double
         Get
+            If _DogSpeed >= 0 Then 'cache
+                Return _DogSpeed
+            End If
             If Me.DogStart Is Nothing Or Me.DogFinish Is Nothing Then
                 Return Nothing
             End If
+            Dim dogTrackDistance As Double = -1
+            For Each track As TrackAsTrkNode In Me.Tracks
+                If track.TrackType = TrackType.DogTrack Then
+                    dogTrackDistance = track.TrackDistance
+                End If
+            Next track
             If Not Me.DogStart.Time = DateTime.MinValue AndAlso Not Me.DogFinish.Time = DateTime.MinValue Then
+                If dogTrackDistance >= 0 Then
+                    If Math.Abs(Me.TrailDistance - dogTrackDistance) / dogTrackDistance > 0.1 Then
+                        'pokud je rozdíl mezi dogTrack a TrailDistance větší než 10%, je něco špatně
+                        RaiseEvent WarningOccurred($"Warning: In file {Me.FileName}, the difference between TrailDistance ({Me.TrailDistance.ToString("F1")} km) and DogTrack distance ({dogTrackDistance.ToString("F1")} km) is greater than 10 %. Using DogTrack distance for speed calculation.", Color.Red)
+                    End If
+                    'pokud je k dispozici vzdálenost dogTrack, použije ji
+                    _DogSpeed = Math.Round(dogTrackDistance / (Me.DogFinish.Time - Me.DogStart.Time).TotalHours, 1)
+                    Return _DogSpeed
+                End If
                 If (Me.DogFinish.Time - Me.DogStart.Time).TotalHours > 0 Then
-                    Return Math.Round(Me.TrailDistance / (Me.DogFinish.Time - Me.DogStart.Time).TotalHours, 1)
+                    _DogSpeed = Math.Round(Me.TrailDistance / (Me.DogFinish.Time - Me.DogStart.Time).TotalHours, 1)
+                    Return _DogSpeed
                 End If
             End If
             Return Nothing
@@ -691,8 +715,8 @@ Public Class GPXRecord
     End Sub
 
 
-    Public Function GetAgeFromTime() As TimeSpan?
-        Dim ageFromTime As TimeSpan?
+    Public Function GetAgeFromTime() As TimeSpan
+        Dim ageFromTime As TimeSpan = TimeSpan.Zero
         If Me.DogStart Is Nothing Or Me.RunnerStart Is Nothing Then
             Return Nothing
         End If
@@ -706,18 +730,18 @@ Public Class GPXRecord
         Return ageFromTime
     End Function
 
-    Public Function GetAge() As TimeSpan?
+    Public Function GetAge() As TimeSpan
         ' Vrací dvojici: (Age, IsNotInComments)
-        Dim ageFromTime As TimeSpan? = GetAgeFromTime()
-        Dim ageFromComments As TimeSpan? = TimeSpan.Zero
+        Dim ageFromTime As TimeSpan = GetAgeFromTime()
+        Dim ageFromComments As TimeSpan = TimeSpan.Zero
 
 
         Dim ageIsNotInComments As Boolean = (ageFromComments = TimeSpan.Zero)
-        If ageFromTime?.TotalMinutes > 0 Then
+        If ageFromTime.TotalMinutes > 0 Then
             Return ageFromTime
         Else
             If Not String.IsNullOrWhiteSpace(Me.Description) Then ageFromComments = GetAgeFromComments(Me.Description)
-            If ageFromComments?.TotalMinutes > 0 Then
+            If ageFromComments.TotalMinutes > 0 Then
                 Return ageFromComments
             Else
                 Debug.WriteLine($"Age of the trail { Me.Reader.FileName} wasn't found!")

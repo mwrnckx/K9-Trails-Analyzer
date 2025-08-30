@@ -262,7 +262,7 @@ Public Class TrackConverter
 
 
     Public Function CalculateTrailDistance(trkNode As XmlNode) As Double
-        Dim totalLengthOfFirst_trkseg As Double = 0.0
+        Dim totalLengthOfFirst_trkseg As Double = -1.0F
         Dim lat1, lon1, lat2, lon2 As Double
         Dim firstPoint As Boolean = True
 
@@ -291,6 +291,7 @@ Public Class TrackConverter
                             ' Calculate the distance between the previous and current point
                             lat2 = lat
                             lon2 = lon
+                            If totalLengthOfFirst_trkseg < 0 Then totalLengthOfFirst_trkseg = 0 'odstranění počáteční hodnoty -1
                             totalLengthOfFirst_trkseg += HaversineDistance(lat1, lon1, lat2, lon2, "km")
 
                             ' Move the current point into lat1, lon1 for the next iteration
@@ -307,6 +308,7 @@ Public Class TrackConverter
         End If
 
         Return totalLengthOfFirst_trkseg ' Result in kilometers
+
     End Function
 
     Public Function calculateDeviation(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) As Double?

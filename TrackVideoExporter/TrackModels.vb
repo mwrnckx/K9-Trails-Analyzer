@@ -238,10 +238,17 @@ Public Class TrackAsTrkNode 'track as trkNode
         End Get
     End Property
 
+    ''' <summary>
+    ''' Calculates the total distance of the track in meters.
+    ''' </summary>
+    ''' <remarks>This property uses the TrackConverter to calculate the distance based on the TrkNode.</remarks>
+    Dim _trackDistance As Double = -1
     Public ReadOnly Property TrackDistance As Double
         Get
+            If _trackDistance >= 0 Then Return _trackDistance
             Dim conv As New TrackConverter()
-            Return conv.CalculateTrailDistance(Me.TrkNode)
+            _trackDistance = conv.CalculateTrailDistance(Me.TrkNode)
+            Return _trackDistance
         End Get
     End Property
 
