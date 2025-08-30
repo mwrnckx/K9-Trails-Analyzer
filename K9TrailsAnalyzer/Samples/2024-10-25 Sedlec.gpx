@@ -7,8 +7,7 @@
         <k9:dogName>REX</k9:dogName>
         <k9:goal>plowed field</k9:goal>
         <k9:trail>📏: 0,4 km 45 min. single knowing, plowed field, road, crossed on the road by two people, two dogs and cars</k9:trail>
-        <k9:performance> she was very inaccurate in the field
-        </k9:performance>
+        <k9:performance> she was very inaccurate in the field</k9:performance>
         <k9:weather temperature="15" windSpeed="2.33" windDirection="149" precipitation="0" relHumidity="69" cloudCover="94">🌡15 °C  💨 2,3 m/s SSE 💧69 %   💧0 mm/h ⛅94 %</k9:weather>
       </k9:report>
     </extensions>
@@ -18,8 +17,7 @@
   <trk>
     <type>TrailLayer</type>
     <name>2024-10-25Sedlec </name>
-    <desc><![CDATA[📍 plowed field<br>👣 📏: 0,4 km 45 min. single knowing, plowed field, road, crossed on the road by two people, two dogs and cars<br>🏅  she was very inaccurate in the field
-        <br>🌡15 °C  💨 2,3 m/s SSE 💧69 %   💧0 mm/h ⛅94 %]]></desc>
+    <desc><![CDATA[📍 plowed field<br>👣 📏: 0,4 km 45 min. single knowing, plowed field, road, crossed on the road by two people, two dogs and cars<br>🏅  she was very inaccurate in the field<br>🌡15 °C  💨 2,3 m/s SSE 💧69 %   💧0 mm/h ⛅94 %]]></desc>
     <extensions>
       <k9:TrackType>RunnerTrail</k9:TrackType>
     </extensions>

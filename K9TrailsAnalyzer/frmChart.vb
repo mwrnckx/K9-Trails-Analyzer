@@ -31,8 +31,25 @@ Partial Class frmChart
         Me.dogName = dogname
         Thread.CurrentThread.CurrentCulture = _CultureInfo
         InitializeComponent()
+    End Sub
+
+    ' Konstruktor, který pøijme data
+    Public Sub New(dogname As String, data As List(Of (X As Date, Y As Double)), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
+        ' Rozdìlení na X a Y osy
+        Me.X_Data = data.Select(Function(p) p.Item1).ToArray()
+        Me.Y_Data = data.Select(Function(p) p.Item2).ToArray()
+        Me.yAxisLabel = yAxisLabel
+        Me.startDate = _startDate
+        Me.endDate = _endDate
+        Me.Text = _meText
+        Me.isIntercept = _isIntercept
+        Me.chartType = _chartType
+        Me.dogName = dogname
+        Thread.CurrentThread.CurrentCulture = _CultureInfo
+        InitializeComponent()
 
     End Sub
+
     ' Konstruktor, který pøijme data
     Public Sub New(dogname As String, _X_data As String(), _Y_data As Double(), yAxisLabel As String, _startDate As Date, _endDate As Date, _meText As String, _isIntercept As Boolean, _chartType As SeriesChartType, _CultureInfo As CultureInfo)
         Me.X_DataString = _X_data

@@ -101,7 +101,6 @@ Public Class GpxFileManager
                         _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description) 'async kvůli počasí!
                     End If
                     _gpxRecord.TrailAge = _gpxRecord.GetAge
-                    'Dim deviation = _gpxRecord.TrailDeviation
                     If _gpxRecord.IsAlreadyProcessed = False Then 'možno přeskočit, už to proběhlo...
                         _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku Runner
                         _gpxRecord.WriteLocalizedReports() 'zapíše popis do DogTracku

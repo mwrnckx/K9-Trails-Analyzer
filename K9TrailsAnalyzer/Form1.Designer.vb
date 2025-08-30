@@ -456,6 +456,7 @@ Partial Class Form1
         For Each file In Directory.GetFiles(defaultDir)
             Dim appdataPath = Path.Combine(Application.StartupPath, "AppData", Path.GetFileName(file))
             If IO.Path.Exists(appdataPath) Then
+                'pókud už existuje uživatelské nastavení, tak se default hodnotami nepřepisuje!
                 Continue For
             End If
             IO.File.Move(file, appdataPath) 'pokud tam už něco je nepřepisuje se!

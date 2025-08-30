@@ -443,7 +443,7 @@ Public Class Form1
 
 
     Private Charts As New List(Of frmChart)
-    Private Sub btnChartsClick(sender As Object, e As EventArgs) Handles btnCharts.Click
+    Private Async Sub btnChartsClick(sender As Object, e As EventArgs) Handles btnCharts.Click
         'zruší předchozí grafy
         CloseGrafs()
 
@@ -454,72 +454,96 @@ Public Class Form1
         End If
 
         'what to display
-        Dim yAxisData() As Double
-        Dim yAxisLabel As String
-        Dim xAxisData As Date()
-        Dim GrafText As String
 
         Dim chart1 As frmChart
 
         ' Získání dat pro graf rychlosti
-        'Dim speedData = GetGraphData(Of Double)(gpxRecords, Function(r) r.DogSpeed)
-        Dim speedData = GetGraphData(Of Double)(
-    gpxRecords,
-    Function(r) If(r.DogSpeed.HasValue, r.DogSpeed.Value, Double.NaN)
-)
 
-        xAxisData = speedData.Item1
-        yAxisData = speedData.Item2
-        yAxisLabel = Resource1.Y_AxisLabelSpeed
-        GrafText = yAxisLabel
-        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        chart1.Show()
+
+        chart1 = Await LoadGraphDataAsync(
+    gpxRecords,
+    Function(r) If(r.DogSpeed.HasValue, r.DogSpeed.Value, Double.NaN),
+    Function(v) v,
+    Resource1.Y_AxisLabelSpeed,
+    Resource1.Y_AxisLabelSpeed,
+    SeriesChartType.Point
+)
+        '    data = GetGraphData(Of Double)(
+        'gpxRecords,
+        'Function(r) If(r.DogSpeed.HasValue, r.DogSpeed.Value, Double.NaN),
+        'Function(v) v
+        '    )
+
+        '    yAxisLabel = Resource1.Y_AxisLabelSpeed
+        '    GrafText = yAxisLabel
+        '    chart1 = New frmChart(ActiveDog.Name, data, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        '    chart1.Show()
         Charts.Add(chart1)
 
 
         ' Získání dat pro graf stáří trasy
-        Dim trailAgeData = GetGraphData(Of Double)(
+        chart1 = Await LoadGraphDataAsync(
     gpxRecords,
-    Function(r) If(r.TrailAge.HasValue, r.TrailAge.Value.TotalHours, Double.NaN)
+    Function(r) If(r.TrailAge.HasValue, r.TrailAge.Value, TimeSpan.Zero),
+    Function(ts) ts.TotalHours,
+    Resource1.Y_AxisLabelAge,
+    Resource1.Y_AxisLabelAge,
+    SeriesChartType.Point
 )
-        xAxisData = trailAgeData.Item1
-        yAxisData = trailAgeData.Item2
 
-        yAxisLabel = Resource1.Y_AxisLabelAge
-        GrafText = Resource1.Y_AxisLabelAge
-        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        chart1.Show()
+
+
+
+        '        Dim trailAgeData = GetGraphData(Of Double)(
+        '    gpxRecords,
+        '    Function(r) If(r.TrailAge.HasValue, r.TrailAge.Value.TotalHours, Double.NaN)
+        ')
+        '        xAxisData = trailAgeData.Item1
+        '        yAxisData = trailAgeData.Item2
+
+        '        yAxisLabel = Resource1.Y_AxisLabelAge
+        '        GrafText = Resource1.Y_AxisLabelAge
+        '        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        '        chart1.Show()
         Charts.Add(chart1)
 
-        ' Získání dat pro graf přesnosti trasy
-        Dim trailDeviationData = GetGraphData(Of Double)(gpxRecords, Function(r) If(r.TrailDeviation.HasValue, r.TrailDeviation.Value, Double.NaN))
-        xAxisData = trailDeviationData.Item1
-        yAxisData = trailDeviationData.Item2
-        yAxisLabel = Resource1.Y_AxisLabelDeviation
-        GrafText = Resource1.Y_AxisLabelDeviation
-        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        chart1.Show()
-        Charts.Add(chart1)
 
         'Distances
         ' Získání dat pro graf vzdálenosti
-        Dim distanceData = GetGraphData(Of Double)(gpxRecords, Function(r) r.TrailDistance)
-        xAxisData = distanceData.Item1
-        yAxisData = distanceData.Item2
-        yAxisLabel = Resource1.Y_AxisLabelLength
-        GrafText = yAxisLabel
-        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
-        chart1.Show()
+        chart1 = Await LoadGraphDataAsync(
+    gpxRecords,
+    Function(r) r.TrailDistance,
+    Function(v) v,
+    Resource1.Y_AxisLabelLength,
+    Resource1.Y_AxisLabelLength,
+    SeriesChartType.Point
+)
+
+        'Dim distanceData = GetGraphData(Of Double)(gpxRecords, Function(r) r.TrailDistance)
+        'xAxisData = distanceData.Item1
+        'yAxisData = distanceData.Item2
+        'yAxisLabel = Resource1.Y_AxisLabelLength
+        'GrafText = yAxisLabel
+        'chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        'chart1.Show()
         Charts.Add(chart1)
 
         'TotDistance
-        Dim totDistanceData = GetGraphData(Of Double)(gpxRecords, Function(r) r.TotalDistance)
-        xAxisData = totDistanceData.Item1
-        yAxisData = totDistanceData.Item2
-        yAxisLabel = Resource1.Y_AxisLabelTotalLength
-        GrafText = yAxisLabel
-        chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
-        chart1.Show()
+        chart1 = Await LoadGraphDataAsync(
+    gpxRecords,
+    Function(r) r.TotalDistance,
+    Function(v) v,
+    Resource1.Y_AxisLabelTotalLength,
+    Resource1.Y_AxisLabelTotalLength,
+    SeriesChartType.Point)
+
+        'Dim totDistanceData = GetGraphData(Of Double)(gpxRecords, Function(r) r.TotalDistance)
+        'xAxisData = totDistanceData.Item1
+        'yAxisData = totDistanceData.Item2
+        'yAxisLabel = Resource1.Y_AxisLabelTotalLength
+        'GrafText = yAxisLabel
+        'chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, False, SeriesChartType.Point, currentCulture)
+        'chart1.Show()
         Charts.Add(chart1)
 
 
@@ -551,31 +575,101 @@ Public Class Form1
         Dim MonthlyChart1 = New frmChart(ActiveDog.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
+
+        ' Získání dat pro graf přesnosti trasy
+        'Dim trailDeviationData = GetGraphData(Of Double)(gpxRecords, Function(r) If(r.TrailDeviation.HasValue, r.TrailDeviation.Value, Double.NaN))
+        ' spustí GetGraphData mimo UI vlákno
+        'Dim trailDeviationData = Await Task.Run(Function()
+        '                                            Return GetGraphData(Of Double)(
+        '    gpxRecords,
+        '    Function(r) If(r.TrailDeviation.HasValue, r.TrailDeviation.Value, Double.NaN)
+        ')
+        '                                        End Function)
+
+        chart1 = Await LoadGraphDataAsync(
+    gpxRecords,
+    Function(r) If(r.TrailDeviation.HasValue, r.TrailDeviation.Value, Double.NaN),
+    Function(v) v,
+    Resource1.Y_AxisLabelDeviation,
+    Resource1.Y_AxisLabelDeviation,
+    SeriesChartType.Point
+)
+        'xAxisData = trailDeviationData.Item1
+        'yAxisData = trailDeviationData.Item2
+        'yAxisLabel = Resource1.Y_AxisLabelDeviation
+        'GrafText = Resource1.Y_AxisLabelDeviation
+        'chart1 = New frmChart(ActiveDog.Name, xAxisData, yAxisData, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, GrafText, True, SeriesChartType.Point, currentCulture)
+        'chart1.Show()
+        Charts.Add(chart1)
+
         ' Nastavení AcceptButton pro formulář, aby se při stisku Enter spustil btnReadGpxFiles_Click
         Me.AcceptButton = Me.btnReadGpxFiles
 
     End Sub
 
-    Public Function GetGraphDataOld(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
-        If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
-            Dim timestamps As New List(Of DateTime)
-            Dim values As New List(Of T)
+    ' Pomocná univerzální metoda
+    Private Async Function LoadGraphDataAsync(Of T)(
+    gpxRecords As List(Of GPXRecord),
+    selector As Func(Of GPXRecord, T),
+    converter As Func(Of T, Double),
+    yAxisLabel As String,
+    grafText As String,
+    chartType As SeriesChartType
+) As Task(Of frmChart)
 
-            For Each rec In gpxRecords
-                If rec?.TrailStart IsNot Nothing Then
-                    timestamps.Add(rec.TrailStart.Time)
-                    values.Add(selector(rec))
-                End If
-            Next
+        ' Spočítá data mimo UI vlákno
+        Dim data = Await Task.Run(Function()
+                                      Return GetGraphData(Of T)(gpxRecords, selector, converter)
+                                  End Function)
 
-            Return Tuple.Create(timestamps.ToArray(), values.ToArray())
-        Else
-            Debug.WriteLine("List gpxRecords je Nothing nebo prázdný. Graf nebude zobrazen.")
-            Return New Tuple(Of DateTime(), T())(New DateTime() {}, New T() {}) ' Prázdná pole
-        End If
+        ' Po dokončení vytvoří graf (už na UI vlákně)
+
+        'Dim chart1 = New frmChart(ActiveDog.Name, data, yAxisLabel, dtpStartDate.Value, dtpEndDate.Value, grafText, True, SeriesChartType.Point, currentCulture)
+
+        Dim chartForm As New frmChart(
+        ActiveDog.Name,
+        data,
+        yAxisLabel,
+        dtpStartDate.Value,
+        dtpEndDate.Value,
+        grafText,
+        True,
+        chartType,
+        currentCulture
+    )
+
+        chartForm.Show()
+        Return chartForm
     End Function
 
-    Public Function GetGraphData(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
+    Private Function GetGraphData(Of T)(
+    records As IEnumerable(Of GPXRecord),
+    selector As Func(Of GPXRecord, T),
+    converter As Func(Of T, Double)
+) As List(Of (X As DateTime, Y As Double))
+
+        Dim result As New List(Of (X As DateTime, Y As Double))
+
+        For Each rec In records
+            If rec?.TrailStart IsNot Nothing Then
+                Dim value As T = selector(rec)
+                Dim y As Double = converter(value)
+
+                ' Přeskakujeme NaN nebo nereálné hodnoty
+                If Not Double.IsNaN(y) AndAlso Not Double.IsInfinity(y) Then
+                    result.Add((X:=rec.TrailStart.Time, Y:=y))
+                End If
+            End If
+        Next
+
+        Return result
+    End Function
+
+
+
+
+    Public Function GetGraphDataOld(Of T)(gpxRecords As List(Of GPXRecord),
+                                       selector As Func(Of GPXRecord, T)) As Tuple(Of DateTime(), T())
         If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
             Dim timestamps As New List(Of DateTime)
             Dim values As New List(Of T)
