@@ -130,7 +130,6 @@ Partial Class frmChart
 
         ' Nastavení vlastností pro osu Y
         Me.chart1.ChartAreas(0).AxisY.Title = yAxisLabel
-
         ' Pokud chceme zobrazit møížku
         chart1.ChartAreas(0).AxisX.MajorGrid.Enabled = True
         chart1.ChartAreas(0).AxisY.MajorGrid.Enabled = True

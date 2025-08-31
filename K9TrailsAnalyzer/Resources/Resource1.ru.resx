@@ -130,9 +130,6 @@
     <value>Скорость собаки на следy (км/ч)</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Y-AxisLabelDeviation" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Дата</value>
   </data>
@@ -170,7 +167,7 @@
     <value>Возраст</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
-    <value>Скорость собаки</value>
+    <value>Скорость</value>
   </data>
   <data name="outAverageDistance" xml:space="preserve">
     <value>Средняя длина следoв</value>

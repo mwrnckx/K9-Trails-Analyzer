@@ -130,7 +130,7 @@
     <value>Speed of the dog on the trails (km/h)</value>
   </data>
   <data name="Y-AxisLabelDeviation" xml:space="preserve">
-    <value>Trail deviation (m)</value>
+    <value>Dog deviation (m)</value>
   </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Date  </value>
@@ -169,7 +169,7 @@
     <value>Age</value>
   </data>
   <data name="outSpeed" xml:space="preserve">
-    <value>Dog's Speed</value>
+    <value>Speed</value>
   </data>
   <data name="outAverageDistance" xml:space="preserve">
     <value>Average length of trails</value>

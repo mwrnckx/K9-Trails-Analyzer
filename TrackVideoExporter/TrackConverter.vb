@@ -1,9 +1,11 @@
 ﻿Imports System.Drawing
 Imports System.Runtime.CompilerServices.RuntimeHelpers
+Imports System.Security.Cryptography
 Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
+Imports Microsoft.VisualBasic.Logging
 
 ''' <summary>
 ''' Provides conversion of GPX data between various internal formats used for video rendering.
@@ -85,7 +87,8 @@ Public Class TrackConverter
             If timenode IsNot Nothing Then
                 time = DateTime.Parse(timenode.InnerText, Nothing, Globalization.DateTimeStyles.AssumeUniversal)
             Else
-                Throw New Exception("Time node not found in trkpt.")
+                Debug.WriteLine("Time node not found in trkpt.")
+                time = DateTime.MinValue
             End If
 
             Dim geopoint As New TrackGeoPoint With {
@@ -261,104 +264,314 @@ Public Class TrackConverter
     End Function
 
 
-    Public Function CalculateTrailDistance(trkNode As XmlNode) As Double
-        Dim totalLengthOfFirst_trkseg As Double = -1.0F
-        Dim lat1, lon1, lat2, lon2 As Double
-        Dim firstPoint As Boolean = True
+    'Public Function CalculateTrailDistance(trkNode As XmlNode) As Double
+    '    Dim totalLengthOfFirst_trkseg As Double = -1.0F
+    '    Dim lat1, lon1, lat2, lon2 As Double
+    '    Dim firstPoint As Boolean = True
 
-        Dim timeNode As XmlNode = Nothing
+    '    Dim timeNode As XmlNode = Nothing
 
-        Dim firstSegment As XmlNode = SelectSingleChildNode("trkseg", trkNode)
-        ' If the segment exists, calculate its length
-        If firstSegment IsNot Nothing Then
-            ' Select all track points in the first segment (<trkpt>)
-            Dim trackPoints As XmlNodeList = SelectChildNodes("trkpt", firstSegment)
+    '    Dim firstSegment As XmlNode = SelectSingleChildNode("trkseg", trkNode)
+    '    ' If the segment exists, calculate its length
+    '    If firstSegment IsNot Nothing Then
+    '        ' Select all track points in the first segment (<trkpt>)
+    '        Dim trackPoints As XmlNodeList = SelectChildNodes("trkpt", firstSegment)
 
-            ' Calculate the distance between each point in the first segment
-            For Each point As XmlNode In trackPoints
-                Try
-                    ' Check if attributes exist and load them as Double
-                    If point.Attributes("lat") IsNot Nothing AndAlso point.Attributes("lon") IsNot Nothing Then
-                        Dim lat As Double = Convert.ToDouble(point.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-                        Dim lon As Double = Convert.ToDouble(point.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+    '        ' Calculate the distance between each point in the first segment
+    '        For Each point As XmlNode In trackPoints
+    '            Try
+    '                ' Check if attributes exist and load them as Double
+    '                If point.Attributes("lat") IsNot Nothing AndAlso point.Attributes("lon") IsNot Nothing Then
+    '                    Dim lat As Double = Convert.ToDouble(point.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+    '                    Dim lon As Double = Convert.ToDouble(point.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
 
-                        If firstPoint Then
-                            ' Initialize the first point
-                            lat1 = lat
-                            lon1 = lon
-                            firstPoint = False
-                        Else
-                            ' Calculate the distance between the previous and current point
-                            lat2 = lat
-                            lon2 = lon
-                            If totalLengthOfFirst_trkseg < 0 Then totalLengthOfFirst_trkseg = 0 'odstranění počáteční hodnoty -1
-                            totalLengthOfFirst_trkseg += HaversineDistance(lat1, lon1, lat2, lon2, "km")
+    '                    If firstPoint Then
+    '                        ' Initialize the first point
+    '                        lat1 = lat
+    '                        lon1 = lon
+    '                        firstPoint = False
+    '                    Else
+    '                        ' Calculate the distance between the previous and current point
+    '                        lat2 = lat
+    '                        lon2 = lon
+    '                        If totalLengthOfFirst_trkseg < 0 Then totalLengthOfFirst_trkseg = 0 'odstranění počáteční hodnoty -1
+    '                        totalLengthOfFirst_trkseg += HaversineDistance(lat1, lon1, lat2, lon2, "km")
 
-                            ' Move the current point into lat1, lon1 for the next iteration
-                            lat1 = lat2
-                            lon1 = lon2
-                        End If
-                    End If
-                Catch ex As Exception
-                    ' Adding a more detailed exception message
-                    Debug.WriteLine("Error: " & ex.Message)
-                    RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
-                End Try
+    '                        ' Move the current point into lat1, lon1 for the next iteration
+    '                        lat1 = lat2
+    '                        lon1 = lon2
+    '                    End If
+    '                End If
+    '            Catch ex As Exception
+    '                ' Adding a more detailed exception message
+    '                Debug.WriteLine("Error: " & ex.Message)
+    '                RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
+    '            End Try
+    '        Next
+    '    End If
+
+    '    Return totalLengthOfFirst_trkseg ' Result in kilometers
+
+    'End Function
+
+    ' Enum pro reprezentaci stavu (pohyb / stání).
+    Private Enum MovementState
+        Moving
+        Stopped
+    End Enum
+    ' Struktura pro vrácení výsledků výpočtu.
+    Public Structure TrackStats
+        Public Property DistanceKm As Double
+        Public Property TotalTime As TimeSpan
+        Public Property MovingTime As TimeSpan
+        Public Property StoppedTime As TimeSpan
+        Public Property SpeedKmh As Double
+        Public Property Deviation As Double
+    End Structure
+    Public Function CalculateTrackStats(trkNode As XmlNode, Optional anotherTrkNode As XmlNode = Nothing) As TrackStats
+        Dim trkAsGeoPoints As TrackAsGeoPoints = ConvertTrackTrkPtsToGeoPoints(ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(trkNode, trackType:=TrackType.Unknown)))
+
+        ' --- Nastavení prahových hodnot podle GPXSee ---
+        Const MOVING_SPEED_THRESHOLD_MS As Double = 0.277  ' m/s (1.0 km/h)
+        Const STOPPED_SPEED_THRESHOLD_MS As Double = 0.1 ' m/s (0.36 km/h)
+
+        Dim totalMovingTime As TimeSpan = TimeSpan.Zero
+        Dim totalStoppedTime As TimeSpan = TimeSpan.Zero
+        Dim totalDistanceKm As Double = -1.0F
+        Dim currentState As MovementState
+        Dim SpeedKmh As Double = -1.0F
+
+        Dim trackGeoPoints As List(Of TrackGeoPoint) = trkAsGeoPoints.TrackGeoPoints
+        Dim anotherTrkAsGeoPoints As TrackAsGeoPoints
+        Dim runnerGeoPoints As List(Of TrackGeoPoint)
+        ' Převedeme runnera do XY
+        Dim runnerXY As New List(Of (X As Double, Y As Double))
+        Dim lat0 As Double
+        Dim lon0 As Double
+        If anotherTrkNode IsNot Nothing Then
+            anotherTrkAsGeoPoints = ConvertTrackTrkPtsToGeoPoints(ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(anotherTrkNode, trackType:=TrackType.Unknown)))
+            runnerGeoPoints = anotherTrkAsGeoPoints.TrackGeoPoints
+            ' Převedeme runnera do XY
+            lat0 = runnerGeoPoints(0).Location.Lat
+            lon0 = runnerGeoPoints(0).Location.Lon
+            For Each rpoint As TrackGeoPoint In runnerGeoPoints
+                Dim lat As Double = rpoint.Location.Lat 'Convert.ToDouble(rpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+                Dim lon As Double = rpoint.Location.Lon 'Convert.ToDouble(rpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+                Dim x, y As Double
+                LatLonToXY(lat, lon, lat0, lon0, x, y)
+                runnerXY.Add((x, y))
             Next
         End If
+        Dim totalDeviation As Double = 0F
 
-        Return totalLengthOfFirst_trkseg ' Result in kilometers
+        Dim segIndex As Integer = 0
 
-    End Function
+        ' --- Hlavní smyčka pro procházení bodů ---
+        For i As Integer = 0 To trackGeoPoints.Count - 2
+            Try
+                Dim point1 As TrackGeoPoint = trackGeoPoints(i)
+                Dim point2 As TrackGeoPoint = trackGeoPoints(i + 1)
 
-    Public Function calculateDeviation(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) As Double?
-        Dim totalDeviation As Double = 0.0
-        Dim lat1, lon1, lat2, lon2 As Double
 
-        Dim timeNode As XmlNode = Nothing
+                Dim timeDiff As TimeSpan = point2.Time - point1.Time
+                Dim distanceMeters As Double = HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
+                If distanceMeters > 0 Then
+                    If totalDistanceKm < 0 Then totalDistanceKm = 0 'odstranění počáteční hodnoty -1
+                End If
+                ' Přeskočíme segmenty s nulovým nebo záporným časem
+                If timeDiff.TotalSeconds <= 0 Then
+                    totalDistanceKm += distanceMeters / 1000.0F 'tohle je situace, když čas chybí, nutno zaočítat!
+                    Continue For
+                End If
 
-        Dim dogSegment As XmlNode = SelectSingleChildNode("trkseg", dogTrkNode)
-        Dim runnerSegment As XmlNode = SelectSingleChildNode("trkseg", runnerTrkNode)
-        ' If the segment exists, calculate its length
-        If dogSegment IsNot Nothing AndAlso runnerSegment IsNot Nothing Then
-            ' Select all track points in the first segment (<trkpt>)
-            Dim dogTrackPoints As XmlNodeList = SelectChildNodes("trkpt", dogSegment)
-            Dim runnerTrackPoints As XmlNodeList = SelectChildNodes("trkpt", runnerSegment)
+                Dim speedMs As Double = distanceMeters / timeDiff.TotalSeconds
 
-            ' Calculate the distance between each point in the first segment
-            For Each dpoint As XmlNode In dogTrackPoints
-                Try
-                    ' Check if attributes exist and load them as Double
-                    If dpoint.Attributes("lat") IsNot Nothing AndAlso dpoint.Attributes("lon") IsNot Nothing Then
-                        lat1 = Convert.ToDouble(dpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-                        lon1 = Convert.ToDouble(dpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
 
-                        Dim deviationForThisPoint As Double = Double.MaxValue
-                        For Each rpoint As XmlNode In runnerTrackPoints
-                            ' Check if attributes exist and load them as Double
-                            If rpoint.Attributes("lat") IsNot Nothing AndAlso rpoint.Attributes("lon") IsNot Nothing Then
-                                lat2 = Convert.ToDouble(rpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
-                                lon2 = Convert.ToDouble(rpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+                ' --- Logika stavového automatu (hystereze) ---
+                ' Pro první segment musíme určit počáteční stav
+                If i = 0 Then
+                    currentState = If(speedMs > MOVING_SPEED_THRESHOLD_MS, MovementState.Moving, MovementState.Stopped)
+                Else
+                    ' Pro další segmenty měníme stav pouze při překročení opačné hranice
+                    If currentState = MovementState.Moving AndAlso speedMs < STOPPED_SPEED_THRESHOLD_MS Then
+                        currentState = MovementState.Stopped
+                    ElseIf currentState = MovementState.Stopped AndAlso speedMs > MOVING_SPEED_THRESHOLD_MS Then
+                        currentState = MovementState.Moving
+                    End If
+                End If
 
-                                ' Calculate the distance between the previous and current point
-                                Dim deviationForThisRunnerPoint As Double = HaversineDistance(lat1, lon1, lat2, lon2, "m")
-                                If deviationForThisRunnerPoint < deviationForThisPoint Then
-                                    deviationForThisPoint = deviationForThisRunnerPoint
-                                End If
+                ' --- Sčítání časů podle aktuálního stavu ---
+                If currentState = MovementState.Moving Then
+                    totalMovingTime = totalMovingTime.Add(timeDiff)
+                    totalDistanceKm += distanceMeters / 1000.0F 'počítá se jen pohyb
+
+
+                    ' Výpočet odchylky od druhé trasy:
+                    If anotherTrkNode IsNot Nothing Then
+                        Dim qx, qy As Double
+                        LatLonToXY(point1.Location.Lat, point1.Location.Lon, lat0, lon0, qx, qy)
+
+                        ' Najdeme nejbližší bod na aktuálním + sousedních segmentech
+                        Dim windowSize As Int16 = runnerXY.Count / 2
+                        Dim minDist As Double = Double.MaxValue
+                        For j = Math.Max(0, segIndex - windowSize) To Math.Min(runnerXY.Count - 2, segIndex + windowSize)
+                            Dim p1 = runnerXY(j)
+                            Dim p2 = runnerXY(j + 1)
+                            Dim dx As Double = p2.X - p1.X
+                            Dim dy As Double = p2.Y - p1.Y
+                            Dim t As Double = ((qx - p1.X) * dx + (qy - p1.Y) * dy) / (dx * dx + dy * dy)
+                            t = Math.Max(0, Math.Min(1, t))
+                            Dim projX As Double = p1.X + t * dx
+                            Dim projY As Double = p1.Y + t * dy
+                            Dim dist As Double = Math.Sqrt((qx - projX) ^ 2 + (qy - projY) ^ 2)
+                            If dist < minDist Then
+                                minDist = dist
+                                segIndex = j ' posuneme okno dopředu
                             End If
-                        Next
-                        totalDeviation += deviationForThisPoint
+                        Next j
+                        totalDeviation += minDist * timeDiff.TotalSeconds ' vážená odchylka v metrech * sekundách
                     End If
-                Catch ex As Exception
-                    ' Adding a more detailed exception message
-                    Debug.WriteLine("Error: " & ex.Message)
-                    'RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
-                End Try
-            Next
-            Return totalDeviation / dogTrackPoints.Count ' Average deviation in meters
-        End If
-        Return Nothing
+                Else
+                        totalStoppedTime = totalStoppedTime.Add(timeDiff)
+                End If
+
+            Catch ex As Exception
+                ' Adding a more detailed exception message
+                Debug.WriteLine("Error: " & ex.Message)
+                RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
+            End Try
+        Next i
+        'End If
+
+
+        Return New TrackStats With {
+                .DistanceKm = totalDistanceKm,
+                .MovingTime = totalMovingTime,
+                .StoppedTime = totalStoppedTime,
+                .Deviation = If(anotherTrkNode IsNot Nothing AndAlso totalMovingTime.TotalSeconds > 0, totalDeviation / (totalMovingTime.TotalSeconds), -1.0F), ' průměrná odchylka v metrech
+                .TotalTime = totalMovingTime + totalStoppedTime,
+                .SpeedKmh = If(totalMovingTime.TotalHours > 0, totalDistanceKm / totalMovingTime.TotalHours, -1.0F)
+            }
+
     End Function
+
+
+
+    'Public Function CalculateDeviation(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) As Double?
+    '    Dim totalDeviation As Double = 0.0
+    '    Dim lat1, lon1, lat2, lon2 As Double
+
+    '    Dim timeNode As XmlNode = Nothing
+
+    '    Dim dogSegment As XmlNode = SelectSingleChildNode("trkseg", dogTrkNode)
+    '    Dim runnerSegment As XmlNode = SelectSingleChildNode("trkseg", runnerTrkNode)
+    '    ' If the segment exists, calculate its length
+    '    If dogSegment IsNot Nothing AndAlso runnerSegment IsNot Nothing Then
+    '        ' Select all track points in the first segment (<trkpt>)
+    '        Dim dogTrackPoints As XmlNodeList = SelectChildNodes("trkpt", dogSegment)
+    '        Dim runnerTrackPoints As XmlNodeList = SelectChildNodes("trkpt", runnerSegment)
+
+    '        ' Calculate the distance between each point in the first segment
+    '        For Each dpoint As XmlNode In dogTrackPoints
+    '            Try
+    '                ' Check if attributes exist and load them as Double
+    '                If dpoint.Attributes("lat") IsNot Nothing AndAlso dpoint.Attributes("lon") IsNot Nothing Then
+    '                    lat1 = Convert.ToDouble(dpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+    '                    lon1 = Convert.ToDouble(dpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+
+    '                    Dim deviationForThisPoint As Double = Double.MaxValue
+    '                    For Each rpoint As XmlNode In runnerTrackPoints
+    '                        ' Check if attributes exist and load them as Double
+    '                        If rpoint.Attributes("lat") IsNot Nothing AndAlso rpoint.Attributes("lon") IsNot Nothing Then
+    '                            lat2 = Convert.ToDouble(rpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+    '                            lon2 = Convert.ToDouble(rpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+
+    '                            ' Calculate the distance between the previous and current point
+    '                            Dim deviationForThisRunnerPoint As Double = HaversineDistance(lat1, lon1, lat2, lon2, "m")
+    '                            If deviationForThisRunnerPoint < deviationForThisPoint Then
+    '                                deviationForThisPoint = deviationForThisRunnerPoint
+    '                            End If
+    '                        End If
+    '                    Next
+    '                    totalDeviation += deviationForThisPoint
+    '                End If
+    '            Catch ex As Exception
+    '                ' Adding a more detailed exception message
+    '                Debug.WriteLine("Error: " & ex.Message)
+    '                'RaiseEvent WarningOccurred("Error processing point: " & ex.Message & Environment.NewLine, Color.Red)
+    '            End Try
+    '        Next
+    '        Return totalDeviation / dogTrackPoints.Count ' Average deviation in meters
+    '    End If
+    '    Return Nothing
+    'End Function
+
+    Public Function CalculateDeviationProjection(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) As Double
+        Dim dogTrkAsGeoPoints As TrackAsGeoPoints = ConvertTrackTrkPtsToGeoPoints(ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(dogTrkNode, trackType:=TrackType.Unknown)))
+        Dim runnerTrkAsGeoPoints As TrackAsGeoPoints = ConvertTrackTrkPtsToGeoPoints(ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(runnerTrkNode, trackType:=TrackType.Unknown)))
+
+
+        Dim totalDeviation As Double = 0F
+
+
+        Dim dogGeoPoints As List(Of TrackGeoPoint) = dogTrkAsGeoPoints.TrackGeoPoints
+        Dim runnerGeoPoints As List(Of TrackGeoPoint) = runnerTrkAsGeoPoints.TrackGeoPoints
+
+        ' Převedeme runnera do XY
+        Dim runnerXY As New List(Of (X As Double, Y As Double))
+        Dim lat0 As Double = runnerGeoPoints(0).Location.Lat
+        Dim lon0 As Double = runnerGeoPoints(0).Location.Lon
+
+        For Each rpoint As TrackGeoPoint In runnerGeoPoints
+            Dim lat As Double = rpoint.Location.Lat 'Convert.ToDouble(rpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim lon As Double = rpoint.Location.Lon 'Convert.ToDouble(rpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim x, y As Double
+            LatLonToXY(lat, lon, lat0, lon0, x, y)
+            runnerXY.Add((x, y))
+        Next
+
+        Dim segIndex As Integer = 0
+        For Each dpoint As TrackGeoPoint In dogGeoPoints
+            Dim lat As Double = dpoint.Location.Lat 'Convert.ToDouble(rpoint.Attributes("lat").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim lon As Double = dpoint.Location.Lon 'Convert.ToDouble(rpoint.Attributes("lon").Value, Globalization.CultureInfo.InvariantCulture)
+            Dim qx, qy As Double
+            LatLonToXY(lat, lon, lat0, lon0, qx, qy)
+
+            ' Najdeme nejbližší bod na aktuálním + sousedních segmentech
+            Dim windowSize As Int16 = runnerXY.Count / 2
+            Dim minDist As Double = Double.MaxValue
+            For i = Math.Max(0, segIndex - windowSize) To Math.Min(runnerXY.Count - 2, segIndex + windowSize)
+                Dim p1 = runnerXY(i)
+                Dim p2 = runnerXY(i + 1)
+                Dim dx As Double = p2.X - p1.X
+                Dim dy As Double = p2.Y - p1.Y
+                Dim t As Double = ((qx - p1.X) * dx + (qy - p1.Y) * dy) / (dx * dx + dy * dy)
+                t = Math.Max(0, Math.Min(1, t))
+                Dim projX As Double = p1.X + t * dx
+                Dim projY As Double = p1.Y + t * dy
+                Dim dist As Double = Math.Sqrt((qx - projX) ^ 2 + (qy - projY) ^ 2)
+                If dist < minDist Then
+                    minDist = dist
+                    segIndex = i ' posuneme okno dopředu
+                End If
+            Next
+            totalDeviation += minDist
+        Next
+
+        Return totalDeviation / dogGeoPoints.Count
+    End Function
+
+    ' Přibližný převod lat/lon na lokální souřadnice v metrech
+    Private Sub LatLonToXY(lat As Double, lon As Double, lat0 As Double, lon0 As Double, ByRef x As Double, ByRef y As Double)
+        Dim R As Double = 6371000.0 ' poloměr Země v m
+        Dim dLat As Double = (lat - lat0) * Math.PI / 180.0
+        Dim dLon As Double = (lon - lon0) * Math.PI / 180.0
+        Dim meanLat As Double = (lat + lat0) / 2.0 * Math.PI / 180.0
+        x = R * dLon * Math.Cos(meanLat)
+        y = R * dLat
+    End Sub
+
+
 
     ' Function to calculate the distance in km between two GPS points using the Haversine formula
     Public Function HaversineDistance(lat1 As Double, lon1 As Double, lat2 As Double, lon2 As Double, units As String) As Double

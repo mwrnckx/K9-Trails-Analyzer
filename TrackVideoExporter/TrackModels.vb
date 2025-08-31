@@ -242,14 +242,28 @@ Public Class TrackAsTrkNode 'track as trkNode
     ''' Calculates the total distance of the track in meters.
     ''' </summary>
     ''' <remarks>This property uses the TrackConverter to calculate the distance based on the TrkNode.</remarks>
-    Dim _trackDistance As Double = -1
-    Public ReadOnly Property TrackDistance As Double
+    'Dim _trackDistance As Double = -1
+    'Public ReadOnly Property TrackDistance As Double
+    '    Get
+    '        If _trackDistance >= 0 Then Return _trackDistance
+    '        Dim conv As New TrackConverter()
+    '        _trackDistance = conv.CalculateTrailDistance(Me.TrkNode)
+    '        Return _trackDistance
+    '    End Get
+    'End Property
+
+    Dim _TrackStats As New TrackConverter.TrackStats With {.DistanceKm = -1.0F, .TotalTime = TimeSpan.Zero, .MovingTime = TimeSpan.Zero, .StoppedTime = TimeSpan.Zero}
+    ''' <summary>
+    ''' Calculates the time statistics of the track including total time, moving time, and stopped time.
+    ''' </summary>
+    ''' <remarks>This property uses the TrackConverter to calculate the time statistics based on the TrkNode.</remarks>
+    Public Property TrackStats As TrackConverter.TrackStats
         Get
-            If _trackDistance >= 0 Then Return _trackDistance
-            Dim conv As New TrackConverter()
-            _trackDistance = conv.CalculateTrailDistance(Me.TrkNode)
-            Return _trackDistance
+            Return _TrackStats
         End Get
+        Set(value As TrackConverter.TrackStats)
+            _TrackStats = value
+        End Set
     End Property
 
 
@@ -269,7 +283,9 @@ Public Class TrackAsTrkNode 'track as trkNode
 
     Public Function calculateDeviation(anotherTrack As TrackAsTrkNode) As Double?
         Dim conv As New TrackConverter()
-        Return conv.calculateDeviation(Me.TrkNode, anotherTrack.TrkNode)
+        'Dim dev As Double? = conv.CalculateDeviation(Me.TrkNode, anotherTrack.TrkNode)
+        Dim dev2 As Double = conv.CalculateDeviationProjection(Me.TrkNode, anotherTrack.TrkNode)
+        Return dev2 'conv.calculateDeviation(Me.TrkNode, anotherTrack.TrkNode)
     End Function
 End Class
 

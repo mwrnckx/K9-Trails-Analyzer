@@ -49,8 +49,6 @@ Public Class Form1
             End If
         End If
 
-
-
         CreateGpxFileManager() 'smaže vše ve staré instanci a vytvoří novou
 
         rtbWarnings.Visible = True
@@ -87,6 +85,7 @@ Public Class Form1
         FillListViewWithGpxRecords()
         Enabled = True
         Me.AcceptButton = Me.btnCharts
+
     End Sub
 
 
@@ -155,6 +154,7 @@ Public Class Form1
         Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 18))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.Y_AxisLabelDeviation & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         Me.rtbOutput.AppendText(vbCrLf)
 
@@ -180,10 +180,15 @@ Public Class Form1
                     Me.rtbOutput.AppendText("        ")
                 End If
                 Dim dogspeed As Double = _gpxRecord.DogSpeed
-                If _gpxRecord.DogSpeed > 0 AndAlso _gpxRecord.DogSpeed > 0.2 Then
+                If _gpxRecord.DogSpeed > 0 Then
                     Me.rtbOutput.AppendText(_gpxRecord.DogSpeed.ToString("F1") & " km/h" & "   ")
                 Else
                     Me.rtbOutput.AppendText("           ")
+                End If
+                If _gpxRecord.dogDeviation > 0 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.dogDeviation.ToString("F1") & " m" & "   ")
+                Else
+                    Me.rtbOutput.AppendText("        ")
                 End If
                 If Not _gpxRecord.Description = Nothing Then
                     Me.rtbOutput.AppendText(_gpxRecord.Description)
@@ -540,7 +545,7 @@ Public Class Form1
 
         chart1 = Await LoadGraphDataAsync(
     gpxRecords,
-    Function(r) If(r.TrailDeviation > 0, r.TrailDeviation, Double.NaN),
+    Function(r) If(r.dogDeviation > 0 And r.dogDeviation < 40, r.dogDeviation, Double.NaN),
     Function(v) v,
     Resource1.Y_AxisLabelDeviation,
     Resource1.Y_AxisLabelDeviation,

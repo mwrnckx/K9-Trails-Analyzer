@@ -10,6 +10,7 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
+Imports TrackVideoExporter.TrackConverter
 
 
 Public Class GpxFileManager
@@ -171,29 +172,29 @@ Public Class GpxFileManager
                                 Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
                                 _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
                                 _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
-                                _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
-                                GPXFRecords.Add(_gpxRecord)
-                            Catch ex As Exception
-                                'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
-                                RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(remoteFilePath)}: {ex.Message}", Color.Red)
-                            End Try
+                            _gpxRecord.CreateTracks() 'seřadí trk podle času
+                            GPXFRecords.Add(_gpxRecord)
+                        Catch ex As Exception
+                            'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
+                            RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(remoteFilePath)}: {ex.Message}", Color.Red)
+                        End Try
 
-                        Else 'zpracované soubory
-                            Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
-                        End If
-                    Catch ex As Exception
+                    Else 'zpracované soubory
+                        Debug.WriteLine("Skipping: " & Path.GetFileName(remoteFilePath))
+                    End If
+                Catch ex As Exception
 
-                    End Try
-                Next
-                RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
+                End Try
+            Next
+            RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
 
-            Else 'local files
-                Dim Files As List(Of String) = Directory.GetFiles(DogInfo.ProcessedDirectory, "*.gpx").ToList()
+        Else 'local files
+            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.ProcessedDirectory, "*.gpx").ToList()
             For Each filePath In Files
                 Try
                     Dim _reader As New GpxReader(filePath)
                     Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
-                    _gpxRecord.CreateAndSortTracks() 'seřadí trk podle času
+                    _gpxRecord.CreateTracks() 'seřadí trk podle času
                     GPXFRecords.Add(_gpxRecord)
                 Catch ex As Exception
                     'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
@@ -309,7 +310,7 @@ Public Class GpxFileManager
                         If TryMerge(_gpxRecords(j), gpxFilesMerged(lastAddedIndex)) Then
                             usedIndexes.Add(j)
                             ' lastAddedIndex zůstává stejný, protože mergujeme do stejného objektu
-                            gpxFilesMerged(lastAddedIndex).CreateAndSortTracks() 'seřadí trk podle času!!
+                            gpxFilesMerged(lastAddedIndex).CreateTracks() 'seřadí trk podle času!!
                         End If
                     End If
                 End If
@@ -507,15 +508,21 @@ Public Class GPXRecord
             Return Me.Tracks.LastOrDefault(Function(t) t.TrackType = TrackType.DogTrack)?.EndTrackGeoPoint
         End Get
     End Property
+    Dim _TrackStats As New TrackStats
+    Public ReadOnly Property TrackStats As TrackConverter.TrackStats
+        Get
+            Return _TrackStats
+        End Get
+    End Property
 
     Public ReadOnly Property TrailDistance As Double
         Get
             If Me.Tracks.Count = 0 Then Return Nothing
             For Each track As TrackAsTrkNode In Me.Tracks
                 If track.TrackType = TrackType.RunnerTrail Then
-                    Return track.TrackDistance
+                    Return track.TrackStats.DistanceKm
                 ElseIf track.TrackType = TrackType.DogTrack Then
-                    Return track.TrackDistance
+                    Return track.TrackStats.DistanceKm
                 Else
 
                 End If
@@ -525,26 +532,19 @@ Public Class GPXRecord
         End Get
     End Property
 
-    Dim _trailDeviation As Double = -1
-    Public ReadOnly Property TrailDeviation As Double
+    Dim _dogDeviation As Double = -1.0F
+    Public ReadOnly Property dogDeviation As Double
         Get
-            If _trailDeviation >= 0 Then 'cache
-                Return _trailDeviation
+            If _dogDeviation >= 0 Then 'cache
+                Return _dogDeviation
             End If
-            If Me.Tracks.Count < 2 Then Return Nothing
-            Dim dogtrack, runnerTrail As TrackAsTrkNode
+            If Me.Tracks.Count < 2 Then Return -1.0F 'pokud je jen jeden track, tak není co porovnávat
             For Each track As TrackAsTrkNode In Me.Tracks
                 If track.TrackType = TrackType.DogTrack Then
-                    dogtrack = track
-                ElseIf track.TrackType = TrackType.RunnerTrail Then
-                    runnerTrail = track
+                    Return track.TrackStats.Deviation
                 End If
             Next track
-            If dogtrack IsNot Nothing AndAlso runnerTrail IsNot Nothing Then
-                _trailDeviation = dogtrack.calculateDeviation(runnerTrail)
-                Return _trailDeviation
-            End If
-            Return Nothing 'pokud nenajde žádnýdogTrail, vrátí Nothing
+            Return -1.0F 'pokud nenajde žádný dogTrail 
         End Get
     End Property
 
@@ -590,37 +590,21 @@ Public Class GPXRecord
         End Get
     End Property
 
-    Dim _DogSpeed As Double = -1
+    Dim _DogSpeed As Double = -1.0F
     Public ReadOnly Property DogSpeed As Double
         Get
             If _DogSpeed >= 0 Then 'cache
                 Return _DogSpeed
             End If
-            If Me.DogStart Is Nothing Or Me.DogFinish Is Nothing Then
-                Return Nothing
-            End If
+
             Dim dogTrackDistance As Double = -1
             For Each track As TrackAsTrkNode In Me.Tracks
                 If track.TrackType = TrackType.DogTrack Then
-                    dogTrackDistance = track.TrackDistance
+                    Return track.TrackStats.SpeedKmh
                 End If
             Next track
-            If Not Me.DogStart.Time = DateTime.MinValue AndAlso Not Me.DogFinish.Time = DateTime.MinValue Then
-                If dogTrackDistance >= 0 Then
-                    If Math.Abs(Me.TrailDistance - dogTrackDistance) / dogTrackDistance > 0.1 Then
-                        'pokud je rozdíl mezi dogTrack a TrailDistance větší než 10%, je něco špatně
-                        RaiseEvent WarningOccurred($"Warning: In file {Me.FileName}, the difference between TrailDistance ({Me.TrailDistance.ToString("F1")} km) and DogTrack distance ({dogTrackDistance.ToString("F1")} km) is greater than 10 %. Using DogTrack distance for speed calculation.", Color.Red)
-                    End If
-                    'pokud je k dispozici vzdálenost dogTrack, použije ji
-                    _DogSpeed = Math.Round(dogTrackDistance / (Me.DogFinish.Time - Me.DogStart.Time).TotalHours, 1)
-                    Return _DogSpeed
-                End If
-                If (Me.DogFinish.Time - Me.DogStart.Time).TotalHours > 0 Then
-                    _DogSpeed = Math.Round(Me.TrailDistance / (Me.DogFinish.Time - Me.DogStart.Time).TotalHours, 1)
-                    Return _DogSpeed
-                End If
-            End If
-            Return Nothing
+
+            Return -1.0F
         End Get
     End Property
 
@@ -745,7 +729,7 @@ Public Class GPXRecord
                 Return ageFromComments
             Else
                 Debug.WriteLine($"Age of the trail { Me.Reader.FileName} wasn't found!")
-                Return Nothing
+                Return TimeSpan.Zero
             End If
         End If
         Return Nothing
@@ -1335,8 +1319,8 @@ FoundRunnerTrailTrk:
 
     End Sub
 
-    Public Sub CreateAndSortTracks()
-        Tracks.Clear() ' Vyčistit seznam tracků
+    Public Sub CreateTracks()
+        Me.Tracks.Clear() ' Vyčistit seznam tracků
         'Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
         Dim parentNode As XmlNode = Me.TrkNodes(0)?.ParentNode
         If parentNode Is Nothing Then Exit Sub
@@ -1368,11 +1352,11 @@ FoundRunnerTrailTrk:
 
             Dim _TrackAsTrkNode As New TrackAsTrkNode(trkNode, trkTypeEnum)
 
-            Tracks.Add(_TrackAsTrkNode)
+            Me.Tracks.Add(_TrackAsTrkNode)
         Next
 
         ' Seřadit podle času
-        Tracks.Sort(Function(a, b) Nullable.Compare(a.StartTrackGeoPoint.Time, b.StartTrackGeoPoint.Time))
+        Me.Tracks.Sort(Function(a, b) Nullable.Compare(a.StartTrackGeoPoint.Time, b.StartTrackGeoPoint.Time))
 
         ' Odebrat staré <trk>
         For Each trk In TrkNodes
@@ -1381,46 +1365,69 @@ FoundRunnerTrailTrk:
 
         ' --- Doplnění <type> ---
 
-        Using dlg As New frmCrossTrailSelector(Tracks, Me.FileName)
+        Using dlg As New frmCrossTrailSelector(Me.Tracks, Me.FileName)
             'pokud nejsou vybrány typy trků, nebo pokud už nebyl soubor zpracován, tak se ptá
             If Not dlg.ValidateTrailTypes Or (Not Me.IsAlreadyProcessed) Then
 
-                If Tracks.Count = 1 Then
+                If Me.Tracks.Count = 1 Then
                     ' Zde volání  funkce, která vrátí typ trků
 
                     dlg.ShowDialog()
-                    Dim trk = Tracks(0).TrkNode
-                    Dim type = Tracks(0).TrackType
+                    Dim trk = Me.Tracks(0).TrkNode
+                    Dim type = Me.Tracks(0).TrackType
                     AddTypeToTrk(trk, type)
 
-                ElseIf Tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
-                    AddTypeToTrk(Tracks(0).TrkNode, TrackType.RunnerTrail)
-                    Tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
-                    AddTypeToTrk(Tracks(1).TrkNode, TrackType.DogTrack)
-                    Tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
-                ElseIf Tracks.Count > 2 Then
+                ElseIf Me.tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
+                    AddTypeToTrk(Me.Tracks(0).TrkNode, TrackType.RunnerTrail)
+                    Me.Tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
+                    AddTypeToTrk(Me.Tracks(1).TrkNode, TrackType.DogTrack)
+                    Me.Tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
+                ElseIf Me.tracks.Count > 2 Then
                     Try
-                        Tracks(Tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
+                        Me.Tracks(Me.Tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
                         ' Zde volání nějaké funkce, která vrátí typ trků
                         dlg.ShowDialog()
 
-                        For i As Integer = 0 To Tracks.Count - 1
-                            Dim trk = Tracks(i).TrkNode
-                            Dim type = Tracks(i).TrackType
+                        For i As Integer = 0 To Me.Tracks.Count - 1
+                            Dim trk = Me.Tracks(i).TrkNode
+                            Dim type = Me.Tracks(i).TrackType
                             AddTypeToTrk(trk, type)
                         Next
                     Catch ex As Exception
-                        RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
+                        RaiseEvent WarningOccurred($"me.tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
                     End Try
                 End If
             End If
         End Using
 
         ' Přidat zpět ve správném pořadí
-        For Each t In Tracks
+        For Each t In Me.Tracks
             parentNode.AppendChild(t.TrkNode)
         Next
+        CalculateTrackStats(Me.Tracks) 'vypočte statistiky
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
+    End Sub
+
+    Private Sub CalculateTrackStats(_tracks As List(Of TrackAsTrkNode))
+        Dim runnerTrail As TrackAsTrkNode = Nothing
+        For Each track As TrackAsTrkNode In _tracks
+            If track.TrackType = TrackType.RunnerTrail Then
+                runnerTrail = track
+            End If
+        Next track
+        Dim conv As New TrackConverter()
+        For Each track As TrackAsTrkNode In _tracks
+            If track.TrackType = TrackType.DogTrack Then
+                If runnerTrail IsNot Nothing Then
+                    track.TrackStats = conv.CalculateTrackStats(track.TrkNode, runnerTrail.TrkNode)
+                Else
+                    track.TrackStats = conv.CalculateTrackStats(track.TrkNode)
+                End If
+            Else
+                track.TrackStats = conv.CalculateTrackStats(track.TrkNode)
+            End If
+        Next track
+
     End Sub
 
 

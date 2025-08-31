@@ -538,7 +538,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Deviation of the trail (m).
+        '''  Vyhledá lokalizovaný řetězec podobný Trail deviation (m).
         '''</summary>
         Friend Shared ReadOnly Property Y_AxisLabelDeviation() As String
             Get

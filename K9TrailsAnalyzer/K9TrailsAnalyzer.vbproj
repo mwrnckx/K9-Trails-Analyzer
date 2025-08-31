@@ -15,7 +15,6 @@
   <FileVersion>0.0.0.0</FileVersion>
   <InformationalVersion>0.0.0</InformationalVersion>
     <AssemblyName>K9TrailsAnalyzer</AssemblyName>
-   <!-- <ImportedNamespaces>core=False,System.Data=False,System.Drawing=False,System.Windows.Forms=False,Microsoft.VisualBasic=True,System=True,System.Collections=True,System.Collections.Generic=True,System.Diagnostics=True,System.Linq=True,System.Xml.Linq=True,System.Threading.Tasks=True,K9TrailsAnalyzer=True</ImportedNamespaces> -->
     <ApplicationIcon>track.ico</ApplicationIcon>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
     <AppDesignerFolder>My Project</AppDesignerFolder>
@@ -36,11 +35,6 @@
     <Compile Remove="Resources\Resource1.uk1.Designer.vb" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Samples\2025-02-27Vojenské_stavby_Samo.gpx" />
-    <None Remove="Samples\2025-06-23_křížení.gpx" />
-  </ItemGroup>
-
  
   <ItemGroup>
     <Content Include="track.ico" />
@@ -49,7 +43,6 @@
   
 
   <ItemGroup>
-   <!-- <Import Include="core" /> -->
     <Import Include="System.Data" />
     <Import Include="System.Drawing" />
     <Import Include="System.Windows.Forms" />
@@ -242,6 +235,9 @@
 <ItemGroup>
   <EmbeddedResource Update="Form1.resx">
     <Generator></Generator>
+  </EmbeddedResource>
+  <EmbeddedResource Update="Resources\Resource1.cs.resx">
+    <Generator>ResXFileCodeGenerator</Generator>
   </EmbeddedResource>
   <EmbeddedResource Update="Resources\Resource1.resx">
     <Generator>ResXFileCodeGenerator</Generator>
