@@ -44,55 +44,123 @@ Public Class GpxFileManager
     Public Event WarningOccurred(message As String, _color As Color)
 
     ''' <summary>
-    ''' vrací průměr hodnot AgeXDistance v zadaném okně (windowSize)
+    ''' vrací součin stáří a délky tj. difficulty index, index obtížnosti jako funkci času
     ''' </summary>
-    Dim _DistXAges As New List(Of (time As DateTime, WeightedAge As Double))
-    Public ReadOnly Property DistXAges As List(Of (time As DateTime, DistXAge As Double))
+    Dim _DiffIndexes As New List(Of (time As DateTime, DiffIndex As Double))
+    Public ReadOnly Property DiffIndexes As List(Of (time As DateTime, DiffIndex As Double))
         Get
-            If _DistXAges.Count > 0 Then Return _DistXAges
+            If _DiffIndexes.Count > 0 Then Return _DiffIndexes
 
             For i = 0 To Me.GpxRecords.Count - 1
-                Dim DistAges As Double = Me._TotalDistances.Last.totalDistance + Me.GpxRecords(i).TrailDistance
-                Me._DistXAges.Add((Me.GpxRecords(i).TrailStart.Time, Me.GpxRecords(i).TrailDistance * Me.GpxRecords(i).TrailAge.TotalHours))
+                Dim diffIndex As Double = Me.GpxRecords(i).TrailDistance * Me.GpxRecords(i).TrailAge.TotalHours
+                If diffIndex > 0 Then 'když chybí age, nepřidává se
+                    Me._DiffIndexes.Add((Me.GpxRecords(i).TrailStart.Time, diffIndex))
+                End If
+
             Next i
-
-            Return _DistXAges
+            Return _DiffIndexes
         End Get
     End Property
 
-    Dim _DistXAges_orig As New List(Of (time As DateTime, WeightedAge As Double))
-    Public ReadOnly Property DistXAges_orig As List(Of (time As DateTime, WeightedAge As Double))
+    ''' <summary>
+    ''' vrací kumulativní součet indexu obtížnosti
+    ''' </summary>
+    Dim _TotalDiffIndexes As New List(Of (time As DateTime, DiffIndex As Double))
+    Public ReadOnly Property TotalDiffIndexes As List(Of (time As DateTime, DiffIndex As Double))
         Get
-            If _DistXAges.Count > 0 Then Return _DistXAges
-            Dim windowSize As Integer = Math.Ceiling(Me.GpxRecords.Count / 20)
-            For i = 0 To Me.GpxRecords.Count - windowSize
-                Dim window = Me.GpxRecords.Skip(i).Take(windowSize).ToList()
-                Dim countOfRecords = window.Where(Function(r) r.TrailAge.TotalHours * r.TrailDistance > 0).Count()
-
-                ' průměry AgexDistance
-
-                Dim numerator = window.Sum(Function(r) r.TrailAge.TotalHours * r.TrailDistance)
-                Dim averagedAgeXTime = (numerator) / countOfRecords
-                Dim numeratorTime = window.Sum(Function(r) r.TrailStart.Time.Ticks * r.TrailDistance)
-                Me._DistXAges.Add((window.Last.TrailStart.Time, averagedAgeXTime))
-            Next
-
-            Return _DistXAges
+            If _TotalDiffIndexes.Count > 0 Then Return _TotalDiffIndexes
+            Me._TotalDiffIndexes.Add(Me.DiffIndexes(0))
+            For i = 1 To Me.DiffIndexes.Count - 1
+                Me._TotalDiffIndexes.Add((Me.DiffIndexes(i).time, Me._TotalDiffIndexes.Last.DiffIndex + Me.DiffIndexes(i).DiffIndex))
+            Next i
+            Return _TotalDiffIndexes
         End Get
     End Property
 
+    ''' <summary>
+    ''' vrací seznam délek jednotlivých stop
+    ''' </summary>
+    Dim _Distances As New List(Of (time As DateTime, Distance As Double))
+    Public ReadOnly Property Distances As List(Of (time As DateTime, Distance As Double))
+        Get
+            If _Distances.Count > 0 Then Return _Distances
+
+            For i = 0 To Me.GpxRecords.Count - 1
+                Dim Distance As Double = Me.GpxRecords(i).TrailDistance
+                If Distance > 0 Then 'když chybí, nepřidává se
+                    Me._Distances.Add((Me.GpxRecords(i).TrailStart.Time, Distance))
+                End If
+
+            Next i
+            Return _Distances
+        End Get
+    End Property
+    ''' <summary>
+    ''' vrací kumulativní součet načuchaných vzdáleností
+    ''' </summary>
     Dim _TotalDistances As New List(Of (time As DateTime, totalDistance As Double))
     Public ReadOnly Property TotalDistances As List(Of (time As DateTime, totalDistance As Double))
         Get
             If _TotalDistances.Count > 0 Then Return _TotalDistances
-            Me._TotalDistances.Add((Me.GpxRecords(0).TrailStart.Time, Me.GpxRecords(0).TrailDistance))
-            For i = 1 To Me.GpxRecords.Count - 1
-                Dim totDist As Double = Me._TotalDistances.Last.totalDistance + Me.GpxRecords(i).TrailDistance
-                Me._TotalDistances.Add((Me.GpxRecords(i).TrailStart.Time, totDist))
+            Me._TotalDistances.Add((Me.Distances(0)))
+            For i = 1 To Me.Distances.Count - 1
+                If Me.Distances(i).Distance > 0 Then
+                    Me._TotalDistances.Add((Me.Distances(i).time, Me._TotalDistances.Last.totalDistance + Me.Distances(i).Distance))
+                End If
             Next i
             Return _TotalDistances
         End Get
     End Property
+
+    ''' <summary>
+    ''' vrací seznam stáří jednotlivých stop v hodinách
+    ''' </summary>
+    Dim _Ages As New List(Of (time As DateTime, Age As Double))
+    Public ReadOnly Property Ages As List(Of (time As DateTime, Age As Double))
+        Get
+            If _Ages.Count > 0 Then Return _Ages
+
+            For i = 0 To Me.GpxRecords.Count - 1
+                Dim Age As Double = Me.GpxRecords(i).TrailAge.TotalHours
+                If Age > 0 Then 'když chybí, nepřidává se
+                    Me._Ages.Add((Me.GpxRecords(i).TrailStart.Time, Age))
+                End If
+            Next i
+            Return _Ages
+        End Get
+    End Property
+
+    Dim _Speeds As New List(Of (time As DateTime, Speed As Double))
+    Public ReadOnly Property Speeds As List(Of (time As DateTime, Speed As Double))
+        Get
+            If _Speeds.Count > 0 Then Return _Speeds
+
+            For i = 0 To Me.GpxRecords.Count - 1
+                Dim Speed As Double = Me.GpxRecords(i).DogSpeed
+                If Speed > 0 Then 'když chybí, nepřidává se
+                    Me._Speeds.Add((Me.GpxRecords(i).TrailStart.Time, Speed))
+                End If
+            Next i
+            Return _Speeds
+        End Get
+    End Property
+
+    Dim _Deviations As New List(Of (time As DateTime, Deviation As Double))
+    Public ReadOnly Property Deviations As List(Of (time As DateTime, Deviation As Double))
+        Get
+            If _Deviations.Count > 0 Then Return _Deviations
+
+            For i = 0 To Me.GpxRecords.Count - 1
+                Dim Deviation As Double = Me.GpxRecords(i).dogDeviation
+                If Deviation > 0 Then 'když chybí, nepřidává se
+                    Me._Deviations.Add((Me.GpxRecords(i).TrailStart.Time, Deviation))
+                End If
+
+            Next i
+            Return _Deviations
+        End Get
+    End Property
+
 
 
 

@@ -253,7 +253,7 @@ Public Class Form1
 
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim totalDistance As Double = Me.GPXFilesManager.TotalDistances(Me.GPXFilesManager.TotalDistances.Count - 1).totalDistance '_gpxFilesManager.TotalDistance
+        Dim totalDistance As Double = Me.GPXFilesManager.TotalDistances.Last.totalDistance '_gpxFilesManager.TotalDistance
         Me.rtbOutput.AppendText(totalDistance.ToString("F1") & " km" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
@@ -284,21 +284,6 @@ Public Class Form1
         Me.rtbOutput.ScrollToCaret()
     End Sub
 
-    'Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord), selector As Func(Of GPXRecord, T)) As Double
-    '    If gpxRecords IsNot Nothing AndAlso gpxRecords.Any() Then
-    '        ' Ošetření pro typy Integer a Long a Double (můžeš rozšířit pro další typy)
-    '        If GetType(T) = GetType(Integer) OrElse GetType(T) = GetType(Long) Then
-    '            Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
-    '        ElseIf GetType(T) = GetType(Double) Then
-    '            Return gpxRecords.Select(Function(r) Convert.ToDouble(selector(r))).Average()
-    '        Else
-    '            Throw New ArgumentException("Typ T musí být numerický (Integer, Long, Double).")
-    '        End If
-    '    Else
-    '        Debug.WriteLine("List GpxRecords je Nothing nebo prázdný. Nelze vypočítat průměr.")
-    '        Return 0
-    '    End If
-    'End Function
 
     Public Function GetAverage(Of T)(gpxRecords As List(Of GPXRecord),
                                   selector As Func(Of GPXRecord, T),
@@ -458,7 +443,7 @@ Public Class Form1
 
 
     Private Charts As New List(Of frmChart)
-    Private Async Sub btnChartsClick(sender As Object, e As EventArgs) Handles btnCharts.Click
+    Private  Sub btnChartsClick(sender As Object, e As EventArgs) Handles btnCharts.Click
         'zruší předchozí grafy
         CloseGrafs()
 
@@ -473,60 +458,43 @@ Public Class Form1
         Dim chart1 As frmChart
 
         ' Získání dat pro graf rychlosti
-        chart1 = Await LoadGraphDataAsync(
-    gpxRecords,
-    Function(r) If(r.DogSpeed > 0, r.DogSpeed, Double.NaN),
-    Function(v) v,
-    Resource1.Y_AxisLabelSpeed,
-    Resource1.Y_AxisLabelSpeed,
-    SeriesChartType.Point
-)
+
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
         Charts.Add(chart1)
+
 
 
         ' Získání dat pro graf stáří trasy
-        chart1 = Await LoadGraphDataAsync(
-    gpxRecords,
-    Function(r) r.TrailAge,
-    Function(ts) ts.TotalHours,
-    Resource1.Y_AxisLabelAge,
-    Resource1.Y_AxisLabelAge,
-    SeriesChartType.Point
-)
-        Charts.Add(chart1)
-
-
-
-        'WeightedAge
-
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DistXAges, "Trail Difficulty Index (h km)", dtpStartDate.Value, dtpEndDate.Value, "Trail Difficulty Index (h km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
 
-        chart1 = Await LoadGraphDataAsync(
-    gpxRecords,
-    Function(r) If(r.dogDeviation > 0 And r.dogDeviation < 40, r.dogDeviation, Double.NaN),
-    Function(v) v,
-    Resource1.Y_AxisLabelDeviation,
-    Resource1.Y_AxisLabelDeviation,
-    SeriesChartType.Point
-)
+        'Difficulty indexes
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h km)", dtpStartDate.Value, dtpEndDate.Value, "Trail Difficulty Index (h km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
         Charts.Add(chart1)
 
-        'Distances
-        ' Získání dat pro graf vzdálenosti
-        chart1 = Await LoadGraphDataAsync(
-    gpxRecords,
-    Function(r) If(r.TrailDistance > 0, r.TrailDistance, Double.NaN),
-    Function(v) v,
-    Resource1.Y_AxisLabelLength,
-    Resource1.Y_AxisLabelLength,
-    SeriesChartType.Point
-)
+        'Total Difficulty indexes
 
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h km)", dtpStartDate.Value, dtpEndDate.Value, "Total Trail Difficulty Index (h km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
+
+
+        'Deviations
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
+
+
+
+        'Distances
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Distances, Resource1.Y_AxisLabelLength, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
         Charts.Add(chart1)
 
 
@@ -573,62 +541,6 @@ Public Class Form1
 
     End Sub
 
-    ' Pomocná univerzální metoda
-    Private Async Function LoadGraphDataAsync(Of T)(
-    gpxRecords As List(Of GPXRecord),
-    selector As Func(Of GPXRecord, T),
-    converter As Func(Of T, Double),
-    yAxisLabel As String,
-    grafText As String,
-    chartType As SeriesChartType
-) As Task(Of frmChart)
-
-        ' Spočítá data mimo UI vlákno
-        Dim data = Await Task.Run(Function()
-                                      Return GetGraphData(Of T)(gpxRecords, selector, converter)
-                                  End Function)
-
-        ' Po dokončení vytvoří graf (už na UI vlákně)
-
-        Dim chartForm As New frmChart(
-        ActiveDog.Name,
-        data,
-        yAxisLabel,
-        dtpStartDate.Value,
-        dtpEndDate.Value,
-        grafText,
-        True,
-        chartType,
-        currentCulture
-    )
-
-        chartForm.Show()
-        Return chartForm
-    End Function
-
-    Private Function GetGraphData(Of T)(
-    records As IEnumerable(Of GPXRecord),
-    selector As Func(Of GPXRecord, T),
-    converter As Func(Of T, Double)
-) As List(Of (X As DateTime, Y As Double))
-
-        Dim result As New List(Of (X As DateTime, Y As Double))
-
-        For Each rec In records
-            If rec?.TrailStart IsNot Nothing Then
-                Dim value As T = selector(rec)
-                Dim y As Double = converter(value)
-
-                ' Přeskakujeme NaN nebo nereálné hodnoty
-                If Not Double.IsNaN(y) AndAlso Not Double.IsInfinity(y) Then
-                    result.Add((X:=rec.TrailStart.Time, Y:=y))
-                End If
-            End If
-        Next
-
-        Return result
-    End Function
-
 
     Public Sub CloseGrafs()
         ' Zavření grafů
@@ -639,9 +551,6 @@ Public Class Form1
         ' Vyprázdnění seznamu
         Charts.Clear()
     End Sub
-
-
-
 
 
     Public Sub ChangeLanguage(sender As Object, e As EventArgs) Handles mnuCzech.Click, mnuGerman.Click, mnuRussian.Click, mnuUkrainian.Click, mnuPolish.Click, mnuEnglish.Click
