@@ -123,13 +123,18 @@
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Délka jednotlivých trailů (km)</value>
   </data>
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Vážená délka trailů (km)</value>
+  </data>
   <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Stáří trailů (hodin)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
     <value>Rychlost psa na trailech (km/h)</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelDeviation" xml:space="preserve">
+    <value>Odchylka psa (m)</value>
+  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Datum  </value>
   </data>
@@ -291,8 +296,5 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   </data>
   <data name="artickle" xml:space="preserve">
     <value>předmět</value>
-  </data>
-  <data name="Y-AxisLabelDeviation" xml:space="preserve">
-    <value>Odchylka psa (m)</value>
   </data>
 </root>

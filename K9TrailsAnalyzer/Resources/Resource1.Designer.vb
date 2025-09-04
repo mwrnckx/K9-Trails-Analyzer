@@ -331,7 +331,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Dog&apos;s Speed.
+        '''  Vyhledá lokalizovaný řetězec podobný Speed.
         '''</summary>
         Friend Shared ReadOnly Property outSpeed() As String
             Get
@@ -538,7 +538,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Trail deviation (m).
+        '''  Vyhledá lokalizovaný řetězec podobný Dog deviation (m).
         '''</summary>
         Friend Shared ReadOnly Property Y_AxisLabelDeviation() As String
             Get
@@ -552,6 +552,15 @@ Namespace My.Resources
         Friend Shared ReadOnly Property Y_AxisLabelLength() As String
             Get
                 Return ResourceManager.GetString("Y-AxisLabelLength", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Weighted trail length (km).
+        '''</summary>
+        Friend Shared ReadOnly Property Y_AxisLabelLengthAge() As String
+            Get
+                Return ResourceManager.GetString("Y-AxisLabelLengthAge", resourceCulture)
             End Get
         End Property
         

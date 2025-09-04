@@ -63,15 +63,25 @@ Public Class Form1
         GPXFilesManager.NumberOfDogs = DogsList.Count
 
 
+
+        Dim waitForm As New frmPleaseWait("I'm reading GPX files, please stand by...")
+        waitForm.Show()
+        waitForm.Refresh()
+
+
         Try
             If Await GPXFilesManager.Main Then
                 Enabled = True
+                waitForm.Close()
+
                 WriteRTBOutput(GPXFilesManager)
                 'Me.GPXFilesManager = GPXFilesManager
                 btnCharts.Visible = True
             Else
-                MessageBox.Show(Resource1.mBoxDataRetrievalFailed)
                 Enabled = True
+                waitForm.Close()
+                MessageBox.Show(Resource1.mBoxDataRetrievalFailed)
+
                 WriteRTBOutput(GPXFilesManager)
                 btnCharts.Visible = False
                 Return
@@ -215,7 +225,6 @@ Public Class Form1
         Next _gpxRecord
 
 
-        Dim totalDistance As Double = _gpxFilesManager.TotalDistance
         'Dim AgeAsDouble As List(Of Double) = age.Select(Function(ts) ts.TotalMinutes).ToList()
 
         ' Nastavení fontu a barvy textu
@@ -244,6 +253,7 @@ Public Class Form1
 
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
+        Dim totalDistance As Double = Me.GPXFilesManager.TotalDistances(Me.GPXFilesManager.TotalDistances.Count - 1).totalDistance '_gpxFilesManager.TotalDistance
         Me.rtbOutput.AppendText(totalDistance.ToString("F1") & " km" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
@@ -435,7 +445,7 @@ Public Class Form1
                 Next
 
                 ' Write the total distance at the end of the CSV file
-                writer.WriteLine($"Total;;; { GPXFilesManager.TotalDistance:F2}")
+                writer.WriteLine($"Total;;; { GPXFilesManager.TotalDistances.Last.totalDistance:F2}")
             End Using
 
 
@@ -463,8 +473,6 @@ Public Class Form1
         Dim chart1 As frmChart
 
         ' Získání dat pro graf rychlosti
-
-
         chart1 = Await LoadGraphDataAsync(
     gpxRecords,
     Function(r) If(r.DogSpeed > 0, r.DogSpeed, Double.NaN),
@@ -488,6 +496,26 @@ Public Class Form1
         Charts.Add(chart1)
 
 
+
+        'WeightedAge
+
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DistXAges, "Trail Difficulty Index (h km)", dtpStartDate.Value, dtpEndDate.Value, "Trail Difficulty Index (h km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
+        Charts.Add(chart1)
+
+
+
+
+        chart1 = Await LoadGraphDataAsync(
+    gpxRecords,
+    Function(r) If(r.dogDeviation > 0 And r.dogDeviation < 40, r.dogDeviation, Double.NaN),
+    Function(v) v,
+    Resource1.Y_AxisLabelDeviation,
+    Resource1.Y_AxisLabelDeviation,
+    SeriesChartType.Point
+)
+        Charts.Add(chart1)
+
         'Distances
         ' Získání dat pro graf vzdálenosti
         chart1 = Await LoadGraphDataAsync(
@@ -501,16 +529,13 @@ Public Class Form1
 
         Charts.Add(chart1)
 
-        'TotDistance
-        chart1 = Await LoadGraphDataAsync(
-    gpxRecords,
-    Function(r) r.TotalDistance,
-    Function(v) v,
-    Resource1.Y_AxisLabelTotalLength,
-    Resource1.Y_AxisLabelTotalLength,
-    SeriesChartType.Point)
 
+        'TotDistance
+        chart1 = New frmChart(ActiveDog.Name, Me.GPXFilesManager.TotalDistances, Resource1.Y_AxisLabelTotalLength, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1.Show()
         Charts.Add(chart1)
+
+
 
 
         ' Vygenerujeme seznam všech měsíců v daném období
@@ -542,17 +567,6 @@ Public Class Form1
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
 
-
-        chart1 = Await LoadGraphDataAsync(
-    gpxRecords,
-    Function(r) If(r.dogDeviation > 0 And r.dogDeviation < 40, r.dogDeviation, Double.NaN),
-    Function(v) v,
-    Resource1.Y_AxisLabelDeviation,
-    Resource1.Y_AxisLabelDeviation,
-    SeriesChartType.Point
-)
-
-        Charts.Add(chart1)
 
         ' Nastavení AcceptButton pro formulář, aby se při stisku Enter spustil btnReadGpxFiles_Click
         Me.AcceptButton = Me.btnReadGpxFiles
@@ -1171,7 +1185,7 @@ Public Class Form1
         Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData._windDirection, _gpxRecord.WeatherData._windSpeed)
         AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
-        Dim waitForm As New frmPleaseWait()
+        Dim waitForm As New frmPleaseWait("I'm making an overlay video, please stand by...")
         waitForm.Show()
 
         ' Spustíme na pozadí, aby nezamrzlo UI

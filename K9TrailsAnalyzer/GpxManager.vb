@@ -6,11 +6,13 @@ Imports System.Text
 Imports System.Text.Encodings.Web
 Imports System.Text.Json
 Imports System.Text.RegularExpressions
+Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
 Imports GPXTrailAnalyzer.My.Resources
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackConverter
+
 
 
 Public Class GpxFileManager
@@ -30,7 +32,7 @@ Public Class GpxFileManager
     Public dateFrom As Date
     Public dateTo As Date
     Public Property ForceProcess As Boolean = False ' 'pokud je True, zpracuje všechny soubory, i ty, které už byly zpracovány (přepíše popis a další věci)
-    Private ReadOnly maxAge As TimeSpan
+    Private ReadOnly maxAgeForMerge As TimeSpan
     Private ReadOnly prependDateToName As Boolean
     Private ReadOnly trimGPS_Noise As Boolean
     Private ReadOnly mergeDecisions As System.Collections.Specialized.StringCollection
@@ -39,17 +41,71 @@ Public Class GpxFileManager
     Private mergeCancel As Boolean = False 'don't merge 
 
     Public Property GpxRecords As New List(Of GPXRecord)
-    Public Property TotalDistance As Double = 0 'celková vzdálenost všech zpracovaných trailů
     Public Event WarningOccurred(message As String, _color As Color)
+
+    ''' <summary>
+    ''' vrací průměr hodnot AgeXDistance v zadaném okně (windowSize)
+    ''' </summary>
+    Dim _DistXAges As New List(Of (time As DateTime, WeightedAge As Double))
+    Public ReadOnly Property DistXAges As List(Of (time As DateTime, DistXAge As Double))
+        Get
+            If _DistXAges.Count > 0 Then Return _DistXAges
+
+            For i = 0 To Me.GpxRecords.Count - 1
+                Dim DistAges As Double = Me._TotalDistances.Last.totalDistance + Me.GpxRecords(i).TrailDistance
+                Me._DistXAges.Add((Me.GpxRecords(i).TrailStart.Time, Me.GpxRecords(i).TrailDistance * Me.GpxRecords(i).TrailAge.TotalHours))
+            Next i
+
+            Return _DistXAges
+        End Get
+    End Property
+
+    Dim _DistXAges_orig As New List(Of (time As DateTime, WeightedAge As Double))
+    Public ReadOnly Property DistXAges_orig As List(Of (time As DateTime, WeightedAge As Double))
+        Get
+            If _DistXAges.Count > 0 Then Return _DistXAges
+            Dim windowSize As Integer = Math.Ceiling(Me.GpxRecords.Count / 20)
+            For i = 0 To Me.GpxRecords.Count - windowSize
+                Dim window = Me.GpxRecords.Skip(i).Take(windowSize).ToList()
+                Dim countOfRecords = window.Where(Function(r) r.TrailAge.TotalHours * r.TrailDistance > 0).Count()
+
+                ' průměry AgexDistance
+
+                Dim numerator = window.Sum(Function(r) r.TrailAge.TotalHours * r.TrailDistance)
+                Dim averagedAgeXTime = (numerator) / countOfRecords
+                Dim numeratorTime = window.Sum(Function(r) r.TrailStart.Time.Ticks * r.TrailDistance)
+                Me._DistXAges.Add((window.Last.TrailStart.Time, averagedAgeXTime))
+            Next
+
+            Return _DistXAges
+        End Get
+    End Property
+
+    Dim _TotalDistances As New List(Of (time As DateTime, totalDistance As Double))
+    Public ReadOnly Property TotalDistances As List(Of (time As DateTime, totalDistance As Double))
+        Get
+            If _TotalDistances.Count > 0 Then Return _TotalDistances
+            Me._TotalDistances.Add((Me.GpxRecords(0).TrailStart.Time, Me.GpxRecords(0).TrailDistance))
+            For i = 1 To Me.GpxRecords.Count - 1
+                Dim totDist As Double = Me._TotalDistances.Last.totalDistance + Me.GpxRecords(i).TrailDistance
+                Me._TotalDistances.Add((Me.GpxRecords(i).TrailStart.Time, totDist))
+            Next i
+            Return _TotalDistances
+        End Get
+    End Property
+
+
+
 
     Public Sub New()
         'gpxRemoteDirectory = My.Settings.Directory
-        maxAge = New TimeSpan(My.Settings.maxAge, 0, 0)
+        maxAgeForMerge = New TimeSpan(My.Settings.maxAge, 0, 0)
         prependDateToName = My.Settings.PrependDateToName
         trimGPS_Noise = My.Settings.TrimGPSnoise
     End Sub
 
     Public Async Function Main() As Task(Of Boolean)
+
         Try
             Dim allFiles As New List(Of GPXRecord)  ' všechny soubory v pracovním adresáři
             Dim localFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(False) 'seznam starých souborů, které už byly zpracovány
@@ -83,7 +139,6 @@ Public Class GpxFileManager
                 Return False 'vrátí false, pokud nejsou žádné soubory v zadaném intervalu
             End If
 
-            Me.TotalDistance = 0 'resetuje celkovou vzdálenost
 
             ' Zpracování každého GPX souboru
             For Each _gpxRecord As GPXRecord In gpxFilesSortedAndFiltered
@@ -93,15 +148,14 @@ Public Class GpxFileManager
                         If prependDateToName Then _gpxRecord.PrependDateToFilename()
                         If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                     End If
-                    Me.TotalDistance += _gpxRecord.TrailDistance
-                    _gpxRecord.TotalDistance = Me.TotalDistance 'tohle není vlastnost recordu, záleží na zvoleném období
+
                     _gpxRecord.Description = _gpxRecord.BuildSummaryDescription() 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
                     'když už byl file v minulosti zpracován, tak se dál nemusí pokračovat, dialog by byl zbytečný
                     If _gpxRecord.LocalisedReports Is Nothing OrElse _gpxRecord.LocalisedReports.Count = 0 Then _gpxRecord.IsAlreadyProcessed = False
                     If Not _gpxRecord.IsAlreadyProcessed Then
                         _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description) 'async kvůli počasí!
                     End If
-                    _gpxRecord.TrailAge = _gpxRecord.GetAge
+
                     If _gpxRecord.IsAlreadyProcessed = False Then 'možno přeskočit, už to proběhlo...
                         _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku Runner
                         _gpxRecord.WriteLocalizedReports() 'zapíše popis do DogTracku
@@ -120,16 +174,20 @@ Public Class GpxFileManager
             Next _gpxRecord
 
             Me.GpxRecords = gpxFilesSortedAndFiltered
+
+
+
             If Me.GpxRecords IsNot Nothing And GpxRecords.Count > 0 Then
                 Return True
             Else
                 Return False
             End If
         Catch ex As Exception 'tohle aby to nezamrzlo, když se něco nepovede
-            RaiseEvent WarningOccurred("Something went wrong", Color.Red)
+            RaiseEvent WarningOccurred("Something went wrong" & vbCrLf & ex.ToString, Color.Red)
             Return False
 
         End Try
+
     End Function
 
 
@@ -142,36 +200,36 @@ Public Class GpxFileManager
             '    File.Copy(dowloadedDefault, downloadedPath)
             'End If
             Dim tracker As New FileTracker(downloadedPath)
-                Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
-                Dim i As Integer = 0
-                For Each remoteFilePath In Files
+            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
+            Dim i As Integer = 0
+            For Each remoteFilePath In Files
 
                 'tracker.MarkAsProcessed(remoteFilePath) 'toto připraveno pro tiché zpracování Originals
                 'Continue For '
                 Try
-                        If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
-                            Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
-                            ' Pokud je soubor nový nebo změněný, zpracujeme ho
-                            'zkopíruje soubor do lokálních adresářů
-                            Dim localOriginalsFilePath As String = Path.Combine(DogInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
-                            If File.Exists(localOriginalsFilePath) Then
-                                RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
-                            Else
-                                IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
-                            End If
+                    If tracker.IsNewOrChanged(remoteFilePath) Then 'new files!!!
+                        Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
+                        ' Pokud je soubor nový nebo změněný, zpracujeme ho
+                        'zkopíruje soubor do lokálních adresářů
+                        Dim localOriginalsFilePath As String = Path.Combine(DogInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
+                        If File.Exists(localOriginalsFilePath) Then
+                            RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
+                        Else
+                            IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
+                        End If
 
-                            Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, Path.GetFileName(remoteFilePath))
+                        Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, Path.GetFileName(remoteFilePath))
 
-                            i += 1
-                            tracker.MarkAsProcessed(remoteFilePath)
-                            Try
-                                'načte z Originals:
-                                Dim _reader As New GpxReader(localOriginalsFilePath)
-                                'Ukládat bude do Processed!
-                                _reader.FilePath = localProcessedFilePath
-                                Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
-                                _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
-                                _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
+                        i += 1
+                        tracker.MarkAsProcessed(remoteFilePath)
+                        Try
+                            'načte z Originals:
+                            Dim _reader As New GpxReader(localOriginalsFilePath)
+                            'Ukládat bude do Processed!
+                            _reader.FilePath = localProcessedFilePath
+                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
+                            _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
+                            _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
                             _gpxRecord.CreateTracks() 'seřadí trk podle času
                             GPXFRecords.Add(_gpxRecord)
                         Catch ex As Exception
@@ -284,7 +342,7 @@ Public Class GpxFileManager
             While j < _gpxRecords.Count
                 Dim timeDiff As TimeSpan = _gpxRecords(j).TrailStart.Time - _gpxRecords(lastAddedIndex).TrailStart.Time
 
-                If timeDiff > maxAge Then
+                If timeDiff > maxAgeForMerge Then
                     ' Další záznam je už moc starý, nemá cenu pokračovat
                     Exit While
                 End If
@@ -515,9 +573,24 @@ Public Class GPXRecord
         End Get
     End Property
 
+    Private _TrailAge As TimeSpan = TimeSpan.Zero
+    Public ReadOnly Property TrailAge As TimeSpan
+        Get
+            If _TrailAge > TimeSpan.Zero Then 'cache
+                Return _TrailAge
+            End If
+            _TrailAge = Me.GetAge
+            Return _TrailAge
+        End Get
+    End Property
+
+    Dim _trailDistance As Double = 0
     Public ReadOnly Property TrailDistance As Double
         Get
-            If Me.Tracks.Count = 0 Then Return Nothing
+            If _trailDistance > 0 Then 'cache
+                Return _trailDistance
+            End If
+            If Me.Tracks.Count = 0 Then Return 0
             For Each track As TrackAsTrkNode In Me.Tracks
                 If track.TrackType = TrackType.RunnerTrail Then
                     Return track.TrackStats.DistanceKm
@@ -528,9 +601,16 @@ Public Class GPXRecord
                 End If
             Next track
 
-            Return Nothing 'pokud nenajde žádný RunnerTrail, vrátí Nothing
+            Return 0F 'pokud nenajde žádný Trail, vrátí 0
         End Get
     End Property
+
+    Public ReadOnly Property DistanceXAge As Double
+        Get
+            Return Me.TrailDistance * Me.TrailAge.TotalHours 'km * h
+        End Get
+    End Property
+
 
     Dim _dogDeviation As Double = -1.0F
     Public ReadOnly Property dogDeviation As Double
@@ -567,8 +647,9 @@ Public Class GPXRecord
     End Property
 
     'Public Property TrkNodes As XmlNodeList
-    Public Property TrailAge As TimeSpan = TimeSpan.Zero
-    Public Property TotalDistance As Double = CDbl(0) 'celková vzdálenost všech zpracovaných trailů, záleží na zvoleném období
+    'Public Property TotalDistance As Double = CDbl(0) 'celková vzdálenost všech zpracovaných trailů, záleží na zvoleném období
+    'Public Property TotalDistanceXAge As Double = CDbl(0) 'celková vzdálenost všech zpracovaných trailů, záleží na zvoleném období
+    'Public Property TotalAge As Double = CDbl(0) 'celkové stáří trailů, záleží na zvoleném období
     Public Property Description As String
     'Public Property DescriptionParts As List(Of (Text As String, Color As Color, FontStyle As FontStyle))
 
@@ -702,14 +783,14 @@ Public Class GPXRecord
     Public Function GetAgeFromTime() As TimeSpan
         Dim ageFromTime As TimeSpan = TimeSpan.Zero
         If Me.DogStart Is Nothing Or Me.RunnerStart Is Nothing Then
-            Return Nothing
+            Return TimeSpan.Zero
         End If
         Try
             If Me.DogStart.Time <> Date.MinValue AndAlso Me.RunnerStart.Time <> Date.MinValue Then
                 ageFromTime = Me.DogStart.Time - Me.RunnerStart.Time
             End If
         Catch ex As Exception
-            Return Nothing
+            Return TimeSpan.Zero
         End Try
         Return ageFromTime
     End Function
@@ -732,7 +813,13 @@ Public Class GPXRecord
                 Return TimeSpan.Zero
             End If
         End If
-        Return Nothing
+        Return TimeSpan.Zero
+    End Function
+
+    Private Function GetWeightedAge(window As Integer) As Single
+        Dim lengthFromComments As Single = 0.0F
+        If Not String.IsNullOrWhiteSpace(Me.Description) Then lengthFromComments = GetLengthFromComments(Me.Description)
+        Return lengthFromComments
     End Function
 
 
@@ -814,8 +901,6 @@ FoundRunnerTrailTrk:
             Dim casString As String = Regex.Match(nalezenyCas, "\d+[.,]?\d*").Value.Replace(",", ".")
             Dim casCislo As Double = Double.Parse(casString, CultureInfo.InvariantCulture)
 
-
-
             Dim casTimeSpan As TimeSpan
             If nalezenyCas.Contains("h") Then
                 casTimeSpan = TimeSpan.FromHours(casCislo)
@@ -840,9 +925,6 @@ FoundRunnerTrailTrk:
             ' Převede desetinnou tečku nebo čárku na standardní tečku pro parsování
             Dim delkaString As String = Regex.Match(nalezenaDelka, "\d+[.,]?\d*").Value.Replace(",", ".")
             Dim delkaCislo As Double = Double.Parse(delkaString, CultureInfo.InvariantCulture)
-
-
-
 
             If nalezenaDelka.Contains("km") Then
 

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+      <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <RootNamespace>GPXTrailAnalyzer</RootNamespace>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
@@ -203,6 +203,11 @@
 
 
   <ItemGroup>
+    <Compile Update="Form1.Designer.vb">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Form1.resx</DependentUpon>
+    </Compile>
     <Compile Update="frmPleaseWait.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -233,10 +238,10 @@
 </ItemGroup>
 
 <ItemGroup>
-  <EmbeddedResource Update="Form1.resx">
-    <Generator></Generator>
-  </EmbeddedResource>
   <EmbeddedResource Update="Resources\Resource1.cs.resx">
+    <Generator>ResXFileCodeGenerator</Generator>
+  </EmbeddedResource>
+  <EmbeddedResource Update="Resources\Resource1.de.resx">
     <Generator>ResXFileCodeGenerator</Generator>
   </EmbeddedResource>
   <EmbeddedResource Update="Resources\Resource1.resx">

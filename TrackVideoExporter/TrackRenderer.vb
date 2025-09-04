@@ -216,12 +216,12 @@ Public Class PngRenderer
             g.Clear(Color.Transparent)
 
             'first the direction of the wind:
-            If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
-                Dim position As New PointF(backgroundTiles.bgmap.Width, 0) ' pravý horní roh růžice
-                Dim scale As Single = 0.15
-                DrawWindArrow(g, position, scale, myWindArrow)
-                'DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
-            End If
+            'If windDirection IsNot Nothing And windDirection >= 0 And windDirection <= 360 Then
+            '    Dim position As New PointF(backgroundTiles.bgmap.Width, 0) ' pravý horní roh růžice
+            '    Dim scale As Single = 0.15
+            '    DrawWindArrow(g, position, scale, myWindArrow)
+            '    'DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
+            'End If
 
 
             For Each track As TrackAsPointsF In tracksAsPointsF

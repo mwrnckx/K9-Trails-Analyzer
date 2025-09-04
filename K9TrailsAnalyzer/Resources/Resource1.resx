@@ -123,6 +123,9 @@
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Length of trails (km)</value>
   </data>
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Weighted trail length (km)</value>
+  </data>
   <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Age of trails (hours)</value>
   </data>

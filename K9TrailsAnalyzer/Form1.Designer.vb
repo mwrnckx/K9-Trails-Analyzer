@@ -156,14 +156,16 @@ Partial Class Form1
         mnuPrependDateToFileName.CheckOnClick = True
         mnuPrependDateToFileName.CheckState = CheckState.Checked
         mnuPrependDateToFileName.Name = "mnuPrependDateToFileName"
+        mnuPrependDateToFileName.Visible = False
         resources.ApplyResources(mnuPrependDateToFileName, "mnuPrependDateToFileName")
         ' 
         ' mnuTrimGPSNoise
         ' 
-        mnuTrimGPSNoise.Checked = True
+        mnuTrimGPSNoise.Checked = False
         mnuTrimGPSNoise.CheckOnClick = True
         mnuTrimGPSNoise.CheckState = CheckState.Checked
         mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
+        mnuTrimGPSNoise.Visible = False
         resources.ApplyResources(mnuTrimGPSNoise, "mnuTrimGPSNoise")
         ' 
         ' mnuMergingTracks
@@ -469,9 +471,10 @@ Partial Class Form1
         WriteRTBWarning("Logs:", Color.Maroon)
 
 
-        mnuPrependDateToFileName.Checked = My.Settings.PrependDateToName
+        mnuPrependDateToFileName.Checked = True ' My.Settings.PrependDateToName
         mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
         mnucbActiveDog.SelectedItem = My.Settings.ActiveDog
+
 
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days

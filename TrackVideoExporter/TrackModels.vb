@@ -134,7 +134,7 @@ Public Class TrackAsTrkPts 'track as trackPoints
     ''' <summary>
     ''' List of XML nodes representing track points in the GPX file.
     ''' </summary>
-    ''' <remarks>Each node corresponds to a <trkpt> element in the GPX file.</remarks>
+    ''' <remarks>Each node corresponds to a trkpt element in the GPX file.</remarks>
     ''' <returns>XmlNodeList containing track points.</returns>
     Public Property TrackPoints As XmlNodeList
 End Class
@@ -154,7 +154,7 @@ Public Class TrackAsTrkNode 'track as trkNode
         Me.TrkNode = trkNode
     End Sub
     ''' <summary>
-    ''' XmlNode representing the entire <trk> element in the GPX file.
+    ''' XmlNode representing the entire trk element in the GPX file.
     ''' </summary>
     Public Property TrkNode As XmlNode
 
@@ -238,19 +238,6 @@ Public Class TrackAsTrkNode 'track as trkNode
         End Get
     End Property
 
-    ''' <summary>
-    ''' Calculates the total distance of the track in meters.
-    ''' </summary>
-    ''' <remarks>This property uses the TrackConverter to calculate the distance based on the TrkNode.</remarks>
-    'Dim _trackDistance As Double = -1
-    'Public ReadOnly Property TrackDistance As Double
-    '    Get
-    '        If _trackDistance >= 0 Then Return _trackDistance
-    '        Dim conv As New TrackConverter()
-    '        _trackDistance = conv.CalculateTrailDistance(Me.TrkNode)
-    '        Return _trackDistance
-    '    End Get
-    'End Property
 
     Dim _TrackStats As New TrackConverter.TrackStats With {.DistanceKm = -1.0F, .TotalTime = TimeSpan.Zero, .MovingTime = TimeSpan.Zero, .StoppedTime = TimeSpan.Zero}
     ''' <summary>

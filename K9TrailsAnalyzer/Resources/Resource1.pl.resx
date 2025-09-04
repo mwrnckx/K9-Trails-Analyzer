@@ -123,13 +123,19 @@
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Długość śladów (km)</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelLengthAge" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
   <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Wiek tras (godziny)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
     <value>Prędkość psa na śladu (km/h)</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelDeviation" xml:space="preserve">
+    <value>Odchylenie szlaku (m)</value>
+  </data>
   <data name="X_AxisLabel" xml:space="preserve">
     <value>Data</value>
   </data>
@@ -287,8 +293,5 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   </data>
   <data name="artickle" xml:space="preserve">
     <value>przedmiot</value>
-  </data>
-  <data name="Y-AxisLabelDeviation" xml:space="preserve">
-    <value>Odchylenie szlaku (m)</value>
   </data>
 </root>
