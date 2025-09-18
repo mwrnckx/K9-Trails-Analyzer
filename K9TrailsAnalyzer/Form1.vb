@@ -56,8 +56,8 @@ Public Class Form1
         CloseGrafs()
 
         'období, které se má zpracovat
-        GPXFilesManager.dateFrom = dtpStartDate.Value
-        GPXFilesManager.dateTo = dtpEndDate.Value
+        GPXFilesManager.dateFrom = dtpStartDate.Value.Date
+        GPXFilesManager.dateTo = dtpEndDate.Value.Date.AddDays(1) 'aby to bylo až do půlnoci
 
         GPXFilesManager.DogInfo = ActiveDog
         GPXFilesManager.NumberOfDogs = DogsList.Count
@@ -459,14 +459,14 @@ Public Class Form1
 
         ' Získání dat pro graf rychlosti
 
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
         ' Získání dat pro graf stáří trasy
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -474,32 +474,32 @@ Public Class Form1
 
 
         'Difficulty indexes
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h km)", dtpStartDate.Value, dtpEndDate.Value, "Trail Difficulty Index (h km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
         'Total Difficulty indexes
 
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h km)", dtpStartDate.Value, dtpEndDate.Value, "Total Trail Difficulty Index (h km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'Deviations
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
         'Distances
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Distances, Resource1.Y_AxisLabelLength, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Distances, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'TotDistance
-        chart1 = New frmChart(ActiveDog.Name, Me.GPXFilesManager.TotalDistances, Resource1.Y_AxisLabelTotalLength, dtpStartDate.Value, dtpEndDate.Value, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, Me.GPXFilesManager.TotalDistances, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -507,8 +507,8 @@ Public Class Form1
 
 
         ' Vygenerujeme seznam všech měsíců v daném období
-        Dim allMonths = Enumerable.Range(0, 12 * (dtpEndDate.Value.Year - dtpStartDate.Value.Year) + (dtpEndDate.Value.Month - dtpStartDate.Value.Month) + 1).
-                    Select(Function(offset) dtpStartDate.Value.AddMonths(offset)).
+        Dim allMonths = Enumerable.Range(0, 12 * (GPXFilesManager.dateTo.Year - GPXFilesManager.dateFrom.Year) + (GPXFilesManager.dateTo.Month - GPXFilesManager.dateFrom.Month) + 1).
+                    Select(Function(offset) GPXFilesManager.dateFrom.AddMonths(offset)).
                     Select(Function(d) New DateTime(d.Year, d.Month, 1))
 
         ' Použijeme Left Join pro zahrnutí všech měsíců, i těch bez dat a použijeme trailStart
@@ -531,7 +531,7 @@ Public Class Form1
 
         Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y
         Dim monthlyGrafText = monthlyYAxisLabel ' Např. "Měsíční vzdálenost"
-        Dim MonthlyChart1 = New frmChart(ActiveDog.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, dtpStartDate.Value, dtpEndDate.Value, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
+        Dim MonthlyChart1 = New frmChart(ActiveDog.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
 

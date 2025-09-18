@@ -190,7 +190,7 @@ Partial Class frmChart
                 ' Pøidání regresní série do grafu
                 chart1.Series.Add(regressionSeries)
             Catch ex As Exception
-                Debug.WriteLine("Nepodaøilo se proložit pøímku")
+                Debug.WriteLine("Failed to interlace a straight line")
             End Try
 
 
