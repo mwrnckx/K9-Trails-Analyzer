@@ -163,7 +163,7 @@ Public Class Form1
         Me.rtbOutput.AppendText((My.Resources.Resource1.X_AxisLabel & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outLength & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAge & manySpaces).Substring(0, 8))
-        Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 18))
+        Me.rtbOutput.AppendText((My.Resources.Resource1.outSpeed & manySpaces).Substring(0, 11))
         Me.rtbOutput.AppendText((My.Resources.Resource1.Y_AxisLabelDeviation & manySpaces).Substring(0, 12))
         Me.rtbOutput.AppendText(My.Resources.Resource1.outDescription)
         Me.rtbOutput.AppendText(vbCrLf)

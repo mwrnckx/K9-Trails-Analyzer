@@ -239,7 +239,7 @@ Public Class TrackAsTrkNode 'track as trkNode
     End Property
 
 
-    Dim _TrackStats As New TrackConverter.TrackStats With {.DistanceKm = -1.0F, .TotalTime = TimeSpan.Zero, .MovingTime = TimeSpan.Zero, .StoppedTime = TimeSpan.Zero}
+    Dim _TrackStats As New TrackConverter.TrackStats With {.DogDistanceKm = -1.0F, .TotalTime = TimeSpan.Zero, .MovingTime = TimeSpan.Zero, .StoppedTime = TimeSpan.Zero}
     ''' <summary>
     ''' Calculates the time statistics of the track including total time, moving time, and stopped time.
     ''' </summary>
@@ -268,12 +268,6 @@ Public Class TrackAsTrkNode 'track as trkNode
         Return _trackAsTrkPts
     End Function
 
-    Public Function calculateDeviation(anotherTrack As TrackAsTrkNode) As Double?
-        Dim conv As New TrackConverter()
-        'Dim dev As Double? = conv.CalculateDeviation(Me.TrkNode, anotherTrack.TrkNode)
-        Dim dev2 As Double = conv.CalculateDeviationProjection(Me.TrkNode, anotherTrack.TrkNode)
-        Return dev2 'conv.calculateDeviation(Me.TrkNode, anotherTrack.TrkNode)
-    End Function
 End Class
 
 ''' <summary>

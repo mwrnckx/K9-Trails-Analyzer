@@ -661,9 +661,9 @@ Public Class GPXRecord
             If Me.Tracks.Count = 0 Then Return 0
             For Each track As TrackAsTrkNode In Me.Tracks
                 If track.TrackType = TrackType.RunnerTrail Then
-                    Return track.TrackStats.DistanceKm
+                    Return track.TrackStats.DogDistanceKm
                 ElseIf track.TrackType = TrackType.DogTrack Then
-                    Return track.TrackStats.DistanceKm
+                    Return track.TrackStats.DogDistanceKm
                 Else
 
                 End If
@@ -749,7 +749,7 @@ Public Class GPXRecord
             Dim dogTrackDistance As Double = -1
             For Each track As TrackAsTrkNode In Me.Tracks
                 If track.TrackType = TrackType.DogTrack Then
-                    Return track.TrackStats.SpeedKmh
+                    Return track.TrackStats.DogNetSpeedKmh
                 End If
             Next track
 
@@ -1554,11 +1554,11 @@ FoundRunnerTrailTrk:
         For Each t In Me.Tracks
             parentNode.AppendChild(t.TrkNode)
         Next
-        CalculateTrackStats(Me.Tracks) 'vypočte statistiky
+        CalculateTrackStats(Me.Tracks, Me.WptNodes) 'vypočte statistiky
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
     End Sub
 
-    Private Sub CalculateTrackStats(_tracks As List(Of TrackAsTrkNode))
+    Private Sub CalculateTrackStats(_tracks As List(Of TrackAsTrkNode), _wptNodes As TrackAsTrkPts)
         Dim runnerTrail As TrackAsTrkNode = Nothing
         For Each track As TrackAsTrkNode In _tracks
             If track.TrackType = TrackType.RunnerTrail Then
@@ -1569,12 +1569,12 @@ FoundRunnerTrailTrk:
         For Each track As TrackAsTrkNode In _tracks
             If track.TrackType = TrackType.DogTrack Then
                 If runnerTrail IsNot Nothing Then
-                    track.TrackStats = conv.CalculateTrackStats(track.TrkNode, runnerTrail.TrkNode)
-                Else
-                    track.TrackStats = conv.CalculateTrackStats(track.TrkNode)
+                    track.TrackStats = conv.CalculateTrackStats(track.TrkNode, runnerTrail.TrkNode, _wptNodes)
+                    'Else
+                    '    track.TrackStats = conv.CalculateTrackStats(track.TrkNode)
                 End If
-            Else
-                track.TrackStats = conv.CalculateTrackStats(track.TrkNode)
+                'Else
+                '    track.TrackStats = conv.CalculateTrackStats(track.TrkNode)
             End If
         Next track
 
