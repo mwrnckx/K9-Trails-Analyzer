@@ -7,7 +7,7 @@ Imports TrackVideoExporter
 
 <Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class Form1
-    Inherits System.Windows.Forms.Form
+    Inherits Form
     Private components As System.ComponentModel.IContainer
     ' The form overrides the Dispose method to clean up the component list.
     <System.Diagnostics.DebuggerNonUserCode()>
@@ -71,6 +71,7 @@ Partial Class Form1
         btnCharts = New Button()
         btnReadGpxFiles = New Button()
         PictureBox2 = New PictureBox()
+        TabCompetition = New TabPage()
         TabVideoExport = New TabPage()
         lvGpxFiles = New ListView()
         clmFileName = New ColumnHeader()
@@ -79,15 +80,23 @@ Partial Class Form1
         clmAge = New ColumnHeader()
         clmTrkCount = New ColumnHeader()
         PictureBox3 = New PictureBox()
+        ' Vytvoření instancí pro DataGridView a jeho sloupce
+        ' Vytvoření instancí pro DataGridView a VŠECHNY jeho sloupce
+        Me.dgvTrails = New DataGridView()
+        Dim panelProDgv As New Panel()
+
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
         gbPeriod.SuspendLayout()
         CType(PictureBox2, ISupportInitialize).BeginInit()
+        TabCompetition.SuspendLayout()
         TabVideoExport.SuspendLayout()
         CType(PictureBox3, ISupportInitialize).BeginInit()
-        SuspendLayout()
+        CType(Me.dgvTrails, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SuspendLayout()
+
         ' 
         ' ToolTip1
         ' 
@@ -283,14 +292,15 @@ Partial Class Form1
         rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         resources.ApplyResources(rtbWarnings, "rtbWarnings")
         rtbWarnings.Name = "rtbWarnings"
-        ' 
+        '
         ' TabControl1
-        ' 
-        TabControl1.Controls.Add(TabStats)
-        TabControl1.Controls.Add(TabVideoExport)
-        resources.ApplyResources(TabControl1, "TabControl1")
-        TabControl1.Name = "TabControl1"
-        TabControl1.SelectedIndex = 0
+        '
+        Me.TabControl1.Controls.Add(Me.TabStats)
+        Me.TabControl1.Controls.Add(Me.TabCompetition)
+        Me.TabControl1.Controls.Add(Me.TabVideoExport)
+        resources.ApplyResources(Me.TabControl1, "TabControl1")
+        Me.TabControl1.Name = "TabControl1"
+        Me.TabControl1.SelectedIndex = 0
         ' 
         ' TabStats
         ' 
@@ -362,6 +372,7 @@ Partial Class Form1
         resources.ApplyResources(PictureBox2, "PictureBox2")
         PictureBox2.Name = "PictureBox2"
         PictureBox2.TabStop = False
+
         ' 
         ' TabVideoExport
         ' 
@@ -372,6 +383,7 @@ Partial Class Form1
         resources.ApplyResources(TabVideoExport, "TabVideoExport")
         TabVideoExport.Name = "TabVideoExport"
         TabVideoExport.UseVisualStyleBackColor = True
+
         ' 
         ' lvGpxFiles
         ' 
@@ -408,6 +420,70 @@ Partial Class Form1
         resources.ApplyResources(PictureBox3, "PictureBox3")
         PictureBox3.Name = "PictureBox3"
         PictureBox3.TabStop = False
+
+        '
+        ' dgvTracks (Hlavní nastavení DataGridView)
+        '
+        Me.dgvTrails.AllowUserToAddRows = False
+        Me.dgvTrails.AllowUserToDeleteRows = False
+        Me.dgvTrails.AutoGenerateColumns = True
+        ' DŮLEŽITÉ: Toto nastavení zajistí, že se zobrazí horizontální posuvník
+        Me.dgvTrails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+        Me.dgvTrails.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        '        Me.dgvTracks.Columns.AddRange(New DataGridViewColumn() {
+        '    Me.colGPXFilename, Me.colDogName, Me.colHandlerName, Me.colTotalPoints, Me.colRunnerFoundPoints, Me.colDogSpeedPoints, Me.colDogAcuracyPoints, Me.colHandlerCheckPoints, Me.colDogGrossSpeedKmh, Me.colRunnerDistanceKm, Me.colTotalTime, Me.colDeviation, Me.colWeightedDistanceAlongTrailPerCent,
+        '    Me.colRunnerName, Me.colStartTime, Me.colTrailAge,
+        '    Me.colDogDistanceKm,
+        '    Me.colWeightedDistanceAlongTrailKm,
+        '    Me.colFirstCheckpointEvalDistanceMeters, Me.colFirstCheckpointEvalDeviationFromTrailMeters, Me.colFirstCheckpointEvaldogGrossSpeed,
+        '    Me.colSecondCheckpointEvalDistanceMeters, Me.colSecondCheckpointEvalDeviationFromTrailMeters, Me.colSecondCheckpointEvaldogGrossSpeed,
+        '    Me.colRating, Me.colNotes
+        '})
+        Me.dgvTrails.Anchor = (CType((((AnchorStyles.Top Or AnchorStyles.Bottom) _
+    Or AnchorStyles.Left) _
+    Or AnchorStyles.Right), AnchorStyles))
+        Me.dgvTrails.Name = "dgvTracks"
+        Me.dgvTrails.Size = New System.Drawing.Size(2000, 2000)
+        Me.dgvTrails.ScrollBars = ScrollBars.None
+        Me.dgvTrails.TabIndex = 0
+        Me.dgvTrails.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Me.dgvTrails.DefaultCellStyle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Me.dgvTrails.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True
+        ' 5. Upravíme vlastnosti dgvTracks tak, aby správně fungoval uvnitř panelu.
+        Me.dgvTrails.Location = New Point(0, 0)
+        ' Zrušíme automatické přizpůsobení šířky, aby mohl být širší než panel.
+        Me.dgvTrails.Anchor = AnchorStyles.Top Or AnchorStyles.Left
+        ' Nastavíme jeho šířku na dostatečně velkou hodnotu.
+        'Me.dgvTrails.Width = 2500
+
+        ' =======================================================================
+        ' Kód pro opravu posuvníku DataGridView (začátek)
+        ' =======================================================================
+
+
+        panelProDgv.Dock = DockStyle.Fill      ' Roztáhne se přes celou záložku.
+        panelProDgv.AutoScroll = True         ' Zapne automatické posuvníky.
+        panelProDgv.BackColor = Color.Transparent ' Aby nepřekryl barvu záložky
+
+
+        ' 3. Nyní dgvTracks PŘIDÁME do našeho nového panelu.
+        panelProDgv.Controls.Add(Me.dgvTrails)
+
+        ' 4. A nakonec PŘIDÁME panel (který už v sobě obsahuje dgvTracks) na záložku.
+        Me.TabCompetition.Controls.Add(panelProDgv)
+
+
+
+
+        ' 
+        ' TabCompetition
+        ' 
+        TabCompetition.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabCompetition.Controls.Add(me.panelProDGV)
+        resources.ApplyResources(TabCompetition, "TabCompetition")
+        TabCompetition.Name = "TabCompetition"
+        TabCompetition.UseVisualStyleBackColor = True
+
         ' 
         ' Form1
         ' 
@@ -427,8 +503,11 @@ Partial Class Form1
         TabStats.ResumeLayout(False)
         gbPeriod.ResumeLayout(False)
         CType(PictureBox2, ISupportInitialize).EndInit()
+        CType(Me.dgvTrails, System.ComponentModel.ISupportInitialize).EndInit()
         TabVideoExport.ResumeLayout(False)
         TabVideoExport.PerformLayout()
+        TabCompetition.ResumeLayout(False)
+        TabCompetition.PerformLayout()
         CType(PictureBox3, ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
@@ -555,6 +634,7 @@ Partial Class Form1
     Friend WithEvents mnuExit As ToolStripMenuItem
     Friend WithEvents TabControl1 As TabControl
     Friend WithEvents TabStats As TabPage
+    Friend WithEvents TabCompetition As TabPage
     Friend WithEvents TabVideoExport As TabPage
     Friend WithEvents rtbOutput As RichTextBox
     Friend WithEvents gbPeriod As GroupBox
@@ -579,5 +659,9 @@ Partial Class Form1
     Friend WithEvents mnucbActiveDog As ToolStripComboBox
     Friend WithEvents mnuDeleteCurrentDog As ToolStripMenuItem
     Friend WithEvents mnuRenameCurrentDog As ToolStripMenuItem
+    Friend WithEvents dgvTrails As DataGridView
+    ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
+    Friend WithEvents panelProDgv As Panel
+
 End Class
 

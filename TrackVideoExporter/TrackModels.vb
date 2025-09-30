@@ -239,19 +239,19 @@ Public Class TrackAsTrkNode 'track as trkNode
     End Property
 
 
-    Dim _TrackStats As New TrackConverter.TrackStats With {.DogDistanceKm = -1.0F, .TotalTime = TimeSpan.Zero, .MovingTime = TimeSpan.Zero, .StoppedTime = TimeSpan.Zero}
-    ''' <summary>
-    ''' Calculates the time statistics of the track including total time, moving time, and stopped time.
-    ''' </summary>
-    ''' <remarks>This property uses the TrackConverter to calculate the time statistics based on the TrkNode.</remarks>
-    Public Property TrackStats As TrackConverter.TrackStats
-        Get
-            Return _TrackStats
-        End Get
-        Set(value As TrackConverter.TrackStats)
-            _TrackStats = value
-        End Set
-    End Property
+    'Dim _TrackStats As New TrackConverter.TrackStats With {.DogDistanceKm = -1.0F, .TotalTime = TimeSpan.Zero, .MovingTime = TimeSpan.Zero, .StoppedTime = TimeSpan.Zero}
+    '''' <summary>
+    '''' Calculates the time statistics of the track including total time, moving time, and stopped time.
+    '''' </summary>
+    '''' <remarks>This property uses the TrackConverter to calculate the time statistics based on the TrkNode.</remarks>
+    'Public Property TrackStats As TrackConverter.TrackStats
+    '    Get
+    '        Return _TrackStats
+    '    End Get
+    '    Set(value As TrackConverter.TrackStats)
+    '        _TrackStats = value
+    '    End Set
+    'End Property
 
 
 
@@ -281,7 +281,7 @@ Public Enum TrackType
     RunnerTrail
     DogTrack
     CrossTrail
-    Artickle 'scent artickle
+    Artickle 'scent artickle or checkPoint
 End Enum
 
 ''' <summary>
