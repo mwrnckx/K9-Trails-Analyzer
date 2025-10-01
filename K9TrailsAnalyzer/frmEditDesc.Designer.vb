@@ -59,7 +59,7 @@ Partial Class frmEditComments
         ' btnOK
         ' 
         resources.ApplyResources(btnOK, "btnOK")
-        btnOK.BackColor = Color.DarkGoldenrod
+        btnOK.BackColor = Color.Goldenrod
         btnOK.Name = "btnOK"
         btnOK.UseVisualStyleBackColor = False
         ' 

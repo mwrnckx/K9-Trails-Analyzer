@@ -62,20 +62,20 @@ Partial Class frmCrossTrailSelector
         dgvTracks.BackgroundColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         dgvTracks.BorderStyle = BorderStyle.None
         dgvTracks.CellBorderStyle = DataGridViewCellBorderStyle.None
-        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle1.BackColor = SystemColors.Control
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 14.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
-        DataGridViewCellStyle1.ForeColor = SystemColors.WindowText
+        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle1.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 14.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        DataGridViewCellStyle1.ForeColor = Color.DarkSalmon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.GradientActiveCaption
         DataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
         dgvTracks.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         dgvTracks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvTracks.Columns.AddRange(New DataGridViewColumn() {nameColumn, startColumn, descColumn, typeColumn})
-        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft
-        DataGridViewCellStyle2.BackColor = SystemColors.Window
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle2.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
         DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
-        DataGridViewCellStyle2.ForeColor = SystemColors.ControlText
+        DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.GradientActiveCaption
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.ControlText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False

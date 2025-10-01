@@ -71,7 +71,7 @@ Partial Class Form1
         btnCharts = New Button()
         btnReadGpxFiles = New Button()
         PictureBox2 = New PictureBox()
-        TabCompetition = New TabPage()
+        TabTrial = New TabPage()
         TabVideoExport = New TabPage()
         lvGpxFiles = New ListView()
         clmFileName = New ColumnHeader()
@@ -82,8 +82,8 @@ Partial Class Form1
         PictureBox3 = New PictureBox()
         ' Vytvoření instancí pro DataGridView a jeho sloupce
         ' Vytvoření instancí pro DataGridView a VŠECHNY jeho sloupce
-        Me.dgvTrails = New DataGridView()
-        Dim panelProDgv As New Panel()
+        Me.dgvTrial = New DataGridView()
+        Dim panelForDgv As New Panel()
 
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
@@ -91,10 +91,10 @@ Partial Class Form1
         TabStats.SuspendLayout()
         gbPeriod.SuspendLayout()
         CType(PictureBox2, ISupportInitialize).BeginInit()
-        TabCompetition.SuspendLayout()
+        TabTrial.SuspendLayout()
         TabVideoExport.SuspendLayout()
         CType(PictureBox3, ISupportInitialize).BeginInit()
-        CType(Me.dgvTrails, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.dgvTrial, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
 
         ' 
@@ -126,7 +126,7 @@ Partial Class Form1
         ' 
         ' MenuStrip1
         ' 
-        MenuStrip1.BackColor = Color.FromArgb(CByte(172), CByte(209), CByte(158))
+        MenuStrip1.BackColor = Color.DarkSeaGreen
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
         MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem, HelpToolStripMenuItem})
@@ -296,11 +296,14 @@ Partial Class Form1
         ' TabControl1
         '
         Me.TabControl1.Controls.Add(Me.TabStats)
-        Me.TabControl1.Controls.Add(Me.TabCompetition)
         Me.TabControl1.Controls.Add(Me.TabVideoExport)
+        Me.TabControl1.Controls.Add(Me.TabTrial)
         resources.ApplyResources(Me.TabControl1, "TabControl1")
         Me.TabControl1.Name = "TabControl1"
         Me.TabControl1.SelectedIndex = 0
+        TabControl1.DrawMode = TabDrawMode.OwnerDrawFixed
+
+
         ' 
         ' TabStats
         ' 
@@ -355,7 +358,7 @@ Partial Class Form1
         ' 
         ' btnCharts
         ' 
-        btnCharts.BackColor = Color.DarkGoldenrod
+        btnCharts.BackColor = Color.Goldenrod
         resources.ApplyResources(btnCharts, "btnCharts")
         btnCharts.Name = "btnCharts"
         btnCharts.UseVisualStyleBackColor = False
@@ -424,65 +427,61 @@ Partial Class Form1
         '
         ' dgvTracks (Hlavní nastavení DataGridView)
         '
-        Me.dgvTrails.AllowUserToAddRows = False
-        Me.dgvTrails.AllowUserToDeleteRows = False
-        Me.dgvTrails.AutoGenerateColumns = True
+        Me.dgvTrial.AllowUserToAddRows = False
+        Me.dgvTrial.AllowUserToDeleteRows = False
+        Me.dgvTrial.AutoGenerateColumns = True
+
         ' DŮLEŽITÉ: Toto nastavení zajistí, že se zobrazí horizontální posuvník
-        Me.dgvTrails.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
-        Me.dgvTrails.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        '        Me.dgvTracks.Columns.AddRange(New DataGridViewColumn() {
-        '    Me.colGPXFilename, Me.colDogName, Me.colHandlerName, Me.colTotalPoints, Me.colRunnerFoundPoints, Me.colDogSpeedPoints, Me.colDogAcuracyPoints, Me.colHandlerCheckPoints, Me.colDogGrossSpeedKmh, Me.colRunnerDistanceKm, Me.colTotalTime, Me.colDeviation, Me.colWeightedDistanceAlongTrailPerCent,
-        '    Me.colRunnerName, Me.colStartTime, Me.colTrailAge,
-        '    Me.colDogDistanceKm,
-        '    Me.colWeightedDistanceAlongTrailKm,
-        '    Me.colFirstCheckpointEvalDistanceMeters, Me.colFirstCheckpointEvalDeviationFromTrailMeters, Me.colFirstCheckpointEvaldogGrossSpeed,
-        '    Me.colSecondCheckpointEvalDistanceMeters, Me.colSecondCheckpointEvalDeviationFromTrailMeters, Me.colSecondCheckpointEvaldogGrossSpeed,
-        '    Me.colRating, Me.colNotes
-        '})
-        Me.dgvTrails.Anchor = (CType((((AnchorStyles.Top Or AnchorStyles.Bottom) _
+        Me.dgvTrial.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
+        Me.dgvTrial.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvTrial.Anchor = (CType((((AnchorStyles.Top Or AnchorStyles.Bottom) _
     Or AnchorStyles.Left) _
     Or AnchorStyles.Right), AnchorStyles))
-        Me.dgvTrails.Name = "dgvTracks"
-        Me.dgvTrails.Size = New System.Drawing.Size(2000, 2000)
-        Me.dgvTrails.ScrollBars = ScrollBars.None
-        Me.dgvTrails.TabIndex = 0
-        Me.dgvTrails.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        Me.dgvTrails.DefaultCellStyle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        Me.dgvTrails.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True
-        ' 5. Upravíme vlastnosti dgvTracks tak, aby správně fungoval uvnitř panelu.
-        Me.dgvTrails.Location = New Point(0, 0)
-        ' Zrušíme automatické přizpůsobení šířky, aby mohl být širší než panel.
-        Me.dgvTrails.Anchor = AnchorStyles.Top Or AnchorStyles.Left
-        ' Nastavíme jeho šířku na dostatečně velkou hodnotu.
-        'Me.dgvTrails.Width = 2500
+        Me.dgvTrial.Name = "dgvTracks"
+        Me.dgvTrial.Size = New System.Drawing.Size(3000, 2000) 'musí být veliký aby se vytvořily posuvníky v Panelu
+        Me.dgvTrial.ScrollBars = ScrollBars.None
+        Me.dgvTrial.TabIndex = 0
+        Me.dgvTrial.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Me.dgvTrial.DefaultCellStyle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Me.dgvTrial.DefaultCellStyle.ForeColor = Color.Maroon
+        Me.dgvTrial.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
+        'columnHeaders
+        Me.dgvTrial.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True
+        Me.dgvTrial.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+        Me.dgvTrial.EnableHeadersVisualStyles = False ' Důležité! Jinak se použije styl systému Windows
+        Me.dgvTrial.ColumnHeadersDefaultCellStyle.BackColor = Color.Salmon ' Zvolte požadovanou barvu
+        Me.dgvTrial.ColumnHeadersDefaultCellStyle.ForeColor = Color.Maroon ' (volitelné) barva textu
+        Me.dgvTrial.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+        Me.dgvTrial.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvTrial.Location = New Point(0, 0)
+        Me.dgvTrial.Anchor = AnchorStyles.Top Or AnchorStyles.Left
 
         ' =======================================================================
         ' Kód pro opravu posuvníku DataGridView (začátek)
         ' =======================================================================
 
 
-        panelProDgv.Dock = DockStyle.Fill      ' Roztáhne se přes celou záložku.
-        panelProDgv.AutoScroll = True         ' Zapne automatické posuvníky.
-        panelProDgv.BackColor = Color.Transparent ' Aby nepřekryl barvu záložky
+        panelForDgv.Dock = DockStyle.Fill      ' Roztáhne se přes celou záložku.
+        panelForDgv.AutoScroll = True         ' Zapne automatické posuvníky.
+        panelForDgv.BackColor = Color.Transparent ' Aby nepřekryl barvu záložky
 
 
         ' 3. Nyní dgvTracks PŘIDÁME do našeho nového panelu.
-        panelProDgv.Controls.Add(Me.dgvTrails)
+        panelForDgv.Controls.Add(Me.dgvTrial)
 
         ' 4. A nakonec PŘIDÁME panel (který už v sobě obsahuje dgvTracks) na záložku.
-        Me.TabCompetition.Controls.Add(panelProDgv)
-
-
-
+        Me.TabTrial.Controls.Add(panelForDgv)
 
         ' 
-        ' TabCompetition
+        ' TabTrial
         ' 
-        TabCompetition.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        TabCompetition.Controls.Add(me.panelProDGV)
-        resources.ApplyResources(TabCompetition, "TabCompetition")
-        TabCompetition.Name = "TabCompetition"
-        TabCompetition.UseVisualStyleBackColor = True
+        TabTrial.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabTrial.Controls.Add(Me.panelProDgv)
+        resources.ApplyResources(TabTrial, "TabTrial")
+        TabTrial.Text = "Mantrailing Trial"
+        TabTrial.Name = "TabTrial"
+        TabTrial.UseVisualStyleBackColor = True
+
 
         ' 
         ' Form1
@@ -503,11 +502,11 @@ Partial Class Form1
         TabStats.ResumeLayout(False)
         gbPeriod.ResumeLayout(False)
         CType(PictureBox2, ISupportInitialize).EndInit()
-        CType(Me.dgvTrails, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.dgvTrial, System.ComponentModel.ISupportInitialize).EndInit()
         TabVideoExport.ResumeLayout(False)
         TabVideoExport.PerformLayout()
-        TabCompetition.ResumeLayout(False)
-        TabCompetition.PerformLayout()
+        TabTrial.ResumeLayout(False)
+        TabTrial.PerformLayout()
         CType(PictureBox3, ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
@@ -634,7 +633,7 @@ Partial Class Form1
     Friend WithEvents mnuExit As ToolStripMenuItem
     Friend WithEvents TabControl1 As TabControl
     Friend WithEvents TabStats As TabPage
-    Friend WithEvents TabCompetition As TabPage
+    Friend WithEvents TabTrial As TabPage
     Friend WithEvents TabVideoExport As TabPage
     Friend WithEvents rtbOutput As RichTextBox
     Friend WithEvents gbPeriod As GroupBox
@@ -659,7 +658,7 @@ Partial Class Form1
     Friend WithEvents mnucbActiveDog As ToolStripComboBox
     Friend WithEvents mnuDeleteCurrentDog As ToolStripMenuItem
     Friend WithEvents mnuRenameCurrentDog As ToolStripMenuItem
-    Friend WithEvents dgvTrails As DataGridView
+    Friend WithEvents dgvTrial As DataGridView
     ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
     Friend WithEvents panelProDgv As Panel
 

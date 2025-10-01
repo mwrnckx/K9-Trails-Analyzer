@@ -53,7 +53,7 @@ Public Class GpxFileManager
             If _DiffIndexes.Count > 0 Then Return _DiffIndexes
 
             For i = 0 To Me.GpxRecords.Count - 1
-                Dim diffIndex As Double = Me.GpxRecords(i).TrailStats.DogDistanceKm * Me.GpxRecords(i).TrailStats.TrailAge.TotalHours
+                Dim diffIndex As Double = Me.GpxRecords(i).TrailStats.DogDistance * Me.GpxRecords(i).TrailStats.TrailAge.TotalHours
                 If diffIndex > 0 Then 'když chybí age, nepřidává se
                     Me._DiffIndexes.Add((Me.GpxRecords(i).TrailStart.Time, diffIndex))
                 End If
@@ -137,7 +137,7 @@ Public Class GpxFileManager
             If _Speeds.Count > 0 Then Return _Speeds
 
             For i = 0 To Me.GpxRecords.Count - 1
-                Dim Speed As Double = Me.GpxRecords(i).TrailStats.DogNetSpeedKmh
+                Dim Speed As Double = Me.GpxRecords(i).TrailStats.DogNetSpeed
                 If Speed > 0 Then 'když chybí, nepřidává se
                     Me._Speeds.Add((Me.GpxRecords(i).TrailStart.Time, Speed))
                 End If
@@ -584,19 +584,19 @@ End Class
 ''' structure for returning calculation results.
 ''' </summary>
 Public Structure TrailStatsStructure
-    Public Property DogDistanceKm As Double ' Distance actually traveled by the dog (measured from the dog's route)
-    Public Property RunnerDistanceKm As Double ' Distance actually traveled by the runner (measured from the runner's route)
-    Public Property WeightedDistanceAlongTrailKm As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
+    Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
+    Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property TrailAge As TimeSpan ' age of the trail 
     Public Property TotalTime As TimeSpan ' total time of the dog's route
     Public Property MovingTime As TimeSpan ' net time the dog moved
     Public Property StoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
-    Public Property DogNetSpeedKmh As Double ' net speed (moving time only), calculated from the length of the dog's route
-    Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
+    Public Property DogNetSpeed As Double ' net speed (moving time only), calculated from the length of the dog's route
+    Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
     Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
-    Public Property PoitsInMTcompetition As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAcuracyPoints As Integer, HandlerCheckPoints As Integer) ' number of points in MT competition according to the rules
-    Public Property CheckpointsEval As List(Of (distanceAlongTrailMeters As Double, deviationFromTrailMeters As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
+    Public Property PoitsInMTTrial As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer) ' number of points in MT Trial according to the rules
+    Public Property CheckpointsEval As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
 End Structure
 
 Public Class GPXRecord
@@ -659,7 +659,7 @@ Public Class GPXRecord
     Dim _TrailStats As TrailStatsStructure
     Public ReadOnly Property TrailStats As TrailStatsStructure
         Get
-            If _TrailStats.DogDistanceKm > 0 Then Return _TrailStats 'cache
+            If _TrailStats.DogDistance > 0 Then Return _TrailStats 'cache
             If Me.Tracks.Count = 0 Then Return New TrailStatsStructure
 
             _TrailStats = Me.CalculateTrackStats(Me.Tracks, Me.WptNodes) 'vypočte statistiky
@@ -670,7 +670,7 @@ Public Class GPXRecord
 
 
     ''' <summary>
-    ''' returns WeightedDistanceAlongTrailKm
+    ''' returns WeightedDistanceAlongTrail
     ''' </summary>
     Dim _trailDistance As Double = 0
     Public ReadOnly Property TrailDistance As Double
@@ -679,14 +679,14 @@ Public Class GPXRecord
                 Return _trailDistance
             End If
             If Me.Tracks.Count = 0 Then Return 0F
-            If Me.TrailStats.WeightedDistanceAlongTrailKm > 0 Then
-                _trailDistance = Me.TrailStats.WeightedDistanceAlongTrailKm
+            If Me.TrailStats.WeightedDistanceAlongTrail > 0 Then
+                _trailDistance = Me.TrailStats.WeightedDistanceAlongTrail
                 Return _trailDistance
-            ElseIf Me.TrailStats.DogDistanceKm > 0 Then
-                _trailDistance = Me.TrailStats.DogDistanceKm
+            ElseIf Me.TrailStats.DogDistance > 0 Then
+                _trailDistance = Me.TrailStats.DogDistance
                 Return _trailDistance
-            ElseIf Me.TrailStats.RunnerDistanceKm > 0 Then
-                _trailDistance = Me.TrailStats.RunnerDistanceKm
+            ElseIf Me.TrailStats.RunnerDistance > 0 Then
+                _trailDistance = Me.TrailStats.RunnerDistance
                 Return _trailDistance
             End If
             Return 0F 'pokud nenajde žádný Track, vrátí 0
@@ -1146,12 +1146,12 @@ FoundRunnerTrailTrk:
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)(?=\W|$)", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outLength.ToLower & ":", "") ' odstranění vícenásobných mezer
                 trailPart = trailPart.Replace("📏:", "") '
-                trailPart = "📏:" & NBSP & Me.TrailDistance.ToString("F1") & NBSP & "km, " & trailPart
+                trailPart = "📏:" & NBSP & (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km, " & trailPart
             End If
 
         Else
             If Me.TrailDistance > 0 Then
-                trailPart = "📏:" & NBSP & Me.TrailDistance.ToString("F1") & NBSP & "km"
+                trailPart = "📏:" & NBSP & (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km"
             End If
             If ageFromTime.TotalHours > 0 Then
                 trailPart &= "  ⏳:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
@@ -1560,7 +1560,7 @@ FoundRunnerTrailTrk:
         ' --- KROK 1: Příprava všech dat ---
         Dim preparedData = PrepareTrackData(dogTrkNode, runnerTrkNode)
         If preparedData.DogGeoPoints.Count < 2 Then Return New TrailStatsStructure With {
-        .RunnerDistanceKm = preparedData.RunnerTotalDistanceKm,
+        .RunnerDistance = preparedData.RunnerTotalDistance,
         .TrailAge = GetAge()
          } ' Není co analyzovat
 
@@ -1569,7 +1569,7 @@ FoundRunnerTrailTrk:
 
         ' --- KROK 3: Vyhodnocení checkpointů ---
         'GrossSpeed: The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
-        Dim checkPointsEvals = EvaluateCheckPoints(checkPoints, preparedData.DogGeoPoints, preparedData.RunnerGeoPoints, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0, preparedData.RunnerTotalDistanceKm)
+        Dim checkPointsEvals = EvaluateCheckPoints(checkPoints, preparedData.DogGeoPoints, preparedData.RunnerGeoPoints, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0, preparedData.RunnerTotalDistance)
         Dim max_index As Integer = -1
         Dim maxDistance As Double = 0.0
         Dim maxWeight As Double = 0
@@ -1577,10 +1577,10 @@ FoundRunnerTrailTrk:
 
         For i = 0 To checkPointsEvals.Count - 1
             Dim cp = checkPointsEvals(i)
-            Dim _weight = Weight(cp.deviationFromTrailMeters) * (cp.distanceAlongTrailMeters / (preparedData.RunnerTotalDistanceKm * 1000))
+            Dim _weight = Weight(cp.deviationFromTrail) * (cp.distanceAlongTrail / (preparedData.RunnerTotalDistance))
             If _weight > maxWeight Then
                 maxWeight = _weight
-                maxDistance = cp.distanceAlongTrailMeters
+                maxDistance = cp.distanceAlongTrail
                 max_index = i
                 _dogGrossSpeed = cp.dogGrossSpeedkmh * _weight
             End If
@@ -1589,22 +1589,22 @@ FoundRunnerTrailTrk:
 
         ' --- KROK 4: Sestavení předběžných statistik a výpočet finálního skóre ---
         Dim preliminaryStats As New TrailStatsStructure With {
-        .DogDistanceKm = preparedData.dogTotalDistanceKm,
-        .RunnerDistanceKm = preparedData.RunnerTotalDistanceKm,
-        .WeightedDistanceAlongTrailPerCent = movementAnalysis.WeightedDistanceMeters / preparedData.RunnerTotalDistanceKm / 10.0,
-        .WeightedDistanceAlongTrailKm = movementAnalysis.WeightedDistanceMeters / 1000.0,
+        .DogDistance = preparedData.dogTotalDistance,
+        .RunnerDistance = preparedData.RunnerTotalDistance,
+        .WeightedDistanceAlongTrailPerCent = movementAnalysis.WeightedDistance / preparedData.RunnerTotalDistance * 100.0,
+        .WeightedDistanceAlongTrail = movementAnalysis.WeightedDistance,
         .TrailAge = GetAge(),
         .MovingTime = movementAnalysis.MovingTime,
         .StoppedTime = movementAnalysis.StoppedTime,
         .TotalTime = movementAnalysis.MovingTime + movementAnalysis.StoppedTime,
-        .DogNetSpeedKmh = preparedData.dogTotalDistanceKm / movementAnalysis.MovingTime.TotalHours,
-        .DogGrossSpeedKmh = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
+        .DogNetSpeed = (preparedData.dogTotalDistance / 1000.0) / movementAnalysis.MovingTime.TotalHours,
+        .DogGrossSpeed = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
         .Deviation = If(movementAnalysis.MovingTime.TotalSeconds > 0, movementAnalysis.TotalWeightedDeviation / movementAnalysis.MovingTime.TotalSeconds, -1.0),
         .CheckpointsEval = checkPointsEvals
     }
 
         Dim runnerFoundWeight As Double = Weight(movementAnalysis.MinDistanceToRunnerEnd) ' around one to ten meters then drops steeply
-        preliminaryStats.PoitsInMTcompetition = CalculateCompetitionScore(preliminaryStats, runnerFoundWeight)
+        preliminaryStats.PoitsInMTTrial = CalculateTrialScore(preliminaryStats, runnerFoundWeight)
 
         ' --- KROK 5: Vrácení kompletních výsledků ---
         Return preliminaryStats
@@ -1612,7 +1612,7 @@ FoundRunnerTrailTrk:
     End Function
 
     Private Function PrepareTrackData(dogTrkNode As XmlNode, runnerTrkNode As XmlNode) _
-    As (DogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), RunnerGeoPoints As List(Of TrackGeoPoint), RunnerXY As List(Of (X As Double, Y As Double)), Lat0 As Double, Lon0 As Double, RunnerTotalDistanceKm As Double, dogTotalDistanceKm As Double)
+    As (DogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), RunnerGeoPoints As List(Of TrackGeoPoint), RunnerXY As List(Of (X As Double, Y As Double)), Lat0 As Double, Lon0 As Double, RunnerTotalDistance As Double, dogTotalDistance As Double)
 
         ' all the code  applies:
         ' 1. Convert XmlNode to List(Of TrackGeoPoint) for both the dog and the runner.
@@ -1630,8 +1630,8 @@ FoundRunnerTrailTrk:
         Dim lat0 As Double
         Dim lon0 As Double
 
-        Dim RunnerTotalDistanceKm As Double = 0.0F 'celková dráha kladeče (aka runner) počítána ze záznamu jeho trasy (runnerGeoPoints)
-        Dim dogTotalDistanceKm As Double = 0.0F 'celková dráha psa počítána ze záznamu jeho trasy (dogGeoPoints)
+        Dim RunnerTotalDistance As Double = 0.0F 'celková dráha kladeče (aka runner) počítána ze záznamu jeho trasy (runnerGeoPoints)
+        Dim dogTotalDistance As Double = 0.0F 'celková dráha psa počítána ze záznamu jeho trasy (dogGeoPoints)
 
         If runnerTrkNode IsNot Nothing Then
             runnerTrkAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(runnerTrkNode, trackType:=TrackType.Unknown)))
@@ -1649,8 +1649,8 @@ FoundRunnerTrailTrk:
                     Dim X, Y As Double
                     conv.LatLonToXY(lat, lon, lat0, lon0, X, Y)
                     runnerXY.Add((X, Y))
-                    Dim distanceMeters As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
-                    RunnerTotalDistanceKm += distanceMeters / 1000.0F 'tohle je situace, když čas chybí, nutno započítat!
+                    Dim distance As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
+                    RunnerTotalDistance += distance  'tohle je situace, když čas chybí, nutno započítat!
                 Next
                 'add the last point of the runner (final runners position):
                 Dim lastLat As Double = runnerGeoPoints.Last.Location.Lat
@@ -1679,8 +1679,8 @@ FoundRunnerTrailTrk:
                 Dim X, Y As Double
                 conv.LatLonToXY(lat, lon, lat0, lon0, X, Y)
                 dogXY.Add((X, Y))
-                Dim distanceMeters As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
-                dogTotalDistanceKm += distanceMeters / 1000.0F 'tohle je situace, když čas chybí, nutno započítat!
+                Dim distance As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
+                dogTotalDistance += distance 'tohle je situace, když čas chybí, nutno započítat!
             Next
             'add the last point of the dog (final dogs position):
             Dim lastLat As Double = dogGeoPoints.Last.Location.Lat
@@ -1691,7 +1691,7 @@ FoundRunnerTrailTrk:
         End If
 
         ' The function returns all prepared data structures at once
-        Return (dogGeoPoints, dogXY, runnerGeoPoints, runnerXY, lat0, lon0, RunnerTotalDistanceKm, dogTotalDistanceKm)
+        Return (dogGeoPoints, dogXY, runnerGeoPoints, runnerXY, lat0, lon0, RunnerTotalDistance, dogTotalDistance)
     End Function
 
 
@@ -1704,7 +1704,7 @@ FoundRunnerTrailTrk:
     ''' <param name="lon0">Longitude reference for conversion.</param>
     ''' <returns>Tuple containing key motion analysis metrics.</returns>
     Private Function AnalyzeDogMovement(dogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double) _
-    As (MovingTime As TimeSpan, StoppedTime As TimeSpan, WeightedDistanceMeters As Double, TotalWeightedDeviation As Double, MinDistanceToRunnerEnd As Double)
+    As (MovingTime As TimeSpan, StoppedTime As TimeSpan, WeightedDistance As Double, TotalWeightedDeviation As Double, MinDistanceToRunnerEnd As Double)
         Dim conv As New TrackConverter()
         ' --- Setting constants ---
         Const MOVING_SPEED_THRESHOLD_MS As Double = 0.277 ' 1.0 km/h
@@ -1870,9 +1870,9 @@ FoundRunnerTrailTrk:
     ''' <param name="lon0">Reference longitude for coordinate conversion.</param>
     ''' <returns>A list of tuples, where each tuple contains the distance from the start of the trail in kilometers and the waypoint's deviation from the trail in meters.</returns>
     Private Function EvaluateCheckPoints(wayPoints As TrackAsTrkPts, dogGeoPoints As List(Of TrackGeoPoint), runnerGeoPoints As List(Of TrackGeoPoint), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double, totalRunnerDistanceKm As Double) _
-    As List(Of (distanceAlongTrailMeters As Double, deviationFromTrailMeters As Double, dogGrossSpeedkmh As Double))
+    As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
         Dim conv As New TrackConverter()
-        Dim results As New List(Of (distanceAlongTrailMeters As Double, deviationFromTrailMeters As Double, dogGrossSpeed As Double))
+        Dim results As New List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double))
         Dim converter As New TrackConverter
         ' If there's no runner track to compare against, we can't evaluate anything.
         If runnerXY.Count < 2 Or runnerGeoPoints.Count < 2 Then
@@ -1971,12 +1971,12 @@ FoundRunnerTrailTrk:
     End Function
 
     ''' <summary>
-    ''' Calculates the final competition score based on the analyzed track statistics.
+    ''' Calculates the final Trial score based on the analyzed track statistics.
     ''' </summary>
     ''' <param name="stats">The complete TrackStats object containing all performance metrics.</param>
     ''' <param name="runnerFound">A boolean indicating if the runner was successfully found.</param>
     ''' <returns>The final integer score for the team.</returns>
-    Private Function CalculateCompetitionScore(stats As TrailStatsStructure, runnerFoundWeight As Double) As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAcuracyPoints As Integer, HandlerCheckPoints As Integer)
+    Private Function CalculateTrialScore(stats As TrailStatsStructure, runnerFoundWeight As Double) As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer)
 
         ' --- Scoring Configuration ---
         ' By defining all scoring parameters here, you can easily tweak the rules later.
@@ -1993,7 +1993,7 @@ FoundRunnerTrailTrk:
             Return (0, 0, 0, 0) ' No activity to score.
         End If
         ' --- Step 0: Initialize score accumulators ---
-        Dim RunnerFoundPoints, DogSpeedPoints, DogAcuracyPoints As Integer
+        Dim RunnerFoundPoints, DogSpeedPoints, DogAccuracyPoints As Integer
         Dim HandlerCheckPoints As Integer = 0
 
         ' --- Step 1: Calculate points based on the primary outcome (Find vs. No-Find) ---
@@ -2003,15 +2003,15 @@ FoundRunnerTrailTrk:
 
         ' --- Step 2: Calculate bonus points for performance metrics ---
         ' Add bonus points for speed. We use gross speed as it rewards overall efficiency.
-        If stats.DogGrossSpeedKmh > 0 Then
-            DogSpeedPoints = CInt(Math.Round(stats.DogGrossSpeedKmh * POINTS_PER_KMH_GROSS_SPEED))
+        If stats.DogGrossSpeed > 0 Then
+            DogSpeedPoints = CInt(Math.Round(stats.DogGrossSpeed * POINTS_PER_KMH_GROSS_SPEED))
         End If
 
         '--- Step 3: Calculate points for trail following  ---
         ' Award points for the portion of the trail the dog followed correctly.
         ' This is where WeightedDistanceAlongTrailKm is the perfect metric.
 
-        DogAcuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent))
+        DogAccuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent))
 
 
         '--- Step 4: Calculate points for each reached checkpoint ---
@@ -2024,16 +2024,16 @@ FoundRunnerTrailTrk:
 
             For i As Integer = Math.Max(lastCheckPointIndex - 1, 0) To lastCheckPointIndex ' TODO: V případě nálezu kladeče rozhodčí  nálezu ozznačí jako checkpoint nebo ne? 
                 Dim checkPointEval = stats.CheckpointsEval(i)
-                Dim Deviation = checkPointEval.deviationFromTrailMeters
+                Dim Deviation = checkPointEval.deviationFromTrail
                 ' Výpočet váhy podle vzdálenosti (Deviation)
                 Dim _weight As Double = Weight(Deviation)
-                HandlerCheckPoints += (checkPointEval.distanceAlongTrailMeters / (stats.RunnerDistanceKm * 1000)) ^ 2 * _weight * POINTS_FOR_CHECKPOINT  'the point value is not allocated linearly but quadratically - for reaching 50% of the trail there are only 25% points
+                HandlerCheckPoints += (checkPointEval.distanceAlongTrail / (stats.RunnerDistance)) ^ 2 * _weight * POINTS_FOR_CHECKPOINT  'the point value is not allocated linearly but quadratically - for reaching 50% of the trail there are only 25% points
             Next
         End If
 
 
         ' --- Final Step: Ensure the score is not negative ---
-        Return (RunnerFoundPoints, DogSpeedPoints, DogAcuracyPoints, HandlerCheckPoints)
+        Return (RunnerFoundPoints, DogSpeedPoints, DogAccuracyPoints, HandlerCheckPoints)
 
     End Function
 

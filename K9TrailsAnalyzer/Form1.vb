@@ -1,4 +1,6 @@
 ﻿Imports System.ComponentModel
+Imports System.Data.Common
+Imports System.DirectoryServices.ActiveDirectory
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection
@@ -11,6 +13,7 @@ Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
 Imports Microsoft.VisualBasic.Logging
 Imports TrackVideoExporter.TrackVideoExporter
+Imports Windows.Win32.System
 
 
 
@@ -95,7 +98,14 @@ Public Class Form1
         ' Naplnění ListView s daty
         FillListViewWithGpxRecords()
 
+        Enabled = True
+        Me.AcceptButton = Me.btnCharts
 
+    End Sub
+
+
+
+    Private Sub FillDgvTrial()
         ' Vytvořte si třídu pro data
         ' Vytvořte seznam pro zobrazení a naplňte ho
         Dim displayList As New List(Of TrailStatsDisplay)()
@@ -105,23 +115,26 @@ Public Class Form1
             displayList.Add(New TrailStatsDisplay With {
                 .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),
                 .DogName = "",
-                 .RunnerDistanceKm = stats.RunnerDistanceKm,
-                .DogGrossSpeedKmh = stats.DogGrossSpeedKmh,
-                .DogDistanceKm = stats.DogDistanceKm,
+                 .RunnerDistance = stats.RunnerDistance,
+                 .TotalTime = stats.TotalTime.Minutes,
+                .DogGrossSpeedKmh = stats.DogGrossSpeed,
+                .DogDistance = stats.DogDistance,
+                .Deviation = stats.Deviation,
+                .WeightedDistanceAlongTrail = stats.WeightedDistanceAlongTrail,
+                .WeightedDistanceAlongTrailPerCent = stats.WeightedDistanceAlongTrailPerCent / 100,'je v % převedeno zpět na desetinné číslo
+                .StartTime = record.TrailStart.Time,
                 .TrailAge = stats.TrailAge.TotalMinutes,
-                .RunnerFoundPoints = stats.PoitsInMTcompetition.RunnerFoundPoints,
-                .DogSpeedPoints = stats.PoitsInMTcompetition.DogSpeedPoints,
-                .DogAcuracyPoints = stats.PoitsInMTcompetition.DogAcuracyPoints,
-                .HandlerCheckPoints = stats.PoitsInMTcompetition.HandlerCheckPoints,
-                .Rating = "", ' Prázdné hodnoty pro rozhodčího
+                .RunnerFoundPoints = stats.PoitsInMTTrial.RunnerFoundPoints,
+                .DogSpeedPoints = stats.PoitsInMTTrial.DogSpeedPoints,
+                .DogAccuracyPoints = stats.PoitsInMTTrial.DogAccuracyPoints,
+                .HandlerCheckPoints = stats.PoitsInMTTrial.HandlerCheckPoints,
                 .Notes = ""
             })
-
 
             Dim displayItem = displayList.Last()
             displayItem.TotalPoints = displayItem.RunnerFoundPoints +
                                displayItem.DogSpeedPoints +
-                               displayItem.DogAcuracyPoints +
+                               displayItem.DogAccuracyPoints +
                                displayItem.HandlerCheckPoints
             ' Nyní přidejte data pro první dva checkpointy z CheckpointsEval
             Dim firstIndex As Integer = stats.CheckpointsEval.Count - 2 ' První checkpoint
@@ -129,46 +142,165 @@ Public Class Form1
             ' Použij podmínku:
             If secondIndex >= 0 Then
                 With displayItem
-                    .SecondCheckpointEvalDeviationFromTrailMeters = stats.CheckpointsEval(secondIndex).deviationFromTrailMeters
-                    .SecondCheckpointEvalDistanceMeters = stats.CheckpointsEval(secondIndex).distanceAlongTrailMeters
+                    .SecondCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(secondIndex).deviationFromTrail
+                    .SecondCheckpointEvalDistance = stats.CheckpointsEval(secondIndex).distanceAlongTrail
                     .SecondCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(secondIndex).dogGrossSpeed
                 End With
             Else
                 ' Pokud není dostatek dat, nastav výchozí hodnoty, aby aplikace nespadla
-                displayItem.SecondCheckpointEvalDeviationFromTrailMeters = 0
-                displayItem.SecondCheckpointEvalDistanceMeters = 0
+                displayItem.SecondCheckpointEvalDeviationFromTrail = 0
+                displayItem.SecondCheckpointEvalDistance = 0
                 displayItem.SecondCheckpointEvaldogGrossSpeed = 0
             End If
 
             If firstIndex >= 0 Then
                 With displayItem
-                    .FirstCheckpointEvalDeviationFromTrailMeters = stats.CheckpointsEval(firstIndex).deviationFromTrailMeters
-                    .FirstCheckpointEvalDistanceMeters = stats.CheckpointsEval(firstIndex).distanceAlongTrailMeters
+                    .FirstCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(firstIndex).deviationFromTrail
+                    .FirstCheckpointEvalDistance = stats.CheckpointsEval(firstIndex).distanceAlongTrail
                     .FirstCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(firstIndex).dogGrossSpeed
                 End With
             Else
                 ' Pokud není dostatek dat, nastav výchozí hodnoty, aby aplikace nespadla
-                displayItem.FirstCheckpointEvalDeviationFromTrailMeters = 0
-                displayItem.FirstCheckpointEvalDistanceMeters = 0
+                displayItem.FirstCheckpointEvalDeviationFromTrail = 0
+                displayItem.FirstCheckpointEvalDistance = 0
                 displayItem.FirstCheckpointEvaldogGrossSpeed = 0
             End If
         Next i
 
+        displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints)) ' Seřadit sestupně 
 
-
-        ' Tuto čistou listinu pak nastavíte jako DataSource
-        dgvTrails.DataSource = displayList
-        For Each col In Me.dgvTrails.Columns
-            col.width = 75
+        'vypíše pořadí v soutěži:
+        Dim ranking As Integer = 1
+        For Each item In displayList
+            item.Ranking = ranking.ToString & "."
+            ranking += 1
         Next
-        Me.dgvTrails.Columns(0).Width = 150
 
-        Enabled = True
-        Me.AcceptButton = Me.btnCharts
+        dgvTrial.Columns.Clear()
+        dgvTrial.DataSource = displayList
+
+
+
+        'dgvTrial.RowTemplate.DefaultCellStyle.Padding = newPadding
+        ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
+        For Each column As DataGridViewColumn In Me.dgvTrial.Columns
+
+            ' Příklad získání lokalizovaného textu TODO!!!!!!
+            Dim propertyName As String = column.DataPropertyName
+            Dim resourceKey As String = "Header_" & propertyName
+            Dim localizedText As String = My.Resources.ResourceManager.GetString(resourceKey, My.Resources.Culture)
+
+            ' ZAJIŠTĚNÍ JEDNOTNÉ FORMÁTU HLAVIČKY:
+            If Not String.IsNullOrEmpty(localizedText) Then
+                ' 1. Aplikovat zalomení: "Runner Found Points" -> "Runner" & vbCrLf & "Found" & vbCrLf & "Points"
+                column.HeaderText = FormatHeader(localizedText)
+            Else
+                ' Fallback, pokud není lokalizovaný text (např. název Property)
+                column.HeaderText = FormatHeader(column.HeaderText)
+            End If
+
+            ' 2. Vynucení nízké šířky pro správný Autosize
+            ' Tímto zajistíte, že se sloupec přizpůsobí pouze nejdelšímu slovu.
+            column.Width = 10
+            column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+
+            column.DefaultCellStyle.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
+           column.HeaderCell.Style.ForeColor = Color.Black
+        Next
+
+        ' Krok 4: Vynutit automatické přizpůsobení šířky po dokončení
+        Me.dgvTrial.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells)
+
+
+        'Me.dgvTrial.Refresh()
+
+        ' ----------------------------------------------------
+        ' Kód pro nastavení formátu na jedno desetinné místo
+        ' ----------------------------------------------------
+
+        Dim columnsIntegerData As String() = {
+    "DogDistance",
+    "RunnerDistance",
+    "WeightedDistanceAlongTrail",
+       "Deviation",
+        "TrailAge",
+      "FirstCheckpointEvalDistance",
+          "SecondCheckpointEvalDistance",
+     "SecondCheckpointEvalDeviationFromTrail"
+}
+
+        For Each columnName As String In columnsIntegerData
+            ' Zkontrolujte, jestli sloupec existuje
+            If Me.dgvTrial.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = Me.dgvTrial.Columns(columnName)
+
+                ' Nastavte formát na jedno desetinné místo ("N1")
+                ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
+                ' F1 = Pevný počet desetinných míst, 1 desetinné místo
+                column.DefaultCellStyle.Format = "N0"
+
+            End If
+        Next
+        Dim columnsFloatData As String() = {
+    "DogGrossSpeedKmh",
+       "FirstCheckpointEvalDeviationFromTrail",
+     "FirstCheckpointEvaldogGrossSpeed",
+     "SecondCheckpointEvaldogGrossSpeed",
+      "TotalTime"
+}
+        For Each columnName As String In columnsFloatData
+            ' Zkontrolujte, jestli sloupec existuje
+            If Me.dgvTrial.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = Me.dgvTrial.Columns(columnName)
+                ' Nastavte formát na jedno desetinné místo ("N1")
+                ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
+                ' F1 = Pevný počet desetinných míst, 1 desetinné místo
+                column.DefaultCellStyle.Format = "F1"
+            End If
+        Next
+
+        If Me.dgvTrial.Columns.Contains("WeightedDistanceAlongTrailPerCent") Then
+            Dim column As DataGridViewColumn = Me.dgvTrial.Columns("WeightedDistanceAlongTrailPerCent")
+            ' P2 = Procenta na 2 desetinná místa (např. 12,34 %)
+            column.DefaultCellStyle.Format = "P0"
+        End If
+
+        If Me.dgvTrial.Columns.Contains("StartTime") Then
+            Dim column As DataGridViewColumn = Me.dgvTrial.Columns("StartTime")
+            column.DefaultCellStyle.Format = "HH:mm"
+            column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+        End If
+
+        Dim columnsPointsData As String() = {
+    "TotalPoints",
+    "RunnerFoundPoints",
+   "DogSpeedPoints",
+        "DogAccuracyPoints",
+        "HandlerCheckPoints",
+        "Ranking"
+    }
+        For Each columnName As String In columnsPointsData
+            ' Zkontrolujte, jestli sloupec existuje
+            If Me.dgvTrial.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = Me.dgvTrial.Columns(columnName)
+                ' Nastavte formát na jedno desetinné místo ("N1")
+                ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
+                ' F1 = Pevný počet desetinných míst, 1 desetinné místo
+                column.DefaultCellStyle.Format = "F0"
+                column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
+                column.DefaultCellStyle.BackColor = Color.DarkSeaGreen
+                'column.HeaderCell.Style.BackColor = Color.DarkSeaGreen
+            End If
+        Next
+        Me.dgvTrial.Columns("TotalPoints").DefaultCellStyle.Font = New Font(Me.dgvTrial.Columns("TotalPoints").DefaultCellStyle.Font, FontStyle.Bold)
+
 
     End Sub
-
-
+    ' Funkce nahradí mezery v textu záhlaví za zalomení řádku (vbCrLf)
+    Private Function FormatHeader(ByVal headerText As String) As String
+        ' Nahradí všechny mezery v textu za zalomení řádku
+        Return headerText.Replace(" ", vbCrLf)
+    End Function
 
     Private Sub FillListViewWithGpxRecords()
         ' Vymažeme předchozí položky
@@ -184,7 +316,7 @@ Public Class Form1
                 item.ToolTipText = "This gpx record doesn't contain dog's track, video cannot be created from it."
             End If
             item.SubItems.Add(record.TrailStart.Time.ToString("yyyy-MM-dd HH:mm")) ' např. datum
-            item.SubItems.Add($"{record.TrailDistance:F2} km") ' délka trasy
+            item.SubItems.Add($"{record.TrailDistance / 1000.0:F2} km") ' délka trasy
             item.SubItems.Add($"{record.TrailStats.TrailAge.TotalHours:F1} h") ' věk trasy v hodinách
             item.SubItems.Add($"{record.Tracks.Count}") ' počet tras
             item.Tag = record ' pro pozdější použití (např. vytvoření videa)
@@ -254,15 +386,15 @@ Public Class Form1
 
                 Me.rtbOutput.SelectionColor = Color.DarkGreen ' Nastavit barvu
                 'Me.rtbOutput.AppendText(_gpxRecord.TrailStart.Time.ToString("dd.MM.yy") & "    ")
-                Me.rtbOutput.AppendText(_gpxRecord.TrailDistance.ToString("F2") & " km" & "     ")
+                Me.rtbOutput.AppendText((_gpxRecord.TrailDistance / 1000.0).ToString("F2") & " km" & "     ")
                 If _gpxRecord.TrailStats.TrailAge.TotalHours > 0 Then
                     Me.rtbOutput.AppendText(_gpxRecord.TrailStats.TrailAge.TotalHours.ToString("F1") & " h" & "   ")
                 Else
                     Me.rtbOutput.AppendText("        ")
                 End If
                 'Dim dogspeed As Double = _gpxRecord.DogSpeed
-                If _gpxRecord.TrailStats.DogNetSpeedKmh > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.DogNetSpeedKmh.ToString("F1") & " km/h" & "   ")
+                If _gpxRecord.TrailStats.DogNetSpeed > 0 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.DogNetSpeed.ToString("F1") & " km/h" & "   ")
                 Else
                     Me.rtbOutput.AppendText("           ")
                 End If
@@ -325,14 +457,14 @@ Public Class Form1
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
         Dim totalDistance As Double = Me.GPXFilesManager.TotalDistances.Last.totalDistance '_gpxFilesManager.TotalDistance
-        Me.rtbOutput.AppendText(totalDistance.ToString("F1") & " km" & vbCrLf)
+        Me.rtbOutput.AppendText((totalDistance / 1000.0).ToString("F1") & " km" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.RunnerDistanceKm)
-        Me.rtbOutput.AppendText((1000 * averageDistance).ToString("F0") & " m" & vbCrLf)
+        Dim averageDistance As Double = GetAverage(Of Double)(_gpxRecords, Function(r) r.TrailStats.RunnerDistance)
+        Me.rtbOutput.AppendText((averageDistance).ToString("F0") & " m" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageAge & manydots).Substring(0, labelLength))
@@ -345,7 +477,7 @@ Public Class Form1
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageSpeed & manydots).Substring(0, labelLength))
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim averageDogSpeed As Double = GetAverage(_gpxRecords, Function(r) r.TrailStats.DogNetSpeedKmh, ignoreZeros:=True)
+        Dim averageDogSpeed As Double = GetAverage(_gpxRecords, Function(r) r.TrailStats.DogNetSpeed, ignoreZeros:=True)
         Me.rtbOutput.AppendText(averageDogSpeed.ToString("F1") & " km/h")
 
         ' Posunutí kurzoru na konec textu
@@ -490,7 +622,7 @@ Public Class Form1
                         writer.Write($"{ .TrailStart.Time.ToString("yyyy-MM-dd")};")
                         writer.Write($"{_age};")
                         writer.Write($"{ .TrailDistance:F2};")
-                        If Not .TrailStats.DogNetSpeedKmh = 0 Then writer.Write($"{ .TrailStats.DogNetSpeedKmh:F2};") Else writer.Write(";")
+                        If Not .TrailStats.DogNetSpeed = 0 Then writer.Write($"{ .TrailStats.DogNetSpeed:F2};") Else writer.Write(";")
                         writer.Write($"{ .Description};")
                         If Not .Link Is Nothing Then
                             writer.WriteLine($"=HYPERTEXTOVÝ.ODKAZ(""{ .Link}"")")
@@ -1098,6 +1230,29 @@ Public Class Form1
         End Select
     End Sub
 
+    Private Sub TabControl1_DrawItem(sender As Object, e As DrawItemEventArgs) Handles TabControl1.DrawItem
+        Dim tabControl = DirectCast(sender, TabControl)
+        Dim tabPage = tabControl.TabPages(e.Index)
+        Dim rect = tabControl.GetTabRect(e.Index)
+        Dim brush As Brush
+
+        Select Case e.Index
+            Case 0
+                brush = New SolidBrush(Color.Goldenrod) ' Zvolte požadovanou barvu
+            Case 1
+                brush = New SolidBrush(Color.DarkSeaGreen)'DarkSeaGreen)'zelená
+            Case 2
+                brush = New SolidBrush(Color.Salmon) ' Zvolte požadovanou barvu
+                ' Zvolte požadovanou barvu
+            Case Else
+                brush = New SolidBrush(SystemColors.Control)
+        End Select
+
+        e.Graphics.FillRectangle(brush, rect)
+        TextRenderer.DrawText(e.Graphics, tabPage.Text, tabControl.Font, rect, tabPage.ForeColor)
+        brush.Dispose()
+    End Sub
+
     Private Async Sub btnCreateVideos_Click(sender As Object, e As EventArgs) Handles btnCreateVideos.Click
 
         If lvGpxFiles.CheckedItems.Count > 2 Then
@@ -1212,11 +1367,16 @@ Public Class Form1
     End Sub
 
     Private Sub TabControl1_Selecting(sender As Object, e As TabControlCancelEventArgs) Handles TabControl1.Selecting
-        If e.TabPage Is TabVideoExport AndAlso lvGpxFiles.Items.Count = 0 Then
+        If (e.TabPage Is TabVideoExport Or e.TabPage Is TabTrial) AndAlso lvGpxFiles.Items.Count = 0 Then
             mboxEx("This tab is not ready yet." & vbCrLf & "First you need to load the gpx files - click on the salmon button!")
             e.Cancel = True
+        ElseIf e.TabPage Is TabTrial AndAlso dgvTrial.RowCount <= 0 Then
+            Me.FillDgvTrial()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
+
         End If
     End Sub
+
+
 
     Private Sub mnuAbout_Click(sender As Object, e As EventArgs) Handles mnuAbout.Click
         Try
@@ -1343,43 +1503,70 @@ End Class
 Public Class TrailStatsDisplay
     <DisplayName("File")>
     Public Property GPXFilename As String ' 
-    <DisplayName("Dog")>
-    Public Property DogName As String ' 
     <DisplayName("Start")>
     Public Property StartTime As Date ' start time of the trail (from the runner's track)
+
+    <DisplayName("Dog")>
+    Public Property DogName As String ' 
     <DisplayName("Handler")>
     Public Property HandlerName As String ' name of the handler 
+
+    <DisplayName("Ranking")>
+    Public Property Ranking As String ' 
+
     <DisplayName("Total Points")>
     Public Property TotalPoints As Integer
-
     <DisplayName("Runner Found Points")>
     Public Property RunnerFoundPoints As Integer
     <DisplayName("Dog Speed Points")>
     Public Property DogSpeedPoints As Integer
-    <DisplayName("Dog Acuracy Points")>
-    Public Property DogAcuracyPoints As Integer
-    <DisplayName("Handler Check Points")>
-    Public Property HandlerCheckPoints As Integer ' number of points in MT competition according to the rules
+    <DisplayName("Dog Accuracy Points")>
+    Public Property DogAccuracyPoints As Integer
+    <DisplayName("Handler Points")>
+    Public Property HandlerCheckPoints As Integer ' number of points in MT Trial according to the rules
 
-    Public Property RunnerDistanceKm As Double ' Distance actually traveled by the runner (measured from the runner's route)
-
-    Public Property DogDistanceKm As Double ' Distance actually traveled by the dog (measured from the dog's route)
-    Public Property WeightedDistanceAlongTrailKm As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property TrailAge As Double ' age of the trail 
-    Public Property TotalTime As Double ' total time of the dog's route
+    <DisplayName("Dog Speed km/h")>
     Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
+
+    <DisplayName("Average Deviation")>
     Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
-    Public Property FirstCheckpointEvalDistanceMeters As Double
-    Public Property FirstCheckpointEvalDeviationFromTrailMeters As Double
+
+    <DisplayName("Trail Distance")>
+    Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
+
+    <DisplayName("Total Time min")>
+    Public Property TotalTime As Double ' total time of the dog's route
+
+    <DisplayName("Trail Age min")>
+    Public Property TrailAge As Double ' age of the trail 
+
+    <DisplayName("Weighted Distance Along Trail")>
+    Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+
+    <DisplayName("Weighted Distance Along Trail")>
+    Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+
+    <DisplayName("Dog Distance")>
+    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
+
+
+    <DisplayName("1th Checkpoint Distance")>
+    Public Property FirstCheckpointEvalDistance As Double
+
+    <DisplayName("1th Checkpoint Deviation")>
+    Public Property FirstCheckpointEvalDeviationFromTrail As Double
+    <DisplayName("1th Checkpoint dogSpeed km/h")>
     Public Property FirstCheckpointEvaldogGrossSpeed As Double ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
-    Public Property SecondCheckpointEvalDistanceMeters As Double
-    Public Property SecondCheckpointEvalDeviationFromTrailMeters As Double
+    <DisplayName("Last Checkpoint Distance")>
+    Public Property SecondCheckpointEvalDistance As Double
+    <DisplayName("Last Checkpoint Deviation")>
+    Public Property SecondCheckpointEvalDeviationFromTrail As Double
+    <DisplayName("Last Checkpoint dogSpeed km/h")>
     Public Property SecondCheckpointEvaldogGrossSpeed As Double
 
-    <DisplayName("Runner")>
+    <DisplayName("Runner name")>
     Public Property RunnerName As String '
-    Public Property Rating As String
+
     Public Property Notes As String
 End Class
 

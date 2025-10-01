@@ -44,7 +44,7 @@ Partial Class frmVideoDone
         ' btnOpenFolder
         ' 
         btnOpenFolder.AutoSizeMode = AutoSizeMode.GrowAndShrink
-        btnOpenFolder.BackColor = Color.DarkGoldenrod
+        btnOpenFolder.BackColor = Color.Goldenrod
         btnOpenFolder.FlatStyle = FlatStyle.Flat
         btnOpenFolder.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
         btnOpenFolder.Location = New Point(193, 334)
@@ -57,7 +57,7 @@ Partial Class frmVideoDone
         ' btnPlayVideo
         ' 
         btnPlayVideo.AutoSizeMode = AutoSizeMode.GrowAndShrink
-        btnPlayVideo.BackColor = Color.DarkGoldenrod
+        btnPlayVideo.BackColor = Color.Goldenrod
         btnPlayVideo.FlatStyle = FlatStyle.Flat
         btnPlayVideo.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
         btnPlayVideo.Location = New Point(44, 334)
@@ -70,7 +70,7 @@ Partial Class frmVideoDone
         ' btnClose
         ' 
         btnClose.AutoSizeMode = AutoSizeMode.GrowAndShrink
-        btnClose.BackColor = Color.DarkGoldenrod
+        btnClose.BackColor = Color.Goldenrod
         btnClose.FlatStyle = FlatStyle.Flat
         btnClose.Font = New Font("Segoe UI", 10.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
         btnClose.Location = New Point(585, 334)
