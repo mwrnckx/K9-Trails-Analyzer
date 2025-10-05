@@ -81,35 +81,35 @@ Public Class GpxFileManager
     ''' <summary>
     ''' vrací seznam délek jednotlivých stop
     ''' </summary>
-    Dim _Distances As New List(Of (time As DateTime, Distance As Double))
-    Public ReadOnly Property Distances As List(Of (time As DateTime, Distance As Double))
+    Dim _DistancesKm As New List(Of (time As DateTime, Distance As Double))
+    Public ReadOnly Property DistancesKm As List(Of (time As DateTime, DistanceKm As Double))
         Get
-            If _Distances.Count > 0 Then Return _Distances
+            If _DistancesKm.Count > 0 Then Return _DistancesKm
 
             For i = 0 To Me.GpxRecords.Count - 1
                 Dim Distance As Double = Me.GpxRecords(i).TrailDistance
                 If Distance > 0 Then 'když chybí, nepřidává se
-                    Me._Distances.Add((Me.GpxRecords(i).TrailStart.Time, Distance))
+                    Me._DistancesKm.Add((Me.GpxRecords(i).TrailStart.Time, Distance / 1000))
                 End If
 
             Next i
-            Return _Distances
+            Return _DistancesKm
         End Get
     End Property
     ''' <summary>
     ''' vrací kumulativní součet načuchaných vzdáleností
     ''' </summary>
-    Dim _TotalDistances As New List(Of (time As DateTime, totalDistance As Double))
-    Public ReadOnly Property TotalDistances As List(Of (time As DateTime, totalDistance As Double))
+    Dim _TotalDistancesKm As New List(Of (time As DateTime, totalDistanceKm As Double))
+    Public ReadOnly Property TotalDistancesKm As List(Of (time As DateTime, totalDistanceKm As Double))
         Get
-            If _TotalDistances.Count > 0 Then Return _TotalDistances
-            Me._TotalDistances.Add((Me.Distances(0)))
-            For i = 1 To Me.Distances.Count - 1
-                If Me.Distances(i).Distance > 0 Then
-                    Me._TotalDistances.Add((Me.Distances(i).time, Me._TotalDistances.Last.totalDistance + Me.Distances(i).Distance))
+            If _TotalDistancesKm.Count > 0 Then Return _TotalDistancesKm
+            Me._TotalDistancesKm.Add((Me.DistancesKm(0)))
+            For i = 1 To Me.DistancesKm.Count - 1
+                If Me.DistancesKm(i).DistanceKm > 0 Then
+                    Me._TotalDistancesKm.Add((Me.DistancesKm(i).time, Me._TotalDistancesKm.Last.totalDistanceKm + Me.DistancesKm(i).DistanceKm))
                 End If
             Next i
-            Return _TotalDistances
+            Return _TotalDistancesKm
         End Get
     End Property
 
@@ -176,6 +176,7 @@ Public Class GpxFileManager
     Public Async Function Main() As Task(Of Boolean)
 
         Try
+            Debug.WriteLine("Starting processing GPX files...")
             Dim allFiles As New List(Of GPXRecord)  ' všechny soubory v pracovním adresáři
             Dim localFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(False) 'seznam starých souborů, které už byly zpracovány
             allFiles.AddRange(localFiles) 'přidá staré soubory
@@ -213,7 +214,7 @@ Public Class GpxFileManager
             For Each _gpxRecord As GPXRecord In gpxFilesSortedAndFiltered
                 Try
                     If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
-                        _gpxRecord.RenamewptNode(My.Resources.Resource1.artickle) 'renaming wpt to "artickle"
+                        _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "article"
                         If prependDateToName Then _gpxRecord.PrependDateToFilename()
                         'If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                     End If
@@ -318,6 +319,7 @@ Public Class GpxFileManager
                     Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
                     '_gpxRecord.CreateTracks() 'seřadí trk podle času
                     GPXFRecords.Add(_gpxRecord)
+                    Dim test = _gpxRecord.TrailStats.WeightedDistanceAlongTrailPerCent
                 Catch ex As Exception
                     'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
                     RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(filePath)}: {ex.Message}", Color.Red)
@@ -597,6 +599,7 @@ Public Structure TrailStatsStructure
     Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
     Public Property PoitsInMTTrial As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer) ' number of points in MT Trial according to the rules
     Public Property CheckpointsEval As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
+    Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
 End Structure
 
 Public Class GPXRecord
@@ -623,9 +626,9 @@ Public Class GPXRecord
             If Me.Reader Is Nothing Then
                 Throw New InvalidOperationException("Reader nebyl nastaven.")
             End If
-            Dim wptNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt")
-            _wptNodes = New TrackAsTrkPts(TrackType.Artickle, wptNodeList)
-            Return _wptNodes 'vrací seznam všech wpt, které jsou v souboru
+            Dim wptNodeList As XmlNodeList = Me.Reader.SelectNodes("wpt") 'když není žádný, vrátí prázdný list
+            _wptNodes = New TrackAsTrkPts(TrackType.article, wptNodeList)
+            Return _wptNodes 'vrací seznam všech wpt, které jsou v souboru 
         End Get
     End Property
 
@@ -659,7 +662,7 @@ Public Class GPXRecord
     Dim _TrailStats As TrailStatsStructure
     Public ReadOnly Property TrailStats As TrailStatsStructure
         Get
-            If _TrailStats.DogDistance > 0 Then Return _TrailStats 'cache
+            If _TrailStats.DogDistance > 0 Or _TrailStats.RunnerDistance > 0 Then Return _TrailStats 'cache
             If Me.Tracks.Count = 0 Then Return New TrailStatsStructure
 
             _TrailStats = Me.CalculateTrackStats(Me.Tracks, Me.WptNodes) 'vypočte statistiky
@@ -1451,6 +1454,7 @@ FoundRunnerTrailTrk:
         Dim parentNode As XmlNode = Me.TrkNodes(0)?.ParentNode
         If parentNode Is Nothing Then Return New List(Of TrackAsTrkNode)
         Dim _tracks As New List(Of TrackAsTrkNode)
+        Dim types(Me.TrkNodes.Count - 1) As TrackType
         'projde všechny trkNode:
         For i As Integer = 0 To Me.TrkNodes.Count - 1
             Dim trkNode As XmlNode = Me.TrkNodes(i)
@@ -1474,8 +1478,8 @@ FoundRunnerTrailTrk:
                 trkTypeEnum = TrackType.Unknown ' pokud není typ, nastavíme na Unknown
             End If
             'pokud některý track je uknown musí se znovu zpracovat
-            If trkTypeEnum = TrackType.Unknown Then _IsAlreadyProcessed = False
-
+            'If trkTypeEnum = TrackType.Unknown Then _IsAlreadyProcessed = False
+            types(i) = trkTypeEnum
             Dim _TrackAsTrkNode As New TrackAsTrkNode(trkNode, trkTypeEnum)
 
             _tracks.Add(_TrackAsTrkNode)
@@ -1491,51 +1495,145 @@ FoundRunnerTrailTrk:
 
         ' --- Doplnění <type> ---
 
-        Using dlg As New frmCrossTrailSelector(_tracks, Me.FileName)
-            'pokud nejsou vybrány typy trků, nebo pokud už nebyl soubor zpracován, tak se ptá
-            If Not dlg.ValidateTrailTypes Or (Not Me.IsAlreadyProcessed) Then
+        ' Kód v místě, kde rozhoduješ, jestli máš form ukázat:
+        If ValidateTypes(types, False) And Me.IsAlreadyProcessed Then
+            ' Všechny typy jsou platné a soubor již byl zpracován, nemusíš ukazovat formulář
+            ' pokračuj dál — formulář není potřeba
+        Else
+            ' musíme nechat uživatele domluvit typy -> otevři formulář
 
-                If _tracks.Count = 1 Then
-                    ' Zde volání  funkce, která vrátí typ trků
+            Dim suggestedTypes = ComputeSuggestedTypes(_tracks)
 
-                    dlg.ShowDialog()
-                    Dim trk = _tracks(0).TrkNode
-                    Dim type = _tracks(0).TrackType
+            ' Pokud projde validací navržených typů, použij je a formulář neukazuj:
+            If ValidateTypes(suggestedTypes, False) And suggestedTypes.Count = 2 Then
+                ' Aplikuj navržené typy do modelu (trkList) a pokračuj bez formuláře
+                For i = 0 To _tracks.Count - 1
+                    _tracks(i).TrackType = suggestedTypes(i)
+                    Dim trk = _tracks(i).TrkNode
+                    Dim type = _tracks(i).TrackType
                     AddTypeToTrk(trk, type)
+                Next
 
-                ElseIf _tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
-                    AddTypeToTrk(_tracks(0).TrkNode, TrackType.RunnerTrail)
-                    _tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
-                    AddTypeToTrk(_tracks(1).TrkNode, TrackType.DogTrack)
-                    _tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
-                ElseIf _tracks.Count > 2 Then
-                    Try
-                        _tracks(_tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
-                        ' Zde volání nějaké funkce, která vrátí typ trků
-                        dlg.ShowDialog()
+                ' pokračuj dál — formulář není potřeba
+            Else
+                ' musíme nechat uživatele domluvit typy -> otevři formulář
+                Using f As New frmCrossTrailSelector(_tracks, FileName)
+                    f.ShowDialog()
+                    ' předpoklad: formulář změnil trkList při potvrzení
+                    For i As Integer = 0 To _tracks.Count - 1
+                        Dim trk = _tracks(i).TrkNode
+                        Dim type = _tracks(i).TrackType
+                        AddTypeToTrk(trk, type)
+                    Next
 
-                        For i As Integer = 0 To _tracks.Count - 1
-                            Dim trk = _tracks(i).TrkNode
-                            Dim type = _tracks(i).TrackType
-                            AddTypeToTrk(trk, type)
-                        Next
-                    Catch ex As Exception
-                        RaiseEvent WarningOccurred($"me.tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
-                    End Try
-                End If
+                End Using
             End If
-        End Using
+
+        End If
+
+
+        'Using dlg As New frmCrossTrailSelector(_tracks, Me.FileName)
+        '    'pokud nejsou vybrány typy trků, nebo pokud už nebyl soubor zpracován, tak se ptá
+        '    If (Not Me.IsAlreadyProcessed) Then
+
+        '        If _tracks.Count = 1 Then
+        '            ' Zde volání  funkce, která vrátí typ trků
+
+        '            dlg.ShowDialog()
+        '            Dim trk = _tracks(0).TrkNode
+        '            Dim type = _tracks(0).TrackType
+        '            AddTypeToTrk(trk, type)
+
+        '        ElseIf _tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
+        '            AddTypeToTrk(_tracks(0).TrkNode, TrackType.RunnerTrail)
+        '            _tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
+        '            AddTypeToTrk(_tracks(1).TrkNode, TrackType.DogTrack)
+        '            _tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
+        '        ElseIf _tracks.Count > 2 Then
+        '            Try
+        '                _tracks(_tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
+        '                ' Zde volání nějaké funkce, která vrátí typ trků
+        '                dlg.ShowDialog()
+
+        '                For i As Integer = 0 To _tracks.Count - 1
+        '                    Dim trk = _tracks(i).TrkNode
+        '                    Dim type = _tracks(i).TrackType
+        '                    AddTypeToTrk(trk, type)
+        '                Next
+        '            Catch ex As Exception
+        '                RaiseEvent WarningOccurred($"me.tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
+        '            End Try
+        '        End If
+        '    End If
+        'End Using
 
         ' Přidat zpět ve správném pořadí
         For Each track In _tracks
             parentNode.AppendChild(track.TrkNode)
         Next
+        Me.Save() 'měnil se typ či pořadí tracků!
         Return _tracks
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
     End Function
 
-    ' Enum pro reprezentaci stavu (pohyb / stání).
-    Private Enum MovementState
+    ' Vrátí pole TrackType, které jsou "navržené" podle pravidel (pouze pro Unknown měníme)
+    Public Function ComputeSuggestedTypes(trkList As List(Of TrackAsTrkNode)) As TrackType()
+            Dim n = trkList.Count
+            Dim result(n - 1) As TrackType
+
+            ' nejprve zkopíruj původní stavy
+            For i = 0 To n - 1
+                result(i) = trkList(i).TrackType
+            Next
+
+            ' pravidla, která používáš v Load:
+            Select Case n
+                Case 1
+                    If result(0) = TrackType.Unknown Then result(0) = TrackType.DogTrack
+                Case 2
+                    If result(0) = TrackType.Unknown Then result(0) = TrackType.RunnerTrail
+                    If result(1) = TrackType.Unknown Then result(1) = TrackType.DogTrack
+                Case Else
+                    If n > 0 AndAlso result(n - 1) = TrackType.Unknown Then result(n - 1) = TrackType.DogTrack
+            End Select
+
+            Return result
+        End Function
+
+        ' Validuje pole typů (možno bez UI). Pokud showMessages = True, použije mboxEx pro chybová hlášení.
+        Public Function ValidateTypes(types() As TrackType, Optional showMessages As Boolean = True) As Boolean
+            Dim runnerCount As Integer = 0
+            Dim dogCount As Integer = 0
+
+            For i = 0 To types.Length - 1
+                Dim t = types(i)
+                If t = TrackType.Unknown Then
+                    If showMessages Then mboxEx("For each track you have to choose its type!")
+                    Return False
+                ElseIf t = TrackType.RunnerTrail Then
+                    runnerCount += 1
+                ElseIf t = TrackType.DogTrack Then
+                    dogCount += 1
+                End If
+            Next
+
+            If runnerCount > 1 Then
+                If showMessages Then mboxEx("There can be only one Runner trail.")
+                Return False
+            End If
+            If dogCount > 1 Then
+                If showMessages Then mboxEx("There can be only one dog track.")
+                Return False
+            End If
+
+            Return True
+        End Function
+
+
+
+
+        ' Enum pro reprezentaci stavu (pohyb / stání).
+        Private Enum MovementState
         Moving
         Stopped
     End Enum
@@ -1559,32 +1657,37 @@ FoundRunnerTrailTrk:
 
         ' --- KROK 1: Příprava všech dat ---
         Dim preparedData = PrepareTrackData(dogTrkNode, runnerTrkNode)
-        If preparedData.DogGeoPoints.Count < 2 Then Return New TrailStatsStructure With {
+        If preparedData.DogGeoPoints Is Nothing OrElse preparedData.DogGeoPoints.Count < 2 Then Return New TrailStatsStructure With {
         .RunnerDistance = preparedData.RunnerTotalDistance,
         .TrailAge = GetAge()
          } ' Není co analyzovat
 
         ' --- KROK 2: Analýza pohybu a sledování stopy ---
         Dim movementAnalysis = AnalyzeDogMovement(preparedData.DogGeoPoints, preparedData.dogXY, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0)
-
+        Dim checkPointsEvals As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) = Nothing
+        Dim maxDistance As Double = 0.0
         ' --- KROK 3: Vyhodnocení checkpointů ---
         'GrossSpeed: The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
-        Dim checkPointsEvals = EvaluateCheckPoints(checkPoints, preparedData.DogGeoPoints, preparedData.RunnerGeoPoints, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0, preparedData.RunnerTotalDistance)
-        Dim max_index As Integer = -1
-        Dim maxDistance As Double = 0.0
-        Dim maxWeight As Double = 0
         Dim _dogGrossSpeed As Double = 0.0
+        If checkPoints IsNot Nothing AndAlso checkPoints.TrackPoints.Count > 0 AndAlso runnerTrkNode IsNot Nothing Then
 
-        For i = 0 To checkPointsEvals.Count - 1
-            Dim cp = checkPointsEvals(i)
-            Dim _weight = Weight(cp.deviationFromTrail) * (cp.distanceAlongTrail / (preparedData.RunnerTotalDistance))
-            If _weight > maxWeight Then
-                maxWeight = _weight
-                maxDistance = cp.distanceAlongTrail
-                max_index = i
-                _dogGrossSpeed = cp.dogGrossSpeedkmh * _weight
-            End If
-        Next
+            checkPointsEvals = EvaluateCheckPoints(checkPoints, preparedData.DogGeoPoints, preparedData.RunnerGeoPoints, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0, preparedData.RunnerTotalDistance)
+            Dim max_index As Integer = -1
+
+            Dim maxWeight As Double = 0
+
+
+            For i = 0 To checkPointsEvals.Count - 1
+                Dim cp = checkPointsEvals(i)
+                Dim _weight = Weight(cp.deviationFromTrail) * (cp.distanceAlongTrail / (preparedData.RunnerTotalDistance))
+                If _weight > maxWeight Then
+                    maxWeight = _weight
+                    maxDistance = cp.distanceAlongTrail
+                    max_index = i
+                    _dogGrossSpeed = cp.dogGrossSpeed
+                End If
+            Next
+        End If
 
 
         ' --- KROK 4: Sestavení předběžných statistik a výpočet finálního skóre ---
@@ -1597,11 +1700,14 @@ FoundRunnerTrailTrk:
         .MovingTime = movementAnalysis.MovingTime,
         .StoppedTime = movementAnalysis.StoppedTime,
         .TotalTime = movementAnalysis.MovingTime + movementAnalysis.StoppedTime,
-        .DogNetSpeed = (preparedData.dogTotalDistance / 1000.0) / movementAnalysis.MovingTime.TotalHours,
-        .DogGrossSpeed = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
+       .DogGrossSpeed = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
         .Deviation = If(movementAnalysis.MovingTime.TotalSeconds > 0, movementAnalysis.TotalWeightedDeviation / movementAnalysis.MovingTime.TotalSeconds, -1.0),
-        .CheckpointsEval = checkPointsEvals
+        .CheckpointsEval = checkPointsEvals,
+        .MaxTeamDistance = maxDistance
     }
+        If movementAnalysis.MovingTime.TotalHours > 0 Then
+            preliminaryStats.DogNetSpeed = (preparedData.dogTotalDistance / 1000.0) / movementAnalysis.MovingTime.TotalHours
+        End If
 
         Dim runnerFoundWeight As Double = Weight(movementAnalysis.MinDistanceToRunnerEnd) ' around one to ten meters then drops steeply
         preliminaryStats.PoitsInMTTrial = CalculateTrialScore(preliminaryStats, runnerFoundWeight)
@@ -1620,8 +1726,12 @@ FoundRunnerTrailTrk:
         ' 3. Converting the runner's track from Lat/Lon to XY.
         ' 4. Calculate the total length of the track of the runner (totalRunnerDistanceKm).
         Dim conv As New TrackConverter()
-        Dim dogTrkAsGeoPoints As TrackAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(dogTrkNode, trackType:=TrackType.Unknown)))
-        Dim dogGeoPoints As List(Of TrackGeoPoint) = dogTrkAsGeoPoints.TrackGeoPoints 'trasa psa/psovoda
+        Dim dogTrkAsGeoPoints As TrackAsGeoPoints
+        Dim dogGeoPoints As List(Of TrackGeoPoint) = Nothing
+        If dogTrkNode IsNot Nothing Then
+            dogTrkAsGeoPoints = conv.ConvertTrackTrkPtsToGeoPoints(conv.ConvertTrackAsTrkNodeToTrkPts(New TrackAsTrkNode(dogTrkNode, trackType:=TrackType.DogTrack)))
+            dogGeoPoints = dogTrkAsGeoPoints.TrackGeoPoints 'trasa psa/psovoda
+        End If
         Dim runnerTrkAsGeoPoints As TrackAsGeoPoints
         Dim runnerGeoPoints As List(Of TrackGeoPoint) = Nothing
         ' Transfer the runner to XY
@@ -1630,7 +1740,7 @@ FoundRunnerTrailTrk:
         Dim lat0 As Double
         Dim lon0 As Double
 
-        Dim RunnerTotalDistance As Double = 0.0F 'celková dráha kladeče (aka runner) počítána ze záznamu jeho trasy (runnerGeoPoints)
+        Dim runnerTotalDistance As Double = 0.0F 'celková dráha kladeče (aka runner) počítána ze záznamu jeho trasy (runnerGeoPoints)
         Dim dogTotalDistance As Double = 0.0F 'celková dráha psa počítána ze záznamu jeho trasy (dogGeoPoints)
 
         If runnerTrkNode IsNot Nothing Then
@@ -1659,7 +1769,7 @@ FoundRunnerTrailTrk:
                 conv.LatLonToXY(lastLat, lastLon, lat0, lon0, lastX, lastY)
                 runnerXY.Add((lastX, lastY))
             End If
-        ElseIf dogGeoPoints.Count > 0 Then
+        ElseIf dogGeoPoints IsNot Nothing AndAlso dogGeoPoints.Count > 0 Then
             ' Backup solution if we don't have a runner's track, we will use the dog's first point as a reference
             lat0 = dogGeoPoints(0).Location.Lat
             lon0 = dogGeoPoints(0).Location.Lon
@@ -1668,7 +1778,7 @@ FoundRunnerTrailTrk:
             Return (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing)
         End If
 
-        If dogGeoPoints.Count > 0 Then
+        If dogGeoPoints IsNot Nothing AndAlso dogGeoPoints.Count > 0 Then
             ' We will convert the dog to XY
             For i As Integer = 0 To dogGeoPoints.Count - 2
                 Dim point1 As TrackGeoPoint = dogGeoPoints(i) 'první bod segmentu trasy psa/psovoda
@@ -1868,14 +1978,14 @@ FoundRunnerTrailTrk:
     ''' <param name="runnerXY">The runner's track converted to XY coordinates, used for fast geometric projections.</param>
     ''' <param name="lat0">Reference latitude for coordinate conversion.</param>
     ''' <param name="lon0">Reference longitude for coordinate conversion.</param>
-    ''' <returns>A list of tuples, where each tuple contains the distance from the start of the trail in kilometers and the waypoint's deviation from the trail in meters.</returns>
+    ''' <returns>A list of tuples, where each tuple contains the distance from the start of the trail in kilometers, the waypoint's deviation from the trail in meters and gross speed of the team as distancealongTrail to the checkpoint/time from start to the checkPoint.</returns>
     Private Function EvaluateCheckPoints(wayPoints As TrackAsTrkPts, dogGeoPoints As List(Of TrackGeoPoint), runnerGeoPoints As List(Of TrackGeoPoint), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double, totalRunnerDistanceKm As Double) _
     As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
         Dim conv As New TrackConverter()
-        Dim results As New List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double))
+        Dim results As New List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
         Dim converter As New TrackConverter
         ' If there's no runner track to compare against, we can't evaluate anything.
-        If runnerXY.Count < 2 Or runnerGeoPoints.Count < 2 Then
+        If runnerXY.Count < 2 OrElse runnerGeoPoints.Count < 2 Then
             Return results
         End If
 
@@ -1883,7 +1993,7 @@ FoundRunnerTrailTrk:
         Dim pointsToEvaluate As New List(Of TrackGeoPoint)
 
         ' Add user-defined waypoints, if they exist.
-        If wayPoints IsNot Nothing Then
+        If wayPoints.TrackPoints.Count > 0 Then
             ' This assumes a converter class exists, as per your original code.
             Dim waypointsAsListOfGeoPoints As List(Of TrackGeoPoint) = converter.ConvertTrackTrkPtsToGeoPoints(wayPoints).TrackGeoPoints
             waypointsAsListOfGeoPoints.Sort(Function(a, b) Nullable.Compare(a.Time, b.Time))
@@ -1942,15 +2052,15 @@ FoundRunnerTrailTrk:
 
             ' --- If a closest point was found, calculate the distance from the start along the trail ---
             If closestSegmentIndex > -1 Then
-                Dim distanceAlongTrailMeters As Double = 0.0
 
                 ' Sum the lengths of all full segments before the closest one.
-                ' Use Haversine on original GeoPoints for better accuracy over distance.
+                Dim distanceAlongTrailMeters As Double = 0.0
                 For k As Integer = 0 To closestSegmentIndex - 1
-                    Dim runnerPoint1 = runnerGeoPoints(k)
-                    Dim runnerPoint2 = runnerGeoPoints(k + 1)
-                    distanceAlongTrailMeters += conv.HaversineDistance(runnerPoint1.Location.Lat, runnerPoint1.Location.Lon, runnerPoint2.Location.Lat, runnerPoint2.Location.Lon, "m")
+                    Dim runnerPoint1 = runnerXY(k)
+                    Dim runnerPoint2 = runnerXY(k + 1)
+                    distanceAlongTrailMeters += Math.Sqrt((runnerPoint1.X - runnerPoint2.X) ^ 2 + (runnerPoint1.Y - runnerPoint2.Y) ^ 2) ' in meters 
                 Next k
+
 
                 ' Add the partial length of the last segment (from its start to the projection point).
                 ' This is calculated in the XY plane, which is accurate enough for a single segment.
@@ -1962,6 +2072,7 @@ FoundRunnerTrailTrk:
                 Dim checkPointTime As DateTime = checkPoint.Time
                 Dim dogStartTime As DateTime = dogGeoPoints.First.Time
                 Dim timeDiffHours As Double = (checkPointTime - dogStartTime).TotalHours
+                ' Calculate gross speed (distanceAlongTrail / total time) in km/h
                 Dim dogGrossSpeedkmh As Double = If(timeDiffHours > 0, distanceAlongTrailMeters / 1000.0 / timeDiffHours, 0.0) ' in km/h
                 results.Add((distanceAlongTrailMeters, minDeviation, dogGrossSpeedkmh))
             End If
@@ -2004,18 +2115,26 @@ FoundRunnerTrailTrk:
         ' --- Step 2: Calculate bonus points for performance metrics ---
         ' Add bonus points for speed. We use gross speed as it rewards overall efficiency.
         If stats.DogGrossSpeed > 0 Then
-            DogSpeedPoints = CInt(Math.Round(stats.DogGrossSpeed * POINTS_PER_KMH_GROSS_SPEED))
+            Dim weight As Double = stats.MaxTeamDistance / stats.RunnerDistance ' weight according to the max distance reached along the trail
+            DogSpeedPoints = CInt(Math.Round(stats.DogGrossSpeed * POINTS_PER_KMH_GROSS_SPEED * weight))
         End If
 
         '--- Step 3: Calculate points for trail following  ---
         ' Award points for the portion of the trail the dog followed correctly.
         ' This is where WeightedDistanceAlongTrailKm is the perfect metric.
 
-        DogAccuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent))
+        If Double.IsNaN(stats.WeightedDistanceAlongTrailPerCent) OrElse
+           Double.IsInfinity(stats.WeightedDistanceAlongTrailPerCent) OrElse
+           stats.WeightedDistanceAlongTrailPerCent < Integer.MinValue OrElse
+           stats.WeightedDistanceAlongTrailPerCent > Integer.MaxValue Then
+            DogAccuracyPoints = 0
+        Else
+            DogAccuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent))
+        End If
 
 
         '--- Step 4: Calculate points for each reached checkpoint ---
-        If stats.CheckpointsEval.Count > 1 Then
+        If stats.CheckpointsEval IsNot Nothing AndAlso stats.CheckpointsEval.Count > 1 Then
             ' the VERY LAST item in CheckPointsEval
             ' is the dog's final position, not a  checkpoint.
             'points for the last waypoint:
@@ -2027,7 +2146,7 @@ FoundRunnerTrailTrk:
                 Dim Deviation = checkPointEval.deviationFromTrail
                 ' Výpočet váhy podle vzdálenosti (Deviation)
                 Dim _weight As Double = Weight(Deviation)
-                HandlerCheckPoints += (checkPointEval.distanceAlongTrail / (stats.RunnerDistance)) ^ 2 * _weight * POINTS_FOR_CHECKPOINT  'the point value is not allocated linearly but quadratically - for reaching 50% of the trail there are only 25% points
+                HandlerCheckPoints += (checkPointEval.distanceAlongTrail / (stats.RunnerDistance)) * _weight * POINTS_FOR_CHECKPOINT  '
             Next
         End If
 
@@ -2121,6 +2240,7 @@ FoundRunnerTrailTrk:
     Public Sub TrimGPSnoise(minDistance As Integer)
         'clip the start and end of both <trk>, i.e., the Runner and the dog, which was recorded after (or before) the end of the trail. Useful when the GPS doesn't turn off right away.
         ' Získání všech uzlů <trk>
+        Return 'zablokováno
         Dim trackNodes = Me.Reader.SelectNodes("trk")
         For Each trkNode As XmlNode In trackNodes
             ' Získání všech <trkseg> uvnitř <trk>
@@ -2188,7 +2308,7 @@ FoundRunnerTrailTrk:
             End If
 
             If Not isCluster Then
-                'poslední bod v clusteru je nahrazen centroidem
+                'poslední bod v clusteru se nahradí centroidem
                 If cluster_.Count > 5 Then
                     'Poslední point v klastru se nahradí centroidem,
                     'přitom uzel time zůstává beze změny - tím se zpřesní
@@ -2675,7 +2795,7 @@ Module TrackDisplayLogic
             Case TrackType.RunnerTrail : Return My.Resources.Resource1.RunnerTrail
             Case TrackType.DogTrack : Return My.Resources.Resource1.dogTrack
             Case TrackType.CrossTrail : Return My.Resources.Resource1.CrossingTrail
-            Case TrackType.Artickle : Return My.Resources.Resource1.artickle
+            Case TrackType.Article : Return My.Resources.Resource1.article
             Case Else : Return My.Resources.Resource1.txtUnknown
         End Select
     End Function

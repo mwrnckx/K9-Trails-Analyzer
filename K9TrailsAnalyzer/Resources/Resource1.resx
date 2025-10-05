@@ -175,13 +175,13 @@
     <value>Speed</value>
   </data>
   <data name="outAverageDistance" xml:space="preserve">
-    <value>Average length of trails</value>
+    <value>Average effective length of trails</value>
   </data>
   <data name="outAverageAge" xml:space="preserve">
     <value>Average age of trails</value>
   </data>
   <data name="outAverageSpeed" xml:space="preserve">
-    <value>Average speed of dog</value>
+    <value>Average net speed of dog</value>
   </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>The gpx files were successfully backed up to the directory:</value>
@@ -293,7 +293,7 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="RunnerTrail" xml:space="preserve">
     <value>Runner's trail</value>
   </data>
-  <data name="artickle" xml:space="preserve">
-    <value>Scent Artickle</value>
+  <data name="article" xml:space="preserve">
+    <value>Scent article</value>
   </data>
 </root>

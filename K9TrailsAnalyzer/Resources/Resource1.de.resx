@@ -294,7 +294,7 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="RunnerTrail" xml:space="preserve">
     <value />
   </data>
-  <data name="artickle" xml:space="preserve">
+  <data name="article" xml:space="preserve">
     <value>Gegenstand</value>
   </data>
 </root>

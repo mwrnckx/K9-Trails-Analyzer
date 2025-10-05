@@ -176,13 +176,13 @@
     <value>Tempo</value>
   </data>
   <data name="outAverageDistance" xml:space="preserve">
-    <value>Průměrná délka trailů</value>
+    <value>Průměrná efektivní délka trailů</value>
   </data>
   <data name="outAverageAge" xml:space="preserve">
     <value>Průměrné stáří trailů</value>
   </data>
   <data name="outAverageSpeed" xml:space="preserve">
-    <value>Průměrná rychlost psa</value>
+    <value>Průměrná čistá rychlost psa</value>
   </data>
   <data name="logBackupOfFiles" xml:space="preserve">
     <value>Soubory gpx byly úspěšně zálohovány do: </value>
@@ -294,7 +294,7 @@ Pokud jsou trasy jen dvě, je to celkem jednoznačné - první je trasa kladeče
   <data name="RunnerTrail" xml:space="preserve">
     <value>Trasa kladeče</value>
   </data>
-  <data name="artickle" xml:space="preserve">
+  <data name="article" xml:space="preserve">
     <value>předmět</value>
   </data>
 </root>

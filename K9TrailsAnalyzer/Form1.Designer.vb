@@ -289,7 +289,7 @@ Partial Class Form1
         ' 
         ' rtbWarnings
         ' 
-        rtbWarnings.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        rtbWarnings.BackColor = Color.Beige
         resources.ApplyResources(rtbWarnings, "rtbWarnings")
         rtbWarnings.Name = "rtbWarnings"
         '
@@ -307,7 +307,7 @@ Partial Class Form1
         ' 
         ' TabStats
         ' 
-        TabStats.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabStats.BackColor = Color.Beige
         TabStats.Controls.Add(rtbOutput)
         TabStats.Controls.Add(gbPeriod)
         TabStats.Controls.Add(btnCharts)
@@ -319,12 +319,12 @@ Partial Class Form1
         ' rtbOutput
         ' 
         resources.ApplyResources(rtbOutput, "rtbOutput")
-        rtbOutput.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        rtbOutput.BackColor = Color.Beige
         rtbOutput.Name = "rtbOutput"
         ' 
         ' gbPeriod
         ' 
-        gbPeriod.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        gbPeriod.BackColor = Color.Beige
         gbPeriod.Controls.Add(cmbTimeInterval)
         gbPeriod.Controls.Add(dtpEndDate)
         gbPeriod.Controls.Add(dtpStartDate)
@@ -335,7 +335,7 @@ Partial Class Form1
         ' 
         ' cmbTimeInterval
         ' 
-        cmbTimeInterval.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        cmbTimeInterval.BackColor = Color.Beige
         cmbTimeInterval.FormattingEnabled = True
         cmbTimeInterval.Items.AddRange(New Object() {resources.GetString("cmbTimeInterval.Items"), resources.GetString("cmbTimeInterval.Items1"), resources.GetString("cmbTimeInterval.Items2"), resources.GetString("cmbTimeInterval.Items3"), resources.GetString("cmbTimeInterval.Items4"), resources.GetString("cmbTimeInterval.Items5")})
         resources.ApplyResources(cmbTimeInterval, "cmbTimeInterval")
@@ -344,14 +344,14 @@ Partial Class Form1
         ' dtpEndDate
         ' 
         resources.ApplyResources(dtpEndDate, "dtpEndDate")
-        dtpEndDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpEndDate.CalendarMonthBackground = Color.Beige
         dtpEndDate.Format = DateTimePickerFormat.Custom
         dtpEndDate.Name = "dtpEndDate"
         ' 
         ' dtpStartDate
         ' 
         resources.ApplyResources(dtpStartDate, "dtpStartDate")
-        dtpStartDate.CalendarMonthBackground = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        dtpStartDate.CalendarMonthBackground = Color.Beige
         dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
         dtpStartDate.Format = DateTimePickerFormat.Custom
         dtpStartDate.Name = "dtpStartDate"
@@ -379,7 +379,7 @@ Partial Class Form1
         ' 
         ' TabVideoExport
         ' 
-        TabVideoExport.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabVideoExport.BackColor = Color.Beige
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
         TabVideoExport.Controls.Add(PictureBox3)
@@ -391,7 +391,7 @@ Partial Class Form1
         ' lvGpxFiles
         ' 
         resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
-        lvGpxFiles.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        lvGpxFiles.BackColor = Color.Beige
         lvGpxFiles.CheckBoxes = True
         lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
         lvGpxFiles.Name = "lvGpxFiles"
@@ -441,8 +441,8 @@ Partial Class Form1
         Me.dgvTrial.Size = New System.Drawing.Size(3000, 2000) 'musí být veliký aby se vytvořily posuvníky v Panelu
         Me.dgvTrial.ScrollBars = ScrollBars.None
         Me.dgvTrial.TabIndex = 0
-        Me.dgvTrial.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
-        Me.dgvTrial.DefaultCellStyle.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Me.dgvTrial.BackColor = Color.Beige
+        Me.dgvTrial.DefaultCellStyle.BackColor = Color.Beige
         Me.dgvTrial.DefaultCellStyle.ForeColor = Color.Maroon
         Me.dgvTrial.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
         'columnHeaders
@@ -475,7 +475,7 @@ Partial Class Form1
         ' 
         ' TabTrial
         ' 
-        TabTrial.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        TabTrial.BackColor = Color.Beige
         TabTrial.Controls.Add(Me.panelProDgv)
         resources.ApplyResources(TabTrial, "TabTrial")
         TabTrial.Text = "Mantrailing Trial"
@@ -550,7 +550,7 @@ Partial Class Form1
 
 
         mnuPrependDateToFileName.Checked = True ' My.Settings.PrependDateToName
-        mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
+        'mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
         mnucbActiveDog.SelectedItem = My.Settings.ActiveDog
 
 

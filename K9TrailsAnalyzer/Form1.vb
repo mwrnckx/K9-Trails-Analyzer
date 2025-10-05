@@ -4,6 +4,7 @@ Imports System.DirectoryServices.ActiveDirectory
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection
+Imports System.Runtime.InteropServices.JavaScript.JSType
 Imports System.Text
 Imports System.Text.Encodings.Web
 Imports System.Text.Json
@@ -32,6 +33,8 @@ Public Class Form1
             Return DogsList.FirstOrDefault(Function(d) d.Id = ActiveDogId)
         End Get
     End Property
+
+    Private displayList As List(Of TrailStatsDisplay) 'pro naplnění dgvTrial
 
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
@@ -103,12 +106,25 @@ Public Class Form1
 
     End Sub
 
+    Private Sub ClearDgvTrial()
+
+        ' 2. Znovu nastavte nebo obnovte DataSource
+        ' a) Pokud displayList je List<T>, je lepší ho znovu nastavit
+        If displayList IsNot Nothing Then displayList.Clear()
+        dgvTrial.DataSource = Nothing ' Odpojte stávající zdroj
+        dgvTrial.Columns.Clear()     ' Vyčistěte sloupce, pokud byly automaticky generovány
+        'dgvTrial.DataSource = displayList ' Znovu nastavte prázdný zdroj (displayList je nyní prázdný)
+
+    End Sub
+
 
 
     Private Sub FillDgvTrial()
         ' Vytvořte si třídu pro data
         ' Vytvořte seznam pro zobrazení a naplňte ho
-        Dim displayList As New List(Of TrailStatsDisplay)()
+
+        ClearDgvTrial() 'nejprve vyčistíme
+        displayList = New List(Of TrailStatsDisplay)()
         For i As Integer = GPXFilesManager.GpxRecords.Count - 1 To 0 Step -1
             Dim record As GPXRecord = GPXFilesManager.GpxRecords(i)
             Dim stats As TrailStatsStructure = record.TrailStats
@@ -120,6 +136,7 @@ Public Class Form1
                 .DogGrossSpeedKmh = stats.DogGrossSpeed,
                 .DogDistance = stats.DogDistance,
                 .Deviation = stats.Deviation,
+                .maxTeamDistance = stats.MaxTeamDistance,
                 .WeightedDistanceAlongTrail = stats.WeightedDistanceAlongTrail,
                 .WeightedDistanceAlongTrailPerCent = stats.WeightedDistanceAlongTrailPerCent / 100,'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
@@ -137,33 +154,27 @@ Public Class Form1
                                displayItem.DogAccuracyPoints +
                                displayItem.HandlerCheckPoints
             ' Nyní přidejte data pro první dva checkpointy z CheckpointsEval
-            Dim firstIndex As Integer = stats.CheckpointsEval.Count - 2 ' První checkpoint
-            Dim secondIndex As Integer = stats.CheckpointsEval.Count - 1 ' Druhý checkpoint
-            ' Použij podmínku:
-            If secondIndex >= 0 Then
-                With displayItem
-                    .SecondCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(secondIndex).deviationFromTrail
-                    .SecondCheckpointEvalDistance = stats.CheckpointsEval(secondIndex).distanceAlongTrail
-                    .SecondCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(secondIndex).dogGrossSpeed
-                End With
-            Else
-                ' Pokud není dostatek dat, nastav výchozí hodnoty, aby aplikace nespadla
-                displayItem.SecondCheckpointEvalDeviationFromTrail = 0
-                displayItem.SecondCheckpointEvalDistance = 0
-                displayItem.SecondCheckpointEvaldogGrossSpeed = 0
-            End If
+            Dim firstIndex As Integer = 0
+            Dim secondIndex As Integer = 0
+            If stats.CheckpointsEval IsNot Nothing Then
+                firstIndex = stats.CheckpointsEval.Count - 2  ' První checkpoint
+                secondIndex = stats.CheckpointsEval.Count - 1 ' Druhý checkpoint
 
-            If firstIndex >= 0 Then
-                With displayItem
-                    .FirstCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(firstIndex).deviationFromTrail
-                    .FirstCheckpointEvalDistance = stats.CheckpointsEval(firstIndex).distanceAlongTrail
-                    .FirstCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(firstIndex).dogGrossSpeed
-                End With
-            Else
-                ' Pokud není dostatek dat, nastav výchozí hodnoty, aby aplikace nespadla
-                displayItem.FirstCheckpointEvalDeviationFromTrail = 0
-                displayItem.FirstCheckpointEvalDistance = 0
-                displayItem.FirstCheckpointEvaldogGrossSpeed = 0
+                ' Použij podmínku:
+                If secondIndex >= 0 Then
+                    With displayItem
+                        .SecondCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(secondIndex).deviationFromTrail
+                        .SecondCheckpointEvalDistance = stats.CheckpointsEval(secondIndex).distanceAlongTrail
+                        .SecondCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(secondIndex).dogGrossSpeed
+                    End With
+                End If
+                If firstIndex >= 0 Then
+                    With displayItem
+                        .FirstCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(firstIndex).deviationFromTrail
+                        .FirstCheckpointEvalDistance = stats.CheckpointsEval(firstIndex).distanceAlongTrail
+                        .FirstCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(firstIndex).dogGrossSpeed
+                    End With
+                End If
             End If
         Next i
 
@@ -223,6 +234,7 @@ Public Class Form1
     "RunnerDistance",
     "WeightedDistanceAlongTrail",
        "Deviation",
+       "maxTeamDistance",
         "TrailAge",
       "FirstCheckpointEvalDistance",
           "SecondCheckpointEvalDistance",
@@ -337,6 +349,7 @@ Public Class Form1
             For Each record In GPXFilesManager.GpxRecords
                 RemoveHandler record.WarningOccurred, AddressOf GPXFilesManager.WriteRTBWarning
             Next
+            GPXFilesManager.GpxRecords.Clear()
             GPXFilesManager = Nothing ' Uvolnění staré instance
         End If
 
@@ -423,7 +436,9 @@ Public Class Form1
                 ' Skrolování na aktuální pozici kurzoru
                 Me.rtbOutput.ScrollToCaret()
             Catch ex As Exception
-                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath) & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                MessageBox.Show(My.Resources.Resource1.mBoxDataRetrievalFailed & vbCrLf & "File: " & IO.Path.GetFileNameWithoutExtension(_gpxRecord.Reader.FilePath) & vbCrLf & ex.Message & Environment.NewLine &
+                              $"(StackTrace):" & Environment.NewLine &
+                              ex.StackTrace, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             End Try
         Next _gpxRecord
 
@@ -456,8 +471,8 @@ Public Class Form1
 
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
-        Dim totalDistance As Double = Me.GPXFilesManager.TotalDistances.Last.totalDistance '_gpxFilesManager.TotalDistance
-        Me.rtbOutput.AppendText((totalDistance / 1000.0).ToString("F1") & " km" & vbCrLf)
+        Dim totalDistanceKm As Double = Me.GPXFilesManager.TotalDistancesKm.Last.totalDistanceKm '_gpxFilesManager.TotalDistance
+        Me.rtbOutput.AppendText((totalDistanceKm).ToString("F1") & " km" & vbCrLf)
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
@@ -633,7 +648,7 @@ Public Class Form1
                 Next
 
                 ' Write the total distance at the end of the CSV file
-                writer.WriteLine($"Total;;; { GPXFilesManager.TotalDistances.Last.totalDistance:F2}")
+                writer.WriteLine($"Total;;; { GPXFilesManager.TotalDistancesKm.Last.totalDistanceKm:F2}")
             End Using
 
 
@@ -696,13 +711,13 @@ Public Class Form1
 
 
         'Distances
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Distances, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DistancesKm, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'TotDistance
-        chart1 = New frmChart(ActiveDog.Name, Me.GPXFilesManager.TotalDistances, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDog.Name, Me.GPXFilesManager.TotalDistancesKm, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -718,12 +733,12 @@ Public Class Form1
         Dim monthlySumsWithEmpty = From month In allMonths
                                    Group Join ms In (From record In gpxRecords
                                                      Group record By Month = New DateTime(record.TrailStart.Time.Year, record.TrailStart.Time.Month, 1) Into grp = Group
-                                                     Select New With {Month, .TotalDistance = grp.Sum(Function(r) r.TrailDistance)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {month, .TotalDistance = 0.0})
+                                                     Select New With {Month, .TotalDistanceKm = grp.Sum(Function(r) r.TrailDistance / 1000)}) On month Equals ms.Month Into gj = Group From subMs In gj.DefaultIfEmpty(New With {month, .TotalDistanceKm = 0.0})
                                    Select subMs
 
         ' Převedeme na pole pro graf
         Dim monthlyXAxisDataWithEmpty = monthlySumsWithEmpty.Select(Function(ms) ms.Month.ToString("MMMM yy", currentCulture)).ToArray
-        Dim monthlyYAxisDataWithEmpty = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistance).ToArray
+        Dim monthlyYAxisDataWithEmpty = monthlySumsWithEmpty.Select(Function(ms) ms.TotalDistanceKm).ToArray
 
         For Each s In monthlyXAxisDataWithEmpty
             Debug.WriteLine($"X:  {s}")
@@ -1132,7 +1147,8 @@ Public Class Form1
         My.Settings.Save()
         ' uložíme config (aby se volba pamatovala)
         SaveConfig()
-
+        ClearDgvTrial()
+        lvGpxFiles.Items.Clear()
         ' tady můžeš volat další inicializace pro aktivního psa
         ' e.g. RefreshOriginalsFolderForActiveDog()
     End Sub
@@ -1528,8 +1544,11 @@ Public Class TrailStatsDisplay
     <DisplayName("Dog Speed km/h")>
     Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
 
+    <DisplayName("Max. Team Distance")>
+    Public Property MaxTeamDistance As Double 'where on the trail the team reached (measured to the last checkpointu)
+
     <DisplayName("Average Deviation")>
-    Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
+    Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track weighted by time
 
     <DisplayName("Trail Distance")>
     Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
@@ -1551,18 +1570,18 @@ Public Class TrailStatsDisplay
 
 
     <DisplayName("1th Checkpoint Distance")>
-    Public Property FirstCheckpointEvalDistance As Double
+    Public Property FirstCheckpointEvalDistance As Double = 0
 
     <DisplayName("1th Checkpoint Deviation")>
-    Public Property FirstCheckpointEvalDeviationFromTrail As Double
+    Public Property FirstCheckpointEvalDeviationFromTrail As Double = 0
     <DisplayName("1th Checkpoint dogSpeed km/h")>
-    Public Property FirstCheckpointEvaldogGrossSpeed As Double ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
+    Public Property FirstCheckpointEvaldogGrossSpeed As Double = 0 ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     <DisplayName("Last Checkpoint Distance")>
-    Public Property SecondCheckpointEvalDistance As Double
+    Public Property SecondCheckpointEvalDistance As Double = 0
     <DisplayName("Last Checkpoint Deviation")>
-    Public Property SecondCheckpointEvalDeviationFromTrail As Double
+    Public Property SecondCheckpointEvalDeviationFromTrail As Double = 0
     <DisplayName("Last Checkpoint dogSpeed km/h")>
-    Public Property SecondCheckpointEvaldogGrossSpeed As Double
+    Public Property SecondCheckpointEvaldogGrossSpeed As Double = 0
 
     <DisplayName("Runner name")>
     Public Property RunnerName As String '

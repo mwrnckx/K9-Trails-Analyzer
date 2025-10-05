@@ -8,7 +8,7 @@ Public Class frmPleaseWait
     Private WithEvents progressBar As ProgressBar
     Public Sub New(label As String)
         Me.Text = "Please Wait"
-        Me.BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        Me.BackColor = Color.Beige
         Me.ControlBox = False
         Me.Size = New Size(400, 150)
         Me.StartPosition = FormStartPosition.CenterScreen

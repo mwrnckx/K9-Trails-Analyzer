@@ -291,7 +291,7 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="RunnerTrail" xml:space="preserve">
     <value />
   </data>
-  <data name="artickle" xml:space="preserve">
+  <data name="article" xml:space="preserve">
     <value>przedmiot</value>
   </data>
 </root>

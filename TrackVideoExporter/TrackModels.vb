@@ -42,7 +42,7 @@ Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentuj
                 Case TrackType.RunnerTrail : Return Color.Blue
                 Case TrackType.DogTrack : Return Color.Red
                 Case TrackType.CrossTrail : Return Color.Green
-                Case TrackType.Artickle : Return Color.Orange
+                Case TrackType.article : Return Color.Orange
                 Case Else : Return Color.Black
             End Select
         End Get
@@ -281,7 +281,7 @@ Public Enum TrackType
     RunnerTrail
     DogTrack
     CrossTrail
-    Artickle 'scent artickle or checkPoint
+    article 'scent article or checkPoint
 End Enum
 
 ''' <summary>

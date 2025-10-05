@@ -65,11 +65,11 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Scent Artickle.
+        '''  Vyhledá lokalizovaný řetězec podobný Scent article.
         '''</summary>
-        Friend Shared ReadOnly Property artickle() As String
+        Friend Shared ReadOnly Property article() As String
             Get
-                Return ResourceManager.GetString("artickle", resourceCulture)
+                Return ResourceManager.GetString("article", resourceCulture)
             End Get
         End Property
         
@@ -268,7 +268,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Average length of trails.
+        '''  Vyhledá lokalizovaný řetězec podobný Average effective length of trails.
         '''</summary>
         Friend Shared ReadOnly Property outAverageDistance() As String
             Get

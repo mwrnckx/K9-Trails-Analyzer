@@ -103,7 +103,7 @@ Partial Class frmEditComments
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
-        BackColor = Color.FromArgb(CByte(237), CByte(240), CByte(213))
+        BackColor = Color.Beige
         Controls.Add(txtTrail)
         Controls.Add(txtPerformance)
         Controls.Add(txtGoal)

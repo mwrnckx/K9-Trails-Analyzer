@@ -141,7 +141,7 @@
   <data name="gbPeriod.Text" xml:space="preserve">
     <value>Вибір періоду</value>
   </data>
-  <data name="lblScentArtickle.Text" xml:space="preserve">
+  <data name="lblScentarticle.Text" xml:space="preserve">
     <value>зразок запаху</value>
   </data>
   <data name="$this.Text" xml:space="preserve">

@@ -145,7 +145,7 @@
   <data name="gbPeriod.Text" xml:space="preserve">
     <value>Výběr období</value>
   </data>
-  <data name="lblScentArtickle.Text" xml:space="preserve">
+  <data name="lblScentarticle.Text" xml:space="preserve">
     <value>pachovka</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />

@@ -6,7 +6,7 @@
         <k9:dogName>REX</k9:dogName>
         <k9:goal>plowed Field</k9:goal>
         <k9:trail>⏳: 1,7 h</k9:trail>
-        <k9:performance> Very unfocused work, ignoring artickles</k9:performance>
+        <k9:performance> Very unfocused work, ignoring articles</k9:performance>
         <k9:weather temperature="11.2" windSpeed="1.15" windDirection="85" precipitation="0" relHumidity="81" cloudCover="87">🌡11,2 °C  💨 1,2 m/s E 💧81 %   💧0 mm/h ⛅87 %</k9:weather>
       </k9:report>
       <k9:processed>28.08.2025 20:33:19</k9:processed>
@@ -49,7 +49,7 @@
     <hdop>1.50</hdop>
   </wpt>
   <trk>
-    <desc><![CDATA[📍 plowed Field<br>👣 ⏳: 1,7 h<br>🏅  Very unfocused work, ignoring artickles<br>🌡11,2 °C  💨 1,2 m/s E 💧81 %   💧0 mm/h ⛅87 %]]></desc>
+    <desc><![CDATA[📍 plowed Field<br>👣 ⏳: 1,7 h<br>🏅  Very unfocused work, ignoring articles<br>🌡11,2 °C  💨 1,2 m/s E 💧81 %   💧0 mm/h ⛅87 %]]></desc>
     <extensions>
       <k9:TrackType>RunnerTrail</k9:TrackType>
     </extensions>
