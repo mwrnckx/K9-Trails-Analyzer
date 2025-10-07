@@ -318,4 +318,10 @@
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Ändern Sie das Verzeichnis mit GPX -Dateien</value>
   </data>
+  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+    <value>Löschen Sie den aktuellen Hund/Ereignis</value>
+  </data>
+  <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
+    <value>Bearbeiten Sie den Hund oder den Ereignisnamen</value>
+  </data>
 </root>

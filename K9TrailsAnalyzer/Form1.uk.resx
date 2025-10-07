@@ -300,4 +300,10 @@
   <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
     <value>Видалити поточну собаку</value>
   </data>
+  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+    <value>Видалити поточну собаку/подію</value>
+  </data>
+  <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
+    <value>Редагувати собаку або назву події</value>
+  </data>
 </root>

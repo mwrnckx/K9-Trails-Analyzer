@@ -1,0 +1,17 @@
+﻿[
+  {
+    "id": "001",
+    "name": "Rex (demo_dog)",
+    "remotedirectory": ""
+    },
+    {
+    "id": "002",
+    "name": "Category: Beginners",
+    "remotedirectory": ""
+    },
+     {
+    "id": "003",
+    "name": "Category: Advanced",
+    "remotedirectory": ""
+    }
+]

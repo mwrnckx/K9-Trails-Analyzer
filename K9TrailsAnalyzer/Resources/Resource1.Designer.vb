@@ -277,7 +277,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Average speed of dog.
+        '''  Vyhledá lokalizovaný řetězec podobný Average net speed of dog.
         '''</summary>
         Friend Shared ReadOnly Property outAverageSpeed() As String
             Get
@@ -340,7 +340,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Total Length of all trails.
+        '''  Vyhledá lokalizovaný řetězec podobný Total Effective Length of all trails.
         '''</summary>
         Friend Shared ReadOnly Property outTotalLength() As String
             Get

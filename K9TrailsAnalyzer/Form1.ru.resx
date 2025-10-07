@@ -306,4 +306,10 @@
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Изменить каталог с файлами GPX</value>
   </data>
+  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+    <value>Удалить текущую собаку/событие</value>
+  </data>
+  <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
+    <value>Редактировать название собаки или события</value>
+  </data>
 </root>

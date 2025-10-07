@@ -161,7 +161,7 @@
     <value>Celkový počet  stop/trailů</value>
   </data>
   <data name="outTotalLength" xml:space="preserve">
-    <value>Celková délka trailů v daném období</value>
+    <value>Celková efektivní délka trailů</value>
   </data>
   <data name="outLength" xml:space="preserve">
     <value>Délka</value>

@@ -1,4 +1,5 @@
 ﻿Imports System.DirectoryServices.ActiveDirectory
+Imports System.Drawing.Text
 Imports System.Globalization
 Imports System.IO
 Imports System.Net.Http
@@ -6,6 +7,7 @@ Imports System.Text
 Imports System.Text.Encodings.Web
 Imports System.Text.Json
 Imports System.Text.RegularExpressions
+Imports System.Windows.Forms.Design
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
 Imports System.Xml
@@ -18,7 +20,12 @@ Imports TrackVideoExporter.TrackConverter
 
 Public Class GpxFileManager
     'obsahuje seznam souborů typu gpxRecord a funkce na jejich vytvoření a zpracování
+
     Dim _dogInfo As DogInfo 'informace o psovi, pro kterého se zpracovávají soubory
+    ''' <summary>
+    ''' Informace o psovi, pro kterého se zpracovávají soubory.
+    ''' </summary>
+    ''' <returns>Vrací objekt DogInfo s informacemi o psovi: Id, Name, RemoteDirectory, ProcessedDirectory atd.</returns>
     Public Property DogInfo As DogInfo 'informace o psovi, pro kterého se zpracovávají soubory
         Get
             Return _dogInfo
@@ -96,6 +103,7 @@ Public Class GpxFileManager
             Return _DistancesKm
         End Get
     End Property
+
     ''' <summary>
     ''' vrací kumulativní součet načuchaných vzdáleností
     ''' </summary>
@@ -215,7 +223,10 @@ Public Class GpxFileManager
                 Try
                     If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                         _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "article"
-                        If prependDateToName Then _gpxRecord.PrependDateToFilename()
+                        'If prependDateToName Then
+                        '    Dim newFilename As String = _gpxRecord.PrependDateToFilename(_gpxRecord.FileName)
+                        '    If _gpxRecord.FileName <> newFilename Then _gpxRecord.RenameFile(newFilename)
+                        'End If
                         'If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
                     End If
 
@@ -265,7 +276,8 @@ Public Class GpxFileManager
         Dim GPXFRecords As New List(Of GPXRecord)
 
         If remoteFiles Then
-            Dim downloadedPath = Path.Combine(Application.StartupPath, "AppData", "downloaded.json")
+            'Dim downloadedPath = Path.Combine(Application.StartupPath, "AppData", "downloaded.json")
+            Dim downloadedPath = Path.Combine(Application.StartupPath, DogInfo.LocalBaseDirectory, "downloaded.json")
             Dim tracker As New FileTracker(downloadedPath)
             Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
             Dim i As Integer = 0
@@ -282,17 +294,25 @@ Public Class GpxFileManager
                         Else
                             IO.File.Copy(remoteFilePath, localOriginalsFilePath, False)
                         End If
-
-                        Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, Path.GetFileName(remoteFilePath))
-
                         i += 1
-                        tracker.MarkAsProcessed(remoteFilePath)
+                        tracker.MarkAsDownloadeded(remoteFilePath)
                         Try
                             'načte z Originals:
                             Dim _reader As New GpxReader(localOriginalsFilePath)
+                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo)
+                            Dim fileNameWithDate As String = _gpxRecord.PrependDateToFilename(Path.GetFileName(remoteFilePath))
+                            Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, fileNameWithDate)
+
+                            If File.Exists(localProcessedFilePath) Then
+                                Dim dialogResult = mboxQEx($"File {fileNameWithDate} already exists in localProcessed directory!" & vbCrLf & "It's probably a duplicate trail. Do you still want to add it?")
+                                If dialogResult = DialogResult.No Then
+                                    RaiseEvent WarningOccurred($"File {fileNameWithDate} was skipped because it is duplicate", Color.DarkOrange)
+                                    Continue For 'přejde na další soubor
+                                End If
+                            End If
 
                             _reader.FilePath = localProcessedFilePath
-                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
+
                             _gpxRecord.SplitSegmentsIntoTracks() 'rozdělí trk s více segmenty na jednotlivé trk
                             _gpxRecord.IsAlreadyProcessed = False 'nastaví, že soubor ještě nebyl zpracován
                             '_gpxRecord.CreateTracks() 'seřadí trk podle času
@@ -316,10 +336,10 @@ Public Class GpxFileManager
             For Each filePath In Files
                 Try
                     Dim _reader As New GpxReader(filePath)
-                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo.Name)
+                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo)
                     '_gpxRecord.CreateTracks() 'seřadí trk podle času
                     GPXFRecords.Add(_gpxRecord)
-                    Dim test = _gpxRecord.TrailStats.WeightedDistanceAlongTrailPerCent
+                    'Dim test = _gpxRecord.TrailStats.WeightedDistanceAlongTrailPerCent
                 Catch ex As Exception
                     'pokud dojde k chybě při čtení souboru, vypíše se varování a pokračuje se na další soubor
                     RaiseEvent WarningOccurred($"Error reading file {Path.GetFileName(filePath)}: {ex.Message}", Color.Red)
@@ -327,7 +347,7 @@ Public Class GpxFileManager
             Next
 
         End If
-        ' Seřazení podle data
+        ' Seřazení podle data -  volá i formulář pro určení typu trasy!!!! Je to důležité pro další zpracování (merge!)
         GPXFRecords.Sort(Function(x, y) x.TrailStart.Time.CompareTo(y.TrailStart.Time))
         Return GPXFRecords
     End Function
@@ -372,101 +392,93 @@ Public Class GpxFileManager
         RaiseEvent WarningOccurred(_message, _color)
     End Sub
 
-
-
+    ''' <summary>
+    ''' Merges pairs of GPX files where one contains only the runner's track and the other only the dog's track.
+    ''' Ensures that a resulting record does not contain both tracks before merging.
+    ''' </summary>
+    ''' <param name="_gpxRecords">List of GPXRecord objects to be merged.</param>
+    ''' <returns>List of merged GPXRecord objects.</returns>
     Public Function MergeGpxFiles(_gpxRecords As List(Of GPXRecord)) As List(Of GPXRecord)
+
         Dim gpxFilesMerged As New List(Of GPXRecord)
-        If _gpxRecords.Count = 0 Then Return gpxFilesMerged 'ošetření prázdného listu
+        If _gpxRecords.Count = 0 Then Return gpxFilesMerged
 
-        Dim usedIndexes As New List(Of Integer) ' Seznam indexů, které už byly použity pro spojení
+        Dim usedIndexes As New HashSet(Of Integer)
+        For i = 0 To _gpxRecords.Count - 1
+            If usedIndexes.Contains(i) Then Continue For
+            ' Ensure the record does not already contain both tracks (runner and dog)
+            Dim iHasOnlyRunner = _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.RunnerTrail) _
+                AndAlso Not _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.DogTrack)
+            Dim iHasOnlyDog = _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.DogTrack) _
+                AndAlso Not _gpxRecords(i).Tracks.Any(Function(t) t.TrackType = TrackType.RunnerTrail)
 
-        For i As Integer = 0 To _gpxRecords.Count - 1
-            If usedIndexes.Contains(i) Then Continue For ' Přeskočíme již spojené prvky, ty jsou smazány, do listu se tedy nepřidávají
+            If Not (iHasOnlyRunner Or iHasOnlyDog) Then
+                ' If the record already contains both tracks, add it as is
+                gpxFilesMerged.Add(_gpxRecords(i))
+                usedIndexes.Add(i)
+                Continue For
+            End If
 
-            '_gpxRecords(i).CreateAndSortTracks()
-            gpxFilesMerged.Add(_gpxRecords(i)) ' Přidáme aktuální prvek do merged listu
-            If _gpxRecords(i).IsAlreadyProcessed Then Continue For  'možno přeskočit, už to proběhlo...
+            Dim merged As Boolean = False
+            For j = 0 To _gpxRecords.Count - 1
+                If i = j OrElse usedIndexes.Contains(j) Then Continue For
 
-            Dim lastAddedIndex As Integer = gpxFilesMerged.Count - 1 ' Index posledního přidaného prvku
+                Dim jHasRunner = _gpxRecords(j).Tracks.All(Function(t) t.TrackType = TrackType.RunnerTrail)
+                Dim jHasDog = _gpxRecords(j).Tracks.All(Function(t) t.TrackType = TrackType.DogTrack)
 
-            Dim iTypes As New List(Of TrackType)
-            Dim TraiRunnerStart As DateTime
-            Dim DogStart As DateTime
-            For k = 0 To _gpxRecords(i).Tracks.Count - 1
-                Dim kType = _gpxRecords(i).Tracks(k).TrackType
-                iTypes.Add(kType)
-                Select Case kType
-                    Case TrackType.RunnerTrail
-                        TraiRunnerStart = _gpxRecords(i).Tracks(k).StartTrackGeoPoint.Time
-                    Case TrackType.DogTrack
-                        DogStart = _gpxRecords(i).Tracks(k).StartTrackGeoPoint.Time
-                End Select
-            Next k
+                ' One must be runner, the other must be dog
+                If (iHasOnlyRunner And jHasDog) Or (iHasOnlyDog And jHasRunner) Then
+                    Dim runnerIdx = If(iHasOnlyRunner, i, j)
+                    Dim dogIdx = If(iHasOnlyDog, i, j)
+                    Dim runner = _gpxRecords(runnerIdx)
+                    Dim dog = _gpxRecords(dogIdx)
 
-            ' Vnitřní cyklus se pokouší spojit POSLEDNĚ PŘIDANÝ prvek s NÁSLEDUJÍCÍMI
-            Dim j As Integer = i + 1
-            While j < _gpxRecords.Count
-                Dim timeDiff As TimeSpan = _gpxRecords(j).TrailStart.Time - _gpxRecords(lastAddedIndex).TrailStart.Time
-
-                If timeDiff > maxAgeForMerge Then
-                    ' Další záznam je už moc starý, nemá cenu pokračovat
-                    Exit While
-                End If
-
-                If Not usedIndexes.Contains(j) Then
-                    '#TODO
-                    'pokud jsou oba záznamy stejného typu dogtrack či RunnerTrail tak nespojovat!
-                    Dim jTypes As New List(Of TrackType)
-                    For k = 0 To _gpxRecords(j).Tracks.Count - 1
-                        Dim kType = _gpxRecords(j).Tracks(k).TrackType
-                        jTypes.Add(kType)
-                        Select Case kType
-                            Case TrackType.RunnerTrail
-                                TraiRunnerStart = _gpxRecords(j).Tracks(k).StartTrackGeoPoint.Time
-                            Case TrackType.DogTrack
-                                DogStart = _gpxRecords(j).Tracks(k).StartTrackGeoPoint.Time
-                        End Select
-                    Next k
-                    'TODO  když jtypes bude obsahovat dogTrack a i types RunnerTrail, tak zkontolovat, že pes je mladší!!! 
-                    Dim haveCommonItem As Boolean = jTypes.Any(Function(x) iTypes.Contains(x))
-                    If Not haveCommonItem Then
-                        If DogStart <= TraiRunnerStart Then Continue For 'pes nemůže startovat dřív než Runner
-                        If TryMerge(_gpxRecords(j), gpxFilesMerged(lastAddedIndex)) Then
-                            usedIndexes.Add(j)
-                            ' lastAddedIndex zůstává stejný, protože mergujeme do stejného objektu
-                            gpxFilesMerged(lastAddedIndex).CreateTracks() 'seřadí trk podle času!!
+                    Dim timeDiff = dog.TrailStart.Time - runner.TrailStart.Time
+                    ' Merge only if the time difference is positive and within the allowed maxAgeForMerge
+                    If timeDiff.TotalSeconds > 0 AndAlso timeDiff <= maxAgeForMerge Then
+                        If TryMerge(dog, runner) Then
+                            gpxFilesMerged.Add(runner)
+                            usedIndexes.Add(runnerIdx)
+                            usedIndexes.Add(dogIdx)
+                            runner.CreateTracks() 'nutné přepočítat tracky, protože jinak proprties vrací staré hodnoty, kde je jen runnerTrail
+                            merged = True
+                            Exit For
                         End If
                     End If
                 End If
+            Next
 
-                j += 1
-            End While
-
-        Next i
+            ' If not merged, add the record as is
+            If Not merged AndAlso Not usedIndexes.Contains(i) Then
+                gpxFilesMerged.Add(_gpxRecords(i))
+                usedIndexes.Add(i)
+            End If
+        Next
 
         Return gpxFilesMerged
     End Function
 
-    Private Function TryMerge(file_i As GPXRecord, file_prev As GPXRecord) As Boolean
+
+    Private Function TryMerge(dog As GPXRecord, runner As GPXRecord) As Boolean
         'returns true if file_i was nested in file_prev or if the file was deleted as a duplicate
         'find all adjacent files that differ by less than MaxAge
         ' Basic check to see if the difference in data meets the maxAge condition
         'check for duplicates: if the difference is less than one second, it's probably the same track
-        If (file_i.TrailStart.Time - file_prev.TrailStart.Time < New TimeSpan(0, 0, 1)) Then
+        If (dog.TrailStart.Time - runner.TrailStart.Time < New TimeSpan(0, 0, 1)) Then
             Dim question As String = $"Tracks in files 
-{file_i.Reader.FileName} 
+{dog.Reader.FileName} 
 and 
-{file_prev.Reader.FileName} 
+{runner.Reader.FileName} 
 have same start time. 
 I suspect it's a duplication. 
 
-Should we delete the {file_i.Reader.FileName} file?
+Should we delete the {dog.FileName} file?
 
 Be carefull with this!!!!!"
             Dim result As DialogResult = MessageBox.Show(question, "Delete duplicate file?", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
             If result = DialogResult.Yes Then
-                IO.File.Delete(file_i.Reader.FilePath)
-                RaiseEvent WarningOccurred($"File {file_i.Reader.FileName} was deleted because it is duplicate", Color.DarkOrange)
+                IO.File.Delete(dog.Reader.FilePath)
+                RaiseEvent WarningOccurred($"File {dog.Reader.FileName} was deleted because it is duplicate", Color.DarkOrange)
                 Return True
                 'ElseIf result = DialogResult.No Then
                 '    SaveMergeDecision(file_prev, file_i, result.ToString)
@@ -475,10 +487,10 @@ Be carefull with this!!!!!"
 
         ' Zeptej se uživatele, zda chce soubory spojit
         Dim mergeFiles As DialogResult
-        If Not mergeNoAsk Then mergeFiles = DialogMergeFiles(file_prev, file_i)
+        If Not mergeNoAsk Then mergeFiles = DialogMergeFiles(runner, dog)
         ' Pokud uživatel souhlasí, spoj soubory, jinak přidej
         If mergeNoAsk OrElse (mergeFiles = DialogResult.Yes) Then
-            If file_prev.MergeDogToMe(file_i) Then
+            If runner.MergeDogToMe(dog) Then
                 Return True
             End If
         End If
@@ -618,6 +630,7 @@ Public Class GPXRecord
     End Property
 
     Public Property DogName As String
+    Public Property ActiveDogInfo As DogInfo
 
     Dim _wptNodes As TrackAsTrkPts
     Public ReadOnly Property WptNodes As TrackAsTrkPts
@@ -697,11 +710,13 @@ Public Class GPXRecord
     End Property
 
 
+
+    'todo: přidat logiku - buď start kladeče, pokud není start psa
     Public ReadOnly Property TrailStart As TrackGeoPoint
         Get
             If Me.Tracks?.Count = 0 Then
                 Return Nothing
-            Else 'vrací  vrací start prvního tracku
+            Else 'vrací start prvního tracku
                 Return Me.Tracks(0)?.StartTrackGeoPoint
             End If
         End Get
@@ -709,6 +724,7 @@ Public Class GPXRecord
 
 
 
+    ''' <returns>Returns file name with extension</returns>
     Public ReadOnly Property FileName As String
         Get
             Return Me.Reader.FileName
@@ -800,10 +816,11 @@ Public Class GPXRecord
 
 
 
-    Public Sub New(_reader As GpxReader, forceProcess As Boolean, _dogname As String)
+    Public Sub New(_reader As GpxReader, forceProcess As Boolean, activeDogInfo As DogInfo)
         'gpxDirectory = 
         Me.Reader = _reader
-        Me.DogName = _dogname
+        Me.DogName = activeDogInfo.Name
+        Me.ActiveDogInfo = activeDogInfo
         If forceProcess Then
             _IsAlreadyProcessed = False
         Else
@@ -1014,57 +1031,63 @@ FoundRunnerTrailTrk:
     End Function
 
 
+    ''' <summary>
+    ''' Extracts a date from the file name and removes it from the name.
+    ''' </summary>
+    ''' <returns>Returns a tuple: (found date, modified file name without the date).
+        ' If no date is found, returns (Nothing, original file name).</returns>
+    Public Function GetRemoveDateFromName(fileName As String) As (fileDate As DateTime, fileNameWithoutDate As String)
+        Dim Separator As String = "\s*(?:\.|_|-|,|\._)\s*" ' Dash, underscore, dot, comma, or ._
+        Dim isoSeparator As String = "\s*(?:[-/_]|\.)\s*"   ' Multiple separators for ISO format
 
-    Public Function GetRemoveDateFromName() As (DateTime, String)
-
-        Dim Separator As String = "\s*(?:\.|_|-|,|\._)\s*" ' Pomlčka, podtržítko nebo tečka
-        Dim isoSeparator As String = "\s*(?:[-/_]|\.)\s*" ' Více separátorů
-        'Separator = "\._"
-        ' Definice regulárního výrazu s pojmenovanými skupinami
+        ' Regex patterns for different date formats with named groups
         Dim datePattern1 As String =
-        $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}))|" &
-        $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))|" &
-        $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))"
+            $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}))|" &
+            $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))|" &
+            $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))"
 
-        Dim datePattern2 As String = $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
-        ' Regex pro čas v různých formátech
+        Dim datePattern2 As String = $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))" ' Fallback for any three numbers separated
+        ' Regex for time in various formats (not used for date extraction, but for removal)
         Dim timeRegex As String = "(?:0?[0-9]|1[0-9]|2[0-3])[:\.](?:[0-5][0-9])(?:[:\.](?:[0-5][0-9]))?"
+
+        ' Combine all regex patterns
         Dim myRegex As New Regex(datePattern1 & "|" & datePattern2 & "|" & timeRegex)
-        Dim fileName As String = Me.Reader.FileName
 
         Dim match As Match = myRegex.Match(fileName)
         If match.Success Then
-            Dim dateTimeFromFileName As Date = New DateTime
-
             Try
+                ' Try to extract year, month, day from named groups
                 Dim _year As Integer = Integer.Parse(match.Groups("year").Value)
                 Dim _month As Integer = Integer.Parse(match.Groups("month").Value)
                 Dim _day As Integer = Integer.Parse(match.Groups("day").Value)
 
+                Dim dateTimeFromFileName As New DateTime
+                ' Determine the date format based on matched group and current culture
                 If (match.Groups("eu").Success Or match.Groups("eu2").Success) And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("d") Then
-                    ' Evropský formát
+                    ' European format: day-month-year
                     dateTimeFromFileName = New DateTime(_year, _month, _day)
                 ElseIf match.Groups("us").Success And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("M") Then
-                    ' Americký formát
+                    ' US format: month-day-year
                     dateTimeFromFileName = New DateTime(_year, _month, _day)
                 ElseIf match.Groups("iso").Success Then
-                    ' ISO formát (YYYY-MM-DD)
+                    ' ISO format: year-month-day
                     dateTimeFromFileName = New DateTime(_year, _month, _day)
                 Else
+                    ' Fallback: year-day-month (may be incorrect if parsing fails)
                     dateTimeFromFileName = New DateTime(_year, _day, _month)
                 End If
 
-                ' Odstranění nalezeného datového řetězce z názvu souboru
-                Dim modifiedFileName As String = myRegex.Replace(fileName, "").Trim()
-                ' Kombinace obou regexů a nahrazení prázdným řetězcem
+                ' Remove the found date/time string from the file name
+                Dim fileNameWithoutDate As String = myRegex.Replace(fileName, "").Trim()
 
-                'odstraní znaky na začátku a konci
+                ' Remove unwanted characters from the start and end
                 Dim charsToTrim As Char() = {"_", "-", ".", " "}
-                modifiedFileName = modifiedFileName.Replace(".gpx", "")
-                modifiedFileName = modifiedFileName.TrimStart(charsToTrim).TrimEnd(charsToTrim)
-                modifiedFileName = modifiedFileName & ".gpx" ' Přidání přípony .gpx zpět, pokud je potřeba"
-                ' Vrácení data i upraveného názvu souboru
-                Return (dateTimeFromFileName, modifiedFileName)
+                fileNameWithoutDate = fileNameWithoutDate.Replace(".gpx", "")
+                fileNameWithoutDate = fileNameWithoutDate.TrimStart(charsToTrim).TrimEnd(charsToTrim)
+                fileNameWithoutDate = fileNameWithoutDate & ".gpx" ' Add .gpx extension back
+
+                ' Return the found date and the modified file name
+                Return (dateTimeFromFileName, fileNameWithoutDate)
             Catch ex As Exception
                 Debug.WriteLine($"{fileName} - Error in date format")
                 Return (Nothing, fileName)
@@ -1073,7 +1096,6 @@ FoundRunnerTrailTrk:
             Debug.WriteLine($"{fileName} - Date not found")
             Return (Nothing, fileName)
         End If
-
     End Function
 
 
@@ -1384,7 +1406,7 @@ FoundRunnerTrailTrk:
         Dim newName = MergeFileNames(Me, dog)
         'do souboru Me vloží kompletní uzel  <trk> vyjmutý ze souboru dog
         Try
-            ' Najdi první uzel <trk>
+            ' Najdi všechny trk v přidávaném souboru
             Dim dogTrkNodes As XmlNodeList = dog.Reader.SelectNodes("trk")
 
             ' Předpokládáme, že "dog.Reader" je XmlDocument prvního souboru
@@ -1394,7 +1416,7 @@ FoundRunnerTrailTrk:
 
             For Each dogTrkNode In dogTrkNodes
                 Dim importedNode As XmlNode = Me.Reader.ImportNode(dogTrkNode, True) ' Důležité: Import uzlu!
-                Dim meGpxNode As XmlNode = Me.Reader.SelectSingleNode("gpx")
+                Dim meGpxNode As XmlNode = Me.Reader.SelectSingleNode("gpx") 'vybere root (gpx)
                 meGpxNode.AppendChild(importedNode) ' Přidání na konec <gpx>
             Next
 
@@ -1453,7 +1475,7 @@ FoundRunnerTrailTrk:
         'Dim trkNodes As XmlNodeList = Me.Reader.SelectNodes("trk")
         Dim parentNode As XmlNode = Me.TrkNodes(0)?.ParentNode
         If parentNode Is Nothing Then Return New List(Of TrackAsTrkNode)
-        Dim _tracks As New List(Of TrackAsTrkNode)
+        Me._tracks = New List(Of TrackAsTrkNode)
         Dim types(Me.TrkNodes.Count - 1) As TrackType
         'projde všechny trkNode:
         For i As Integer = 0 To Me.TrkNodes.Count - 1
@@ -1473,7 +1495,7 @@ FoundRunnerTrailTrk:
 
 
             If trkTypeText Is Nothing Then
-
+                'unknown
             ElseIf Not [Enum].TryParse(trkTypeText.Trim(), ignoreCase:=True, result:=trkTypeEnum) Then
                 trkTypeEnum = TrackType.Unknown ' pokud není typ, nastavíme na Unknown
             End If
@@ -1482,11 +1504,11 @@ FoundRunnerTrailTrk:
             types(i) = trkTypeEnum
             Dim _TrackAsTrkNode As New TrackAsTrkNode(trkNode, trkTypeEnum)
 
-            _tracks.Add(_TrackAsTrkNode)
+            Me._tracks.Add(_TrackAsTrkNode)
         Next
 
         ' Seřadit podle času
-        _tracks.Sort(Function(a, b) Nullable.Compare(a.StartTrackGeoPoint.Time, b.StartTrackGeoPoint.Time))
+        Me._tracks.Sort(Function(a, b) Nullable.Compare(a.StartTrackGeoPoint.Time, b.StartTrackGeoPoint.Time))
 
         ' Odebrat staré <trk>
         For Each trk In TrkNodes
@@ -1501,16 +1523,16 @@ FoundRunnerTrailTrk:
             ' pokračuj dál — formulář není potřeba
         Else
             ' musíme nechat uživatele domluvit typy -> otevři formulář
-
+            _IsAlreadyProcessed = False 'nutné kvůli tomu aby se soubor uložil
             Dim suggestedTypes = ComputeSuggestedTypes(_tracks)
 
             ' Pokud projde validací navržených typů, použij je a formulář neukazuj:
             If ValidateTypes(suggestedTypes, False) And suggestedTypes.Count = 2 Then
                 ' Aplikuj navržené typy do modelu (trkList) a pokračuj bez formuláře
-                For i = 0 To _tracks.Count - 1
-                    _tracks(i).TrackType = suggestedTypes(i)
-                    Dim trk = _tracks(i).TrkNode
-                    Dim type = _tracks(i).TrackType
+                For i = 0 To Me._tracks.Count - 1
+                    Me._tracks(i).TrackType = suggestedTypes(i)
+                    Dim trk = Me._tracks(i).TrkNode
+                    Dim type = Me._tracks(i).TrackType
                     AddTypeToTrk(trk, type)
                 Next
 
@@ -1520,9 +1542,9 @@ FoundRunnerTrailTrk:
                 Using f As New frmCrossTrailSelector(_tracks, FileName)
                     f.ShowDialog()
                     ' předpoklad: formulář změnil trkList při potvrzení
-                    For i As Integer = 0 To _tracks.Count - 1
-                        Dim trk = _tracks(i).TrkNode
-                        Dim type = _tracks(i).TrackType
+                    For i As Integer = 0 To Me._tracks.Count - 1
+                        Dim trk = Me._tracks(i).TrkNode
+                        Dim type = Me._tracks(i).TrackType
                         AddTypeToTrk(trk, type)
                     Next
 
@@ -1532,108 +1554,73 @@ FoundRunnerTrailTrk:
         End If
 
 
-        'Using dlg As New frmCrossTrailSelector(_tracks, Me.FileName)
-        '    'pokud nejsou vybrány typy trků, nebo pokud už nebyl soubor zpracován, tak se ptá
-        '    If (Not Me.IsAlreadyProcessed) Then
-
-        '        If _tracks.Count = 1 Then
-        '            ' Zde volání  funkce, která vrátí typ trků
-
-        '            dlg.ShowDialog()
-        '            Dim trk = _tracks(0).TrkNode
-        '            Dim type = _tracks(0).TrackType
-        '            AddTypeToTrk(trk, type)
-
-        '        ElseIf _tracks.Count = 2 Then 'když jsou jen dva trky, tak se předpokládá, že první je RunnerTrail a druhý DogTrack
-        '            AddTypeToTrk(_tracks(0).TrkNode, TrackType.RunnerTrail)
-        '            _tracks(0).TrackType = TrackType.RunnerTrail ' aktualizace typu
-        '            AddTypeToTrk(_tracks(1).TrkNode, TrackType.DogTrack)
-        '            _tracks(1).TrackType = TrackType.DogTrack ' aktualizace typu
-        '        ElseIf _tracks.Count > 2 Then
-        '            Try
-        '                _tracks(_tracks.Count - 1).TrackType = TrackType.DogTrack ' aktualizace typu (poslední je dog)
-        '                ' Zde volání nějaké funkce, která vrátí typ trků
-        '                dlg.ShowDialog()
-
-        '                For i As Integer = 0 To _tracks.Count - 1
-        '                    Dim trk = _tracks(i).TrkNode
-        '                    Dim type = _tracks(i).TrackType
-        '                    AddTypeToTrk(trk, type)
-        '                Next
-        '            Catch ex As Exception
-        '                RaiseEvent WarningOccurred($"me.tracks in file {Me.Reader.FileName} were not identified properly.", Color.Red)
-        '            End Try
-        '        End If
-        '    End If
-        'End Using
 
         ' Přidat zpět ve správném pořadí
-        For Each track In _tracks
+        For Each track In Me._tracks
             parentNode.AppendChild(track.TrkNode)
         Next
-        Me.Save() 'měnil se typ či pořadí tracků!
-        Return _tracks
+        Return Me._tracks
         RaiseEvent WarningOccurred($"Tracks in file {Me.Reader.FileName} were sorted and typed.", Color.DarkGreen)
     End Function
 
     ' Vrátí pole TrackType, které jsou "navržené" podle pravidel (pouze pro Unknown měníme)
     Public Function ComputeSuggestedTypes(trkList As List(Of TrackAsTrkNode)) As TrackType()
-            Dim n = trkList.Count
-            Dim result(n - 1) As TrackType
+        Dim n = trkList.Count
+        Dim result(n - 1) As TrackType
 
-            ' nejprve zkopíruj původní stavy
-            For i = 0 To n - 1
-                result(i) = trkList(i).TrackType
-            Next
+        ' nejprve zkopíruj původní stavy
+        For i = 0 To n - 1
+            result(i) = trkList(i).TrackType
+        Next
 
-            ' pravidla, která používáš v Load:
-            Select Case n
-                Case 1
-                    If result(0) = TrackType.Unknown Then result(0) = TrackType.DogTrack
-                Case 2
-                    If result(0) = TrackType.Unknown Then result(0) = TrackType.RunnerTrail
-                    If result(1) = TrackType.Unknown Then result(1) = TrackType.DogTrack
-                Case Else
-                    If n > 0 AndAlso result(n - 1) = TrackType.Unknown Then result(n - 1) = TrackType.DogTrack
-            End Select
+        ' pravidla, která používáš v Load:
+        Select Case n
+            Case 1
+                If result(0) = TrackType.Unknown Then result(0) = TrackType.DogTrack
+            Case 2
+                If result(0) = TrackType.Unknown Then result(0) = TrackType.RunnerTrail
+                If result(1) = TrackType.Unknown Then result(1) = TrackType.DogTrack
+            Case Else
+                If n > 0 AndAlso result(n - 1) = TrackType.Unknown Then result(n - 1) = TrackType.DogTrack
+        End Select
 
-            Return result
-        End Function
+        Return result
+    End Function
 
-        ' Validuje pole typů (možno bez UI). Pokud showMessages = True, použije mboxEx pro chybová hlášení.
-        Public Function ValidateTypes(types() As TrackType, Optional showMessages As Boolean = True) As Boolean
-            Dim runnerCount As Integer = 0
-            Dim dogCount As Integer = 0
+    ' Validuje pole typů (možno bez UI). Pokud showMessages = True, použije mboxEx pro chybová hlášení.
+    Public Function ValidateTypes(types() As TrackType, Optional showMessages As Boolean = True) As Boolean
+        Dim runnerCount As Integer = 0
+        Dim dogCount As Integer = 0
 
-            For i = 0 To types.Length - 1
-                Dim t = types(i)
-                If t = TrackType.Unknown Then
-                    If showMessages Then mboxEx("For each track you have to choose its type!")
-                    Return False
-                ElseIf t = TrackType.RunnerTrail Then
-                    runnerCount += 1
-                ElseIf t = TrackType.DogTrack Then
-                    dogCount += 1
-                End If
-            Next
-
-            If runnerCount > 1 Then
-                If showMessages Then mboxEx("There can be only one Runner trail.")
+        For i = 0 To types.Length - 1
+            Dim t = types(i)
+            If t = TrackType.Unknown Then
+                If showMessages Then mboxEx("For each track you have to choose its type!")
                 Return False
+            ElseIf t = TrackType.RunnerTrail Then
+                runnerCount += 1
+            ElseIf t = TrackType.DogTrack Then
+                dogCount += 1
             End If
-            If dogCount > 1 Then
-                If showMessages Then mboxEx("There can be only one dog track.")
-                Return False
-            End If
+        Next
 
-            Return True
-        End Function
+        If runnerCount > 1 Then
+            If showMessages Then mboxEx("There can be only one Runner trail.")
+            Return False
+        End If
+        If dogCount > 1 Then
+            If showMessages Then mboxEx("There can be only one dog track.")
+            Return False
+        End If
+
+        Return True
+    End Function
 
 
 
 
-        ' Enum pro reprezentaci stavu (pohyb / stání).
-        Private Enum MovementState
+    ' Enum pro reprezentaci stavu (pohyb / stání).
+    Private Enum MovementState
         Moving
         Stopped
     End Enum
@@ -1711,7 +1698,6 @@ FoundRunnerTrailTrk:
 
         Dim runnerFoundWeight As Double = Weight(movementAnalysis.MinDistanceToRunnerEnd) ' around one to ten meters then drops steeply
         preliminaryStats.PoitsInMTTrial = CalculateTrialScore(preliminaryStats, runnerFoundWeight)
-
         ' --- KROK 5: Vrácení kompletních výsledků ---
         Return preliminaryStats
 
@@ -1760,7 +1746,7 @@ FoundRunnerTrailTrk:
                     conv.LatLonToXY(lat, lon, lat0, lon0, X, Y)
                     runnerXY.Add((X, Y))
                     Dim distance As Double = conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
-                    RunnerTotalDistance += distance  'tohle je situace, když čas chybí, nutno započítat!
+                    runnerTotalDistance += distance  'tohle je situace, když čas chybí, nutno započítat!
                 Next
                 'add the last point of the runner (final runners position):
                 Dim lastLat As Double = runnerGeoPoints.Last.Location.Lat
@@ -1801,7 +1787,7 @@ FoundRunnerTrailTrk:
         End If
 
         ' The function returns all prepared data structures at once
-        Return (dogGeoPoints, dogXY, runnerGeoPoints, runnerXY, lat0, lon0, RunnerTotalDistance, dogTotalDistance)
+        Return (dogGeoPoints, dogXY, runnerGeoPoints, runnerXY, lat0, lon0, runnerTotalDistance, dogTotalDistance)
     End Function
 
 
@@ -2093,11 +2079,10 @@ FoundRunnerTrailTrk:
         ' By defining all scoring parameters here, you can easily tweak the rules later.
 
         ' A) Points for major objectives
-        Const POINTS_FOR_FIND As Integer = 100
-        Const POINTS_FOR_CHECKPOINT As Integer = 50 ' Points for each correctly reached checkpoint (waypoint).
-
-        ' B) Bonuses and thresholds
-        Const POINTS_PER_KMH_GROSS_SPEED As Double = 20.0 ' Bonus points for each km/h of gross speed.
+        Dim POINTS_FOR_FIND As Integer = ActiveDogInfo.PointsForFindMax ' Points for successfully finding the runner
+        Dim POINTS_FOR_CHECKPOINT As Integer = ActiveDogInfo.PointsForHandler / 2 ' Points for each correctly reached checkpoint (waypoint). There are two checkpoints evaluated. 
+        Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveDogInfo.PointsPer5KmhGrossSpeed ' Bonus points for each km/h of gross speed.
+        Dim PointsForDogAccuracy As Integer = ActiveDogInfo.PointsForAccuracMax ' Maximum points for dog accuracy (trail following).
 
         ' --- Initial check ---
         If stats.TotalTime.TotalSeconds <= 0 Then
@@ -2129,7 +2114,7 @@ FoundRunnerTrailTrk:
            stats.WeightedDistanceAlongTrailPerCent > Integer.MaxValue Then
             DogAccuracyPoints = 0
         Else
-            DogAccuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent))
+            DogAccuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent)) / 100 * PointsForDogAccuracy
         End If
 
 
@@ -2463,26 +2448,26 @@ FoundRunnerTrailTrk:
 
 
 
-    Public Sub PrependDateToFilename()
+    Public Function PrependDateToFilename(newFileName As String) As String
 
         'Dim fileExtension As String = Path.GetExtension(Reader.FilePath)
         'Dim fileNameOhneExt As String = Path.GetFileNameWithoutExtension(Reader.FilePath)
-        Dim newFileName As String = Reader.FileName
+        'Dim newFileName As String = Reader.FileName
 
         Try
             ' Smaže datum v názvu souboru (to kvůli převodu na iso formát):
-            Dim result As (DateTime?, String) = GetRemoveDateFromName()
+            Dim result As (DateTime?, String) = GetRemoveDateFromName(Me.FileName)
             Dim modifiedFileName As String = result.Item2
-            newFileName = $"{TrailStart.Time:yyyy-MM-dd} {modifiedFileName}"
+            newFileName = $"{Me.TrailStart.Time:yyyy-MM-dd} {modifiedFileName}"
         Catch ex As Exception
             Debug.WriteLine(ex.ToString())
             'ponechá původní jméno, ale přidá datum
-            newFileName = $"{TrailStart:yyyy-MM-dd} {Reader.FileName}"
+            newFileName = $"{TrailStart:yyyy-MM-dd} {Me.Reader.FileName}"
         End Try
+        Return newFileName
+        'If Me.Reader.FileName <> newFileName Then RenameFile(newFileName)
 
-        If Me.Reader.FileName <> newFileName Then RenameFile(newFileName)
-
-    End Sub
+    End Function
 
     ' Funkce pro přejmenování souboru
     Public Function RenameFile(newFileName As String) As Boolean
@@ -2808,6 +2793,7 @@ Public Class GpxReader
     Public Property FilePath As String
 
 
+    ''' <returns>Return file name with extension</returns>
     Public ReadOnly Property FileName As String
         Get
             Return Path.GetFileName(FilePath)
@@ -3065,7 +3051,7 @@ Public Class FileTracker
     End Function
 
     ' Uloží info o souboru jako zpracovaném
-    Public Sub MarkAsProcessed(filePath As String)
+    Public Sub MarkAsDownloadeded(filePath As String)
         Dim fi As New FileInfo(filePath)
         Dim fileName = fi.Name
         Dim rec As New FileRecord With {
@@ -3074,11 +3060,11 @@ Public Class FileTracker
         }
 
         downloadedFiles(fileName) = rec
-        Save()
+        DownloadedSave()
     End Sub
 
     ' Uloží JSON
-    Private Sub Save()
+    Private Sub DownloadedSave()
         Dim options As New JsonSerializerOptions With {.WriteIndented = True,
                  .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
         }

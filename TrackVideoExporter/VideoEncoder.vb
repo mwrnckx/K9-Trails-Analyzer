@@ -32,7 +32,9 @@ Public Class FfmpegVideoEncoder
         Try
             'úklid:
             'IO.Directory.GetFiles(pngDir.FullName).ToList().ForEach(Sub(f) System.IO.File.Delete(f))
-            pngDir.Delete(True) 'smazat adresář 
+            If pngDir.Exists Then
+                pngDir.Delete(True)
+            End If
         Catch ex As Exception
 
         End Try
@@ -64,7 +66,9 @@ Public Class FfmpegVideoEncoder
 
             'úklid:
             Try
-                pngDir.Delete(True) 'smazat adresář s PNG obrázky
+                If pngDir.Exists Then
+                    pngDir.Delete(True) 'smazat adresář s PNG obrázky
+                End If
             Catch ex As Exception
                 RaiseEvent WarningOccurred("Failed to delete PNG directory: " & ex.Message, Color.Red)
                 'když selže smazání adresáře, např. když je otevřený v jiném programu, jede se dál
@@ -81,5 +85,6 @@ Public Class FfmpegVideoEncoder
     End Function
 
 End Class
+
 
 

@@ -49,7 +49,7 @@ Partial Class Form1
         mnuUkrainian = New ToolStripMenuItem()
         mnuPolish = New ToolStripMenuItem()
         mnuRussian = New ToolStripMenuItem()
-        SToolStripMenuItem = New ToolStripMenuItem()
+        ToolStripMenuItem = New ToolStripMenuItem()
         mnucbActiveDog = New ToolStripComboBox()
         mnuRenameCurrentDog = New ToolStripMenuItem()
         mnuAddDog = New ToolStripMenuItem()
@@ -129,7 +129,7 @@ Partial Class Form1
         MenuStrip1.BackColor = Color.DarkSeaGreen
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, SToolStripMenuItem, HelpToolStripMenuItem})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, ToolStripMenuItem, HelpToolStripMenuItem})
         MenuStrip1.Name = "MenuStrip1"
         ' 
         ' mnuFile
@@ -232,9 +232,9 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        SToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuRenameCurrentDog, mnuAddDog, mnuDeleteCurrentDog, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
-        resources.ApplyResources(SToolStripMenuItem, "SToolStripMenuItem")
-        SToolStripMenuItem.Name = "SToolStripMenuItem"
+        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuRenameCurrentDog, mnuAddDog, mnuDeleteCurrentDog, New ToolStripSeparator(), mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, New ToolStripSeparator(), mnuFactoryReset})
+        resources.ApplyResources(ToolStripMenuItem, "SToolStripMenuItem")
+        ToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
         ' mnucbActiveDog
         ' 
@@ -447,7 +447,7 @@ Partial Class Form1
         Me.dgvTrial.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
         'columnHeaders
         Me.dgvTrial.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True
-        Me.dgvTrial.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.BottomCenter
+        Me.dgvTrial.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
         Me.dgvTrial.EnableHeadersVisualStyles = False ' Důležité! Jinak se použije styl systému Windows
         Me.dgvTrial.ColumnHeadersDefaultCellStyle.BackColor = Color.Salmon ' Zvolte požadovanou barvu
         Me.dgvTrial.ColumnHeadersDefaultCellStyle.ForeColor = Color.Maroon ' (volitelné) barva textu
@@ -557,7 +557,7 @@ Partial Class Form1
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
 
-        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDog.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
+        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDogInfo.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
         Dim resources = New ComponentResourceManager(Me.GetType())
         LocalizeMenuItems(MenuStrip1.Items, resources)
         SetTooltips()
@@ -623,7 +623,7 @@ Partial Class Form1
     Friend WithEvents mnuTrimGPSNoise As ToolStripMenuItem
     Friend WithEvents mnuExportAs As ToolStripMenuItem
     Friend WithEvents mnuMergingTracks As ToolStripMenuItem
-    Friend WithEvents SToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents ToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents mnuFactoryReset As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
     Friend WithEvents mnuAddDog As ToolStripMenuItem

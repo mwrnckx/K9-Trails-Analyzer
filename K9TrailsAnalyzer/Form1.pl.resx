@@ -379,4 +379,10 @@
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Zmień katalog za pomocą plików GPX</value>
   </data>
+  <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
+    <value>Edytuj nazwę psa lub wydarzenia</value>
+  </data>
+  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+    <value>Usuń obecny pies/zdarzenie</value>
+  </data>
 </root>

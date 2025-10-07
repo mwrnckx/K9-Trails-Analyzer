@@ -160,7 +160,7 @@
     <value>Total number of track/trails</value>
   </data>
   <data name="outTotalLength" xml:space="preserve">
-    <value>Total Length of all trails</value>
+    <value>Total Effective Length of all trails</value>
   </data>
   <data name="outLength" xml:space="preserve">
     <value>Length</value>

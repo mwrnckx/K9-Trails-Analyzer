@@ -22,13 +22,13 @@ Imports Windows.Win32.System
 Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
-    Private ReadOnly DogsFilePath As String = Path.Combine(Application.StartupPath, "AppData", "dogs.json")
+    Private ReadOnly DogsFilePath As String = Path.Combine(Application.StartupPath, "AppData", "dogsInfo.json")
     Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "AppData", "config.json")
     'Private ReadOnly DogsRootPath As String = Path.Combine(Application.StartupPath, "Dogs")
 
     Private DogsList As List(Of DogInfo)
     Private ActiveDogId As String = String.Empty
-    Private ReadOnly Property ActiveDog As DogInfo
+    Private ReadOnly Property ActiveDogInfo As DogInfo
         Get
             Return DogsList.FirstOrDefault(Function(d) d.Id = ActiveDogId)
         End Get
@@ -40,14 +40,14 @@ Public Class Form1
 
         Enabled = False
 
-        Dim gpxDir = ActiveDog.RemoteDirectory 'My.Settings.Directory
+        Dim gpxDir = ActiveDogInfo.RemoteDirectory 'My.Settings.Directory
         If String.IsNullOrWhiteSpace(gpxDir) OrElse Not Directory.Exists(gpxDir) Then
             ' Cesta není nastavená nebo složka neexistuje → použij výchozí složku Samples vedle exe
             Dim defaultDir = Path.Combine(Application.StartupPath, "Samples")
 
             If Directory.Exists(defaultDir) Then
                 gpxDir = defaultDir
-                ActiveDog.RemoteDirectory = gpxDir
+                ActiveDogInfo.RemoteDirectory = gpxDir
                 'My.Settings.Save()
             Else
                 ' Můžeš nabídnout dialog, nebo nastavit nějaké jiné výchozí chování
@@ -66,7 +66,7 @@ Public Class Form1
         GPXFilesManager.dateFrom = dtpStartDate.Value.Date
         GPXFilesManager.dateTo = dtpEndDate.Value.Date.AddDays(1) 'aby to bylo až do půlnoci
 
-        GPXFilesManager.DogInfo = ActiveDog
+        GPXFilesManager.DogInfo = ActiveDogInfo
         GPXFilesManager.NumberOfDogs = DogsList.Count
 
 
@@ -107,14 +107,9 @@ Public Class Form1
     End Sub
 
     Private Sub ClearDgvTrial()
-
-        ' 2. Znovu nastavte nebo obnovte DataSource
-        ' a) Pokud displayList je List<T>, je lepší ho znovu nastavit
         If displayList IsNot Nothing Then displayList.Clear()
         dgvTrial.DataSource = Nothing ' Odpojte stávající zdroj
         dgvTrial.Columns.Clear()     ' Vyčistěte sloupce, pokud byly automaticky generovány
-        'dgvTrial.DataSource = displayList ' Znovu nastavte prázdný zdroj (displayList je nyní prázdný)
-
     End Sub
 
 
@@ -122,21 +117,20 @@ Public Class Form1
     Private Sub FillDgvTrial()
         ' Vytvořte si třídu pro data
         ' Vytvořte seznam pro zobrazení a naplňte ho
-
         ClearDgvTrial() 'nejprve vyčistíme
         displayList = New List(Of TrailStatsDisplay)()
         For i As Integer = GPXFilesManager.GpxRecords.Count - 1 To 0 Step -1
             Dim record As GPXRecord = GPXFilesManager.GpxRecords(i)
             Dim stats As TrailStatsStructure = record.TrailStats
             displayList.Add(New TrailStatsDisplay With {
-                .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),
+                .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath).Substring(11),
                 .DogName = "",
                  .RunnerDistance = stats.RunnerDistance,
                  .TotalTime = stats.TotalTime.Minutes,
                 .DogGrossSpeedKmh = stats.DogGrossSpeed,
                 .DogDistance = stats.DogDistance,
                 .Deviation = stats.Deviation,
-                .maxTeamDistance = stats.MaxTeamDistance,
+                .MaxTeamDistance = stats.MaxTeamDistance,
                 .WeightedDistanceAlongTrail = stats.WeightedDistanceAlongTrail,
                 .WeightedDistanceAlongTrailPerCent = stats.WeightedDistanceAlongTrailPerCent / 100,'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
@@ -191,8 +185,6 @@ Public Class Form1
         dgvTrial.DataSource = displayList
 
 
-
-        'dgvTrial.RowTemplate.DefaultCellStyle.Padding = newPadding
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
         For Each column As DataGridViewColumn In Me.dgvTrial.Columns
 
@@ -216,9 +208,10 @@ Public Class Form1
             column.AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
 
             column.DefaultCellStyle.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
-           column.HeaderCell.Style.ForeColor = Color.Black
+            column.HeaderCell.Style.ForeColor = Color.Black
         Next
-
+        Me.dgvTrial.Columns("GPXFilename").HeaderText = ActiveDogInfo.Name
+        Me.dgvTrial.Columns("GPXFilename").HeaderCell.Style.Font = New Font("Cascadia Code", 16.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
         ' Krok 4: Vynutit automatické přizpůsobení šířky po dokončení
         Me.dgvTrial.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells)
 
@@ -450,7 +443,7 @@ Public Class Form1
         Me.rtbOutput.SelectionFont = New Font("Calibri", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon ' Nastavit barvu
         Me.rtbOutput.AppendText(vbCrLf & My.Resources.Resource1.outProcessed_period_from & _gpxFilesManager.dateFrom.ToShortDateString & My.Resources.Resource1.outDo & _gpxFilesManager.dateTo.ToShortDateString &
-                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & ActiveDog.RemoteDirectory & vbCrLf & vbCrLf)
+                vbCrLf & My.Resources.Resource1.outAll_gpx_files_from_directory & ActiveDogInfo.RemoteDirectory & vbCrLf & vbCrLf)
 
         Dim manydots As String = "...................................................................."
         Dim labelLength As Integer = 40
@@ -471,8 +464,14 @@ Public Class Form1
 
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Firebrick
+
+
+        Me.rtbOutput.SelectionFont = New Font("Cascadia Code Semibold", 10, FontStyle.Bold) ' Nastavit font
+        Me.rtbOutput.SelectionColor = Color.Firebrick
         Dim totalDistanceKm As Double = Me.GPXFilesManager.TotalDistancesKm.Last.totalDistanceKm '_gpxFilesManager.TotalDistance
         Me.rtbOutput.AppendText((totalDistanceKm).ToString("F1") & " km" & vbCrLf)
+
+
         Me.rtbOutput.SelectionFont = New Font("Cascadia Code", 10) ' Nastavit font
         Me.rtbOutput.SelectionColor = Color.Maroon
         Me.rtbOutput.AppendText((My.Resources.Resource1.outAverageDistance & manydots).Substring(0, labelLength))
@@ -677,14 +676,14 @@ Public Class Form1
 
         ' Získání dat pro graf rychlosti
 
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, GPXFilesManager.Speeds, Resource1.Y_AxisLabelSpeed, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelSpeed, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
         ' Získání dat pro graf stáří trasy
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, GPXFilesManager.Ages, Resource1.Y_AxisLabelAge, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelAge, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -692,32 +691,32 @@ Public Class Form1
 
 
         'Difficulty indexes
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, GPXFilesManager.DiffIndexes, "Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
         'Total Difficulty indexes
 
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, GPXFilesManager.TotalDiffIndexes, "Total Trail Difficulty Index (h·km)", GPXFilesManager.dateFrom, GPXFilesManager.dateTo, "Total Trail Difficulty Index (h·km)", True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'Deviations
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, GPXFilesManager.Deviations, Resource1.Y_AxisLabelDeviation, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelDeviation, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
 
         'Distances
-        chart1 = New frmChart(ActiveDog.Name, GPXFilesManager.DistancesKm, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, GPXFilesManager.DistancesKm, Resource1.Y_AxisLabelLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelLength, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
 
         'TotDistance
-        chart1 = New frmChart(ActiveDog.Name, Me.GPXFilesManager.TotalDistancesKm, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
+        chart1 = New frmChart(ActiveDogInfo.Name, Me.GPXFilesManager.TotalDistancesKm, Resource1.Y_AxisLabelTotalLength, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, Resource1.Y_AxisLabelTotalLength, True, SeriesChartType.Point, Me.currentCulture)
         chart1.Show()
         Charts.Add(chart1)
 
@@ -749,7 +748,7 @@ Public Class Form1
 
         Dim monthlyYAxisLabel = Resource1.Y_AxisLabelMonthly  'My.Resources.Resource1.Y_AxisLabelLength ' Nebo jiný popisek pro osu Y
         Dim monthlyGrafText = monthlyYAxisLabel ' Např. "Měsíční vzdálenost"
-        Dim MonthlyChart1 = New frmChart(ActiveDog.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
+        Dim MonthlyChart1 = New frmChart(ActiveDogInfo.Name, monthlyXAxisDataWithEmpty, monthlyYAxisDataWithEmpty, monthlyYAxisLabel, GPXFilesManager.dateFrom, GPXFilesManager.dateTo, monthlyGrafText, True, SeriesChartType.Column, currentCulture) ' Použijeme sloupcový graf (Column)
         MonthlyChart1.Show()
         Charts.Add(MonthlyChart1)
 
@@ -968,11 +967,11 @@ Public Class Form1
         Dim folderDialog As New FolderBrowserDialog
 
         If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
-            If ActiveDog.RemoteDirectory = "" Then
-                ActiveDog.RemoteDirectory = Directory.GetParent(Application.StartupPath).ToString
+            If ActiveDogInfo.RemoteDirectory = "" Then
+                ActiveDogInfo.RemoteDirectory = Directory.GetParent(Application.StartupPath).ToString
             End If
-            folderDialog.SelectedPath = ActiveDog.RemoteDirectory
-            folderDialog.Description = $"Select a folder from where to load gpx files for dog {ActiveDog.Name}"
+            folderDialog.SelectedPath = ActiveDogInfo.RemoteDirectory
+            folderDialog.Description = $"Select a folder from where to load gpx files for dog {ActiveDogInfo.Name}"
             folderDialog.UseDescriptionForTitle = True
         ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
             folderDialog.ShowNewFolderButton = True
@@ -991,8 +990,8 @@ Public Class Form1
         If folderDialog.ShowDialog = DialogResult.OK Then
 
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
-                ActiveDog.RemoteDirectory = folderDialog.SelectedPath
-                mbox($"The gpx files for the dog {ActiveDog.Name} will be imported from the {ActiveDog.RemoteDirectory} folder.")
+                ActiveDogInfo.RemoteDirectory = folderDialog.SelectedPath
+                mbox($"The gpx files for the dog {ActiveDogInfo.Name} will be imported from the {ActiveDogInfo.RemoteDirectory} folder.")
                 SaveDogs()
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
@@ -1004,7 +1003,7 @@ Public Class Form1
         End If
 
 
-        StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDog.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
+        StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDogInfo.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
 
     End Sub
 
@@ -1059,7 +1058,7 @@ Public Class Form1
     '    My.Settings.Save()
     'End Sub
 
-    ' ----- načtení a uložení dogs.json -----
+    ' ----- načtení a uložení dogsInfo.json -----
     Private Sub LoadDogs()
         If File.Exists(DogsFilePath) Then
             Dim json = File.ReadAllText(DogsFilePath, Encoding.UTF8)
@@ -1166,7 +1165,7 @@ Public Class Form1
         ' vytvoříme složky
         'Dim dogLocalBasePath = Path.Combine(DogsRootPath, newId)
 
-        Dim dogRemotePath = ActiveDog.RemoteDirectory 'Path.Combine(My.Settings.Directory, dogName)
+        Dim dogRemotePath = ActiveDogInfo.RemoteDirectory 'Path.Combine(My.Settings.Directory, dogName)
         Dim folderDialog As New FolderBrowserDialog()
         folderDialog.SelectedPath = dogRemotePath
         folderDialog.Description = $"Selecting the folder from where to load gpx files for the dog {dogName}."
@@ -1592,6 +1591,14 @@ End Class
 
 
 ' --- model psa ---
+''' <summary>
+''' Information about the selected dog/trial category
+''' </summary>
+''' <!--
+''' id: unique ID of the dog (three digits, e.g. "001")
+''' name: name of the dog (e.g. "Rex")
+''' remoteDirectory: path to the directory where the gpx files for this dog are stored (e.g. "D:\GPXFiles\Rex")
+''' -->
 Public Class DogInfo
     <JsonPropertyName("id")>
     Public Property Id As String
@@ -1606,8 +1613,8 @@ Public Class DogInfo
             If (String.IsNullOrWhiteSpace(_remoteDirectory)) Then
                 ' pokud není nastaveno, použije se výchozí cesta
 
-                _remoteDirectory = Path.Combine(Application.StartupPath, "Samples")
-                End If
+                _remoteDirectory = Path.Combine(Application.StartupPath, "Samples", Me.Id)
+            End If
             Return _remoteDirectory
         End Get
         Set(value As String)
@@ -1615,6 +1622,18 @@ Public Class DogInfo
         End Set
     End Property
 
+    ' Konfigurační body pro disciplíny (uživatelsky nastavitelné)
+    <JsonPropertyName("PointsForFindMax")>
+    Public Property PointsForFindMax As Integer = 100
+
+    <JsonPropertyName("PointsPer5KmhGrossSpeed")>
+    Public Property PointsPer5KmhGrossSpeed As Double = 100
+
+    <JsonPropertyName("PointsForAccuracyMax")>
+    Public Property PointsForAccuracMax As Integer = 100
+
+    <JsonPropertyName("PointsForHandlerMax")>
+    Public Property PointsForHandler As Integer = 100
 
 
     <JsonIgnore>
