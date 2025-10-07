@@ -2080,9 +2080,9 @@ FoundRunnerTrailTrk:
 
         ' A) Points for major objectives
         Dim POINTS_FOR_FIND As Integer = ActiveDogInfo.PointsForFindMax ' Points for successfully finding the runner
-        Dim POINTS_FOR_CHECKPOINT As Integer = ActiveDogInfo.PointsForHandler / 2 ' Points for each correctly reached checkpoint (waypoint). There are two checkpoints evaluated. 
+        Dim POINTS_FOR_CHECKPOINT As Integer = ActiveDogInfo.PointsForHandlerMax / 2 ' Points for each correctly reached checkpoint (waypoint). There are two checkpoints evaluated. 
         Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveDogInfo.PointsPer5KmhGrossSpeed ' Bonus points for each km/h of gross speed.
-        Dim PointsForDogAccuracy As Integer = ActiveDogInfo.PointsForAccuracMax ' Maximum points for dog accuracy (trail following).
+        Dim PointsForDogAccuracy As Integer = ActiveDogInfo.PointsForAccuracyMax ' Maximum points for dog accuracy (trail following).
 
         ' --- Initial check ---
         If stats.TotalTime.TotalSeconds <= 0 Then

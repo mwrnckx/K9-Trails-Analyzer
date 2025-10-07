@@ -1137,13 +1137,13 @@ Public Class Form1
 
     ' ----- handler při změně výběru v ToolStripComboBoxu -----
     Private Sub mnucbActiveDog_SelectedIndexChanged(sender As Object, e As EventArgs) Handles mnucbActiveDog.SelectedIndexChanged
-        Dim sel = TryCast(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
-        If sel Is Nothing Then Return
-        SetScrollState(1, sel.Id) ' nastavíme scroll state pro aktivního psa
-        ActiveDogId = sel.Id
-        My.Settings.ActiveDog = sel.Id ' uložíme jméno psa do nastavení
-        'lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
-        My.Settings.Save()
+        Dim selected = TryCast(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+        If selected Is Nothing Then Return
+        SetScrollState(1, selected.Id) ' nastavíme scroll state pro aktivního psa
+        ActiveDogId = selected.Id
+        'My.Settings.ActiveDog = sel.Id ' uložíme jméno psa do nastavení
+        ''lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
+        'My.Settings.Save()
         ' uložíme config (aby se volba pamatovala)
         SaveConfig()
         ClearDgvTrial()
@@ -1489,14 +1489,16 @@ Public Class Form1
     End Sub
 
     Private Sub mnuRenameCurrentDog_Click(sender As Object, e As EventArgs) Handles mnuRenameCurrentDog.Click
-        Dim selectedDog As DogInfo = CType(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
-        If selectedDog IsNot Nothing Then
-            Dim newName As String = InputBox("Enter the dog's new name:", "Rename the dog", selectedDog.Name)
-            If Not String.IsNullOrWhiteSpace(newName) AndAlso newName <> selectedDog.Name Then
+
+
+        'Dim selectedDog As DogInfo = CType(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+        If ActiveDogInfo IsNot Nothing Then
+            Dim newName As String = InputBox("Enter the dog's new name:", "Rename the dog", ActiveDogInfo.Name)
+            If Not String.IsNullOrWhiteSpace(newName) AndAlso newName <> ActiveDogInfo.Name Then
                 If DogsList.Any(Function(d) d.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)) Then
                     MessageBox.Show("A dog with this name already exists!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
                 Else
-                    selectedDog.Name = newName
+                    ActiveDogInfo.Name = newName
                     ' případně uložit do JSON
                     SaveDogs()
                     PopulateDogsToolStrip()
@@ -1630,10 +1632,10 @@ Public Class DogInfo
     Public Property PointsPer5KmhGrossSpeed As Double = 100
 
     <JsonPropertyName("PointsForAccuracyMax")>
-    Public Property PointsForAccuracMax As Integer = 100
+    Public Property PointsForAccuracyMax As Integer = 100
 
     <JsonPropertyName("PointsForHandlerMax")>
-    Public Property PointsForHandler As Integer = 100
+    Public Property PointsForHandlerMax As Integer = 100
 
 
     <JsonIgnore>

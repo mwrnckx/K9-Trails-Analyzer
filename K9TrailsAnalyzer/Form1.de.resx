@@ -309,19 +309,19 @@
   <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
     <value>Aktuellen Hund löschen</value>
   </data>
-  <data name="mnuAddDog.Text" xml:space="preserve">
-    <value>Fügen Sie einen anderen Hund hinzu</value>
-  </data>
   <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
     <value>Ändern Sie das Verzeichnis, in dem sich die GPX -Dateien des aktuellen Hundes befinden</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Ändern Sie das Verzeichnis mit GPX -Dateien</value>
   </data>
+  <data name="mnuAddDog.Text" xml:space="preserve">
+    <value>Fügen Sie eine andere Kategorie hinzu</value>
+  </data>
   <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
-    <value>Löschen Sie den aktuellen Hund/Ereignis</value>
+    <value>Aktuelle Kategorie löschen</value>
   </data>
   <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
-    <value>Bearbeiten Sie den Hund oder den Ereignisnamen</value>
+    <value>Kategorienname bearbeiten</value>
   </data>
 </root>

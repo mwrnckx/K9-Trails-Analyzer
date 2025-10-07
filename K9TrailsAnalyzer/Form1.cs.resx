@@ -330,15 +330,15 @@
     <value>Odstranit aktuální pes</value>
   </data>
   <data name="mnuAddDog.Text" xml:space="preserve">
-    <value>Přidejte dalšího psa nebo závodní kategorii</value>
+    <value>Přidejte další kategorii</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Změň adresář s gpx soubory</value>
   </data>
   <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
-    <value>Smazat aktuálního psa/kategorii</value>
+    <value>Smazat aktuální kategorii</value>
   </data>
   <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
-    <value>Upravit jméno psa nebo název kategorie</value>
+    <value>Upravit název kategorie</value>
   </data>
 </root>

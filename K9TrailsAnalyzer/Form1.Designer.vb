@@ -54,6 +54,10 @@ Partial Class Form1
         mnuRenameCurrentDog = New ToolStripMenuItem()
         mnuAddDog = New ToolStripMenuItem()
         mnuDeleteCurrentDog = New ToolStripMenuItem()
+        mnuPointsForFind = New ToolStripTextBox()
+        mnuPointsForSpeed = New ToolStripTextBox
+        mnuPointsForAccuracy = New ToolStripTextBox
+        mnuPointsForHandler = New ToolStripTextBox
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
         mnuFactoryReset = New ToolStripMenuItem()
@@ -134,7 +138,7 @@ Partial Class Form1
         ' 
         ' mnuFile
         ' 
-        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuExportAs, mnuExit})
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuExportAs, mnuExit})
         resources.ApplyResources(mnuFile, "mnuFile")
         mnuFile.Name = "mnuFile"
         ' 
@@ -232,7 +236,65 @@ Partial Class Form1
         ' 
         ' SToolStripMenuItem
         ' 
-        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveDog, mnuRenameCurrentDog, mnuAddDog, mnuDeleteCurrentDog, New ToolStripSeparator(), mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, New ToolStripSeparator(), mnuFactoryReset})
+        ' ... nahraď původní lblPointsForFind a mnuPointsForFind v AddRange tímto:
+        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {
+                New ToolStripLabel With {.Text = "The category:", .AutoSize = True, .Font = New Font("Cascadia Code Semibold", 14, FontStyle.Bold)},
+                mnucbActiveDog,
+                mnuSelect_directory_gpx_files,
+                mnuRenameCurrentDog,
+                mnuAddDog,
+                mnuDeleteCurrentDog,
+                New ToolStripSeparator(),
+                New ToolStripLabel With {.Text = "Adjust the points in this trial category:", .AutoSize = True, .Font = New Font("Cascadia Code Semibold", 14, FontStyle.Bold)},
+                New ToolStripLabel With {.Text = "Points for finding the dealer:", .AutoSize = True},
+                mnuPointsForFind,
+                New ToolStripLabel With {.Text = "Points for speed:", .AutoSize = True},
+                mnuPointsForSpeed,
+                New ToolStripLabel With {.Text = "Points for accuracy:", .AutoSize = True},
+                mnuPointsForAccuracy,
+                New ToolStripLabel With {.Text = "Points for handler's work:", .AutoSize = True},
+                mnuPointsForHandler,
+                New ToolStripSeparator(),
+                New ToolStripSeparator(),
+                mnuSelectADirectoryToSaveVideo,
+                mnuSetFFmpegPath,
+                New ToolStripSeparator(),
+                New ToolStripSeparator(),
+                mnuFactoryReset
+            })
+
+        ' Přidání nového ToolStripTextBox pro zadávání čísel do ToolStripMenuItem
+
+        Me.mnuPointsForFind.Name = "mnuPointsForFind"
+        Me.mnuPointsForFind.ToolTipText = "Zadejte počet bodů za nalezení"
+        Me.mnuPointsForFind.Width = 50
+        Me.mnuPointsForFind.Text = "0" ' výchozí hodnota
+        Me.mnuPointsForFind.TextBoxTextAlign = HorizontalAlignment.Right
+        Me.mnuPointsForFind.MaxLength = 3 ' maximální délka vstupu
+
+        Me.mnuPointsForSpeed.Name = "mnuPointsForSpeed"
+        Me.mnuPointsForSpeed.ToolTipText = "Zadejte počet bodů za rychlost"
+        Me.mnuPointsForSpeed.Width = 50
+        Me.mnuPointsForSpeed.Text = "0" ' výchozí hodnota
+        Me.mnuPointsForSpeed.TextBoxTextAlign = HorizontalAlignment.Right
+        Me.mnuPointsForSpeed.MaxLength = 3 ' maximální délka vstupu
+
+        Me.mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
+        Me.mnuPointsForAccuracy.ToolTipText = "Zadejte počet bodů za přesnost"
+        Me.mnuPointsForAccuracy.Width = 50
+        Me.mnuPointsForAccuracy.Text = "0" ' výchozí hodnota
+        Me.mnuPointsForAccuracy.TextBoxTextAlign = HorizontalAlignment.Right
+        Me.mnuPointsForAccuracy.MaxLength = 3 ' maximální délka vstupu
+
+
+        Me.mnuPointsForHandler.Name = "mnuPointsForHandler"
+        Me.mnuPointsForHandler.ToolTipText = "Zadejte počet bodů za práci psovoda"
+        Me.mnuPointsForHandler.Width = 50
+        Me.mnuPointsForHandler.Text = "0" ' výchozí hodnota
+        Me.mnuPointsForHandler.TextBoxTextAlign = HorizontalAlignment.Right
+        Me.mnuPointsForHandler.MaxLength = 3 ' maximální délka vstupu
+        '
+
         resources.ApplyResources(ToolStripMenuItem, "SToolStripMenuItem")
         ToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
@@ -551,7 +613,7 @@ Partial Class Form1
 
         mnuPrependDateToFileName.Checked = True ' My.Settings.PrependDateToName
         'mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
-        mnucbActiveDog.SelectedItem = My.Settings.ActiveDog
+        'mnucbActiveDog.SelectedItem = My.Settings.ActiveDog 'todo: načítat z json!
 
 
         CreateGpxFileManager()
@@ -569,6 +631,12 @@ Partial Class Form1
         mnuRussian.Image = resizeImage(My.Resources.ru_flag, Nothing, height)
         mnuUkrainian.Image = resizeImage(My.Resources.uk_flag, Nothing, height)
         mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, height)
+
+        mnuPointsForFind.Text = Me.ActiveDogInfo.PointsForFindMax
+        mnuPointsForSpeed.Text = Me.ActiveDogInfo.PointsPer5KmhGrossSpeed
+        mnuPointsForAccuracy.Text = Me.ActiveDogInfo.PointsForAccuracyMax
+        mnuPointsForHandler.Text = Me.ActiveDogInfo.PointsForHandlerMax
+
 
         ReadHelp()
 
@@ -605,6 +673,35 @@ Partial Class Form1
 
         End Select
     End Sub
+
+
+    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus
+        If Integer.TryParse(mnuPointsForFind.Text, Nothing) Then
+            Me.ActiveDogInfo.PointsForFindMax = mnuPointsForFind.Text
+        End If
+        If Integer.TryParse(mnuPointsForSpeed.Text, Nothing) Then
+            Me.ActiveDogInfo.PointsPer5KmhGrossSpeed = mnuPointsForSpeed.Text
+        End If
+        If Integer.TryParse(mnuPointsForAccuracy.Text, Nothing) Then
+            Me.ActiveDogInfo.PointsForAccuracyMax = mnuPointsForAccuracy.Text
+        End If
+        If Integer.TryParse(mnuPointsForHandler.Text, Nothing) Then
+            Me.ActiveDogInfo.PointsForHandlerMax = mnuPointsForHandler.Text
+        End If
+
+    End Sub
+
+
+
+    Private Sub mnuPointsForFind_KeyPress(sender As Object, e As KeyPressEventArgs) Handles mnuPointsForFind.KeyPress
+        ' Pokud chceš, můžeš nastavit validaci vstupu pouze na čísla:
+
+        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
+            e.Handled = True
+
+        End If
+    End Sub
+
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents mnuFile As ToolStripMenuItem
@@ -661,6 +758,10 @@ Partial Class Form1
     Friend WithEvents dgvTrial As DataGridView
     ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
     Friend WithEvents panelProDgv As Panel
+    Friend WithEvents mnuPointsForFind As ToolStripTextBox
+    Friend WithEvents mnuPointsForSpeed As ToolStripTextBox
+    Friend WithEvents mnuPointsForAccuracy As ToolStripTextBox
+    Friend WithEvents mnuPointsForHandler As ToolStripTextBox
 
 End Class
 
