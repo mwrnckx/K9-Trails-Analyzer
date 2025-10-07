@@ -246,13 +246,13 @@ Partial Class Form1
                 mnuDeleteCurrentDog,
                 New ToolStripSeparator(),
                 New ToolStripLabel With {.Text = "Adjust the points in this trial category:", .AutoSize = True, .Font = New Font("Cascadia Code Semibold", 14, FontStyle.Bold)},
-                New ToolStripLabel With {.Text = "Points for finding the dealer:", .AutoSize = True},
+                New ToolStripLabel With {.Text = "Points for finding the runner:", .AutoSize = True},
                 mnuPointsForFind,
-                New ToolStripLabel With {.Text = "Points for speed:", .AutoSize = True},
+                New ToolStripLabel With {.Text = "Points for speed (20 points for each 1 km/h):", .AutoSize = True},
                 mnuPointsForSpeed,
-                New ToolStripLabel With {.Text = "Points for accuracy:", .AutoSize = True},
+                New ToolStripLabel With {.Text = "Max. points for accuracy:", .AutoSize = True},
                 mnuPointsForAccuracy,
-                New ToolStripLabel With {.Text = "Points for handler's work:", .AutoSize = True},
+                New ToolStripLabel With {.Text = "Max. points for handler's dog reading:", .AutoSize = True},
                 mnuPointsForHandler,
                 New ToolStripSeparator(),
                 New ToolStripSeparator(),
@@ -266,21 +266,21 @@ Partial Class Form1
         ' Přidání nového ToolStripTextBox pro zadávání čísel do ToolStripMenuItem
 
         Me.mnuPointsForFind.Name = "mnuPointsForFind"
-        Me.mnuPointsForFind.ToolTipText = "Zadejte počet bodů za nalezení"
+        Me.mnuPointsForFind.ToolTipText = "Zadejte počet bodů za nalezení kladeče."
         Me.mnuPointsForFind.Width = 50
         Me.mnuPointsForFind.Text = "0" ' výchozí hodnota
         Me.mnuPointsForFind.TextBoxTextAlign = HorizontalAlignment.Right
         Me.mnuPointsForFind.MaxLength = 3 ' maximální délka vstupu
 
         Me.mnuPointsForSpeed.Name = "mnuPointsForSpeed"
-        Me.mnuPointsForSpeed.ToolTipText = "Zadejte počet bodů za rychlost"
+        Me.mnuPointsForSpeed.ToolTipText = "Zadejte počet bodů za rychlost (20 bodů za 1 km/h)."
         Me.mnuPointsForSpeed.Width = 50
         Me.mnuPointsForSpeed.Text = "0" ' výchozí hodnota
         Me.mnuPointsForSpeed.TextBoxTextAlign = HorizontalAlignment.Right
         Me.mnuPointsForSpeed.MaxLength = 3 ' maximální délka vstupu
 
         Me.mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
-        Me.mnuPointsForAccuracy.ToolTipText = "Zadejte počet bodů za přesnost"
+        Me.mnuPointsForAccuracy.ToolTipText = "Zadejte max. počet bodů za přesnost."
         Me.mnuPointsForAccuracy.Width = 50
         Me.mnuPointsForAccuracy.Text = "0" ' výchozí hodnota
         Me.mnuPointsForAccuracy.TextBoxTextAlign = HorizontalAlignment.Right
@@ -288,7 +288,7 @@ Partial Class Form1
 
 
         Me.mnuPointsForHandler.Name = "mnuPointsForHandler"
-        Me.mnuPointsForHandler.ToolTipText = "Zadejte počet bodů za práci psovoda"
+        Me.mnuPointsForHandler.ToolTipText = "Zadejte max. počet bodů za schopnost psovoda číst psa."
         Me.mnuPointsForHandler.Width = 50
         Me.mnuPointsForHandler.Text = "0" ' výchozí hodnota
         Me.mnuPointsForHandler.TextBoxTextAlign = HorizontalAlignment.Right
@@ -675,7 +675,7 @@ Partial Class Form1
     End Sub
 
 
-    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus
+    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus, mnuPointsForHandler.LostFocus, mnuPointsForSpeed.LostFocus, mnuPointsForAccuracy.LostFocus
         If Integer.TryParse(mnuPointsForFind.Text, Nothing) Then
             Me.ActiveDogInfo.PointsForFindMax = mnuPointsForFind.Text
         End If
@@ -688,7 +688,6 @@ Partial Class Form1
         If Integer.TryParse(mnuPointsForHandler.Text, Nothing) Then
             Me.ActiveDogInfo.PointsForHandlerMax = mnuPointsForHandler.Text
         End If
-
     End Sub
 
 
