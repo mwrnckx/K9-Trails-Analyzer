@@ -59,57 +59,13 @@ Namespace My.Resources
                 resourceCulture = value
             End Set
         End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property bgImage() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("bgImage", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property czech_flag() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("czech_flag", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property De_Flag() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("De_Flag", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property en_flag() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("en_flag", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property pl_flag() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("pl_flag", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
+
+
+
+
+
+
+
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný {\rtf1\adeflang1025\ansi\ansicpg1250\uc1\adeff0\deff0\stshfdbch0\stshfloch44\stshfhich44\stshfbi44\deflang1029\deflangfe1029\themelang1029\themelangfe0\themelangcs0{\fonttbl{\f0\fbidi \froman\fcharset238\fprq2{\*\panose 02020603050405020304}Times New Roman;}
         '''{\f2\fbidi \fmodern\fcharset238\fprq1{\*\panose 02070309020205020404}Courier New;}{\f10\fbidi \fnil\fcharset2\fprq2{\*\panose 05000000000000000000}Wingdings;}{\f34\fbidi \froman\fcharset238\fprq2{\*\panose 02040503050406030204}Cambria Math;}
@@ -170,17 +126,9 @@ Namespace My.Resources
                 Return ResourceManager.GetString("readme_uk", resourceCulture)
             End Get
         End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property ru_flag() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("ru_flag", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
-        
+
+
+
         '''<summary>
         '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Icon podobný (Ikona).
         '''</summary>
@@ -190,15 +138,7 @@ Namespace My.Resources
                 Return CType(obj,System.Drawing.Icon)
             End Get
         End Property
-        
-        '''<summary>
-        '''  Vyhledává lokalizovaný prostředek typu System.Drawing.Bitmap.
-        '''</summary>
-        Friend ReadOnly Property uk_flag() As System.Drawing.Bitmap
-            Get
-                Dim obj As Object = ResourceManager.GetObject("uk_flag", resourceCulture)
-                Return CType(obj,System.Drawing.Bitmap)
-            End Get
-        End Property
+
+
     End Module
 End Namespace

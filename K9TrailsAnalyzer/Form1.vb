@@ -877,37 +877,42 @@ Partial Public Class Form1
             End If
         Next
         Dim currentCulture As String = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName
-        Dim menuIcon As Image = Nothing
+        Dim menuIcon As Image = Me.mnuEnglish.Image
         Select Case currentCulture
             Case "cs-CZ", "cs"
-                menuIcon = My.Resources.czech_flag
+                menuIcon = mnuCzech.Image
             Case "en-GB", "en", "en-US"
-                menuIcon = My.Resources.en_flag
-                mnuEnglish.Image = resizeImage(My.Resources.en_flag, Nothing, 18)
+                menuIcon = Me.mnuEnglish.Image
             Case "de-DE", "de"
-                menuIcon = My.Resources.De_Flag
-                mnuGerman.Image = resizeImage(My.Resources.De_Flag, Nothing, 18)
+                menuIcon = Me.mnuGerman.Image
+                'mnuGerman.Image = resizeImage(My.Resources.De_Flag, Nothing, 18)
             Case "pl-PL", "pl"
-                menuIcon = My.Resources.pl_flag
-                mnuPolish.Image = resizeImage(My.Resources.pl_flag, Nothing, 18)
+                menuIcon = Me.mnuPolish.Image
+                'mnuPolish.Image = resizeImage(My.Resources.pl_flag, Nothing, 18)
             Case "ru-RU", "ru"
-                menuIcon = My.Resources.ru_flag
-                mnuRussian.Image = resizeImage(My.Resources.ru_flag, Nothing, 18)
+                menuIcon = Me.mnuRussian.Image
+                'mnuRussian.Image = resizeImage(My.Resources.ru_flag, Nothing, 18)
             Case "uk"
-                menuIcon = My.Resources.uk_flag
-                mnuUkrainian.Image = resizeImage(My.Resources.uk_flag, Nothing, 18)
+                menuIcon = Me.mnuUkrainian.Image
+                'mnuUkrainian.Image = resizeImage(My.Resources.uk_flag, Nothing, 18)
             Case Else
                 ' Výchozí obrázek (např. angličtina)
-                menuIcon = My.Resources.en_flag
+                menuIcon = Me.mnuEnglish.Image
         End Select
 
+        If menuIcon Is Nothing Then
+            menuIcon = Me.mnuEnglish.Image ' Zajistí, že nebude Nothing
+        End If
         ' Nastavení obrázku na ToolStripMenuItem
-        mnuLanguage.Image = resizeImage(menuIcon, Nothing, 18)
-        mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, 18)
+
+        mnuLanguage.Image = menuIcon
+
+
+        'mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, 18)
     End Sub
 
     Private Function resizeImage(menuIcon As Image, width As Integer, height As Integer) As Image
-
+        If menuIcon Is Nothing Then Return Nothing
         If width = Nothing Then width = menuIcon.Width * height / menuIcon.Height
         Dim resizedImage As New Bitmap(width, height)
         Using g As Graphics = Graphics.FromImage(resizedImage)
@@ -1103,17 +1108,17 @@ Partial Public Class Form1
 
     ' ----- naplnění ToolStripComboBoxu objekty DogInfo -----
     Private Sub PopulateDogsToolStrip()
-        mnucbActiveDog.ComboBox.Items.Clear()
+        mnucbActiveCategory.ComboBox.Items.Clear()
 
         For Each d As DogInfo In DogsList
-            mnucbActiveDog.ComboBox.Items.Add(d) ' zobrazí se Name díky ToString()
+            mnucbActiveCategory.ComboBox.Items.Add(d) ' zobrazí se Name díky ToString()
         Next
 
         ' pokud je nastaven ActiveDogId, vyber ho; jinak vyber první
         Dim selectedIndex As Integer = -1
         If Not String.IsNullOrEmpty(ActiveDogId) Then
-            For i As Integer = 0 To mnucbActiveDog.ComboBox.Items.Count - 1
-                Dim item As DogInfo = CType(mnucbActiveDog.ComboBox.Items(i), DogInfo)
+            For i As Integer = 0 To mnucbActiveCategory.ComboBox.Items.Count - 1
+                Dim item As DogInfo = CType(mnucbActiveCategory.ComboBox.Items(i), DogInfo)
                 If item.Id = ActiveDogId Then
                     selectedIndex = i
                     Exit For
@@ -1121,12 +1126,12 @@ Partial Public Class Form1
             Next
         End If
 
-        If selectedIndex = -1 AndAlso mnucbActiveDog.ComboBox.Items.Count > 0 Then selectedIndex = 0
+        If selectedIndex = -1 AndAlso mnucbActiveCategory.ComboBox.Items.Count > 0 Then selectedIndex = 0
 
         If selectedIndex >= 0 Then
-            mnucbActiveDog.ComboBox.SelectedIndex = selectedIndex
+            mnucbActiveCategory.ComboBox.SelectedIndex = selectedIndex
             ' zajistí, že ActiveDogId drží hodnotu
-            Dim sel = TryCast(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+            Dim sel = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, DogInfo)
             If sel IsNot Nothing Then
                 ActiveDogId = sel.Id
                 'lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
@@ -1137,8 +1142,8 @@ Partial Public Class Form1
     End Sub
 
     ' ----- handler při změně výběru v ToolStripComboBoxu -----
-    Private Sub mnucbActiveDog_SelectedIndexChanged(sender As Object, e As EventArgs) Handles mnucbActiveDog.SelectedIndexChanged
-        Dim selected = TryCast(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+    Private Sub mnucbActiveCategory_SelectedIndexChanged(sender As Object, e As EventArgs) Handles mnucbActiveCategory.SelectedIndexChanged
+        Dim selected = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, DogInfo)
         If selected Is Nothing Then Return
         SetScrollState(1, selected.Id) ' nastavíme scroll state pro aktivního psa
         ActiveDogId = selected.Id
@@ -1153,8 +1158,8 @@ Partial Public Class Form1
         ' e.g. RefreshOriginalsFolderForActiveDog()
     End Sub
 
-    ' ----- příklad: přidání nového psa (mnuAddDog click) -----
-    Private Sub mnuAddDog_Click(sender As Object, e As EventArgs) Handles mnuAddDog.Click
+    ' ----- příklad: přidání nového psa (mnuAddNewCategory click) -----
+    Private Sub mnuAddNewCategory_Click(sender As Object, e As EventArgs) Handles mnuAddNewCategory.Click
         Dim dogName = InputBox("Enter the name of the new dog:", "New dog")
         If String.IsNullOrWhiteSpace(dogName) Then
             MessageBox.Show("The name of the dog was not given.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
@@ -1194,9 +1199,9 @@ Partial Public Class Form1
         ' refresh UI: vložíme nového psa do comboboxu a vybereme ho
         PopulateDogsToolStrip()
         ' vybrat nového psa:
-        For i As Integer = 0 To mnucbActiveDog.ComboBox.Items.Count - 1
-            Dim d As DogInfo = CType(mnucbActiveDog.ComboBox.Items(i), DogInfo)
-            If d.Id = newId Then mnucbActiveDog.ComboBox.SelectedIndex = i : Exit For
+        For i As Integer = 0 To mnucbActiveCategory.ComboBox.Items.Count - 1
+            Dim d As DogInfo = CType(mnucbActiveCategory.ComboBox.Items(i), DogInfo)
+            If d.Id = newId Then mnucbActiveCategory.ComboBox.SelectedIndex = i : Exit For
         Next
 
         MessageBox.Show($"Pes '{dogName}' přidán s ID {newId}.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -1460,7 +1465,7 @@ Partial Public Class Form1
         My.Settings.WindowSize = Me.Size
     End Sub
 
-    Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuDeleteCurrentDog.Click
+    Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuDeleteCurrentCategory.Click
         ' Najdi psa podle ID
         Dim dogId As String = ActiveDogId
         Dim dogToRemove = DogsList.FirstOrDefault(Function(d) d.Id = dogId)
@@ -1501,10 +1506,10 @@ Partial Public Class Form1
 
     End Sub
 
-    Private Sub mnuRenameCurrentDog_Click(sender As Object, e As EventArgs) Handles mnuRenameCurrentDog.Click
+    Private Sub mnuRenameCurrentCategory_Click(sender As Object, e As EventArgs) Handles mnuRenameCurrentCategory.Click
 
 
-        'Dim selectedDog As DogInfo = CType(mnucbActiveDog.ComboBox.SelectedItem, DogInfo)
+        'Dim selectedDog As DogInfo = CType(mnucbActiveCategory.ComboBox.SelectedItem, DogInfo)
         If ActiveDogInfo IsNot Nothing Then
             Dim newName As String = InputBox("Enter the dog's new name:", "Rename the dog", ActiveDogInfo.Name)
             If Not String.IsNullOrWhiteSpace(newName) AndAlso newName <> ActiveDogInfo.Name Then

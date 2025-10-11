@@ -297,10 +297,10 @@
   <data name="DeleteCurrentDogToolStripMenuItem.Text" xml:space="preserve">
     <value>Видалити поточну собаку</value>
   </data>
-  <data name="mnuAddDog.Text" xml:space="preserve">
+  <data name="mnuAddNewCategory.Text" xml:space="preserve">
     <value>Додайте іншу категорію</value>
   </data>
-  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+  <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Видалити поточну категорію</value>
   </data>
 </root>

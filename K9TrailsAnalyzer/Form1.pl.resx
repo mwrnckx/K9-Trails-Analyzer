@@ -376,13 +376,13 @@
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Zmień katalog za pomocą plików GPX</value>
   </data>
-  <data name="mnuAddDog.Text" xml:space="preserve">
+  <data name="mnuAddNewCategory.Text" xml:space="preserve">
     <value>Dodaj kolejną kategorię</value>
   </data>
-  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+  <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Usuń aktualną kategorię</value>
   </data>
-  <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
+  <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Edytuj nazwę kategorii</value>
   </data>
 </root>

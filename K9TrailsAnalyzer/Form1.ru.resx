@@ -303,13 +303,13 @@
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Изменить каталог с файлами GPX</value>
   </data>
-  <data name="mnuAddDog.Text" xml:space="preserve">
+  <data name="mnuAddNewCategory.Text" xml:space="preserve">
     <value>Добавить еще одну категорию</value>
   </data>
-  <data name="mnuDeleteCurrentDog.Text" xml:space="preserve">
+  <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Удалить текущую категорию</value>
   </data>
-  <data name="mnuRenameCurrentDog.Text" xml:space="preserve">
+  <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Редактировать название категории</value>
   </data>
 </root>

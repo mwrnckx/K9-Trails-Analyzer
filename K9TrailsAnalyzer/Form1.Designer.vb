@@ -28,13 +28,14 @@ Partial Class Form1
     Private Sub InitializeComponent()
         components = New Container()
         Dim resources As ComponentResourceManager = New ComponentResourceManager(GetType(Form1))
+        Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
+        Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolTip1 = New ToolTip(components)
         StatusStrip1 = New StatusStrip()
         StatusLabel1 = New ToolStripStatusLabel()
         btnCreateVideos = New Button()
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
-        mnuSelect_directory_gpx_files = New ToolStripMenuItem()
         mnuExportAs = New ToolStripMenuItem()
         mnuExit = New ToolStripMenuItem()
         mnuSettings = New ToolStripMenuItem()
@@ -50,16 +51,18 @@ Partial Class Form1
         mnuPolish = New ToolStripMenuItem()
         mnuRussian = New ToolStripMenuItem()
         ToolStripMenuItem = New ToolStripMenuItem()
-        mnucbActiveDog = New ToolStripComboBox()
-        mnuRenameCurrentDog = New ToolStripMenuItem()
-        mnuAddDog = New ToolStripMenuItem()
-        mnuDeleteCurrentDog = New ToolStripMenuItem()
+        mnucbActiveCategory = New ToolStripComboBox()
+        mnuSelect_directory_gpx_files = New ToolStripMenuItem()
+        mnuRenameCurrentCategory = New ToolStripMenuItem()
+        mnuAddNewCategory = New ToolStripMenuItem()
+        mnuDeleteCurrentCategory = New ToolStripMenuItem()
         mnuPointsForFind = New ToolStripTextBox()
-        mnuPointsForSpeed = New ToolStripTextBox
-        mnuPointsForAccuracy = New ToolStripTextBox
-        mnuPointsForHandler = New ToolStripTextBox
+        mnuPointsForSpeed = New ToolStripTextBox()
+        mnuPointsForAccuracy = New ToolStripTextBox()
+        mnuPointsForHandler = New ToolStripTextBox()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
+        mnuCheckUpdates = New ToolStripMenuItem()
         mnuFactoryReset = New ToolStripMenuItem()
         HelpToolStripMenuItem = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
@@ -74,8 +77,6 @@ Partial Class Form1
         dtpStartDate = New DateTimePicker()
         btnCharts = New Button()
         btnReadGpxFiles = New Button()
-        PictureBox2 = New PictureBox()
-        TabTrial = New TabPage()
         TabVideoExport = New TabPage()
         lvGpxFiles = New ListView()
         clmFileName = New ColumnHeader()
@@ -83,25 +84,19 @@ Partial Class Form1
         clmLength = New ColumnHeader()
         clmAge = New ColumnHeader()
         clmTrkCount = New ColumnHeader()
-        PictureBox3 = New PictureBox()
-        ' Vytvoření instancí pro DataGridView a jeho sloupce
-        ' Vytvoření instancí pro DataGridView a VŠECHNY jeho sloupce
-        Me.dgvTrial = New DataGridView()
-
-        Me.panelForDgv = New Panel()
-
+        TabTrial = New TabPage()
+        panelForDgv = New Panel()
+        dgvTrial = New DataGridView()
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
         gbPeriod.SuspendLayout()
-        CType(PictureBox2, ISupportInitialize).BeginInit()
-        TabTrial.SuspendLayout()
         TabVideoExport.SuspendLayout()
-        CType(PictureBox3, ISupportInitialize).BeginInit()
-        CType(Me.dgvTrial, System.ComponentModel.ISupportInitialize).BeginInit()
-        Me.SuspendLayout()
-
+        TabTrial.SuspendLayout()
+        panelForDgv.SuspendLayout()
+        CType(dgvTrial, ISupportInitialize).BeginInit()
+        SuspendLayout()
         ' 
         ' ToolTip1
         ' 
@@ -143,11 +138,6 @@ Partial Class Form1
         resources.ApplyResources(mnuFile, "mnuFile")
         mnuFile.Name = "mnuFile"
         ' 
-        ' mnuSelect_directory_gpx_files
-        ' 
-        mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
-        resources.ApplyResources(mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
-        ' 
         ' mnuExportAs
         ' 
         mnuExportAs.Name = "mnuExportAs"
@@ -170,16 +160,14 @@ Partial Class Form1
         mnuPrependDateToFileName.CheckOnClick = True
         mnuPrependDateToFileName.CheckState = CheckState.Checked
         mnuPrependDateToFileName.Name = "mnuPrependDateToFileName"
-        mnuPrependDateToFileName.Visible = False
         resources.ApplyResources(mnuPrependDateToFileName, "mnuPrependDateToFileName")
         ' 
         ' mnuTrimGPSNoise
         ' 
-        mnuTrimGPSNoise.Checked = False
+        mnuTrimGPSNoise.Checked = True
         mnuTrimGPSNoise.CheckOnClick = True
         mnuTrimGPSNoise.CheckState = CheckState.Checked
         mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
-        mnuTrimGPSNoise.Visible = False
         resources.ApplyResources(mnuTrimGPSNoise, "mnuTrimGPSNoise")
         ' 
         ' mnuMergingTracks
@@ -234,90 +222,58 @@ Partial Class Form1
         resources.ApplyResources(mnuRussian, "mnuRussian")
         mnuRussian.Name = "mnuRussian"
         mnuRussian.Tag = "ru"
-        ' 
-        ' SToolStripMenuItem
-        ' 
-        ' ... nahraď původní lblPointsForFind a mnuPointsForFind v AddRange tímto:
-        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {
-                New ToolStripLabel With {.Text = "The category:", .AutoSize = True, .Font = New Font("Cascadia Code Semibold", 14, FontStyle.Bold)},
-                mnucbActiveDog,
-                mnuSelect_directory_gpx_files,
-                mnuRenameCurrentDog,
-                mnuAddDog,
-                mnuDeleteCurrentDog,
-                New ToolStripSeparator(),
-                New ToolStripLabel With {.Text = "Adjust the points in this trial category:", .AutoSize = True, .Font = New Font("Cascadia Code Semibold", 14, FontStyle.Bold)},
-                New ToolStripLabel With {.Text = "Points for finding the runner:", .AutoSize = True},
-                mnuPointsForFind,
-                New ToolStripLabel With {.Text = "Points for speed (20 points for each 1 km/h):", .AutoSize = True},
-                mnuPointsForSpeed,
-                New ToolStripLabel With {.Text = "Max. points for accuracy:", .AutoSize = True},
-                mnuPointsForAccuracy,
-                New ToolStripLabel With {.Text = "Max. points for handler's dog reading:", .AutoSize = True},
-                mnuPointsForHandler,
-                New ToolStripSeparator(),
-                New ToolStripSeparator(),
-                mnuSelectADirectoryToSaveVideo,
-                mnuSetFFmpegPath,
-                New ToolStripSeparator(),
-                New ToolStripSeparator(),
-                mnuFactoryReset
-            })
 
-        ' Přidání nového ToolStripTextBox pro zadávání čísel do ToolStripMenuItem
-
-        Me.mnuPointsForFind.Name = "mnuPointsForFind"
-        Me.mnuPointsForFind.ToolTipText = "Zadejte počet bodů za nalezení kladeče."
-        Me.mnuPointsForFind.Width = 50
-        Me.mnuPointsForFind.Text = "0" ' výchozí hodnota
-        Me.mnuPointsForFind.TextBoxTextAlign = HorizontalAlignment.Right
-        Me.mnuPointsForFind.MaxLength = 3 ' maximální délka vstupu
-
-        Me.mnuPointsForSpeed.Name = "mnuPointsForSpeed"
-        Me.mnuPointsForSpeed.ToolTipText = "Zadejte počet bodů za rychlost (20 bodů za 1 km/h)."
-        Me.mnuPointsForSpeed.Width = 50
-        Me.mnuPointsForSpeed.Text = "0" ' výchozí hodnota
-        Me.mnuPointsForSpeed.TextBoxTextAlign = HorizontalAlignment.Right
-        Me.mnuPointsForSpeed.MaxLength = 3 ' maximální délka vstupu
-
-        Me.mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
-        Me.mnuPointsForAccuracy.ToolTipText = "Zadejte max. počet bodů za přesnost."
-        Me.mnuPointsForAccuracy.Width = 50
-        Me.mnuPointsForAccuracy.Text = "0" ' výchozí hodnota
-        Me.mnuPointsForAccuracy.TextBoxTextAlign = HorizontalAlignment.Right
-        Me.mnuPointsForAccuracy.MaxLength = 3 ' maximální délka vstupu
-
-
-        Me.mnuPointsForHandler.Name = "mnuPointsForHandler"
-        Me.mnuPointsForHandler.ToolTipText = "Zadejte max. počet bodů za schopnost psovoda číst psa."
-        Me.mnuPointsForHandler.Width = 50
-        Me.mnuPointsForHandler.Text = "0" ' výchozí hodnota
-        Me.mnuPointsForHandler.TextBoxTextAlign = HorizontalAlignment.Right
-        Me.mnuPointsForHandler.MaxLength = 3 ' maximální délka vstupu
-        '
-
-        resources.ApplyResources(ToolStripMenuItem, "SToolStripMenuItem")
-        ToolStripMenuItem.Name = "SToolStripMenuItem"
         ' 
-        ' mnucbActiveDog
+        ' ToolStripMenuItem
         ' 
-        resources.ApplyResources(mnucbActiveDog, "mnucbActiveDog")
-        mnucbActiveDog.Name = "mnucbActiveDog"
+        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointsForFind, mnuPointsForSpeed, mnuPointsForAccuracy, mnuPointsForHandler, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
+        resources.ApplyResources(ToolStripMenuItem, "ToolStripMenuItem")
+        ToolStripMenuItem.Name = "ToolStripMenuItem"
         ' 
-        ' mnuRenameCurrentDog
+        ' mnucbActiveCategory
         ' 
-        mnuRenameCurrentDog.Name = "mnuRenameCurrentDog"
-        resources.ApplyResources(mnuRenameCurrentDog, "mnuRenameCurrentDog")
+        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
+        mnucbActiveCategory.Name = "mnucbActiveCategory"
         ' 
-        ' mnuAddDog
+        ' mnuSelect_directory_gpx_files
         ' 
-        mnuAddDog.Name = "mnuAddDog"
-        resources.ApplyResources(mnuAddDog, "mnuAddDog")
+        mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
+        resources.ApplyResources(mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
         ' 
-        ' mnuDeleteCurrentDog
+        ' mnuRenameCurrentCategory
         ' 
-        mnuDeleteCurrentDog.Name = "mnuDeleteCurrentDog"
-        resources.ApplyResources(mnuDeleteCurrentDog, "mnuDeleteCurrentDog")
+        mnuRenameCurrentCategory.Name = "mnuRenameCurrentCategory"
+        resources.ApplyResources(mnuRenameCurrentCategory, "mnuRenameCurrentCategory")
+        ' 
+        ' mnuAddNewCategory
+        ' 
+        mnuAddNewCategory.Name = "mnuAddNewCategory"
+        resources.ApplyResources(mnuAddNewCategory, "mnuAddNewCategory")
+        ' 
+        ' mnuDeleteCurrentCategory
+        ' 
+        mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
+        resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
+        ' 
+        ' mnuPointsForFind
+        ' 
+        resources.ApplyResources(mnuPointsForFind, "mnuPointsForFind")
+        mnuPointsForFind.Name = "mnuPointsForFind"
+        ' 
+        ' mnuPointsForSpeed
+        ' 
+        resources.ApplyResources(mnuPointsForSpeed, "mnuPointsForSpeed")
+        mnuPointsForSpeed.Name = "mnuPointsForSpeed"
+        ' 
+        ' mnuPointsForAccuracy
+        ' 
+        resources.ApplyResources(mnuPointsForAccuracy, "mnuPointsForAccuracy")
+        mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
+        ' 
+        ' mnuPointsForHandler
+        ' 
+        resources.ApplyResources(mnuPointsForHandler, "mnuPointsForHandler")
+        mnuPointsForHandler.Name = "mnuPointsForHandler"
         ' 
         ' mnuSelectADirectoryToSaveVideo
         ' 
@@ -355,27 +311,24 @@ Partial Class Form1
         rtbWarnings.BackColor = Color.Beige
         resources.ApplyResources(rtbWarnings, "rtbWarnings")
         rtbWarnings.Name = "rtbWarnings"
-        '
+        ' 
         ' TabControl1
-        '
-        Me.TabControl1.Controls.Add(Me.TabStats)
-        Me.TabControl1.Controls.Add(Me.TabVideoExport)
-        Me.TabControl1.Controls.Add(Me.TabTrial)
-        resources.ApplyResources(Me.TabControl1, "TabControl1")
-        Me.TabControl1.Name = "TabControl1"
-        Me.TabControl1.SelectedIndex = 0
+        ' 
+        TabControl1.Controls.Add(TabStats)
+        TabControl1.Controls.Add(TabVideoExport)
+        TabControl1.Controls.Add(TabTrial)
+        resources.ApplyResources(TabControl1, "TabControl1")
         TabControl1.DrawMode = TabDrawMode.OwnerDrawFixed
-
-
+        TabControl1.Name = "TabControl1"
+        TabControl1.SelectedIndex = 0
         ' 
         ' TabStats
         ' 
-        TabStats.BackColor = Color.Beige
+        TabStats.BackColor = Color.DarkSeaGreen
         TabStats.Controls.Add(rtbOutput)
         TabStats.Controls.Add(gbPeriod)
         TabStats.Controls.Add(btnCharts)
         TabStats.Controls.Add(btnReadGpxFiles)
-        TabStats.Controls.Add(PictureBox2)
         resources.ApplyResources(TabStats, "TabStats")
         TabStats.Name = "TabStats"
         ' 
@@ -433,23 +386,14 @@ Partial Class Form1
         btnReadGpxFiles.Name = "btnReadGpxFiles"
         btnReadGpxFiles.UseVisualStyleBackColor = False
         ' 
-        ' PictureBox2
-        ' 
-        resources.ApplyResources(PictureBox2, "PictureBox2")
-        PictureBox2.Name = "PictureBox2"
-        PictureBox2.TabStop = False
-
-        ' 
         ' TabVideoExport
         ' 
         TabVideoExport.BackColor = Color.Beige
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
-        TabVideoExport.Controls.Add(PictureBox3)
         resources.ApplyResources(TabVideoExport, "TabVideoExport")
         TabVideoExport.Name = "TabVideoExport"
         TabVideoExport.UseVisualStyleBackColor = True
-
         ' 
         ' lvGpxFiles
         ' 
@@ -481,68 +425,46 @@ Partial Class Form1
         ' 
         resources.ApplyResources(clmTrkCount, "clmTrkCount")
         ' 
-        ' PictureBox3
-        ' 
-        resources.ApplyResources(PictureBox3, "PictureBox3")
-        PictureBox3.Name = "PictureBox3"
-        PictureBox3.TabStop = False
-
-        '
-        ' dgvTracks (Hlavní nastavení DataGridView)
-        '
-        Me.dgvTrial.AllowUserToAddRows = False
-        Me.dgvTrial.AllowUserToDeleteRows = False
-        Me.dgvTrial.AutoGenerateColumns = True
-
-        ' DŮLEŽITÉ: Toto nastavení zajistí, že se zobrazí horizontální posuvník
-        Me.dgvTrial.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
-        Me.dgvTrial.Anchor = (CType((((AnchorStyles.Top Or AnchorStyles.Bottom) _
-    Or AnchorStyles.Left) _
-    Or AnchorStyles.Right), AnchorStyles))
-        Me.dgvTrial.Name = "dgvTrial"
-        Me.dgvTrial.Size = New System.Drawing.Size(3000, 2000) 'musí být veliký aby se vytvořily posuvníky v Panelu
-        Me.dgvTrial.ScrollBars = ScrollBars.None
-        Me.dgvTrial.TabIndex = 0
-        Me.dgvTrial.BackColor = Color.Beige
-        Me.dgvTrial.DefaultCellStyle.BackColor = Color.Beige
-        Me.dgvTrial.DefaultCellStyle.ForeColor = Color.Maroon
-        Me.dgvTrial.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight
-        'columnHeaders
-        Me.dgvTrial.ColumnHeadersDefaultCellStyle.WrapMode = DataGridViewTriState.True
-        Me.dgvTrial.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
-        Me.dgvTrial.EnableHeadersVisualStyles = False ' Důležité! Jinak se použije styl systému Windows
-        Me.dgvTrial.ColumnHeadersDefaultCellStyle.BackColor = Color.Salmon ' Zvolte požadovanou barvu
-        Me.dgvTrial.ColumnHeadersDefaultCellStyle.ForeColor = Color.Maroon ' (volitelné) barva textu
-        Me.dgvTrial.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
-        Me.dgvTrial.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
-        Me.dgvTrial.Location = New Point(0, 0)
-        Me.dgvTrial.Anchor = AnchorStyles.Top Or AnchorStyles.Left
-
-        ' =======================================================================
-        ' Kód pro opravu posuvníku DataGridView (začátek)
-        ' =======================================================================
-
-
-        panelForDgv.Dock = DockStyle.Fill      ' Roztáhne se přes celou záložku.
-        panelForDgv.AutoScroll = True         ' Zapne automatické posuvníky.
-        panelForDgv.BackColor = Color.Transparent ' Aby nepřekryl barvu záložky
-
-
-        ' 3. Nyní dgvTracks PŘIDÁME do našeho nového panelu.
-        panelForDgv.Controls.Add(Me.dgvTrial)
-
-
-        ' 
         ' TabTrial
         ' 
         TabTrial.BackColor = Color.Beige
-        TabTrial.Controls.Add(Me.panelforDgv)
+        TabTrial.Controls.Add(panelForDgv)
         resources.ApplyResources(TabTrial, "TabTrial")
-        TabTrial.Text = "Mantrailing Trial"
         TabTrial.Name = "TabTrial"
         TabTrial.UseVisualStyleBackColor = True
-
-
+        ' 
+        ' panelForDgv
+        ' 
+        resources.ApplyResources(panelForDgv, "panelForDgv")
+        panelForDgv.BackColor = Color.Transparent
+        panelForDgv.Controls.Add(dgvTrial)
+        panelForDgv.Name = "panelForDgv"
+        ' 
+        ' dgvTrial
+        ' 
+        dgvTrial.AllowUserToAddRows = False
+        dgvTrial.AllowUserToDeleteRows = False
+        dgvTrial.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+        DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
+        DataGridViewCellStyle1.BackColor = Color.Salmon
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle1.ForeColor = Color.Maroon
+        DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
+        dgvTrial.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        dgvTrial.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
+        DataGridViewCellStyle2.BackColor = Color.Beige
+        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle2.ForeColor = Color.Maroon
+        DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
+        DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
+        DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
+        dgvTrial.DefaultCellStyle = DataGridViewCellStyle2
+        dgvTrial.EnableHeadersVisualStyles = False
+        resources.ApplyResources(dgvTrial, "dgvTrial")
+        dgvTrial.Name = "dgvTrial"
         ' 
         ' Form1
         ' 
@@ -561,13 +483,11 @@ Partial Class Form1
         TabControl1.ResumeLayout(False)
         TabStats.ResumeLayout(False)
         gbPeriod.ResumeLayout(False)
-        CType(PictureBox2, ISupportInitialize).EndInit()
-        CType(Me.dgvTrial, System.ComponentModel.ISupportInitialize).EndInit()
         TabVideoExport.ResumeLayout(False)
         TabVideoExport.PerformLayout()
         TabTrial.ResumeLayout(False)
-        TabTrial.PerformLayout()
-        CType(PictureBox3, ISupportInitialize).EndInit()
+        panelForDgv.ResumeLayout(False)
+        CType(dgvTrial, ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 
@@ -580,12 +500,23 @@ Partial Class Form1
         ' Přidejte libovolnou inicializaci po volání InitializeComponent().
 
         'nastavuje logiku pro zobrazení názvu trasy v seznamu
+        'todo: používá se tohle vůbec??:
         TrackTypeResolvers.LabelResolver = AddressOf ResolveLabel
 
     End Sub
 
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
+        ' Nastavení obrázků na ToolStripMenuItem
+        Dim imgBasePath As String = Path.Combine(Application.StartupPath, "Resources", "Images")
+        Me.mnuCzech.Image = Image.FromFile(Path.Combine(imgBasePath, "cs-flag.png"))
+        Me.mnuEnglish.Image = Image.FromFile(Path.Combine(imgBasePath, "en-flag.png"))
+        Me.mnuGerman.Image = Image.FromFile(Path.Combine(imgBasePath, "de-flag.png"))
+        Me.mnuPolish.Image = Image.FromFile(Path.Combine(imgBasePath, "pl-flag.png"))
+        Me.mnuRussian.Image = Image.FromFile(Path.Combine(imgBasePath, "ru-flag.png"))
+        Me.mnuUkrainian.Image = Image.FromFile(Path.Combine(imgBasePath, "uk-flag.png"))
+        Me.Icon = New Icon((Path.Combine(imgBasePath, "icon.ico")))
         ' načteme data + config + naplníme combobox
         'při prvním spuštění se načtou data z defaults:
         Dim defaultDir As String = Path.Combine(Application.StartupPath, "defaults")
@@ -609,7 +540,7 @@ Partial Class Form1
 
         mnuPrependDateToFileName.Checked = True ' My.Settings.PrependDateToName
         'mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
-        'mnucbActiveDog.SelectedItem = My.Settings.ActiveDog 'todo: načítat z json!
+        'mnucbActiveCategory.SelectedItem = My.Settings.ActiveDog 'todo: načítat z json!
 
 
         CreateGpxFileManager()
@@ -619,14 +550,7 @@ Partial Class Form1
         Dim resources = New ComponentResourceManager(Me.GetType())
         LocalizeMenuItems(MenuStrip1.Items, resources)
         SetTooltips()
-        Dim height As Integer = 18
-        ' Nastavení obrázku na ToolStripMenuItem
-        mnuEnglish.Image = resizeImage(My.Resources.en_flag, Nothing, height)
-        mnuGerman.Image = resizeImage(My.Resources.De_Flag, Nothing, height)
-        mnuPolish.Image = resizeImage(My.Resources.pl_flag, Nothing, height)
-        mnuRussian.Image = resizeImage(My.Resources.ru_flag, Nothing, height)
-        mnuUkrainian.Image = resizeImage(My.Resources.uk_flag, Nothing, height)
-        mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, height)
+
 
         mnuPointsForFind.Text = Me.ActiveDogInfo.PointsForFindMax
         mnuPointsForSpeed.Text = Me.ActiveDogInfo.PointsPer5KmhGrossSpeed
@@ -718,7 +642,7 @@ Partial Class Form1
     Friend WithEvents ToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents mnuFactoryReset As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
-    Friend WithEvents mnuAddDog As ToolStripMenuItem
+    Friend WithEvents mnuAddNewCategory As ToolStripMenuItem
     Friend WithEvents mnuProcessProcessed As ToolStripMenuItem
     Friend WithEvents mnuSelectADirectoryToSaveVideo As ToolStripMenuItem
     Friend WithEvents mnuSetFFmpegPath As ToolStripMenuItem
@@ -734,9 +658,7 @@ Partial Class Form1
     Friend WithEvents dtpStartDate As DateTimePicker
     Friend WithEvents btnCharts As Button
     Friend WithEvents btnReadGpxFiles As Button
-    Friend WithEvents PictureBox2 As PictureBox
     Friend WithEvents lvGpxFiles As ListView
-    Friend WithEvents PictureBox3 As PictureBox
     Friend WithEvents clmFileName As ColumnHeader
     Friend WithEvents clmDate As ColumnHeader
     Friend WithEvents clmLength As ColumnHeader
@@ -747,9 +669,9 @@ Partial Class Form1
     Friend WithEvents HelpToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents mnuAbout As ToolStripMenuItem
     Friend WithEvents mnuCheckForUpdates1 As ToolStripMenuItem
-    Friend WithEvents mnucbActiveDog As ToolStripComboBox
-    Friend WithEvents mnuDeleteCurrentDog As ToolStripMenuItem
-    Friend WithEvents mnuRenameCurrentDog As ToolStripMenuItem
+    Friend WithEvents mnucbActiveCategory As ToolStripComboBox
+    Friend WithEvents mnuDeleteCurrentCategory As ToolStripMenuItem
+    Friend WithEvents mnuRenameCurrentCategory As ToolStripMenuItem
     Friend WithEvents dgvTrial As DataGridView
     ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
     Friend WithEvents panelForDgv As Panel

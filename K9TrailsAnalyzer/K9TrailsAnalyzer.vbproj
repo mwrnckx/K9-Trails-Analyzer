@@ -2,18 +2,18 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-      <TargetFrameworks>net8.0-windows</TargetFrameworks>
+    <TargetFrameworks>net8.0-windows</TargetFrameworks>
     <RootNamespace>GPXTrailAnalyzer</RootNamespace>
     <StartupObject>Sub Main</StartupObject>
     <UseWindowsForms>true</UseWindowsForms>
     <MyType>WindowsForms</MyType>
-     <Nullable>enable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
     <ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
-  <AssemblyVersion>0.0.0.0</AssemblyVersion>
-  <FileVersion>0.0.0.0</FileVersion>
-  <InformationalVersion>0.0.0</InformationalVersion>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+    <FileVersion>0.0.0.0</FileVersion>
+    <InformationalVersion>0.0.0</InformationalVersion>
     <AssemblyName>K9TrailsAnalyzer</AssemblyName>
     <ApplicationIcon>track.ico</ApplicationIcon>
     <GenerateDocumentationFile>False</GenerateDocumentationFile>
@@ -21,26 +21,11 @@
     <ApplicationManifest>My Project\app.manifest</ApplicationManifest>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="Resources\Resource1.cs.Designer.vb" />
-    <Compile Remove="Resources\Resource1.cs1.Designer.vb" />
-    <Compile Remove="Resources\Resource1.de.Designer.vb" />
-    <Compile Remove="Resources\Resource1.de1.Designer.vb" />
-    <Compile Remove="Resources\Resource1.Designer.vb" />
-    <Compile Remove="Resources\Resource1.pl.Designer.vb" />
-    <Compile Remove="Resources\Resource1.pl1.Designer.vb" />
-    <Compile Remove="Resources\Resource1.ru.Designer.vb" />
-    <Compile Remove="Resources\Resource1.ru1.Designer.vb" />
-    <Compile Remove="Resources\Resource1.uk.Designer.vb" />
-    <Compile Remove="Resources\Resource1.uk1.Designer.vb" />
-  </ItemGroup>
+  <!-- *** ODSTRANĚNO: Blok <Compile Remove> - způsoboval problémy s Designer.vb soubory *** -->
 
- 
   <ItemGroup>
     <Content Include="track.ico" />
   </ItemGroup>
-
-  
 
   <ItemGroup>
     <Import Include="System.Data" />
@@ -48,20 +33,15 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
 
-  
-
   <ItemGroup>
     <PackageReference Include="WinForms.DataVisualization" Version="1.10.0" />
   </ItemGroup>
-
-  
 
   <ItemGroup>
     <ProjectReference Include="..\TrackVideoExporter\TrackVideoExporter.vbproj" />
   </ItemGroup>
 
-
-
+  <!-- Všechny tyto soubory by se měly správně zkopírovat do výstupu -->
   <ItemGroup>
     <None Update="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -93,6 +73,31 @@
     <None Update="downloaded.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\images\cs-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\de-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\en-flag.jpeg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\en-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\icon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\pl-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\ru-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\images\uk-flag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <!-- Zde pokračují tvé definice pro GPX soubory -->
     <None Update="Samples\001\2024-10-25 Sedlec.gpx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -248,10 +253,7 @@
     </None>
   </ItemGroup>
 
-
-
   <ItemGroup>
-
     <Compile Update="frmPleaseWait.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -267,33 +269,31 @@
     </Compile>
   </ItemGroup>
 
-<ItemGroup>
- <!-- <EmbeddedResource Include="Resources\Resource1.resx">
-    <Generator>ResXFileCodeGenerator</Generator>
-    <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
-    <CustomToolNamespace>My.Resources</CustomToolNamespace>
-  </EmbeddedResource> -->
+  <!-- *** ZJEDNODUŠENÝ BLOK PRO ZDROJE (Resources) *** -->
+  <ItemGroup>
+    <!-- Hlavní resx soubor, který generuje Resource1.Designer.vb -->
+    <EmbeddedResource Update="Resources\Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
 
-  <Compile Include="Resources\Resource1.Designer.vb">
-    <AutoGen>True</AutoGen>
-    <DesignTime>True</DesignTime>
-    <DependentUpon>Resource1.resx</DependentUpon>
-  </Compile>
-</ItemGroup>
+    <!-- Kulturně specifické resx soubory pro Resource1, které automaticky používají stejné nastavení jako hlavní resx. -->
+    <EmbeddedResource Update="Resources\Resource1.cs.resx" />
+    <EmbeddedResource Update="Resources\Resource1.de.resx" />
+    
+    <!-- Explicitní zahrnutí Form1.resx a lokalizací pro lepší spolehlivost Designeru. -->
+    <!-- Předpokládáme, že Form1.resx je ve stejné složce jako tento vbproj soubor. -->
+    <EmbeddedResource Update="Form1.resx" />
+    <EmbeddedResource Update="Form1.cs.resx" />
+    <EmbeddedResource Update="Form1.de.resx" />
+    
+    <!-- NOVĚ PŘIDÁNO: Explicitní zahrnutí frmPleaseWait.resx a lokalizací. -->
+    <EmbeddedResource Update="frmPleaseWait.resx" />
+    <EmbeddedResource Update="frmPleaseWait.cs.resx" />
+    <EmbeddedResource Update="frmPleaseWait.de.resx" />
 
-<ItemGroup>
-  <EmbeddedResource Update="Resources\Resource1.cs.resx">
-    <Generator></Generator>
-  </EmbeddedResource>
-  <EmbeddedResource Update="Resources\Resource1.de.resx">
-    <Generator></Generator>
-  </EmbeddedResource>
-  <EmbeddedResource Update="Resources\Resource1.resx">
-    <Generator>ResXFileCodeGenerator</Generator>
-    <CustomToolNamespace>My.Resources</CustomToolNamespace>
-    <LastGenOutput>Resource1.Designer.vb</LastGenOutput>
-  </EmbeddedResource>
-</ItemGroup>
 
+  </ItemGroup>
 
 </Project>
