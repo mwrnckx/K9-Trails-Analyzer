@@ -251,11 +251,7 @@
 
 
   <ItemGroup>
-    <Compile Update="Form1.Designer.vb">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Form1.resx</DependentUpon>
-    </Compile>
+
     <Compile Update="frmPleaseWait.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -287,10 +283,10 @@
 
 <ItemGroup>
   <EmbeddedResource Update="Resources\Resource1.cs.resx">
-    <Generator>ResXFileCodeGenerator</Generator>
+    <Generator></Generator>
   </EmbeddedResource>
   <EmbeddedResource Update="Resources\Resource1.de.resx">
-    <Generator>ResXFileCodeGenerator</Generator>
+    <Generator></Generator>
   </EmbeddedResource>
   <EmbeddedResource Update="Resources\Resource1.resx">
     <Generator>ResXFileCodeGenerator</Generator>

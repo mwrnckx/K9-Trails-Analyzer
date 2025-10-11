@@ -145,7 +145,7 @@
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Chyba při tvorbě CSV souboru</value>
   </data>
-  <data name="mBoxNo gpx file was found" xml:space="preserve">
+  <data name="mBoxNo_gpx_file_was_found" xml:space="preserve">
     <value>Nebyl nalezen žádný soubor gpx</value>
   </data>
   <data name="outProcessed_period_from" xml:space="preserve">

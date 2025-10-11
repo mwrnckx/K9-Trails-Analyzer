@@ -144,7 +144,7 @@
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Error Creating CSV</value>
   </data>
-  <data name="mBoxNo gpx file was found" xml:space="preserve">
+  <data name="mBoxNo_gpx_file_was_found" xml:space="preserve">
     <value>No gpx file was found</value>
   </data>
   <data name="outProcessed_period_from" xml:space="preserve">

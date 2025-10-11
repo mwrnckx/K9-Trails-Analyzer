@@ -7,6 +7,7 @@ Public Class frmPleaseWait
     Private WithEvents lblMessage As Label
     Private WithEvents progressBar As ProgressBar
     Public Sub New(label As String)
+        InitializeComponent()
         Me.Text = "Please Wait"
         Me.BackColor = Color.Beige
         Me.ControlBox = False

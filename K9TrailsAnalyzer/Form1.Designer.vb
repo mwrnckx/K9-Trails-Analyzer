@@ -87,7 +87,8 @@ Partial Class Form1
         ' Vytvoření instancí pro DataGridView a jeho sloupce
         ' Vytvoření instancí pro DataGridView a VŠECHNY jeho sloupce
         Me.dgvTrial = New DataGridView()
-        Dim panelForDgv As New Panel()
+
+        Me.panelForDgv = New Panel()
 
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
@@ -495,11 +496,10 @@ Partial Class Form1
 
         ' DŮLEŽITÉ: Toto nastavení zajistí, že se zobrazí horizontální posuvník
         Me.dgvTrial.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None
-        Me.dgvTrial.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         Me.dgvTrial.Anchor = (CType((((AnchorStyles.Top Or AnchorStyles.Bottom) _
     Or AnchorStyles.Left) _
     Or AnchorStyles.Right), AnchorStyles))
-        Me.dgvTrial.Name = "dgvTracks"
+        Me.dgvTrial.Name = "dgvTrial"
         Me.dgvTrial.Size = New System.Drawing.Size(3000, 2000) 'musí být veliký aby se vytvořily posuvníky v Panelu
         Me.dgvTrial.ScrollBars = ScrollBars.None
         Me.dgvTrial.TabIndex = 0
@@ -531,14 +531,12 @@ Partial Class Form1
         ' 3. Nyní dgvTracks PŘIDÁME do našeho nového panelu.
         panelForDgv.Controls.Add(Me.dgvTrial)
 
-        ' 4. A nakonec PŘIDÁME panel (který už v sobě obsahuje dgvTracks) na záložku.
-        Me.TabTrial.Controls.Add(panelForDgv)
 
         ' 
         ' TabTrial
         ' 
         TabTrial.BackColor = Color.Beige
-        TabTrial.Controls.Add(Me.panelProDgv)
+        TabTrial.Controls.Add(Me.panelforDgv)
         resources.ApplyResources(TabTrial, "TabTrial")
         TabTrial.Text = "Mantrailing Trial"
         TabTrial.Name = "TabTrial"
@@ -583,9 +581,7 @@ Partial Class Form1
 
         'nastavuje logiku pro zobrazení názvu trasy v seznamu
         TrackTypeResolvers.LabelResolver = AddressOf ResolveLabel
-        'If My.Settings.WindowSize <> New Drawing.Size(0, 0) Then
-        '    Me.Size = My.Settings.WindowSize
-        'End If
+
     End Sub
 
 
@@ -756,7 +752,7 @@ Partial Class Form1
     Friend WithEvents mnuRenameCurrentDog As ToolStripMenuItem
     Friend WithEvents dgvTrial As DataGridView
     ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
-    Friend WithEvents panelProDgv As Panel
+    Friend WithEvents panelForDgv As Panel
     Friend WithEvents mnuPointsForFind As ToolStripTextBox
     Friend WithEvents mnuPointsForSpeed As ToolStripTextBox
     Friend WithEvents mnuPointsForAccuracy As ToolStripTextBox

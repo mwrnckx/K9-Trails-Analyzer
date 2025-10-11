@@ -286,7 +286,7 @@ Public Class PngRenderer
     ''' <summary>
     ''' Renders static text onto a new bitmap with a white background. The text will wrap and adjust font size to fit within the specified area.
     ''' </summary>
-    '' <param name="width">With of the new text bitmap.</param>
+    ''' <param name="width">With of the new text bitmap.</param>
     ''' <param name="height">height of the new text bitmap.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
     Public Function RenderStaticText(trailReport As TrailReport, Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap

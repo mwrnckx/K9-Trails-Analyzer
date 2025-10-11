@@ -236,7 +236,7 @@ Namespace My.Resources
         '''</summary>
         Friend Shared ReadOnly Property mBoxNo_gpx_file_was_found() As String
             Get
-                Return ResourceManager.GetString("mBoxNo gpx file was found", resourceCulture)
+                Return ResourceManager.GetString("mBoxNo_gpx_file_was_found", resourceCulture)
             End Get
         End Property
         

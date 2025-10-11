@@ -19,7 +19,7 @@ Imports Windows.Win32.System
 
 
 
-Public Class Form1
+Partial Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
     Private ReadOnly DogsFilePath As String = Path.Combine(Application.StartupPath, "AppData", "dogsInfo.json")
@@ -849,8 +849,9 @@ Public Class Form1
 
         Dim itemBounds = item.GetCurrentParent.Bounds
 
-
-        toolTipLabel.Location = PointToClient(New Point(Cursor.Position.X + 20, Cursor.Position.Y + 30))
+        ' Použijte plně kvalifikovaný název:
+        Dim point As Point = PointToClient(New Point(System.Windows.Forms.Cursor.Position.X + 20, System.Windows.Forms.Cursor.Position.Y + 30))
+        toolTipLabel.Location = point
         toolTipLabel.BringToFront()
     End Sub
 
@@ -1406,38 +1407,50 @@ Public Class Form1
 
     Private Sub mnuCheckUpdates_Click(sender As Object, e As EventArgs) Handles mnuCheckForUpdates1.Click
         Try
+            'Dim url As String = "https://api.github.com/repos/mwrnckx/K9-Trails-Analyzer/releases/latest"
+            'Dim client As New Net.WebClient()
+            'client.Headers.Add("User-Agent", "K9TrailsAnalyzer")
+            'Dim content As String = client.DownloadString(url)
+
             Dim url As String = "https://api.github.com/repos/mwrnckx/K9-Trails-Analyzer/releases/latest"
-            Dim client As New Net.WebClient()
-            client.Headers.Add("User-Agent", "K9TrailsAnalyzer")
-            Dim content As String = client.DownloadString(url)
 
-            Dim json As JsonDocument = JsonDocument.Parse(content)
-            Dim root = json.RootElement
-            Dim latestTag = root.GetProperty("tag_name").GetString()
+            Using client As New Net.Http.HttpClient()
+                client.DefaultRequestHeaders.Add("User-Agent", "K9TrailsAnalyzer")
 
-            Dim currentVersion '= New Version(Application.ProductVersion)
-            currentVersion = GetType(Form1).Assembly.GetName.Version
-            Dim latestVersion = New Version(latestTag.TrimStart("v"c))
+                ' Synchronní verze
+                Dim response As String = client.GetStringAsync(url).Result
+
+                ' Pokračujte se zpracováním response...
 
 
-            If latestVersion > currentVersion Then
-                If mboxq($"A new version is available: {latestVersion.ToString()}" & vbCrLf & "Should I try to download it now?", MessageBoxDefaultButton.Button1) = DialogResult.Yes Then
-                    ' Získat pole assets
-                    Dim assets = root.GetProperty("assets")
-                    Dim downloadUrl As String
-                    If assets.GetArrayLength() > 0 Then
-                        Dim firstAsset = assets(0)
-                        downloadUrl = firstAsset.GetProperty("browser_download_url").GetString()
-                        ' Otevře URL v defaultním browseru
-                        Process.Start(New ProcessStartInfo(downloadUrl) With {.UseShellExecute = True})
-                        Debug.WriteLine("Download URL: " & downloadUrl)
-                    Else
-                        Debug.WriteLine("The download failed.")
+                Dim json As JsonDocument = JsonDocument.Parse(response)
+                Dim root = json.RootElement
+                Dim latestTag = root.GetProperty("tag_name").GetString()
+
+                Dim currentVersion '= New Version(Application.ProductVersion)
+                currentVersion = GetType(Form1).Assembly.GetName.Version
+                Dim latestVersion = New Version(latestTag.TrimStart("v"c))
+
+
+                If latestVersion > currentVersion Then
+                    If mboxq($"A new version is available: {latestVersion.ToString()}" & vbCrLf & "Should I try to download it now?", MessageBoxDefaultButton.Button1) = DialogResult.Yes Then
+                        ' Získat pole assets
+                        Dim assets = root.GetProperty("assets")
+                        Dim downloadUrl As String
+                        If assets.GetArrayLength() > 0 Then
+                            Dim firstAsset = assets(0)
+                            downloadUrl = firstAsset.GetProperty("browser_download_url").GetString()
+                            ' Otevře URL v defaultním browseru
+                            Process.Start(New ProcessStartInfo(downloadUrl) With {.UseShellExecute = True})
+                            Debug.WriteLine("Download URL: " & downloadUrl)
+                        Else
+                            Debug.WriteLine("The download failed.")
+                        End If
                     End If
+                Else
+                    MessageBox.Show("You're using the latest version.", "Updates", MessageBoxButtons.OK, MessageBoxIcon.Information)
                 End If
-            Else
-                MessageBox.Show("You're using the latest version.", "Updates", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            End If
+            End Using
         Catch ex As Exception
             MessageBox.Show("The availability of the new version could not be ascertained." & vbCrLf & ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
         End Try

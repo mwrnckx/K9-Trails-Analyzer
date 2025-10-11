@@ -124,9 +124,6 @@
     <value>Długość śladów (km)</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Y-AxisLabelLengthAge" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
   <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Wiek tras (godziny)</value>
   </data>
@@ -145,7 +142,7 @@
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Błąd podczas tworzenia pliku CSV</value>
   </data>
-  <data name="mBoxNo gpx file was found" xml:space="preserve">
+  <data name="mBoxNo_gpx_file_was_found" xml:space="preserve">
     <value>Nie znaleziono pliku GPX</value>
   </data>
   <data name="outProcessed_period_from" xml:space="preserve">
@@ -286,12 +283,18 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
     <value>przecięcie śladu</value>
   </data>
   <data name="dogTrack" xml:space="preserve">
-    <value />
+    <value>Ślad psa</value>
   </data>
   <data name="RunnerTrail" xml:space="preserve">
-    <value />
+    <value>Ścieżka biegacza</value>
   </data>
   <data name="article" xml:space="preserve">
     <value>przedmiot</value>
+  </data>
+  <data name="txtRunner" xml:space="preserve">
+    <value>biegacz</value>
+  </data>
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Ważona długość szlaku (km)</value>
   </data>
 </root>

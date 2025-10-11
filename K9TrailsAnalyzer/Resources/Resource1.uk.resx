@@ -141,7 +141,7 @@
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Помилка під час створення CSV</value>
   </data>
-  <data name="mBoxNo gpx file was found" xml:space="preserve">
+  <data name="mBoxNo_gpx_file_was_found" xml:space="preserve">
     <value>Файли GPX не знайдено</value>
   </data>
   <data name="outProcessed_period_from" xml:space="preserve">
@@ -289,5 +289,11 @@
   </data>
   <data name="article" xml:space="preserve">
     <value>предмет</value>
+  </data>
+  <data name="txtRunner" xml:space="preserve">
+    <value>бігун</value>
+  </data>
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Зважена довжина стежки (км)</value>
   </data>
 </root>

@@ -124,10 +124,7 @@
     <value>Длина следoв (км)</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Y-AxisLabelLengthAge" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
-  </data>
-  <data name="Y-AxisLabelAge" xml:space="preserve">
+    <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Возраст следoв (часы)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
@@ -145,7 +142,7 @@
   <data name="mBoxErrorCreatingCSV" xml:space="preserve">
     <value>Ошибка при создании CSV</value>
   </data>
-  <data name="mBoxNo gpx file was found" xml:space="preserve">
+  <data name="mBoxNo_gpx_file_was_found" xml:space="preserve">
     <value>GPX файл не найден</value>
   </data>
   <data name="outProcessed_period_from" xml:space="preserve">
@@ -296,5 +293,8 @@
   </data>
   <data name="article" xml:space="preserve">
     <value>предмет</value>
+  </data>
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Взвешенная длина маршрута (км)</value>
   </data>
 </root>
