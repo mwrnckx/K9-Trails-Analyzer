@@ -56,17 +56,24 @@ Partial Class Form1
         mnuRenameCurrentCategory = New ToolStripMenuItem()
         mnuAddNewCategory = New ToolStripMenuItem()
         mnuDeleteCurrentCategory = New ToolStripMenuItem()
+        mnuPointInTrial = New ToolStripMenuItem()
+        mnuPointForFindText = New ToolStripMenuItem()
         mnuPointsForFind = New ToolStripTextBox()
+        mnuPointsForSpeedText = New ToolStripMenuItem()
         mnuPointsForSpeed = New ToolStripTextBox()
+        mnuPointsForAccuracyText = New ToolStripMenuItem()
         mnuPointsForAccuracy = New ToolStripTextBox()
+        mnuPointsForHandlerText = New ToolStripMenuItem()
         mnuPointsForHandler = New ToolStripTextBox()
+        ToolStripSeparator1 = New ToolStripSeparator()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
-        mnuCheckUpdates = New ToolStripMenuItem()
+        ToolStripSeparator2 = New ToolStripSeparator()
         mnuFactoryReset = New ToolStripMenuItem()
         HelpToolStripMenuItem = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
+        mnuCheckUpdates = New ToolStripMenuItem()
         rtbWarnings = New RichTextBox()
         TabControl1 = New TabControl()
         TabStats = New TabPage()
@@ -189,44 +196,43 @@ Partial Class Form1
         ' 
         ' mnuEnglish
         ' 
-        resources.ApplyResources(mnuEnglish, "mnuEnglish")
         mnuEnglish.Name = "mnuEnglish"
+        resources.ApplyResources(mnuEnglish, "mnuEnglish")
         mnuEnglish.Tag = "en"
         ' 
         ' mnuGerman
         ' 
-        resources.ApplyResources(mnuGerman, "mnuGerman")
         mnuGerman.Name = "mnuGerman"
+        resources.ApplyResources(mnuGerman, "mnuGerman")
         mnuGerman.Tag = "de"
         ' 
         ' mnuCzech
         ' 
-        resources.ApplyResources(mnuCzech, "mnuCzech")
         mnuCzech.Name = "mnuCzech"
+        resources.ApplyResources(mnuCzech, "mnuCzech")
         mnuCzech.Tag = "cs"
         ' 
         ' mnuUkrainian
         ' 
-        resources.ApplyResources(mnuUkrainian, "mnuUkrainian")
         mnuUkrainian.Name = "mnuUkrainian"
+        resources.ApplyResources(mnuUkrainian, "mnuUkrainian")
         mnuUkrainian.Tag = "uk"
         ' 
         ' mnuPolish
         ' 
-        resources.ApplyResources(mnuPolish, "mnuPolish")
         mnuPolish.Name = "mnuPolish"
+        resources.ApplyResources(mnuPolish, "mnuPolish")
         mnuPolish.Tag = "pl"
         ' 
         ' mnuRussian
         ' 
-        resources.ApplyResources(mnuRussian, "mnuRussian")
         mnuRussian.Name = "mnuRussian"
+        resources.ApplyResources(mnuRussian, "mnuRussian")
         mnuRussian.Tag = "ru"
-
         ' 
         ' ToolStripMenuItem
         ' 
-        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointsForFind, mnuPointsForSpeed, mnuPointsForAccuracy, mnuPointsForHandler, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, mnuFactoryReset})
+        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointInTrial, ToolStripSeparator1, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
         resources.ApplyResources(ToolStripMenuItem, "ToolStripMenuItem")
         ToolStripMenuItem.Name = "ToolStripMenuItem"
         ' 
@@ -255,25 +261,60 @@ Partial Class Form1
         mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
         resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
         ' 
+        ' mnuPointInTrial
+        ' 
+        mnuPointInTrial.DropDownItems.AddRange(New ToolStripItem() {mnuPointForFindText, mnuPointsForSpeedText, mnuPointsForAccuracyText, mnuPointsForHandlerText})
+        mnuPointInTrial.Name = "mnuPointInTrial"
+        resources.ApplyResources(mnuPointInTrial, "mnuPointInTrial")
+        ' 
+        ' mnuPointForFindText
+        ' 
+        mnuPointForFindText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForFind})
+        mnuPointForFindText.Name = "mnuPointForFindText"
+        resources.ApplyResources(mnuPointForFindText, "mnuPointForFindText")
+        ' 
         ' mnuPointsForFind
         ' 
         resources.ApplyResources(mnuPointsForFind, "mnuPointsForFind")
         mnuPointsForFind.Name = "mnuPointsForFind"
+        ' 
+        ' mnuPointsForSpeedText
+        ' 
+        mnuPointsForSpeedText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForSpeed})
+        mnuPointsForSpeedText.Name = "mnuPointsForSpeedText"
+        resources.ApplyResources(mnuPointsForSpeedText, "mnuPointsForSpeedText")
         ' 
         ' mnuPointsForSpeed
         ' 
         resources.ApplyResources(mnuPointsForSpeed, "mnuPointsForSpeed")
         mnuPointsForSpeed.Name = "mnuPointsForSpeed"
         ' 
+        ' mnuPointsForAccuracyText
+        ' 
+        mnuPointsForAccuracyText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForAccuracy})
+        mnuPointsForAccuracyText.Name = "mnuPointsForAccuracyText"
+        resources.ApplyResources(mnuPointsForAccuracyText, "mnuPointsForAccuracyText")
+        ' 
         ' mnuPointsForAccuracy
         ' 
         resources.ApplyResources(mnuPointsForAccuracy, "mnuPointsForAccuracy")
         mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
         ' 
+        ' mnuPointsForHandlerText
+        ' 
+        mnuPointsForHandlerText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForHandler})
+        mnuPointsForHandlerText.Name = "mnuPointsForHandlerText"
+        resources.ApplyResources(mnuPointsForHandlerText, "mnuPointsForHandlerText")
+        ' 
         ' mnuPointsForHandler
         ' 
         resources.ApplyResources(mnuPointsForHandler, "mnuPointsForHandler")
         mnuPointsForHandler.Name = "mnuPointsForHandler"
+        ' 
+        ' ToolStripSeparator1
+        ' 
+        ToolStripSeparator1.Name = "ToolStripSeparator1"
+        resources.ApplyResources(ToolStripSeparator1, "ToolStripSeparator1")
         ' 
         ' mnuSelectADirectoryToSaveVideo
         ' 
@@ -284,6 +325,11 @@ Partial Class Form1
         ' 
         mnuSetFFmpegPath.Name = "mnuSetFFmpegPath"
         resources.ApplyResources(mnuSetFFmpegPath, "mnuSetFFmpegPath")
+        ' 
+        ' ToolStripSeparator2
+        ' 
+        ToolStripSeparator2.Name = "ToolStripSeparator2"
+        resources.ApplyResources(ToolStripSeparator2, "ToolStripSeparator2")
         ' 
         ' mnuFactoryReset
         ' 
@@ -305,6 +351,11 @@ Partial Class Form1
         ' 
         mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
         resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
+        ' 
+        ' mnuCheckUpdates
+        ' 
+        mnuCheckUpdates.Name = "mnuCheckUpdates"
+        resources.ApplyResources(mnuCheckUpdates, "mnuCheckUpdates")
         ' 
         ' rtbWarnings
         ' 
@@ -445,6 +496,7 @@ Partial Class Form1
         dgvTrial.AllowUserToAddRows = False
         dgvTrial.AllowUserToDeleteRows = False
         dgvTrial.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+        dgvTrial.BackgroundColor = Color.DarkSeaGreen
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = Color.Salmon
         DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
@@ -516,6 +568,13 @@ Partial Class Form1
         Me.mnuPolish.Image = Image.FromFile(Path.Combine(imgBasePath, "pl-flag.png"))
         Me.mnuRussian.Image = Image.FromFile(Path.Combine(imgBasePath, "ru-flag.png"))
         Me.mnuUkrainian.Image = Image.FromFile(Path.Combine(imgBasePath, "uk-flag.png"))
+
+        For Each item As ToolStripMenuItem In {mnuCzech, mnuEnglish, mnuGerman, mnuPolish, mnuRussian, mnuUkrainian}
+            If item.Image IsNot Nothing Then
+                item.ImageScaling = ToolStripItemImageScaling.None
+            End If
+        Next
+
         Me.Icon = New Icon((Path.Combine(imgBasePath, "icon.ico")))
         ' načteme data + config + naplníme combobox
         'při prvním spuštění se načtou data z defaults:
@@ -679,6 +738,14 @@ Partial Class Form1
     Friend WithEvents mnuPointsForSpeed As ToolStripTextBox
     Friend WithEvents mnuPointsForAccuracy As ToolStripTextBox
     Friend WithEvents mnuPointsForHandler As ToolStripTextBox
+    Friend WithEvents mnuPointInTrial As ToolStripMenuItem
+    Friend WithEvents mnuPointForFindText As ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
+    Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
+    Friend WithEvents mnuPointsForSpeedText As ToolStripMenuItem
+    Friend WithEvents mnuPointsForAccuracyText As ToolStripMenuItem
+    Friend WithEvents mnuPointsForHandlerText As ToolStripMenuItem
+
 
 End Class
 

@@ -1,6 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -215,44 +274,38 @@
   <data name="mnuSettings.Text" xml:space="preserve">
     <value>Gpx processing</value>
   </data>
-
   <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuEnglish.Text" xml:space="preserve">
     <value>English</value>
   </data>
-
   <data name="mnuGerman.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuGerman.Text" xml:space="preserve">
     <value>Deutch</value>
   </data>
- 
   <data name="mnuCzech.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuCzech.Text" xml:space="preserve">
     <value>Česky</value>
   </data>
-
   <data name="mnuUkrainian.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuUkrainian.Text" xml:space="preserve">
     <value>Українська</value>
   </data>
-
   <data name="mnuPolish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuPolish.Text" xml:space="preserve">
     <value>Polski</value>
   </data>
-
   <data name="mnuRussian.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuRussian.Text" xml:space="preserve">
     <value>Русский</value>
@@ -260,7 +313,6 @@
   <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-
   <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 22</value>
   </data>
@@ -315,6 +367,12 @@
   <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
     <value>Zadejte počet bodů za nalezení kladeče.</value>
   </data>
+  <data name="mnuPointForFindText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>220, 22</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Point for find</value>
+  </data>
   <data name="mnuPointsForSpeed.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
@@ -329,6 +387,12 @@
   </data>
   <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
     <value>Zadejte počet bodů za rychlost (20 bodů za 1 km/h).</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>220, 22</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Point for speed</value>
   </data>
   <data name="mnuPointsForAccuracy.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
@@ -345,6 +409,12 @@
   <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
     <value>Zadejte max. počet bodů za přesnost.</value>
   </data>
+  <data name="mnuPointsForAccuracyText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>220, 22</value>
+  </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Point for Accuracy</value>
+  </data>
   <data name="mnuPointsForHandler.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
@@ -360,6 +430,24 @@
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
     <value>Zadejte max. počet bodů za schopnost psovoda číst psa.</value>
   </data>
+  <data name="mnuPointsForHandlerText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>220, 22</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Point for Handler</value>
+  </data>
+  <data name="mnuPointInTrial.Size" type="System.Drawing.Size, System.Drawing">
+    <value>420, 22</value>
+  </data>
+  <data name="mnuPointInTrial.Text" xml:space="preserve">
+    <value>Set Point in Trial</value>
+  </data>
+  <data name="mnuPointInTrial.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopRight</value>
+  </data>
+  <data name="ToolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 6</value>
+  </data>
   <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 22</value>
   </data>
@@ -371,6 +459,9 @@
   </data>
   <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
     <value>Set FFmpeg path</value>
+  </data>
+  <data name="ToolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>417, 6</value>
   </data>
   <data name="mnuFactoryReset.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 22</value>
@@ -431,6 +522,9 @@
   </data>
   <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="mnuCheckUpdates.Size" type="System.Drawing.Size, System.Drawing">
+    <value>32, 19</value>
   </data>
   <data name="rtbWarnings.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Bottom</value>
@@ -1086,11 +1180,29 @@
   <data name="&gt;&gt;mnuDeleteCurrentCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuPointInTrial.Name" xml:space="preserve">
+    <value>mnuPointInTrial</value>
+  </data>
+  <data name="&gt;&gt;mnuPointInTrial.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuPointForFindText.Name" xml:space="preserve">
+    <value>mnuPointForFindText</value>
+  </data>
+  <data name="&gt;&gt;mnuPointForFindText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuPointsForFind.Name" xml:space="preserve">
     <value>mnuPointsForFind</value>
   </data>
   <data name="&gt;&gt;mnuPointsForFind.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuPointsForSpeedText.Name" xml:space="preserve">
+    <value>mnuPointsForSpeedText</value>
+  </data>
+  <data name="&gt;&gt;mnuPointsForSpeedText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuPointsForSpeed.Name" xml:space="preserve">
     <value>mnuPointsForSpeed</value>
@@ -1098,17 +1210,35 @@
   <data name="&gt;&gt;mnuPointsForSpeed.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuPointsForAccuracyText.Name" xml:space="preserve">
+    <value>mnuPointsForAccuracyText</value>
+  </data>
+  <data name="&gt;&gt;mnuPointsForAccuracyText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuPointsForAccuracy.Name" xml:space="preserve">
     <value>mnuPointsForAccuracy</value>
   </data>
   <data name="&gt;&gt;mnuPointsForAccuracy.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuPointsForHandlerText.Name" xml:space="preserve">
+    <value>mnuPointsForHandlerText</value>
+  </data>
+  <data name="&gt;&gt;mnuPointsForHandlerText.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuPointsForHandler.Name" xml:space="preserve">
     <value>mnuPointsForHandler</value>
   </data>
   <data name="&gt;&gt;mnuPointsForHandler.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator1.Name" xml:space="preserve">
+    <value>ToolStripSeparator1</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuSelectADirectoryToSaveVideo.Name" xml:space="preserve">
     <value>mnuSelectADirectoryToSaveVideo</value>
@@ -1121,6 +1251,12 @@
   </data>
   <data name="&gt;&gt;mnuSetFFmpegPath.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator2.Name" xml:space="preserve">
+    <value>ToolStripSeparator2</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuFactoryReset.Name" xml:space="preserve">
     <value>mnuFactoryReset</value>
@@ -1144,6 +1280,12 @@
     <value>mnuCheckForUpdates1</value>
   </data>
   <data name="&gt;&gt;mnuCheckForUpdates1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuCheckUpdates.Name" xml:space="preserve">
+    <value>mnuCheckUpdates</value>
+  </data>
+  <data name="&gt;&gt;mnuCheckUpdates.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;clmFileName.Name" xml:space="preserve">
