@@ -324,4 +324,34 @@
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Kategorienname bearbeiten</value>
   </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Max. Punkte für Genauigkeit</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Max. Punkte zum Finden</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Punkte für km/h</value>
+  </data>
+  <data name="mnuPointInTrial.Text" xml:space="preserve">
+    <value>Setze Punkte im Test</value>
+  </data>
+  <data name="ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die maximale Punktzahl für die Fähigkeit des Hundeführers an, den Hund zu lesen.</value>
+  </data>
+  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die maximale Punktzahl für die Genauigkeit ein.</value>
+  </data>
+  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die Anzahl der Punkte für die Geschwindigkeit ein (Punkte für 1 km/h)</value>
+  </data>
+  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
+    <value>Geben Sie die Anzahl der Punkte zum Finden der Riemenscheibe ein.</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Max. Punkte für den Hundeführer</value>
+  </data>
 </root>

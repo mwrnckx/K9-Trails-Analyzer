@@ -312,4 +312,34 @@
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Редактировать название категории</value>
   </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Макс. Баллы за точность</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Макс. Очки за поиск</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Баллы за км/ч</value>
+  </data>
+  <data name="ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
+    <value>Введите максимальное количество баллов для точности.</value>
+  </data>
+  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
+    <value>Введите количество баллов за скорость (баллы за 1 км/ч)</value>
+  </data>
+  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
+    <value>Введите количество точек для нахождения шкива.</value>
+  </data>
+  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
+    <value>Введите максимальное количество баллов за умение хендлера читать собаку.</value>
+  </data>
+  <data name="TabTrial.Text" xml:space="preserve">
+    <value>Испытание по мантрейлингу</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Макс. Очки для хендлера</value>
+  </data>
 </root>

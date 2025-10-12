@@ -340,4 +340,31 @@
   <data name="$this.ToolTip" xml:space="preserve">
     <value />
   </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Max. Body za nalezení</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Body za Km/H.</value>
+  </data>
+  <data name="mnuPointInTrial.Text" xml:space="preserve">
+    <value>Nastavte body ve zkoušce</value>
+  </data>
+  <data name="ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Max. body za přesnost</value>
+  </data>
+  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
+    <value>Zadejte počet bodů za nalezení kladeče.</value>
+  </data>
+  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
+    <value>Zadejte počet bodů za rychlost (bodů za 1 km/h)</value>
+  </data>
+  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
+    <value>Zadejte max. počet bodů za přesnost.</value>
+  </data>
+  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
+    <value>Zadejte max. počet bodů za schopnost psovoda číst psa.</value>
+  </data>
 </root>

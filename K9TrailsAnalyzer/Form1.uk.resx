@@ -303,4 +303,34 @@
   <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Видалити поточну категорію</value>
   </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Макс. Бали за точність</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Макс. Бали для знахідки</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Бали за км/год</value>
+  </data>
+  <data name="mnuPointInTrial.Text" xml:space="preserve">
+    <value>Встановіть бали в суді</value>
+  </data>
+  <data name="ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
+    <value>Введіть максимальну кількість балів для точності.</value>
+  </data>
+  <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
+    <value>Назва категорії редагування</value>
+  </data>
+  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
+    <value>Введіть кількість балів для швидкості (бали за 1 км/год)</value>
+  </data>
+  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
+    <value>Введіть кількість балів для пошуку шківа.</value>
+  </data>
+  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
+    <value>Введіть максимальну кількість балів для здатності обробника читати собаку.</value>
+  </data>
 </root>

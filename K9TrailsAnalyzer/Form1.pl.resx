@@ -385,4 +385,31 @@
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Edytuj nazwę kategorii</value>
   </data>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Maks. Punkty za dokładność</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Maks. Punkty za znalezienie</value>
+  </data>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Punkty za km/h</value>
+  </data>
+  <data name="ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Ustawienia</value>
+  </data>
+  <data name="mnuPointInTrial.Text" xml:space="preserve">
+    <value>Ustaw punkty w teście</value>
+  </data>
+  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
+    <value>Wpisz maksymalną liczbę punktów za umiejętność czytania psa przez przewodnika.</value>
+  </data>
+  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
+    <value>Wprowadź maksymalną liczbę punktów za dokładność.</value>
+  </data>
+  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
+    <value>Podaj liczbę punktów za prędkość (punkty za 1 km/h)</value>
+  </data>
+  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
+    <value>Wprowadź liczbę punktów za znalezienie koła pasowego.</value>
+  </data>
 </root>

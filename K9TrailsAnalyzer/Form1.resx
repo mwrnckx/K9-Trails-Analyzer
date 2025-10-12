@@ -365,13 +365,13 @@
     <value>Right</value>
   </data>
   <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
-    <value>Zadejte počet bodů za nalezení kladeče.</value>
+    <value>Enter the maximal number of points for finding the runner</value>
   </data>
   <data name="mnuPointForFindText.Size" type="System.Drawing.Size, System.Drawing">
     <value>220, 22</value>
   </data>
   <data name="mnuPointForFindText.Text" xml:space="preserve">
-    <value>Point for find</value>
+    <value>Max. Points for Find</value>
   </data>
   <data name="mnuPointsForSpeed.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
@@ -386,13 +386,13 @@
     <value>Right</value>
   </data>
   <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
-    <value>Zadejte počet bodů za rychlost (20 bodů za 1 km/h).</value>
+    <value>Enter the number of points for speed (points per 1 km/h)</value>
   </data>
   <data name="mnuPointsForSpeedText.Size" type="System.Drawing.Size, System.Drawing">
     <value>220, 22</value>
   </data>
   <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
-    <value>Point for speed</value>
+    <value>Points for km/h</value>
   </data>
   <data name="mnuPointsForAccuracy.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
@@ -407,13 +407,13 @@
     <value>Right</value>
   </data>
   <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
-    <value>Zadejte max. počet bodů za přesnost.</value>
+    <value>Enter the maximum number of points for accuracy.</value>
   </data>
   <data name="mnuPointsForAccuracyText.Size" type="System.Drawing.Size, System.Drawing">
     <value>220, 22</value>
   </data>
   <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
-    <value>Point for Accuracy</value>
+    <value>Max. Points for Accuracy</value>
   </data>
   <data name="mnuPointsForHandler.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
@@ -428,19 +428,19 @@
     <value>Right</value>
   </data>
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
-    <value>Zadejte max. počet bodů za schopnost psovoda číst psa.</value>
+    <value>Enter the maximum number of points for the handler's ability to read the dog.</value>
   </data>
   <data name="mnuPointsForHandlerText.Size" type="System.Drawing.Size, System.Drawing">
     <value>220, 22</value>
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
-    <value>Point for Handler</value>
+    <value>Max. Points for Handler</value>
   </data>
   <data name="mnuPointInTrial.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 22</value>
   </data>
   <data name="mnuPointInTrial.Text" xml:space="preserve">
-    <value>Set Point in Trial</value>
+    <value>Set Points in Trial</value>
   </data>
   <data name="mnuPointInTrial.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>TopRight</value>

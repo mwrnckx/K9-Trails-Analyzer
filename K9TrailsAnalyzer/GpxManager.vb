@@ -21,21 +21,21 @@ Imports TrackVideoExporter.TrackConverter
 Public Class GpxFileManager
     'obsahuje seznam souborů typu gpxRecord a funkce na jejich vytvoření a zpracování
 
-    Dim _dogInfo As DogInfo 'informace o psovi, pro kterého se zpracovávají soubory
+    Dim _CategoryInfo As CategoryInfo 'informace o psovi, pro kterého se zpracovávají soubory
     ''' <summary>
     ''' Informace o psovi, pro kterého se zpracovávají soubory.
     ''' </summary>
-    ''' <returns>Vrací objekt DogInfo s informacemi o psovi: Id, Name, RemoteDirectory, ProcessedDirectory atd.</returns>
-    Public Property DogInfo As DogInfo 'informace o psovi, pro kterého se zpracovávají soubory
+    ''' <returns>Vrací objekt CategoryInfo s informacemi o psovi: Id, Name, RemoteDirectory, ProcessedDirectory atd.</returns>
+    Public Property CategoryInfo As CategoryInfo 'informace o psovi, pro kterého se zpracovávají soubory
         Get
-            Return _dogInfo
+            Return _CategoryInfo
         End Get
-        Set(value As DogInfo)
-            _dogInfo = value
+        Set(value As CategoryInfo)
+            _CategoryInfo = value
         End Set
     End Property
 
-    Public Property NumberOfDogs As Integer 'počet psů
+    Public Property NumberOfCategories As Integer 'počet psů
 
     Public dateFrom As Date
     Public dateTo As Date
@@ -190,8 +190,8 @@ Public Class GpxFileManager
             allFiles.AddRange(localFiles) 'přidá staré soubory
 
             Dim remoteFiles As List(Of GPXRecord) = GetdAndProcessGPXFiles(True)
-            If remoteFiles.Count > 0 AndAlso Me.NumberOfDogs > 1 Then
-                Dim response = mboxQEx($"Found {remoteFiles.Count} new GPX files in remote directory:" & vbCrLf & $"{DogInfo.RemoteDirectory}." & vbCrLf & $"Do you really want to import them for the dog {DogInfo.Name}?")
+            If remoteFiles.Count > 0 AndAlso Me.NumberOfCategories > 1 Then
+                Dim response = mboxQEx($"Found {remoteFiles.Count} new GPX files in remote directory:" & vbCrLf & $"{CategoryInfo.RemoteDirectory}." & vbCrLf & $"Do you really want to import them for the dog {CategoryInfo.Name}?")
                 If response = DialogResult.No Then
                     RaiseEvent WarningOccurred("Import of new GPX files was cancelled by user.", Color.Red)
                     Return False 'vrátí false, pokud uživatel zrušil import
@@ -277,9 +277,9 @@ Public Class GpxFileManager
 
         If remoteFiles Then
             'Dim downloadedPath = Path.Combine(Application.StartupPath, "AppData", "downloaded.json")
-            Dim downloadedPath = Path.Combine(Application.StartupPath, DogInfo.LocalBaseDirectory, "downloaded.json")
+            Dim downloadedPath = Path.Combine(Application.StartupPath, CategoryInfo.LocalBaseDirectory, "downloaded.json")
             Dim tracker As New FileTracker(downloadedPath)
-            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.RemoteDirectory, "*.gpx").ToList()
+            Dim Files As List(Of String) = Directory.GetFiles(CategoryInfo.RemoteDirectory, "*.gpx").ToList()
             Dim i As Integer = 0
             For Each remoteFilePath In Files
 
@@ -288,7 +288,7 @@ Public Class GpxFileManager
                         Debug.WriteLine("Zpracovávám: " & Path.GetFileName(remoteFilePath))
                         ' If the file is new or modified, we process it
                         'copies the file to the local directories
-                        Dim localOriginalsFilePath As String = Path.Combine(DogInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
+                        Dim localOriginalsFilePath As String = Path.Combine(CategoryInfo.OriginalsDirectory, Path.GetFileName(remoteFilePath))
                         If File.Exists(localOriginalsFilePath) Then
                             RaiseEvent WarningOccurred($"File  {Path.GetFileName(localOriginalsFilePath)} already exists in localOriginals directory!", Color.Red)
                         Else
@@ -299,9 +299,9 @@ Public Class GpxFileManager
                         Try
                             'načte z Originals:
                             Dim _reader As New GpxReader(localOriginalsFilePath)
-                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo)
+                            Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, CategoryInfo)
                             Dim fileNameWithDate As String = _gpxRecord.PrependDateToFilename(Path.GetFileName(remoteFilePath))
-                            Dim localProcessedFilePath As String = Path.Combine(DogInfo.ProcessedDirectory, fileNameWithDate)
+                            Dim localProcessedFilePath As String = Path.Combine(CategoryInfo.ProcessedDirectory, fileNameWithDate)
 
                             If File.Exists(localProcessedFilePath) Then
                                 Dim dialogResult = mboxQEx($"File {fileNameWithDate} already exists in localProcessed directory!" & vbCrLf & "It's probably a duplicate trail. Do you still want to add it?")
@@ -332,11 +332,11 @@ Public Class GpxFileManager
             RaiseEvent WarningOccurred($"Found {i} new files.", Color.OrangeRed)
 
         Else 'local files
-            Dim Files As List(Of String) = Directory.GetFiles(DogInfo.ProcessedDirectory, "*.gpx").ToList()
+            Dim Files As List(Of String) = Directory.GetFiles(CategoryInfo.ProcessedDirectory, "*.gpx").ToList()
             For Each filePath In Files
                 Try
                     Dim _reader As New GpxReader(filePath)
-                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, DogInfo)
+                    Dim _gpxRecord As New GPXRecord(_reader, Me.ForceProcess, CategoryInfo)
                     '_gpxRecord.CreateTracks() 'seřadí trk podle času
                     GPXFRecords.Add(_gpxRecord)
                     'Dim test = _gpxRecord.TrailStats.WeightedDistanceAlongTrailPerCent
@@ -630,7 +630,7 @@ Public Class GPXRecord
     End Property
 
     Public Property DogName As String
-    Public Property ActiveDogInfo As DogInfo
+    Public Property ActiveCategoryInfo As CategoryInfo
 
     Dim _wptNodes As TrackAsTrkPts
     Public ReadOnly Property WptNodes As TrackAsTrkPts
@@ -816,11 +816,11 @@ Public Class GPXRecord
 
 
 
-    Public Sub New(_reader As GpxReader, forceProcess As Boolean, activeDogInfo As DogInfo)
+    Public Sub New(_reader As GpxReader, forceProcess As Boolean, activeCategoryInfo As CategoryInfo)
         'gpxDirectory = 
         Me.Reader = _reader
-        Me.DogName = activeDogInfo.Name
-        Me.ActiveDogInfo = activeDogInfo
+        Me.DogName = activeCategoryInfo.Name
+        Me.ActiveCategoryInfo = activeCategoryInfo
         If forceProcess Then
             _IsAlreadyProcessed = False
         Else
@@ -1037,65 +1037,184 @@ FoundRunnerTrailTrk:
     ''' <returns>Returns a tuple: (found date, modified file name without the date).
         ' If no date is found, returns (Nothing, original file name).</returns>
     Public Function GetRemoveDateFromName(fileName As String) As (fileDate As DateTime, fileNameWithoutDate As String)
+        Dim extension = Path.GetExtension(fileName)
+        fileName = Path.GetFileNameWithoutExtension(fileName) 'odstraní příponu
+
         Dim Separator As String = "\s*(?:\.|_|-|,|\._)\s*" ' Dash, underscore, dot, comma, or ._
         Dim isoSeparator As String = "\s*(?:[-/_]|\.)\s*"   ' Multiple separators for ISO format
 
-        ' Regex patterns for different date formats with named groups
-        Dim datePattern1 As String =
-            $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}))|" &
-            $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))|" &
-            $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))"
+        Dim pattern As String =
+$"(?<time>(?:0?[0-9]|1[0-9]|2[0-3])[-:\.](?:[0-5][0-9])(?:[-:\.](?:[0-5][0-9]))?)" &
+"|" &
+$"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2])\s*(?:\.|_|-|,|\._)\s*(?<year>\d{{4}}))" &
+"|" &
+$"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))" &
+"|" &
+$"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))" &
+"|" &
+$"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
-        Dim datePattern2 As String = $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))" ' Fallback for any three numbers separated
-        ' Regex for time in various formats (not used for date extraction, but for removal)
-        Dim timeRegex As String = "(?:0?[0-9]|1[0-9]|2[0-3])[:\.](?:[0-5][0-9])(?:[:\.](?:[0-5][0-9]))?"
+        Dim matches = Regex.Matches(fileName, pattern)
+        Dim foundDate As String = Nothing
+        Dim foundTime As String = Nothing
 
-        ' Combine all regex patterns
-        Dim myRegex As New Regex(datePattern1 & "|" & datePattern2 & "|" & timeRegex)
+        For Each m As Match In matches
+            If m.Groups("time").Success Then
+                foundTime = m.Groups("time").Value
+            ElseIf m.Groups("eu").Success OrElse m.Groups("us").Success OrElse m.Groups("iso").Success OrElse m.Groups("eu2").Success Then
+                foundDate = m.Value
+            End If
+        Next
 
-        Dim match As Match = myRegex.Match(fileName)
-        If match.Success Then
-            Try
-                ' Try to extract year, month, day from named groups
-                Dim _year As Integer = Integer.Parse(match.Groups("year").Value)
-                Dim _month As Integer = Integer.Parse(match.Groups("month").Value)
-                Dim _day As Integer = Integer.Parse(match.Groups("day").Value)
+        ' Odstraníme datum a čas z názvu souboru
+        Dim cleanedName As String = fileName
+        If Not String.IsNullOrEmpty(foundDate) Then cleanedName = cleanedName.Replace(foundDate, "")
+        If Not String.IsNullOrEmpty(foundTime) Then cleanedName = cleanedName.Replace(foundTime, "")
 
-                Dim dateTimeFromFileName As New DateTime
-                ' Determine the date format based on matched group and current culture
-                If (match.Groups("eu").Success Or match.Groups("eu2").Success) And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("d") Then
-                    ' European format: day-month-year
-                    dateTimeFromFileName = New DateTime(_year, _month, _day)
-                ElseIf match.Groups("us").Success And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("M") Then
-                    ' US format: month-day-year
-                    dateTimeFromFileName = New DateTime(_year, _month, _day)
-                ElseIf match.Groups("iso").Success Then
-                    ' ISO format: year-month-day
-                    dateTimeFromFileName = New DateTime(_year, _month, _day)
-                Else
-                    ' Fallback: year-day-month (may be incorrect if parsing fails)
-                    dateTimeFromFileName = New DateTime(_year, _day, _month)
+        ' Vyčistíme případné zbytky oddělovačů, např. "__" nebo "--", "..","  "
+        cleanedName = Regex.Replace(cleanedName, "[-_. ]{2,}", "_")
+        'mezery nahradí podtržítkem
+        cleanedName = Regex.Replace(cleanedName, "[ ]", "_")
+        cleanedName = cleanedName.Trim("_"c, "-"c, " "c, "."c)
+        Debug.WriteLine($"Datum: {foundDate}")
+        Debug.WriteLine($"Čas:   {foundTime}")
+        Debug.WriteLine($"Bez datumu a času: {cleanedName}")
+
+
+
+
+
+
+
+        '' Regex patterns for different date formats with named groups
+        'Dim datePattern1 As String =
+        '    $"(?<eu>(?<day>[0-2]\d|3[01]){Separator}(?<month>0[1-9]|1[0-2]){Separator}(?<year>\d{{4}}))|" &
+        '    $"(?<us>(?<month>0[1-9]|1[0-2]){Separator}(?<day>[0-2]\d|3[01]){Separator}(?<year>\d{{4}}))|" &
+        '    $"(?<iso>(?<year>\d{{4}}){isoSeparator}(?<month>0[1-9]|1[0-2]){isoSeparator}(?<day>[0-2]\d|3[01]))"
+
+        'Dim datePattern2 As String = $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))" ' Fallback for any three numbers separated
+        '' Regex for time in various formats (not used for date extraction, but for removal)
+        'Dim timeRegex As String = "(?:0?[0-9]|1[0-9]|2[0-3])[-:\.](?:[0-5][0-9])(?:[-:\.](?:[0-5][0-9]))?"
+
+        '' Combine all regex patterns
+        'Dim myRegex As New Regex(datePattern1 & "|" & datePattern2 & "|" & timeRegex)
+
+        'Dim match As Match = myRegex.Match(fileName)
+        'If match.Success Then
+        Try
+            '        ' Try to extract year, month, day from named groups
+            '        Dim _year, _month, _day As Integer
+            '        'If match.Groups("year") IsNot Nothing Then
+            '        '    _year = Integer.Parse(match.Groups("year").Value)
+            '        'End If
+            '        If False = match.Groups("year").Success AndAlso match.Groups("eu2").Success Then
+            '            _year = Integer.Parse(match.Groups("year").Value)
+            '            _month = Integer.Parse(match.Groups("month").Value)
+            '            _day = Integer.Parse(match.Groups("day").Value)
+            '        End If
+
+
+            Dim dateTimeFromFileName As New DateTime
+            '' Determine the date format based on matched group and current culture
+            'If (match.Groups("eu").Success Or match.Groups("eu2").Success) And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("d") Then
+            '    ' European format: day-month-year
+            '    dateTimeFromFileName = New DateTime(_year, _month, _day)
+            'ElseIf match.Groups("us").Success And CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern.StartsWith("M") Then
+            '    ' US format: month-day-year
+            '    dateTimeFromFileName = New DateTime(_year, _month, _day)
+            'ElseIf match.Groups("iso").Success Then
+            '    ' ISO format: year-month-day
+            '    dateTimeFromFileName = New DateTime(_year, _month, _day)
+            'Else
+            '    ' Fallback: year-day-month (may be incorrect if parsing fails)
+            '    dateTimeFromFileName = New DateTime(_year, _day, _month)
+            'End If
+
+            ' Remove the found date/time string from the file name
+            Dim fileNameWithoutDate As String = cleanedName 'myRegex.Replace(fileName, "").Trim()
+
+            ' --- Převod na DateTime ---
+            Dim parsedDate As Date? = Nothing
+            Dim parsedTime As TimeSpan? = Nothing
+
+            ' 1️⃣ Zkusíme převést datum (různé možné formáty)
+            Dim possibleDateFormats As String() = {
+            "yyyy-MM-dd", "dd-MM-yyyy", "MM-dd-yyyy",
+            "yyyy.MM.dd", "dd.MM.yyyy", "MM.dd.yyyy",
+            "yyyy_MM_dd", "dd_MM_yyyy", "MM_dd_yyyy",
+            "yyyy/MM/dd", "dd/MM/yyyy", "MM/dd/yyyy"
+        }
+
+            If Not String.IsNullOrEmpty(foundDate) Then
+                For Each fmt In possibleDateFormats
+                    Dim tmp As Date
+                    If Date.TryParseExact(foundDate, fmt, CultureInfo.InvariantCulture, DateTimeStyles.None, tmp) Then
+                        parsedDate = tmp
+                        Exit For
+                    End If
+                Next
+
+                ' fallback pro tříčíselný "eu2" formát (např. 025-10-06)
+                If Not parsedDate.HasValue Then
+                    Dim parts = Regex.Split(foundDate, "[^0-9]+")
+                    If parts.Length = 3 Then
+                        Dim y, m, d As Integer
+                        If parts(0).Length = 4 Then
+                            ' ISO (2025-10-06)
+                            y = CInt(parts(0)) : m = CInt(parts(1)) : d = CInt(parts(2))
+                        Else
+                            ' zkusíme interpretovat první číslo jako rok (např. 025 = 2025)
+                            y = If(parts(0).Length = 3, 2000 + CInt(parts(0)), CInt(parts(2)))
+                            m = CInt(parts(1))
+                            d = CInt(parts(2))
+                        End If
+                        Try
+                            parsedDate = New Date(y, m, d)
+                        Catch
+                            ' pokud nesedí (např. 31.11.)
+                        End Try
+                    End If
                 End If
+            End If
 
-                ' Remove the found date/time string from the file name
-                Dim fileNameWithoutDate As String = myRegex.Replace(fileName, "").Trim()
+            ' 2️⃣ Zkusíme převést čas
+            If Not String.IsNullOrEmpty(foundTime) Then
+                Dim t As TimeSpan
+                Dim normalizedTime = foundTime.Replace("-", ":").Replace(".", ":")
+                If TimeSpan.TryParse(normalizedTime, t) Then
+                    parsedTime = t
+                End If
+            End If
 
-                ' Remove unwanted characters from the start and end
-                Dim charsToTrim As Char() = {"_", "-", ".", " "}
-                fileNameWithoutDate = fileNameWithoutDate.Replace(".gpx", "")
-                fileNameWithoutDate = fileNameWithoutDate.TrimStart(charsToTrim).TrimEnd(charsToTrim)
-                fileNameWithoutDate = fileNameWithoutDate & ".gpx" ' Add .gpx extension back
+            ' 3️⃣ Poskládáme DateTime
+            If parsedDate.HasValue Then
+                Dim result As DateTime = parsedDate.Value
+                If parsedTime.HasValue Then result = result.Add(parsedTime.Value)
+                Debug.WriteLine($"Spojené DateTime: {result}")
+                dateTimeFromFileName = result
+            Else
+                Debug.WriteLine("Nepodařilo se sestavit platný DateTime.")
+            End If
 
-                ' Return the found date and the modified file name
-                Return (dateTimeFromFileName, fileNameWithoutDate)
-            Catch ex As Exception
-                Debug.WriteLine($"{fileName} - Error in date format")
+
+
+
+            ' Remove unwanted characters from the start and end
+            'Dim charsToTrim As Char() = {"_", "-", ".", " "}
+            'fileNameWithoutDate = fileNameWithoutDate.Replace(".gpx", "")
+            'fileNameWithoutDate = fileNameWithoutDate.TrimStart(charsToTrim).TrimEnd(charsToTrim)
+            fileNameWithoutDate = fileNameWithoutDate & extension ' Add .gpx extension back
+
+            ' Return the found date and the modified file name
+            Return (dateTimeFromFileName, fileNameWithoutDate)
+        Catch ex As Exception
+            Debug.WriteLine($"{fileName} - Error in date format")
                 Return (Nothing, fileName)
             End Try
-        Else
-            Debug.WriteLine($"{fileName} - Date not found")
-            Return (Nothing, fileName)
-        End If
+        'Else
+        '    Debug.WriteLine($"{fileName} - Date not found")
+        '    Return (Nothing, fileName)
+        'End If
     End Function
 
 
@@ -1397,6 +1516,7 @@ FoundRunnerTrailTrk:
         ' Sestavení nového názvu
         Dim newName As String = $"{String.Join("_", finalnames)}_merged.gpx".Trim
 
+
         Return newName
     End Function
 
@@ -1404,6 +1524,7 @@ FoundRunnerTrailTrk:
     Public Function MergeDogToMe(dog As GPXRecord) As Boolean
 
         Dim newName = MergeFileNames(Me, dog)
+        newName = PrependDateToFilename(newName)
         'do souboru Me vloží kompletní uzel  <trk> vyjmutý ze souboru dog
         Try
             ' Najdi všechny trk v přidávaném souboru
@@ -1656,7 +1777,7 @@ FoundRunnerTrailTrk:
         ' --- KROK 3: Vyhodnocení checkpointů ---
         'GrossSpeed: The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
         Dim _dogGrossSpeed As Double = 0.0
-        If checkPoints IsNot Nothing AndAlso checkPoints.TrackPoints.Count > 0 AndAlso runnerTrkNode IsNot Nothing Then
+        If runnerTrkNode IsNot Nothing Then
 
             checkPointsEvals = EvaluateCheckPoints(checkPoints, preparedData.DogGeoPoints, preparedData.RunnerGeoPoints, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0, preparedData.RunnerTotalDistance)
             Dim max_index As Integer = -1
@@ -1666,6 +1787,7 @@ FoundRunnerTrailTrk:
 
             For i = 0 To checkPointsEvals.Count - 1
                 Dim cp = checkPointsEvals(i)
+                'weiht is the distance of the checkPoint from the path of the runner x the relative effective length along the path 
                 Dim _weight = Weight(cp.deviationFromTrail) * (cp.distanceAlongTrail / (preparedData.RunnerTotalDistance))
                 If _weight > maxWeight Then
                     maxWeight = _weight
@@ -1965,7 +2087,7 @@ FoundRunnerTrailTrk:
     ''' <param name="lat0">Reference latitude for coordinate conversion.</param>
     ''' <param name="lon0">Reference longitude for coordinate conversion.</param>
     ''' <returns>A list of tuples, where each tuple contains the distance from the start of the trail in kilometers, the waypoint's deviation from the trail in meters and gross speed of the team as distancealongTrail to the checkpoint/time from start to the checkPoint.</returns>
-    Private Function EvaluateCheckPoints(wayPoints As TrackAsTrkPts, dogGeoPoints As List(Of TrackGeoPoint), runnerGeoPoints As List(Of TrackGeoPoint), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double, totalRunnerDistanceKm As Double) _
+    Private Function EvaluateCheckPoints(checkPoints As TrackAsTrkPts, dogGeoPoints As List(Of TrackGeoPoint), runnerGeoPoints As List(Of TrackGeoPoint), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double, totalRunnerDistanceKm As Double) _
     As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
         Dim conv As New TrackConverter()
         Dim results As New List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
@@ -1978,17 +2100,17 @@ FoundRunnerTrailTrk:
         ' --- Step 1: Prepare a consolidated list of all points to evaluate ---
         Dim pointsToEvaluate As New List(Of TrackGeoPoint)
 
-        ' Add user-defined waypoints, if they exist.
-        If wayPoints.TrackPoints.Count > 0 Then
+        ' Add user-defined checkpoints, if they exist.
+        If checkPoints.TrackPoints.Count > 0 Then
             ' This assumes a converter class exists, as per your original code.
-            Dim waypointsAsListOfGeoPoints As List(Of TrackGeoPoint) = converter.ConvertTrackTrkPtsToGeoPoints(wayPoints).TrackGeoPoints
-            waypointsAsListOfGeoPoints.Sort(Function(a, b) Nullable.Compare(a.Time, b.Time))
-            If waypointsAsListOfGeoPoints IsNot Nothing Then
-                pointsToEvaluate.AddRange(waypointsAsListOfGeoPoints)
+            Dim checkpointsAsListOfGeoPoints As List(Of TrackGeoPoint) = converter.ConvertTrackTrkPtsToGeoPoints(checkPoints).TrackGeoPoints
+            checkpointsAsListOfGeoPoints.Sort(Function(a, b) Nullable.Compare(a.Time, b.Time))
+            If checkpointsAsListOfGeoPoints IsNot Nothing Then
+                pointsToEvaluate.AddRange(checkpointsAsListOfGeoPoints)
             End If
         End If
 
-        ' Add the dog's last position as a critical waypoint to check for "finding" the runner.
+        ' Add the dog's last position as a critical checkpoint to check for "finding" the runner.
         If dogGeoPoints?.Any() = True Then
             pointsToEvaluate.Add(dogGeoPoints.Last())
         End If
@@ -1999,10 +2121,10 @@ FoundRunnerTrailTrk:
         End If
 
         ' --- Step 2: Process each point in the list ---
-        For Each checkPoint As TrackGeoPoint In pointsToEvaluate
-            ' Convert the waypoint's location to XY coordinates.
+        For Each _Point As TrackGeoPoint In pointsToEvaluate
+            ' Convert the checkpoint's location to XY coordinates.
             Dim checkPointX, checkPointY As Double
-            conv.LatLonToXY(checkPoint.Location.Lat, checkPoint.Location.Lon, lat0, lon0, checkPointX, checkPointY)
+            conv.LatLonToXY(_Point.Location.Lat, _Point.Location.Lon, lat0, lon0, checkPointX, checkPointY)
 
             Dim minDeviation As Double = Double.MaxValue
             Dim closestSegmentIndex As Integer = -1
@@ -2018,7 +2140,7 @@ FoundRunnerTrailTrk:
                 ' If the segment has zero length, skip it.
                 If dx = 0 AndAlso dy = 0 Then Continue For
 
-                ' Calculate the projection of the waypoint onto the line defined by the segment.
+                ' Calculate the projection of the checkpoint onto the line defined by the segment.
                 Dim t As Double = ((checkPointX - p1.X) * dx + (checkPointY - p1.Y) * dy) / (dx * dx + dy * dy)
                 ' Clamp the projection to the segment itself (t between 0 and 1).
                 t = Math.Max(0, Math.Min(1, t))
@@ -2026,7 +2148,7 @@ FoundRunnerTrailTrk:
                 Dim projectionX As Double = p1.X + t * dx
                 Dim projectionY As Double = p1.Y + t * dy
 
-                ' Calculate the deviation of the waypoint to its projection on the segment.
+                ' Calculate the deviation of the checkpoint to its projection on the segment.
                 Dim deviation As Double = Math.Sqrt((checkPointX - projectionX) ^ 2 + (checkPointY - projectionY) ^ 2)
 
                 If deviation < minDeviation Then
@@ -2055,7 +2177,7 @@ FoundRunnerTrailTrk:
                 distanceAlongTrailMeters += partialSegmentLength
                 ' dog's time from start to checkpoint (time from start to checkpoint.time)
                 ' Add the final calculated values to the results list.
-                Dim checkPointTime As DateTime = checkPoint.Time
+                Dim checkPointTime As DateTime = _Point.Time
                 Dim dogStartTime As DateTime = dogGeoPoints.First.Time
                 Dim timeDiffHours As Double = (checkPointTime - dogStartTime).TotalHours
                 ' Calculate gross speed (distanceAlongTrail / total time) in km/h
@@ -2079,10 +2201,10 @@ FoundRunnerTrailTrk:
         ' By defining all scoring parameters here, you can easily tweak the rules later.
 
         ' A) Points for major objectives
-        Dim POINTS_FOR_FIND As Integer = ActiveDogInfo.PointsForFindMax ' Points for successfully finding the runner
-        Dim POINTS_FOR_CHECKPOINT As Integer = ActiveDogInfo.PointsForHandlerMax / 2 ' Points for each correctly reached checkpoint (waypoint). There are two checkpoints evaluated. 
-        Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveDogInfo.PointsPer5KmhGrossSpeed ' Bonus points for each km/h of gross speed.
-        Dim PointsForDogAccuracy As Integer = ActiveDogInfo.PointsForAccuracyMax ' Maximum points for dog accuracy (trail following).
+        Dim POINTS_FOR_FIND As Integer = ActiveCategoryInfo.PointsForFindMax ' Points for successfully finding the runner
+        Dim POINTS_FOR_CHECKPOINT As Integer = ActiveCategoryInfo.PointsForHandlerMax / 2 ' Points for each correctly reached checkpoint (waypoint). There are two checkpoints evaluated. 
+        Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveCategoryInfo.PointsPer5KmhGrossSpeed ' Bonus points for each km/h of gross speed.
+        Dim PointsForDogAccuracy As Integer = ActiveCategoryInfo.PointsForAccuracyMax ' Maximum points for dog accuracy (trail following).
 
         ' --- Initial check ---
         If stats.TotalTime.TotalSeconds <= 0 Then
@@ -2458,11 +2580,11 @@ FoundRunnerTrailTrk:
             ' Smaže datum v názvu souboru (to kvůli převodu na iso formát):
             Dim result As (DateTime?, String) = GetRemoveDateFromName(Me.FileName)
             Dim modifiedFileName As String = result.Item2
-            newFileName = $"{Me.TrailStart.Time:yyyy-MM-dd} {modifiedFileName}"
+            newFileName = $"{Me.TrailStart.Time:yyyy-MM-dd}_{modifiedFileName}"
         Catch ex As Exception
             Debug.WriteLine(ex.ToString())
             'ponechá původní jméno, ale přidá datum
-            newFileName = $"{TrailStart:yyyy-MM-dd} {Me.Reader.FileName}"
+            newFileName = $"{TrailStart:yyyy-MM-dd}_{Me.Reader.FileName}"
         End Try
         Return newFileName
         'If Me.Reader.FileName <> newFileName Then RenameFile(newFileName)

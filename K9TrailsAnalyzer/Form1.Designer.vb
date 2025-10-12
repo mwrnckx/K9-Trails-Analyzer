@@ -574,6 +574,7 @@ Partial Class Form1
                 item.ImageScaling = ToolStripItemImageScaling.None
             End If
         Next
+        Me.mnuLanguage.ImageScaling = ToolStripItemImageScaling.None
 
         Me.Icon = New Icon((Path.Combine(imgBasePath, "icon.ico")))
         ' načteme data + config + naplníme combobox
@@ -590,9 +591,9 @@ Partial Class Form1
             IO.File.Move(file, appdataPath) 'pokud tam už něco je nepřepisuje se!
         Next
 
-        LoadDogs()
+        LoadCategories()
         LoadConfig()
-        PopulateDogsToolStrip()
+        PopulateCategoriesToolStrip()
 
         WriteRTBWarning("Logs:", Color.Maroon)
 
@@ -605,16 +606,16 @@ Partial Class Form1
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
 
-        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveDogInfo.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
+        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveCategoryInfo.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
         Dim resources = New ComponentResourceManager(Me.GetType())
         LocalizeMenuItems(MenuStrip1.Items, resources)
         SetTooltips()
 
 
-        mnuPointsForFind.Text = Me.ActiveDogInfo.PointsForFindMax
-        mnuPointsForSpeed.Text = Me.ActiveDogInfo.PointsPer5KmhGrossSpeed
-        mnuPointsForAccuracy.Text = Me.ActiveDogInfo.PointsForAccuracyMax
-        mnuPointsForHandler.Text = Me.ActiveDogInfo.PointsForHandlerMax
+        mnuPointsForFind.Text = Me.ActiveCategoryInfo.PointsForFindMax
+        mnuPointsForSpeed.Text = Me.ActiveCategoryInfo.PointsPer5KmhGrossSpeed
+        mnuPointsForAccuracy.Text = Me.ActiveCategoryInfo.PointsForAccuracyMax
+        mnuPointsForHandler.Text = Me.ActiveCategoryInfo.PointsForHandlerMax
 
 
         ReadHelp()
@@ -656,17 +657,28 @@ Partial Class Form1
 
     Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus, mnuPointsForHandler.LostFocus, mnuPointsForSpeed.LostFocus, mnuPointsForAccuracy.LostFocus
         If Integer.TryParse(mnuPointsForFind.Text, Nothing) Then
-            Me.ActiveDogInfo.PointsForFindMax = mnuPointsForFind.Text
+            Me.ActiveCategoryInfo.PointsForFindMax = mnuPointsForFind.Text
         End If
         If Integer.TryParse(mnuPointsForSpeed.Text, Nothing) Then
-            Me.ActiveDogInfo.PointsPer5KmhGrossSpeed = mnuPointsForSpeed.Text
+            Me.ActiveCategoryInfo.PointsPer5KmhGrossSpeed = mnuPointsForSpeed.Text
         End If
         If Integer.TryParse(mnuPointsForAccuracy.Text, Nothing) Then
-            Me.ActiveDogInfo.PointsForAccuracyMax = mnuPointsForAccuracy.Text
+            Me.ActiveCategoryInfo.PointsForAccuracyMax = mnuPointsForAccuracy.Text
         End If
         If Integer.TryParse(mnuPointsForHandler.Text, Nothing) Then
-            Me.ActiveDogInfo.PointsForHandlerMax = mnuPointsForHandler.Text
+            Me.ActiveCategoryInfo.PointsForHandlerMax = mnuPointsForHandler.Text
         End If
+        'aktualizace názvu menu
+        'lokalizovaný text bez hodnot v závorce:
+        Dim baseText As String = CStr(Me.mnuPointInTrial.Tag)
+
+        Me.mnuPointInTrial.Text = String.Format("{0} ({1}, {2}, {3}, {4})",
+    baseText,
+    Me.ActiveCategoryInfo.PointsForFindMax,
+    Me.ActiveCategoryInfo.PointsPer5KmhGrossSpeed,
+    Me.ActiveCategoryInfo.PointsForAccuracyMax,
+    Me.ActiveCategoryInfo.PointsForHandlerMax)
+
     End Sub
 
 
