@@ -172,7 +172,7 @@
     <value>Flat</value>
   </data>
   <data name="btnCreateVideos.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Segoe UI, 10pt, style=Bold</value>
+    <value>Cascadia Code, 10pt, style=Bold</value>
   </data>
   <data name="btnCreateVideos.Location" type="System.Drawing.Point, System.Drawing">
     <value>780, 323</value>
@@ -368,7 +368,7 @@
     <value>Enter the maximal number of points for finding the runner</value>
   </data>
   <data name="mnuPointForFindText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuPointForFindText.Text" xml:space="preserve">
     <value>Max. Points for Find</value>
@@ -389,7 +389,7 @@
     <value>Enter the number of points for speed (points per 1 km/h)</value>
   </data>
   <data name="mnuPointsForSpeedText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
     <value>Points for km/h</value>
@@ -410,7 +410,7 @@
     <value>Enter the maximum number of points for accuracy.</value>
   </data>
   <data name="mnuPointsForAccuracyText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
     <value>Max. Points for Accuracy</value>
@@ -431,18 +431,18 @@
     <value>Enter the maximum number of points for the handler's ability to read the dog.</value>
   </data>
   <data name="mnuPointsForHandlerText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>220, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Max. Points for Handler</value>
   </data>
-  <data name="mnuPointInTrial.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mnuPointInCompetition.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 22</value>
   </data>
-  <data name="mnuPointInTrial.Text" xml:space="preserve">
-    <value>Set Points in Trial</value>
+  <data name="mnuPointInCompetition.Text" xml:space="preserve">
+    <value>Set Points in Competition</value>
   </data>
-  <data name="mnuPointInTrial.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+  <data name="mnuPointInCompetition.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>TopRight</value>
   </data>
   <data name="ToolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
@@ -563,13 +563,13 @@
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="rtbOutput.Location" type="System.Drawing.Point, System.Drawing">
-    <value>297, 0</value>
+    <value>291, 13</value>
   </data>
   <data name="rtbOutput.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>676, 380</value>
+    <value>676, 374</value>
   </data>
   <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -698,7 +698,7 @@
     <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
   </data>
   <data name="gbPeriod.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 6</value>
+    <value>19, 13</value>
   </data>
   <data name="gbPeriod.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -707,7 +707,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="gbPeriod.Size" type="System.Drawing.Size, System.Drawing">
-    <value>265, 137</value>
+    <value>260, 137</value>
   </data>
   <data name="gbPeriod.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -737,7 +737,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnCharts.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 231</value>
+    <value>19, 240</value>
   </data>
   <data name="btnCharts.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -776,7 +776,7 @@
     <value>NoControl</value>
   </data>
   <data name="btnReadGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>10, 151</value>
+    <value>19, 160</value>
   </data>
   <data name="btnReadGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
@@ -922,28 +922,28 @@
   <data name="panelForDgv.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="dgvTrial.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="dgvCompetition.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="dgvTrial.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+  <data name="dgvCompetition.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
     <value>None</value>
   </data>
-  <data name="dgvTrial.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="dgvCompetition.Size" type="System.Drawing.Size, System.Drawing">
     <value>3000, 2000</value>
   </data>
-  <data name="dgvTrial.TabIndex" type="System.Int32, mscorlib">
+  <data name="dgvCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;dgvTrial.Name" xml:space="preserve">
-    <value>dgvTrial</value>
+  <data name="&gt;&gt;dgvCompetition.Name" xml:space="preserve">
+    <value>dgvCompetition</value>
   </data>
-  <data name="&gt;&gt;dgvTrial.Type" xml:space="preserve">
+  <data name="&gt;&gt;dgvCompetition.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;dgvTrial.Parent" xml:space="preserve">
+  <data name="&gt;&gt;dgvCompetition.Parent" xml:space="preserve">
     <value>panelForDgv</value>
   </data>
-  <data name="&gt;&gt;dgvTrial.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;dgvCompetition.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="panelForDgv.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -965,33 +965,33 @@
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;panelForDgv.Parent" xml:space="preserve">
-    <value>TabTrial</value>
+    <value>TabCompetition</value>
   </data>
   <data name="&gt;&gt;panelForDgv.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="TabTrial.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="TabCompetition.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 30</value>
   </data>
-  <data name="TabTrial.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
     <value>976, 393</value>
   </data>
-  <data name="TabTrial.TabIndex" type="System.Int32, mscorlib">
+  <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
   </data>
-  <data name="TabTrial.Text" xml:space="preserve">
-    <value>Mantrailing Trial</value>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Mantrailing Competition</value>
   </data>
-  <data name="&gt;&gt;TabTrial.Name" xml:space="preserve">
-    <value>TabTrial</value>
+  <data name="&gt;&gt;TabCompetition.Name" xml:space="preserve">
+    <value>TabCompetition</value>
   </data>
-  <data name="&gt;&gt;TabTrial.Type" xml:space="preserve">
+  <data name="&gt;&gt;TabCompetition.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;TabTrial.Parent" xml:space="preserve">
+  <data name="&gt;&gt;TabCompetition.Parent" xml:space="preserve">
     <value>TabControl1</value>
   </data>
-  <data name="&gt;&gt;TabTrial.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;TabCompetition.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
   <data name="TabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
@@ -1180,10 +1180,10 @@
   <data name="&gt;&gt;mnuDeleteCurrentCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuPointInTrial.Name" xml:space="preserve">
-    <value>mnuPointInTrial</value>
+  <data name="&gt;&gt;mnuPointInCompetition.Name" xml:space="preserve">
+    <value>mnuPointInCompetition</value>
   </data>
-  <data name="&gt;&gt;mnuPointInTrial.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuPointInCompetition.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuPointForFindText.Name" xml:space="preserve">

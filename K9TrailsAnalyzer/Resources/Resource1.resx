@@ -294,6 +294,6 @@ If there are only two routes, it's pretty straightforward - the first is the sub
     <value>Runner's trail</value>
   </data>
   <data name="article" xml:space="preserve">
-    <value>Scent article</value>
+    <value>Checkpoint</value>
   </data>
 </root>

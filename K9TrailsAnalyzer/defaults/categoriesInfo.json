@@ -4,7 +4,7 @@
     "name": "Rex (demo_dog)",
     "remotedirectory": "",
       "PointsForFindMax": 100,
-    "PointsPer5KmhGrossSpeed": 20,
+    "PointsPerKmhGrossSpeed": 20,
     "PointsForAccuracyMax": 100,
     "PointsForHandlerMax": 100
     },
@@ -13,7 +13,7 @@
     "name": "Category: Beginners",
     "remotedirectory": "",
       "PointsForFindMax": 100,
-    "PointsPer5KmhGrossSpeed": 20,
+    "PointsPerKmhGrossSpeed": 20,
     "PointsForAccuracyMax": 100,
     "PointsForHandlerMax": 100
     },
@@ -22,7 +22,7 @@
     "name": "Category: Advanced",
     "remotedirectory": "",
       "PointsForFindMax": 100,
-    "PointsPer5KmhGrossSpeed": 20,
+    "PointsPerKmhGrossSpeed": 20,
     "PointsForAccuracyMax": 100,
     "PointsForHandlerMax": 100
     }

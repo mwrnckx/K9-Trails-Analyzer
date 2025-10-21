@@ -336,7 +336,7 @@
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
     <value>Введите максимальное количество баллов за умение хендлера читать собаку.</value>
   </data>
-  <data name="TabTrial.Text" xml:space="preserve">
+  <data name="TabCompetition.Text" xml:space="preserve">
     <value>Испытание по мантрейлингу</value>
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">

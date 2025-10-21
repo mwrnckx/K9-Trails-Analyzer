@@ -312,7 +312,7 @@
   <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
     <value>Бали за км/год</value>
   </data>
-  <data name="mnuPointInTrial.Text" xml:space="preserve">
+  <data name="mnuPointInCompetition.Text" xml:space="preserve">
     <value>Встановіть бали в суді</value>
   </data>
   <data name="ToolStripMenuItem.Text" xml:space="preserve">

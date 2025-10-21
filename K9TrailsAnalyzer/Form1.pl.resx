@@ -397,7 +397,7 @@
   <data name="ToolStripMenuItem.Text" xml:space="preserve">
     <value>Ustawienia</value>
   </data>
-  <data name="mnuPointInTrial.Text" xml:space="preserve">
+  <data name="mnuPointInCompetition.Text" xml:space="preserve">
     <value>Ustaw punkty w teście</value>
   </data>
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">

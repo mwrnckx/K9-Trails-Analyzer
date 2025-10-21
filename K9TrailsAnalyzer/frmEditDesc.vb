@@ -4,6 +4,7 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports TrackVideoExporter
 
 Public Class frmEditComments
+    Public Property Category As String
     Public Property TrailDescription As TrailReport
     Public Property GoalPart As String
     Public Property TrailPart As String
@@ -14,7 +15,7 @@ Public Class frmEditComments
 
     Public ReadOnly Property AllParts As TrailReport
         Get
-            Return New TrailReport(My.Settings.ActiveDog, Me.GoalPart, Me.TrailPart, Me.DogPart, (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
+            Return New TrailReport("", Me.Category, Me.GoalPart, Me.TrailPart, Me.DogPart, "", (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
         End Get
     End Property
 

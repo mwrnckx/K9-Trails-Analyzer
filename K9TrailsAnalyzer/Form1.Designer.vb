@@ -56,7 +56,7 @@ Partial Class Form1
         mnuRenameCurrentCategory = New ToolStripMenuItem()
         mnuAddNewCategory = New ToolStripMenuItem()
         mnuDeleteCurrentCategory = New ToolStripMenuItem()
-        mnuPointInTrial = New ToolStripMenuItem()
+        mnuPointInCompetition = New ToolStripMenuItem()
         mnuPointForFindText = New ToolStripMenuItem()
         mnuPointsForFind = New ToolStripTextBox()
         mnuPointsForSpeedText = New ToolStripMenuItem()
@@ -91,18 +91,19 @@ Partial Class Form1
         clmLength = New ColumnHeader()
         clmAge = New ColumnHeader()
         clmTrkCount = New ColumnHeader()
-        TabTrial = New TabPage()
+        TabCompetition = New TabPage()
         panelForDgv = New Panel()
-        dgvTrial = New DataGridView()
+        dgvCompetition = New DataGridView()
+        bsCompetitions = New BindingSource()
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
         gbPeriod.SuspendLayout()
         TabVideoExport.SuspendLayout()
-        TabTrial.SuspendLayout()
+        TabCompetition.SuspendLayout()
         panelForDgv.SuspendLayout()
-        CType(dgvTrial, ISupportInitialize).BeginInit()
+        CType(dgvCompetition, ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' ToolTip1
@@ -232,7 +233,7 @@ Partial Class Form1
         ' 
         ' ToolStripMenuItem
         ' 
-        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointInTrial, ToolStripSeparator1, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
+        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointInCompetition, ToolStripSeparator1, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
         resources.ApplyResources(ToolStripMenuItem, "ToolStripMenuItem")
         ToolStripMenuItem.Name = "ToolStripMenuItem"
         ' 
@@ -261,11 +262,11 @@ Partial Class Form1
         mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
         resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
         ' 
-        ' mnuPointInTrial
+        ' mnuPointInCompetition
         ' 
-        mnuPointInTrial.DropDownItems.AddRange(New ToolStripItem() {mnuPointForFindText, mnuPointsForSpeedText, mnuPointsForAccuracyText, mnuPointsForHandlerText})
-        mnuPointInTrial.Name = "mnuPointInTrial"
-        resources.ApplyResources(mnuPointInTrial, "mnuPointInTrial")
+        mnuPointInCompetition.DropDownItems.AddRange(New ToolStripItem() {mnuPointForFindText, mnuPointsForSpeedText, mnuPointsForAccuracyText, mnuPointsForHandlerText})
+        mnuPointInCompetition.Name = "mnuPointInCompetition"
+        resources.ApplyResources(mnuPointInCompetition, "mnuPointInCompetition")
         ' 
         ' mnuPointForFindText
         ' 
@@ -367,7 +368,7 @@ Partial Class Form1
         ' 
         TabControl1.Controls.Add(TabStats)
         TabControl1.Controls.Add(TabVideoExport)
-        TabControl1.Controls.Add(TabTrial)
+        TabControl1.Controls.Add(TabCompetition)
         resources.ApplyResources(TabControl1, "TabControl1")
         TabControl1.DrawMode = TabDrawMode.OwnerDrawFixed
         TabControl1.Name = "TabControl1"
@@ -375,7 +376,7 @@ Partial Class Form1
         ' 
         ' TabStats
         ' 
-        TabStats.BackColor = Color.DarkSeaGreen
+        TabStats.BackColor = Color.Goldenrod
         TabStats.Controls.Add(rtbOutput)
         TabStats.Controls.Add(gbPeriod)
         TabStats.Controls.Add(btnCharts)
@@ -425,7 +426,7 @@ Partial Class Form1
         ' 
         ' btnCharts
         ' 
-        btnCharts.BackColor = Color.Goldenrod
+        btnCharts.BackColor = Color.DarkSeaGreen
         resources.ApplyResources(btnCharts, "btnCharts")
         btnCharts.Name = "btnCharts"
         btnCharts.UseVisualStyleBackColor = False
@@ -449,7 +450,7 @@ Partial Class Form1
         ' lvGpxFiles
         ' 
         resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
-        lvGpxFiles.BackColor = Color.Beige
+        lvGpxFiles.BackColor = Color.DarkSeaGreen
         lvGpxFiles.CheckBoxes = True
         lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
         lvGpxFiles.Name = "lvGpxFiles"
@@ -476,47 +477,46 @@ Partial Class Form1
         ' 
         resources.ApplyResources(clmTrkCount, "clmTrkCount")
         ' 
-        ' TabTrial
+        ' TabCompetition
         ' 
-        TabTrial.BackColor = Color.Beige
-        TabTrial.Controls.Add(panelForDgv)
-        resources.ApplyResources(TabTrial, "TabTrial")
-        TabTrial.Name = "TabTrial"
-        TabTrial.UseVisualStyleBackColor = True
+        TabCompetition.BackColor = Color.Salmon
+        TabCompetition.Controls.Add(panelForDgv)
+        resources.ApplyResources(TabCompetition, "TabCompetition")
+        TabCompetition.Name = "TabCompetition"
         ' 
         ' panelForDgv
         ' 
         resources.ApplyResources(panelForDgv, "panelForDgv")
         panelForDgv.BackColor = Color.Transparent
-        panelForDgv.Controls.Add(dgvTrial)
+        panelForDgv.Controls.Add(dgvCompetition)
         panelForDgv.Name = "panelForDgv"
         ' 
-        ' dgvTrial
+        ' dgvCompetition
         ' 
-        dgvTrial.AllowUserToAddRows = False
-        dgvTrial.AllowUserToDeleteRows = False
-        dgvTrial.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
-        dgvTrial.BackgroundColor = Color.DarkSeaGreen
+        dgvCompetition.AllowUserToAddRows = False
+        dgvCompetition.AllowUserToDeleteRows = False
+        dgvCompetition.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
+        dgvCompetition.BackgroundColor = Color.Salmon
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12F)
         DataGridViewCellStyle1.ForeColor = Color.Maroon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle1.WrapMode = DataGridViewTriState.True
-        dgvTrial.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
-        dgvTrial.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        dgvCompetition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
+        dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
         DataGridViewCellStyle2.BackColor = Color.Beige
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
+        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12F)
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
         DataGridViewCellStyle2.WrapMode = DataGridViewTriState.False
-        dgvTrial.DefaultCellStyle = DataGridViewCellStyle2
-        dgvTrial.EnableHeadersVisualStyles = False
-        resources.ApplyResources(dgvTrial, "dgvTrial")
-        dgvTrial.Name = "dgvTrial"
+        dgvCompetition.DefaultCellStyle = DataGridViewCellStyle2
+        dgvCompetition.EnableHeadersVisualStyles = False
+        resources.ApplyResources(dgvCompetition, "dgvCompetition")
+        dgvCompetition.Name = "dgvCompetition"
         ' 
         ' Form1
         ' 
@@ -537,9 +537,9 @@ Partial Class Form1
         gbPeriod.ResumeLayout(False)
         TabVideoExport.ResumeLayout(False)
         TabVideoExport.PerformLayout()
-        TabTrial.ResumeLayout(False)
+        TabCompetition.ResumeLayout(False)
         panelForDgv.ResumeLayout(False)
-        CType(dgvTrial, ISupportInitialize).EndInit()
+        CType(dgvCompetition, ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 
@@ -613,7 +613,7 @@ Partial Class Form1
 
 
         mnuPointsForFind.Text = Me.ActiveCategoryInfo.PointsForFindMax
-        mnuPointsForSpeed.Text = Me.ActiveCategoryInfo.PointsPer5KmhGrossSpeed
+        mnuPointsForSpeed.Text = Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed
         mnuPointsForAccuracy.Text = Me.ActiveCategoryInfo.PointsForAccuracyMax
         mnuPointsForHandler.Text = Me.ActiveCategoryInfo.PointsForHandlerMax
 
@@ -660,7 +660,7 @@ Partial Class Form1
             Me.ActiveCategoryInfo.PointsForFindMax = mnuPointsForFind.Text
         End If
         If Integer.TryParse(mnuPointsForSpeed.Text, Nothing) Then
-            Me.ActiveCategoryInfo.PointsPer5KmhGrossSpeed = mnuPointsForSpeed.Text
+            Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed = mnuPointsForSpeed.Text
         End If
         If Integer.TryParse(mnuPointsForAccuracy.Text, Nothing) Then
             Me.ActiveCategoryInfo.PointsForAccuracyMax = mnuPointsForAccuracy.Text
@@ -670,12 +670,12 @@ Partial Class Form1
         End If
         'aktualizace názvu menu
         'lokalizovaný text bez hodnot v závorce:
-        Dim baseText As String = CStr(Me.mnuPointInTrial.Tag)
+        Dim baseText As String = CStr(Me.mnuPointInCompetition.Tag)
 
-        Me.mnuPointInTrial.Text = String.Format("{0} ({1}, {2}, {3}, {4})",
+        Me.mnuPointInCompetition.Text = String.Format("{0} ({1}, {2}, {3}, {4})",
     baseText,
     Me.ActiveCategoryInfo.PointsForFindMax,
-    Me.ActiveCategoryInfo.PointsPer5KmhGrossSpeed,
+    Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed,
     Me.ActiveCategoryInfo.PointsForAccuracyMax,
     Me.ActiveCategoryInfo.PointsForHandlerMax)
 
@@ -691,6 +691,8 @@ Partial Class Form1
 
         End If
     End Sub
+
+
 
     Friend WithEvents ToolTip1 As ToolTip
     Friend WithEvents MenuStrip1 As MenuStrip
@@ -720,7 +722,7 @@ Partial Class Form1
     Friend WithEvents mnuExit As ToolStripMenuItem
     Friend WithEvents TabControl1 As TabControl
     Friend WithEvents TabStats As TabPage
-    Friend WithEvents TabTrial As TabPage
+    Friend WithEvents TabCompetition As TabPage
     Friend WithEvents TabVideoExport As TabPage
     Friend WithEvents rtbOutput As RichTextBox
     Friend WithEvents gbPeriod As GroupBox
@@ -743,14 +745,15 @@ Partial Class Form1
     Friend WithEvents mnucbActiveCategory As ToolStripComboBox
     Friend WithEvents mnuDeleteCurrentCategory As ToolStripMenuItem
     Friend WithEvents mnuRenameCurrentCategory As ToolStripMenuItem
-    Friend WithEvents dgvTrial As DataGridView
+    Friend WithEvents dgvCompetition As DataGridView
+    Private WithEvents bsCompetitions As BindingSource
     ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
     Friend WithEvents panelForDgv As Panel
     Friend WithEvents mnuPointsForFind As ToolStripTextBox
     Friend WithEvents mnuPointsForSpeed As ToolStripTextBox
     Friend WithEvents mnuPointsForAccuracy As ToolStripTextBox
     Friend WithEvents mnuPointsForHandler As ToolStripTextBox
-    Friend WithEvents mnuPointInTrial As ToolStripMenuItem
+    Friend WithEvents mnuPointInCompetition As ToolStripMenuItem
     Friend WithEvents mnuPointForFindText As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator

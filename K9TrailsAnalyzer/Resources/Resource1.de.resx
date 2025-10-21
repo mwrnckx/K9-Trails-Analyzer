@@ -124,7 +124,7 @@
     <value>Länge der einzelnen Spuren (km)</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-   <data name="Y-AxisLabelAge" xml:space="preserve">
+  <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Alter der Spuren (Stunden)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
@@ -291,10 +291,10 @@ Wenn es nur zwei Routen gibt, ist es ziemlich unkompliziert - der erste ist der 
   <data name="RunnerTrail" xml:space="preserve">
     <value>Läuferpfad</value>
   </data>
-  <data name="article" xml:space="preserve">
-    <value>Gegenstand</value>
-  </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Gewichtete Streckenlänge (km)</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Kontrollpunkt</value>
   </data>
 </root>

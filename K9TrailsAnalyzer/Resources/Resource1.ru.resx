@@ -124,7 +124,7 @@
     <value>Длина следoв (км)</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-    <data name="Y-AxisLabelAge" xml:space="preserve">
+  <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Возраст следoв (часы)</value>
   </data>
   <data name="Y-AxisLabelSpeed" xml:space="preserve">
@@ -291,10 +291,10 @@
   <data name="RunnerTrail" xml:space="preserve">
     <value>След следопрокладчикa</value>
   </data>
-  <data name="article" xml:space="preserve">
-    <value>предмет</value>
-  </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Взвешенная длина маршрута (км)</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Контрольная точка</value>
   </data>
 </root>

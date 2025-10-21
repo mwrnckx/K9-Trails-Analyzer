@@ -290,7 +290,6 @@ Public Class StyledText
     ''' Text content of the styled text.
     ''' </summary>
     ''' <remarks>Can be used for displaying styled text in UI components.</remarks>
-
     Public Property Text As String
     Public Property Font As Font
     Public Property Color As Color
@@ -329,11 +328,15 @@ Public Class TrailReport
     Public Const trailLabel As String = "👣"
     Public Const performanceLabel As String = "🏅"
 
-    Public Property DogName As StyledText
+    Public Property Title As StyledText
+
+    Public Property Category As StyledText
     ''' <summary>
     ''' Description of the goal of the training session.
     ''' </summary>
     Public Property Goal As StyledText
+
+
 
     ''' <summary>
     ''' Description of the course of the track - where and how it was led, terrain, length, age, etc.
@@ -344,11 +347,16 @@ Public Class TrailReport
     ''' Evaluation of the team's performance - how the dog and handler did on the given track.
     ''' </summary>
     Public Property Performance As StyledText
+
+    ''' <summary>
+    ''' Evaluation of the team's performance - how the dog and handler did on the given track.
+    ''' </summary>
+    Public Property PerformancePoints As StyledText
+
     ''' <summary>
     ''' Weather conditions during the training session.
     ''' </summary>
     ''' <remarks>Contains temperature, wind speed, wind direction, precipitation, relative humidity, and cloud cover.</remarks>
-
     Public Property weather As StyledText
 
     Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
@@ -362,29 +370,51 @@ Public Class TrailReport
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
     ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
-    Public Sub New(dogName As String, goal As String, trail As String, performance As String, _weatherdata As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?), Optional weather As String = " ")
-        Me.DogName = New StyledText(dogName, Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), dogLabel)
+    Public Sub New(title As String, dogName As String, goal As String, trail As String, performance As String, points As String, _weatherdata As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?), Optional weather As String = " ")
+        Me.Title = New StyledText(title, Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), "")
+        Me.Category = New StyledText(dogName, Color.DarkBlue, New Font("Cascadia Code", 14, FontStyle.Bold), dogLabel)
         Me.Goal = New StyledText(goal, Color.DarkGreen, New Font("Cascadia Code", 12, FontStyle.Bold), goalLabel)
         Me.Trail = New StyledText(trail, Color.Blue, New Font("Cascadia Code", 12, FontStyle.Bold), trailLabel)
         Me.Performance = New StyledText(performance, Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), performanceLabel)
+        Me.PerformancePoints = New StyledText(points, Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), "")
         Me.weather = New StyledText(weather, Color.Maroon, New Font("Cascadia Code", 12, FontStyle.Bold), "")
         Me.WeatherData = _weatherdata
     End Sub
     Public Sub New()
         ' Default constructor for serialization or other purposes
-        Me.DogName = New StyledText("Dog Name", Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
+        Me.Category = New StyledText("Dog Name", Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
         Me.Goal = New StyledText("Goal of the training session", Color.DarkGreen, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
         Me.Trail = New StyledText("Course of the track", Color.Blue, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
         Me.Performance = New StyledText("Evaluation of the team's performance", Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
         Me.weather = New StyledText("Weather conditions will be added later.", Color.Maroon, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
     End Sub
-    Public Function toList() As List(Of StyledText)
+    ''' <summary>
+    ''' Converts the TrailReport to a list of StyledText objects.   Basic parts only.
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function ToBasicList(Optional title As String = "Trail description") As List(Of StyledText)
+        Me.Title.Text = title
         Dim result As New List(Of StyledText) From {
-            Me.DogName,
+              Me.Title,
+        Me.Category,
             Me.Goal,
             Me.Trail,
             Me.Performance,
             Me.weather
+        }
+        Return result
+
+    End Function
+    ''' <summary>
+    ''' Converts the TrailReport to a list of StyledText objects.   Competition parts only.
+    ''' </summary>
+    ''' <returns></returns>
+    Public Function ToCompetitionList(Optional title As String = "Competition Points") As List(Of StyledText)
+        Me.Title.Text = title
+        Dim result As New List(Of StyledText) From {
+          Me.Title,
+          Me.Category,
+          Me.PerformancePoints
         }
         Return result
 

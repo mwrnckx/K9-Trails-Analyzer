@@ -6,8 +6,10 @@ Imports System.Drawing.Text
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection.Metadata
+Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
+
 
 Public Class PngSequenceCreator
     Private renderer As PngRenderer
@@ -24,13 +26,17 @@ Public Class PngSequenceCreator
         ' Vytvoříme statický obrázek s textem
         Dim keys = LocalisedReports.Keys.ToList()
         For Each key In keys
-            Dim textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
+            'Dim textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
             Dim trailReport = LocalisedReports(key)
-            Dim staticTextbmp = renderer.RenderStaticText(trailReport)
+            Dim staticTextbmp = renderer.RenderStaticText(trailReport.ToBasicList("Trail description"))
             Dim filename = IO.Path.Combine(outputDir.FullName, key & "-" & "TrailDescription.png")
             staticTextbmp.Save(filename, ImageFormat.Png)
-
         Next key
+        'hodnocení Competition Points (jen pro jeden jazyk):
+        Dim trailReportPoints As TrailReport = LocalisedReports(keys.Last)
+        Dim staticTextbmpPoints = renderer.RenderStaticText(trailReportPoints.ToCompetitionList("Competition Points"))
+        Dim filenamePoints = IO.Path.Combine(outputDir.FullName, "CompetitionPointsDescription.png")
+        staticTextbmpPoints.Save(filenamePoints, ImageFormat.Png)
 
 
         ' Vytvoříme statický obrázek s mapou 
@@ -98,7 +104,8 @@ Public Class PngRenderer
     Private windSpeed As Double?
     Private trackBounds As RectangleF
     Private myWindArrow As Bitmap
-
+    'Private emojiFonts As New PrivateFontCollection() 'hezčí emojis
+    'Private emojiFont As Font
     Dim diagonal As Single
     Dim radius As Single ' poloměr kruhu pro poslední bod, 2.5% šířky obrázku
     Dim penWidth As Single ' šířka pera pro kreslení čar, 1% šířky obrázku
@@ -112,7 +119,6 @@ Public Class PngRenderer
     ''' <param name="windSpeed">The speed of the wind in m/s, or null if not available.</param>
     ''' <param name="bgTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
     Public Sub New(windDirection As Double?, windSpeed As Double?, bgTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single))
-        'Me.minVideoSize = minVideoSize
         Me.windDirection = windDirection
         Me.windSpeed = windSpeed
         Me.trackBounds = bgTiles.bgmap.GetBounds(GraphicsUnit.Pixel) 'přepočítá obdélník na souřadnice v pixelech
@@ -121,6 +127,14 @@ Public Class PngRenderer
         Me.penWidth = 0.005 * diagonal ' šířka pera pro kreslení čar, 1% šířky obrázku
         Me.emSize = 0.012 * diagonal '
         Me.font = New Font("Cascadia Code", emSize, FontStyle.Bold)
+        '' Načti font z disku nebo z resource streamu
+        'hezčí emoji, ale nefunguje to....
+        'Dim emojiFontPath As String = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources\fonts\Twemoji.Mozilla.ttf")
+        'emojiFonts.AddFontFile(emojiFontPath)
+
+        '' Vytvoř instanci Fontu z privátní kolekce
+        'Dim emojiFontFamily = emojiFonts.Families(0)
+        'Me.emojiFont = New Font(emojiFontFamily, 14, FontStyle.Regular)
     End Sub
 
 
@@ -289,16 +303,16 @@ Public Class PngRenderer
     ''' <param name="width">With of the new text bitmap.</param>
     ''' <param name="height">height of the new text bitmap.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
-    Public Function RenderStaticText(trailReport As TrailReport, Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
+    Public Function RenderStaticText(trailReportList As List(Of StyledText), Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
         Dim maxWidth As Single = width * 0.9 ' maximální šířka textu, 90% šířky obrázku
         Dim startX As Single = width * 0.05 ' začátek textu, 5% od levého okraje
         Dim startY As Single = 0 ' začátek textu
         Dim currentY As Single = startY
-        Dim fontSize As Int32 = CInt(height * 0.05) ' výchozí velikost písma
+        Dim fontSize As Int32 = CInt(height * 0.042) ' výchozí velikost písma
 
         Dim staticText As New Bitmap(width, height, PixelFormat.Format32bppArgb)
         Using g As Graphics = Graphics.FromImage(staticText)
-            g.TextRenderingHint = Drawing.Text.TextRenderingHint.AntiAlias ' Lepší kvalita textu
+            g.TextRenderingHint = Drawing.Text.TextRenderingHint.SystemDefault ' Lepší kvalita textu
 
             Dim fits As Boolean = False
             Dim i As Integer = 0
@@ -309,20 +323,22 @@ Public Class PngRenderer
                 fits = True
                 Dim lineHeight As Single
 
-                For Each part In trailReport.toList
-                    Using mainFont = New Font(part.Font.FontFamily, fontSize, part.Font.Style)
+                For Each part In trailReportList
+                    If part.Text IsNot Nothing AndAlso part.Text <> "" Then
+                        Using mainFont = New Font(part.Font.FontFamily, fontSize, part.Font.Style)
 
-                        Using textBrush As New SolidBrush(part.Color)
-                            Dim drawingArea As New RectangleF(startX, currentY, maxWidth, 2000)
-                            currentY = DrawWrappedTextWithEmoji(g, part.Label & "  " & part.Text, mainFont, textBrush, drawingArea)
+                            Using textBrush As New SolidBrush(part.Color)
+                                Dim drawingArea As New RectangleF(startX, currentY, maxWidth, 2000)
+                                currentY = DrawWrappedTextWithEmoji(g, part.Label & "  " & part.Text, mainFont, textBrush, drawingArea)
+                            End Using
+                            lineHeight = mainFont.GetHeight(g)
                         End Using
-                        lineHeight = mainFont.GetHeight(g)
-                    End Using
 
-                    If currentY + lineHeight > height Then
-                        fits = False
-                        fontSize = Math.Floor(fontSize * (height / (currentY + lineHeight))) - 1  ' Adaptivní zmenšení písma
-                        Exit For ' Není třeba pokračovat, už víme že se nevejde
+                        If currentY + lineHeight > height Then
+                            fits = False
+                            fontSize = Math.Floor(fontSize * (height / (currentY + lineHeight))) - 1  ' Adaptivní zmenšení písma
+                            Exit For ' Není třeba pokračovat, už víme že se nevejde
+                        End If
                     End If
                 Next
             Loop
@@ -557,80 +573,107 @@ Public Class PngRenderer
     End Sub
 
 
+
     ''' <summary>
-    ''' Draws a text string containing Czech diacritics and emojis, with proper word wrapping, within a given rectangle.
+    ''' Draws text containing Czech diacritics and emoji (as PNG images), with word wrapping and vbCrLf handling.
+    ''' Emoji images must be stored in "Emoji" subfolder (e.g. "1F463.png" for 👣).
     ''' </summary>
-    ''' <param name="g">The Graphics object to draw on.</param>
-    ''' <param name="text">The text string to draw.</param>
-    ''' <param name="baseFont">The base font for the text (e.g., Segoe UI).</param>
-    ''' <param name="brush">The brush for the text color.</param>
-    ''' <param name="layoutRect">The rectangle defining the drawing and wrapping area.</param>
-    ''' <returns>The Y-coordinate of the current drawing position after rendering the text.</returns>
     Public Function DrawWrappedTextWithEmoji(ByVal g As Graphics, ByVal text As String, ByVal baseFont As Font, ByVal brush As Brush, ByVal layoutRect As RectangleF) As Single
-        ' Nastavení pro kvalitnější vykreslování
-        g.TextRenderingHint = TextRenderingHint.AntiAlias
-        g.SmoothingMode = Drawing2D.SmoothingMode.AntiAlias
+        g.TextRenderingHint = TextRenderingHint.SystemDefault
+        g.SmoothingMode = Drawing2D.SmoothingMode.HighQuality
 
-        ' Font, který použijeme specificky pro emoji
-        Using emojiFont As New Font("Segoe UI Emoji", baseFont.Size, baseFont.Style)
-            Dim lineHeight As Single = baseFont.GetHeight(g)
-            Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
-            currentPosition.Y += lineHeight * 1.5 'odskočí práznou řádku
-            Dim spaceWidth As Single = g.MeasureString(" ", baseFont).Width
+        Dim lineHeight As Single = baseFont.GetHeight(g)
+        Dim currentPosition As New PointF(layoutRect.X, layoutRect.Y)
+        currentPosition.Y += lineHeight * 0.5F
+        Dim spaceWidth As Single = g.MeasureString(" ", baseFont).Width
 
-            ' Rozdělíme celý text na jednotlivá slova
-            Dim words() As String = text.Split(" "c)
+        ' 🔹 Emoji regex (zachytí i vícesymbolové emoji)
+        'Dim emojiRegex As New Regex("[\uD83C-\uDBFF\uDC00-\uDFFF]+")
+        'Dim emojiRegex As New Regex("[\u2614\u2600-\u26FF\u2700-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F\uD83C\uDC00-\uDFFF\uD83D\uDC00-\uDFFF\uD83E\uDC00-\uDFFF]")
+        'Dim emojiRegex As New Regex("(?:\u2614|[\u2600-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F]|[\uD83C-\uDBFF][\uDC00-\uDFFF])")
+        'Dim emojiRegex As New Regex("(?:\u2614|[\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F]|[\uD83C-\uDBFF][\uDC00-\uDFFF])")
+        Dim emojiRegex As New Regex("(?:\u2614|[\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\u2C60-\u2C7F]|[\uD800-\uDBFF][\uDC00-\uDFFF](?:\u200D?[\uD800-\uDBFF][\uDC00-\uDFFF])*)")
+        ' 🔹 Rozdělíme text podle ručních zalomení
+        Dim lines() As String = text.Split(New String() {vbCrLf}, StringSplitOptions.None)
+
+        For Each line As String In lines
+            Dim words() As String = line.Split(" "c)
+            currentPosition.X = layoutRect.X
 
             For Each word As String In words
                 If String.IsNullOrEmpty(word) Then Continue For
 
-                ' --- Krok 1: Změření šířky aktuálního slova (které může obsahovat text i emoji) ---
+                ' --- Měření šířky slova (včetně emoji obrázků) ---
                 Dim wordWidth As Single = 0
-                Dim i As Integer = 0
-                While i < word.Length
-                    ' Zjednodušená detekce emoji
-                    Dim isEmoji As Boolean = (i + 1 < word.Length AndAlso Char.IsSurrogatePair(word, i)) _
-                                             OrElse (UnicodeCategory.OtherSymbol = Char.GetUnicodeCategory(word, i))
+                Dim matches = emojiRegex.Matches(word)
+                Dim lastIndex As Integer = 0
+                For Each m As Match In matches
+                    ' text před emoji
+                    Dim beforeText As String = word.Substring(lastIndex, m.Index - lastIndex)
+                    wordWidth += g.MeasureString(beforeText, baseFont).Width
 
-                    Dim segmentFont As Font = If(isEmoji, emojiFont, baseFont)
-                    Dim segmentCharCount As Integer = If(isEmoji AndAlso Char.IsSurrogatePair(word, i), 2, 1)
-                    Dim segmentText As String = word.Substring(i, segmentCharCount)
+                    ' emoji "šířka" = výška řádku
+                    wordWidth += lineHeight * 0.9F
+                    lastIndex = m.Index + m.Length
+                Next
+                ' zbytek po posledním emoji
+                If lastIndex < word.Length Then
+                    wordWidth += g.MeasureString(word.Substring(lastIndex), baseFont).Width
+                End If
 
-                    wordWidth += g.MeasureString(segmentText, segmentFont).Width
-                    i += segmentCharCount
-                End While
-
-                ' --- Krok 2: Kontrola zalamování ---
-                ' Pokud by slovo přesáhlo šířku a nejsme na začátku řádku, zalomíme.
+                ' --- Zalamování ---
                 If (currentPosition.X + wordWidth > layoutRect.Right) AndAlso (currentPosition.X > layoutRect.X) Then
                     currentPosition.X = layoutRect.X
                     currentPosition.Y += lineHeight
                 End If
 
-                ' --- Krok 3: Vykreslení slova po segmentech ---
-                i = 0
-                While i < word.Length
-                    Dim isEmoji As Boolean = (i + 1 < word.Length AndAlso Char.IsSurrogatePair(word, i)) _
-                                             OrElse (UnicodeCategory.OtherSymbol = Char.GetUnicodeCategory(word, i))
+                ' --- Vykreslení ---
+                lastIndex = 0
+                For Each m As Match In matches
+                    ' text před emoji
+                    Dim beforeText As String = word.Substring(lastIndex, m.Index - lastIndex)
+                    If beforeText.Length > 0 Then
+                        g.DrawString(beforeText, baseFont, brush, currentPosition)
+                        currentPosition.X += g.MeasureString(beforeText, baseFont).Width
+                    End If
 
-                    Dim segmentFont As Font = If(isEmoji, emojiFont, baseFont)
-                    Dim segmentCharCount As Integer = If(isEmoji AndAlso Char.IsSurrogatePair(word, i), 2, 1)
-                    Dim segmentText As String = word.Substring(i, segmentCharCount)
+                    ' emoji
+                    Dim emojiText As String = m.Value
+                    Dim codepoint As Integer = Char.ConvertToUtf32(emojiText, 0)
+                    Dim codeHex As String = codepoint.ToString("X4")
+                    Dim imgPath As String = Path.Combine(Application.StartupPath, "Resources", "emoji", codeHex & ".png")
 
-                    g.DrawString(segmentText, segmentFont, brush, currentPosition)
+                    If File.Exists(imgPath) Then
+                        Using emojiImg As Image = Image.FromFile(imgPath)
+                            g.DrawImage(emojiImg, currentPosition.X, currentPosition.Y - lineHeight * 0.1F, lineHeight, lineHeight)
+                        End Using
+                    Else
+                        ' fallback, pokud obrázek chybí
+                        g.DrawString(emojiText, baseFont, Brushes.Gray, currentPosition)
+                    End If
 
-                    ' Posuneme X souřadnici pro další část slova
-                    currentPosition.X += g.MeasureString(segmentText, segmentFont).Width * 0.6 ' menší mezera mezi segmenty, aby se to nelepilo
-                    i += segmentCharCount
-                End While
+                    currentPosition.X += lineHeight * 0.9F
+                    lastIndex = m.Index + m.Length
+                Next
 
-                ' Po vykreslení slova přidáme mezeru
+                ' zbytek textu po emoji
+                If lastIndex < word.Length Then
+                    Dim remainingText As String = word.Substring(lastIndex)
+                    g.DrawString(remainingText, baseFont, brush, currentPosition)
+                    currentPosition.X += g.MeasureString(remainingText, baseFont).Width
+                End If
+
                 currentPosition.X += spaceWidth
             Next
 
-            Return currentPosition.Y
-        End Using
+            ' 🔹 nová řádka
+            currentPosition.Y += lineHeight * 1.1F
+        Next
+
+        Return currentPosition.Y
     End Function
+
+
 
     ''' <summary>
     ''' Determines a contrasting color (black or white) for a given background color.

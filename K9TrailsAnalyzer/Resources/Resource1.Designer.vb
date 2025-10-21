@@ -65,7 +65,7 @@ Namespace My.Resources
         End Property
         
         '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Scent article.
+        '''  Vyhledá lokalizovaný řetězec podobný Checkpoint.
         '''</summary>
         Friend Shared ReadOnly Property article() As String
             Get

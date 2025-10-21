@@ -287,13 +287,13 @@
   <data name="RunnerTrail" xml:space="preserve">
     <value>Слід бігуна</value>
   </data>
-  <data name="article" xml:space="preserve">
-    <value>предмет</value>
-  </data>
   <data name="txtRunner" xml:space="preserve">
     <value>бігун</value>
   </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Зважена довжина стежки (км)</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>контрольна точка</value>
   </data>
 </root>

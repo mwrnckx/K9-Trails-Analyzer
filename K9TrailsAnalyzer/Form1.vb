@@ -24,8 +24,8 @@ Partial Public Class Form1
     Private GPXFilesManager As GpxFileManager
     Private ReadOnly CategoriesInfoPath As String = Path.Combine(Application.StartupPath, "AppData", "categoriesInfo.json")
     Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "AppData", "config.json")
-    'Private ReadOnly DogsRootPath As String = Path.Combine(Application.StartupPath, "Dogs")
-
+    Private sortColumnName As String = String.Empty 'třídění dgvCompetition
+    Private sortDirection As SortOrder = SortOrder.None
     Private CategoriesInfo As List(Of CategoryInfo)
     Private ActiveDogId As String = String.Empty
     Private ReadOnly Property ActiveCategoryInfo As CategoryInfo
@@ -34,7 +34,7 @@ Partial Public Class Form1
         End Get
     End Property
 
-    Private displayList As List(Of TrailStatsDisplay) 'pro naplnění dgvTrial
+    Private displayList As List(Of TrailStatsDisplay) 'pro naplnění dgvCompetition
 
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
@@ -106,24 +106,23 @@ Partial Public Class Form1
 
     End Sub
 
-    Private Sub ClearDgvTrial()
+    Private Sub ClearDgvCompetition()
         If displayList IsNot Nothing Then displayList.Clear()
-        dgvTrial.DataSource = Nothing ' Odpojte stávající zdroj
-        dgvTrial.Columns.Clear()     ' Vyčistěte sloupce, pokud byly automaticky generovány
+        dgvCompetition.DataSource = Nothing ' Odpojte stávající zdroj
+        dgvCompetition.Columns.Clear()     ' Vyčistěte sloupce, pokud byly automaticky generovány
     End Sub
 
 
 
-    Private Sub FillDgvTrial()
-        ' Vytvořte si třídu pro data
+    Private Sub FillDgvCompetition()
         ' Vytvořte seznam pro zobrazení a naplňte ho
-        ClearDgvTrial() 'nejprve vyčistíme
+        ClearDgvCompetition() 'nejprve vyčistíme
         displayList = New List(Of TrailStatsDisplay)()
         For i As Integer = GPXFilesManager.GpxRecords.Count - 1 To 0 Step -1
             Dim record As GPXRecord = GPXFilesManager.GpxRecords(i)
             Dim stats As TrailStatsStructure = record.TrailStats
             displayList.Add(New TrailStatsDisplay With {
-                .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath).Substring(11),
+                .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),'.Substring(11),
                 .DogName = "",
                  .RunnerDistance = stats.RunnerDistance,
                  .TotalTime = stats.TotalTime.Minutes,
@@ -135,10 +134,10 @@ Partial Public Class Form1
                 .WeightedDistanceAlongTrailPerCent = stats.WeightedDistanceAlongTrailPerCent / 100,'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
                 .TrailAge = stats.TrailAge.TotalMinutes,
-                .RunnerFoundPoints = stats.PoitsInMTTrial.RunnerFoundPoints,
-                .DogSpeedPoints = stats.PoitsInMTTrial.DogSpeedPoints,
-                .DogAccuracyPoints = stats.PoitsInMTTrial.DogAccuracyPoints,
-                .HandlerCheckPoints = stats.PoitsInMTTrial.HandlerCheckPoints,
+                .RunnerFoundPoints = stats.PoitsInMTCompetition.RunnerFoundPoints,
+                .DogSpeedPoints = stats.PoitsInMTCompetition.DogSpeedPoints,
+                .DogAccuracyPoints = stats.PoitsInMTCompetition.DogAccuracyPoints,
+                .HandlerCheckPoints = stats.PoitsInMTCompetition.HandlerCheckPoints,
                 .Notes = ""
             })
 
@@ -181,12 +180,17 @@ Partial Public Class Form1
             ranking += 1
         Next
 
-        dgvTrial.Columns.Clear()
-        dgvTrial.DataSource = displayList
+        dgvCompetition.Columns.Clear()
+        Me.bsCompetitions.DataSource = Me.displayList 'bindingSource kvůli řazení sloupců
+        Me.dgvCompetition.DataSource = Me.bsCompetitions
+        'zformátovat dgvCompetition:
+        Me.FormatDgvCompetition()
+    End Sub
 
+    Private Sub FormatDgvCompetition()
 
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
-        For Each column As DataGridViewColumn In Me.dgvTrial.Columns
+        For Each column As DataGridViewColumn In Me.dgvCompetition.Columns
 
             ' Příklad získání lokalizovaného textu TODO!!!!!!
             Dim propertyName As String = column.DataPropertyName
@@ -195,7 +199,7 @@ Partial Public Class Form1
 
             ' ZAJIŠTĚNÍ JEDNOTNÉ FORMÁTU HLAVIČKY:
             If Not String.IsNullOrEmpty(localizedText) Then
-                ' 1. Aplikovat zalomení: "Runner Found Points" -> "Runner" & vbCrLf & "Found" & vbCrLf & "Points"
+                ' 1. Aplikovat zalomení: "Successful Find Points" -> "Runner" & vbCrLf & "Found" & vbCrLf & "Points"
                 column.HeaderText = FormatHeader(localizedText)
             Else
                 ' Fallback, pokud není lokalizovaný text (např. název Property)
@@ -210,17 +214,11 @@ Partial Public Class Form1
             column.DefaultCellStyle.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
             column.HeaderCell.Style.ForeColor = Color.Black
         Next
-        Me.dgvTrial.Columns("GPXFilename").HeaderText = ActiveCategoryInfo.Name
-        Me.dgvTrial.Columns("GPXFilename").HeaderCell.Style.Font = New Font("Cascadia Code", 16.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
+        Me.dgvCompetition.Columns("GPXFilename").HeaderText = ActiveCategoryInfo.Name
+        Me.dgvCompetition.Columns("GPXFilename").HeaderCell.Style.Font = New Font("Cascadia Code", 16.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
         ' Krok 4: Vynutit automatické přizpůsobení šířky po dokončení
-        Me.dgvTrial.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells)
+        Me.dgvCompetition.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells)
 
-
-        'Me.dgvTrial.Refresh()
-
-        ' ----------------------------------------------------
-        ' Kód pro nastavení formátu na jedno desetinné místo
-        ' ----------------------------------------------------
 
         Dim columnsIntegerData As String() = {
     "DogDistance",
@@ -236,8 +234,8 @@ Partial Public Class Form1
 
         For Each columnName As String In columnsIntegerData
             ' Zkontrolujte, jestli sloupec existuje
-            If Me.dgvTrial.Columns.Contains(columnName) Then
-                Dim column As DataGridViewColumn = Me.dgvTrial.Columns(columnName)
+            If Me.dgvCompetition.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = Me.dgvCompetition.Columns(columnName)
 
                 ' Nastavte formát na jedno desetinné místo ("N1")
                 ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
@@ -255,8 +253,8 @@ Partial Public Class Form1
 }
         For Each columnName As String In columnsFloatData
             ' Zkontrolujte, jestli sloupec existuje
-            If Me.dgvTrial.Columns.Contains(columnName) Then
-                Dim column As DataGridViewColumn = Me.dgvTrial.Columns(columnName)
+            If Me.dgvCompetition.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = Me.dgvCompetition.Columns(columnName)
                 ' Nastavte formát na jedno desetinné místo ("N1")
                 ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
                 ' F1 = Pevný počet desetinných míst, 1 desetinné místo
@@ -264,14 +262,14 @@ Partial Public Class Form1
             End If
         Next
 
-        If Me.dgvTrial.Columns.Contains("WeightedDistanceAlongTrailPerCent") Then
-            Dim column As DataGridViewColumn = Me.dgvTrial.Columns("WeightedDistanceAlongTrailPerCent")
+        If Me.dgvCompetition.Columns.Contains("WeightedDistanceAlongTrailPerCent") Then
+            Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("WeightedDistanceAlongTrailPerCent")
             ' P2 = Procenta na 2 desetinná místa (např. 12,34 %)
             column.DefaultCellStyle.Format = "P0"
         End If
 
-        If Me.dgvTrial.Columns.Contains("StartTime") Then
-            Dim column As DataGridViewColumn = Me.dgvTrial.Columns("StartTime")
+        If Me.dgvCompetition.Columns.Contains("StartTime") Then
+            Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("StartTime")
             column.DefaultCellStyle.Format = "HH:mm"
             column.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter
         End If
@@ -286,8 +284,8 @@ Partial Public Class Form1
     }
         For Each columnName As String In columnsPointsData
             ' Zkontrolujte, jestli sloupec existuje
-            If Me.dgvTrial.Columns.Contains(columnName) Then
-                Dim column As DataGridViewColumn = Me.dgvTrial.Columns(columnName)
+            If Me.dgvCompetition.Columns.Contains(columnName) Then
+                Dim column As DataGridViewColumn = Me.dgvCompetition.Columns(columnName)
                 ' Nastavte formát na jedno desetinné místo ("N1")
                 ' N1 = Číslo s oddělovači tisíců a 1 desetinným místem (podle aktuální regionální kultury)
                 ' F1 = Pevný počet desetinných míst, 1 desetinné místo
@@ -297,8 +295,7 @@ Partial Public Class Form1
                 'column.HeaderCell.Style.BackColor = Color.DarkSeaGreen
             End If
         Next
-        Me.dgvTrial.Columns("TotalPoints").DefaultCellStyle.Font = New Font(Me.dgvTrial.Columns("TotalPoints").DefaultCellStyle.Font, FontStyle.Bold)
-
+        Me.dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font = New Font(Me.dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font, FontStyle.Bold)
 
     End Sub
     ' Funkce nahradí mezery v textu záhlaví za zalomení řádku (vbCrLf)
@@ -906,7 +903,7 @@ Partial Public Class Form1
         ' Nastavení obrázku na ToolStripMenuItem
 
         mnuLanguage.Image = menuIcon
-        Me.mnuPointInTrial.Tag = Me.mnuPointInTrial.Text
+        Me.mnuPointInCompetition.Tag = Me.mnuPointInCompetition.Text
 
         'mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, 18)
     End Sub
@@ -1152,7 +1149,7 @@ Partial Public Class Form1
         'My.Settings.Save()
         ' uložíme config (aby se volba pamatovala)
         SaveConfig()
-        ClearDgvTrial()
+        ClearDgvCompetition()
         lvGpxFiles.Items.Clear()
         ' tady můžeš volat další inicializace pro aktivního psa
         ' e.g. RefreshOriginalsFolderForActiveDog()
@@ -1388,11 +1385,11 @@ Partial Public Class Form1
     End Sub
 
     Private Sub TabControl1_Selecting(sender As Object, e As TabControlCancelEventArgs) Handles TabControl1.Selecting
-        If (e.TabPage Is TabVideoExport Or e.TabPage Is TabTrial) AndAlso lvGpxFiles.Items.Count = 0 Then
+        If (e.TabPage Is TabVideoExport Or e.TabPage Is TabCompetition) AndAlso lvGpxFiles.Items.Count = 0 Then
             mboxEx("This tab is not ready yet." & vbCrLf & "First you need to load the gpx files - click on the salmon button!")
             e.Cancel = True
-        ElseIf e.TabPage Is TabTrial AndAlso dgvTrial.RowCount <= 0 Then
-            Me.FillDgvTrial()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
+        ElseIf e.TabPage Is TabCompetition AndAlso dgvCompetition.RowCount <= 0 Then
+            Me.FillDgvCompetition()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
 
         End If
     End Sub
@@ -1527,6 +1524,54 @@ Partial Public Class Form1
     End Sub
 
 
+    Private Sub dgvCompetition_ColumnHeaderMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvCompetition.ColumnHeaderMouseClick
+        Dim columnName As String = dgvCompetition.Columns(e.ColumnIndex).DataPropertyName
+
+        ' Zjištění směru seřazení
+        If sortColumnName = columnName Then
+            ' Přepnutí směru, pokud se kliklo na stejný sloupec
+            sortDirection = IIf(sortDirection = SortOrder.Ascending, SortOrder.Descending, SortOrder.Ascending)
+        Else
+            ' První kliknutí na nový sloupec: seřaď vzestupně
+            sortDirection = SortOrder.Ascending
+            sortColumnName = columnName
+        End If
+
+        ' Kontrola, že je v DisplayList něco k seřazení
+        If Me.displayList IsNot Nothing AndAlso Me.displayList.Count > 0 Then
+            If sortDirection = SortOrder.Ascending Then
+                ' Vzestupné seřazení (Ascending)
+                Me.displayList = Me.displayList.OrderBy(Function(x) GetPropertyValue(x, columnName)).ToList()
+            Else
+                ' Sestupné seřazení (Descending)
+                Me.displayList = Me.displayList.OrderByDescending(Function(x) GetPropertyValue(x, columnName)).ToList()
+            End If
+
+            ' Znovu přiřaď seřazený list jako zdroj dat
+            Me.dgvCompetition.DataSource = Nothing ' Odpojit starý zdroj
+            Me.dgvCompetition.DataSource = Me.displayList ' Připojit nový, seřazený zdroj
+            'znovu zformátovat dgvCompetition:
+            Me.FormatDgvCompetition()
+        End If
+
+        ' Volitelné: Zobrazení šipky pro indikaci seřazení
+        SetSortGlyph(e.ColumnIndex, sortDirection)
+    End Sub
+
+    ' --- Pomocné funkce pro dynamické získání hodnoty vlastnosti (Reflection) ---
+    ' Tato funkce je klíčová pro Linq seřazení, protože nevíme typ T v List(Of T)
+    Private Function GetPropertyValue(ByVal obj As Object, ByVal propertyName As String) As Object
+        Return obj.GetType().GetProperty(propertyName).GetValue(obj, Nothing)
+    End Function
+
+    ' --- Pomocná funkce pro zobrazení šipky (volitelné) ---
+    Private Sub SetSortGlyph(ByVal columnIndex As Integer, ByVal direction As SortOrder)
+        For Each col As DataGridViewColumn In dgvCompetition.Columns
+            col.HeaderCell.SortGlyphDirection = SortOrder.None
+        Next
+
+        dgvCompetition.Columns(columnIndex).HeaderCell.SortGlyphDirection = direction
+    End Sub
 End Class
 
 ''' <summary>
@@ -1551,14 +1596,14 @@ Public Class TrailStatsDisplay
 
     <DisplayName("Total Points")>
     Public Property TotalPoints As Integer
-    <DisplayName("Runner Found Points")>
+    <DisplayName("Successful Find Points")>
     Public Property RunnerFoundPoints As Integer
     <DisplayName("Dog Speed Points")>
     Public Property DogSpeedPoints As Integer
     <DisplayName("Dog Accuracy Points")>
     Public Property DogAccuracyPoints As Integer
-    <DisplayName("Handler Points")>
-    Public Property HandlerCheckPoints As Integer ' number of points in MT Trial according to the rules
+    <DisplayName("Reading Cues Points")>
+    Public Property HandlerCheckPoints As Integer ' number of points in MT Competition according to the rules
 
     <DisplayName("Dog Speed km/h")>
     Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
@@ -1612,7 +1657,7 @@ End Class
 
 ' --- model psa ---
 ''' <summary>
-''' Information about the selected dog/trial category
+''' Information about the selected dog/Competition category
 ''' </summary>
 ''' <!--
 ''' id: unique ID of the dog (three digits, e.g. "001")
@@ -1646,8 +1691,8 @@ Public Class CategoryInfo
     <JsonPropertyName("PointsForFindMax")>
     Public Property PointsForFindMax As Integer = 100
 
-    <JsonPropertyName("PointsPer5KmhGrossSpeed")>
-    Public Property PointsPer5KmhGrossSpeed As Double = 100
+    <JsonPropertyName("PointsPerKmhGrossSpeed")>
+    Public Property PointsPerKmhGrossSpeed As Double = 20
 
     <JsonPropertyName("PointsForAccuracyMax")>
     Public Property PointsForAccuracyMax As Integer = 100

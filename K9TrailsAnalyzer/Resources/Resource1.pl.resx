@@ -288,13 +288,13 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="RunnerTrail" xml:space="preserve">
     <value>Ścieżka biegacza</value>
   </data>
-  <data name="article" xml:space="preserve">
-    <value>przedmiot</value>
-  </data>
   <data name="txtRunner" xml:space="preserve">
     <value>biegacz</value>
   </data>
   <data name="Y-AxisLabelLengthAge" xml:space="preserve">
     <value>Ważona długość szlaku (km)</value>
+  </data>
+  <data name="article" xml:space="preserve">
+    <value>Punkt kontrolny</value>
   </data>
 </root>
