@@ -34,7 +34,7 @@ Partial Public Class Form1
         End Get
     End Property
 
-    Private displayList As List(Of TrailStatsDisplay) 'pro naplnění dgvCompetition
+    Private displayList As List(Of TrailStatsDisplay) 'datasource dgvCompetition
 
     Private Async Sub btnReadGpxFiles_Click(sender As Object, e As EventArgs) Handles btnReadGpxFiles.Click
 
@@ -1352,7 +1352,7 @@ Partial Public Class Form1
 
                                                If success Then
                                                    Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.webm")
-                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "TrailsOnMap.png")
+                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "TracksOnMap.png")
                                                    Dim form As New frmVideoDone(videopath, bgPNGPath)
                                                    form.ShowDialog()
                                                    form.Dispose()
@@ -1549,7 +1549,8 @@ Partial Public Class Form1
 
             ' Znovu přiřaď seřazený list jako zdroj dat
             Me.dgvCompetition.DataSource = Nothing ' Odpojit starý zdroj
-            Me.dgvCompetition.DataSource = Me.displayList ' Připojit nový, seřazený zdroj
+            Me.bsCompetitions.DataSource = Me.displayList 'bindingSource kvůli řazení sloupců
+            Me.dgvCompetition.DataSource = Me.bsCompetitions
             'znovu zformátovat dgvCompetition:
             Me.FormatDgvCompetition()
         End If
@@ -1571,6 +1572,16 @@ Partial Public Class Form1
         Next
 
         dgvCompetition.Columns(columnIndex).HeaderCell.SortGlyphDirection = direction
+    End Sub
+
+    Private Sub dgvCompetition_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles dgvCompetition.CellEndEdit
+        '// Krok 1: Zjistěte, zda je editovaný sloupec ten, který má spustit přepočet
+        '// Např. sloupec s indexem 0 se změní
+        If (e.ColumnIndex = 0) Then
+            ' Pokud ano, pokračujte k přepočtu
+            '// Krok 2: Proveďte přepočet a aktualizaci
+            'RecalculateRow(e.RowIndex)
+        End If
     End Sub
 End Class
 

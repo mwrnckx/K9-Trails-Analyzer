@@ -370,14 +370,15 @@ Public Class TrailReport
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
     ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
-    Public Sub New(title As String, dogName As String, goal As String, trail As String, performance As String, points As String, _weatherdata As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?), Optional weather As String = " ")
-        Me.Title = New StyledText(title, Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), "")
-        Me.Category = New StyledText(dogName, Color.DarkBlue, New Font("Cascadia Code", 14, FontStyle.Bold), dogLabel)
-        Me.Goal = New StyledText(goal, Color.DarkGreen, New Font("Cascadia Code", 12, FontStyle.Bold), goalLabel)
-        Me.Trail = New StyledText(trail, Color.Blue, New Font("Cascadia Code", 12, FontStyle.Bold), trailLabel)
-        Me.Performance = New StyledText(performance, Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), performanceLabel)
-        Me.PerformancePoints = New StyledText(points, Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), "")
-        Me.weather = New StyledText(weather, Color.Maroon, New Font("Cascadia Code", 12, FontStyle.Bold), "")
+    Public Sub New(title As String, category As String, goal As String, trail As String, performance As String, points As String, _weatherdata As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?), Optional weather As String = " ")
+        Dim mainFont As New Font("Segoe UI Semibold", 12, FontStyle.Bold)
+        Me.Title = New StyledText(title, Color.Firebrick, mainFont, "")
+        Me.Category = New StyledText(category, Color.Maroon, mainFont, dogLabel)
+        Me.Goal = New StyledText(goal, Color.DarkGreen, mainFont, goalLabel)
+        Me.Trail = New StyledText(trail, Color.DarkGreen, mainFont, trailLabel)
+        Me.Performance = New StyledText(performance, Color.DarkGreen, mainFont, performanceLabel)
+        Me.PerformancePoints = New StyledText(points, Color.Maroon, mainFont, "")
+        Me.weather = New StyledText(weather, Color.Maroon, mainFont, "")
         Me.WeatherData = _weatherdata
     End Sub
     Public Sub New()
@@ -409,11 +410,10 @@ Public Class TrailReport
     ''' Converts the TrailReport to a list of StyledText objects.   Competition parts only.
     ''' </summary>
     ''' <returns></returns>
-    Public Function ToCompetitionList(Optional title As String = "Competition Points") As List(Of StyledText)
+    Public Function ToCompetitionList(Optional title As String = "Points") As List(Of StyledText)
         Me.Title.Text = title
         Dim result As New List(Of StyledText) From {
           Me.Title,
-          Me.Category,
           Me.PerformancePoints
         }
         Return result

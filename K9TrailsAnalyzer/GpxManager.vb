@@ -237,11 +237,11 @@ Public Class GpxFileManager
                         _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description) 'async kvůli počasí!
                     End If
                     Dim pointsTotal As Integer = _gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints
-                    Dim performancePoints As String = $"{vbCrLf}🏆Points total: {pointsTotal}{vbCrLf}
-❤Successful find: {_gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} points of {_gpxRecord.ActiveCategoryInfo.PointsForFindMax},
-🚀Dog speed: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints} points ({_gpxRecord.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),
-🎯Dog accuracy: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} points of {_gpxRecord.ActiveCategoryInfo.PointsForAccuracyMax},
-👁Reading Cues: {_gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints} points of {_gpxRecord.ActiveCategoryInfo.PointsForHandlerMax}."
+                    Dim performancePoints As String = $"🏆Total: {pointsTotal} points{vbCrLf}
+❤Final Find: {_gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
+🚀Speed: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints} points ({_gpxRecord.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
+🎯Dog Accuracy: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
+👁Reading Cues: {_gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForHandlerMax})."
                     For Each kvp In _gpxRecord.LocalisedReports
                         kvp.Value.PerformancePoints.Text = performancePoints
                     Next
@@ -621,6 +621,7 @@ Public Structure TrailStatsStructure
     Public Property PoitsInMTCompetition As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer) ' number of points in MT Competition according to the rules
     Public Property CheckpointsEval As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property runnerFound As Boolean ' whether dog found the runner or not
 End Structure
 
 Public Class GPXRecord
@@ -1292,7 +1293,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 trailPart = trailPart.Replace(My.Resources.Resource1.outAge.ToLower & ":", "") ' odstranění age:
                 trailPart = trailPart.Replace("⏳:", "") ' odstranění 🕒:
                 trailPart = trailPart.Replace("⌛:", "") ' odstranění 🕒:
-                trailPart = "⌛:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
+                trailPart = "⌛" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h, " & trailPart
             End If
             Dim LengthfromComments As Single = GetLengthFromComments(trailPart)
             If LengthfromComments = 0 Then
@@ -1300,12 +1301,12 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 trailPart = Regex.Replace(trailPart, "^[0-9\.,]+\s*(km|m)(?=\W|$)", "", RegexOptions.IgnoreCase).Trim()
                 trailPart = trailPart.Replace(My.Resources.Resource1.outLength.ToLower & ":", "") ' odstranění vícenásobných mezer
                 trailPart = trailPart.Replace("📏:", "") '
-                trailPart = "📏:" & NBSP & (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km, " & trailPart
+                trailPart = (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km, " & trailPart
             End If
 
         Else
             If Me.TrailDistance > 0 Then
-                trailPart = "📏:" & NBSP & (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km"
+                trailPart = (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km"
             End If
             If ageFromTime.TotalHours > 0 Then
                 trailPart &= "  ⌛:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
@@ -1313,7 +1314,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         End If
 
-        Return New TrailReport("Competition Points", Me.ActiveCategoryInfo.Name, goalPart, trailPart, dogPart, "", (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
+        Return New TrailReport("", Me.ActiveCategoryInfo.Name, goalPart, trailPart, dogPart, "", (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
     End Function
 
 
@@ -1813,7 +1814,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim preliminaryStats As New TrailStatsStructure With {
         .DogDistance = preparedData.dogTotalDistance,
         .RunnerDistance = preparedData.RunnerTotalDistance,
-        .WeightedDistanceAlongTrailPerCent = movementAnalysis.WeightedDistance / preparedData.RunnerTotalDistance * 100.0,
+        .WeightedDistanceAlongTrailPerCent = movementAnalysis.WeightedDistance / preparedData.RunnerTotalDistance * 100.0,'jako procento z délky kladečovy stopy
         .WeightedDistanceAlongTrail = movementAnalysis.WeightedDistance,
         .TrailAge = GetAge(),
         .MovingTime = movementAnalysis.MovingTime,
@@ -1822,14 +1823,14 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
        .DogGrossSpeed = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
         .Deviation = If(movementAnalysis.MovingTime.TotalSeconds > 0, movementAnalysis.TotalWeightedDeviation / movementAnalysis.MovingTime.TotalSeconds, -1.0),
         .CheckpointsEval = checkPointsEvals,
+        .runnerFound = If(Weight(movementAnalysis.MinDistanceToRunnerEnd) >= 0.75, True, False), ' up to distance of 15 meters full weight (gps accuracy?), after that zero
         .MaxTeamDistance = maxDistance
     }
         If movementAnalysis.MovingTime.TotalHours > 0 Then
             preliminaryStats.DogNetSpeed = (preparedData.dogTotalDistance / 1000.0) / movementAnalysis.MovingTime.TotalHours
         End If
 
-        Dim runnerFoundWeight As Double = If(Weight(movementAnalysis.MinDistanceToRunnerEnd) >= 0.75, 1, 0) ' up to distance of 15 meters full weight (gps accuracy?), after that zero
-        preliminaryStats.PoitsInMTCompetition = CalculateCompetitionScore(preliminaryStats, runnerFoundWeight)
+        preliminaryStats.PoitsInMTCompetition = CalculateCompetitionScore(preliminaryStats)
         ' --- KROK 5: Vrácení kompletních výsledků ---
         Return preliminaryStats
 
@@ -2205,7 +2206,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' <param name="stats">The complete TrackStats object containing all performance metrics.</param>
     ''' <param name="runnerFound">A boolean indicating if the runner was successfully found.</param>
     ''' <returns>The final integer score for the team.</returns>
-    Private Function CalculateCompetitionScore(stats As TrailStatsStructure, runnerFoundWeight As Double) As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer)
+    Private Function CalculateCompetitionScore(stats As TrailStatsStructure) As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer)
 
         ' --- Scoring Configuration ---
         ' By defining all scoring parameters here, you can easily tweak the rules later.
@@ -2227,7 +2228,13 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         ' --- Step 1: Calculate points based on the primary outcome (Find vs. No-Find) ---
 
         ' --- SUCCESS PATH: The runner was found ---
-        RunnerFoundPoints = POINTS_FOR_FIND * runnerFoundWeight
+        If stats.runnerFound Then
+            RunnerFoundPoints = POINTS_FOR_FIND
+        Else
+            ' --- FAILURE PATH: The runner was not found ---
+            RunnerFoundPoints = 0
+        End If
+
 
         ' --- Step 2: Calculate bonus points for performance metrics ---
         ' Add bonus points for speed. We use gross speed as it rewards overall efficiency.
@@ -2246,7 +2253,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
            stats.WeightedDistanceAlongTrailPerCent > Integer.MaxValue Then
             DogAccuracyPoints = 0
         Else
-            DogAccuracyPoints = CInt(Math.Round(stats.WeightedDistanceAlongTrailPerCent)) / 100 * PointsForDogAccuracy
+            DogAccuracyPoints = CInt(stats.WeightedDistanceAlongTrailPerCent / 100 * PointsForDogAccuracy)
         End If
 
 
@@ -2267,8 +2274,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Next
         End If
 
-
-        ' --- Final Step: Ensure the score is not negative ---
+        ' --- Final Step: 
         Return (RunnerFoundPoints, DogSpeedPoints, DogAccuracyPoints, HandlerCheckPoints)
 
     End Function
