@@ -133,12 +133,13 @@ Partial Public Class Form1
                 .MaxTeamDistance = stats.MaxTeamDistance,
                 .WeightedDistanceAlongTrail = stats.WeightedDistanceAlongTrail,
                 .WeightedDistanceAlongTrailPerCent = stats.WeightedDistanceAlongTrailPerCent / 100,'je v % převedeno zpět na desetinné číslo
+                .WeightedTimePerCent = stats.WeightedTimePerCent / 100, 'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
                 .TrailAge = stats.TrailAge.TotalMinutes,
                 .RunnerFoundPoints = stats.PoitsInMTCompetition.RunnerFoundPoints,
                 .DogSpeedPoints = stats.PoitsInMTCompetition.DogSpeedPoints,
                 .DogAccuracyPoints = stats.PoitsInMTCompetition.DogAccuracyPoints,
-                .HandlerCheckPoints = stats.PoitsInMTCompetition.HandlerCheckPoints
+                .dogReadingPoints = stats.PoitsInMTCompetition.DogReadingPoints
                  })
 
             Dim displayItem = displayList.Last()
@@ -309,6 +310,12 @@ Partial Public Class Form1
             column.DefaultCellStyle.Format = "P0"
         End If
 
+        If Me.dgvCompetition.Columns.Contains("WeightedTimePerCent") Then
+            Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("WeightedTimePerCent")
+            ' P2 = Procenta na 2 desetinná místa (např. 12,34 %)
+            column.DefaultCellStyle.Format = "P0"
+        End If
+
         If Me.dgvCompetition.Columns.Contains("StartTime") Then
             Dim column As DataGridViewColumn = Me.dgvCompetition.Columns("StartTime")
             column.DefaultCellStyle.Format = "HH:mm"
@@ -320,7 +327,7 @@ Partial Public Class Form1
     "RunnerFoundPoints",
    "DogSpeedPoints",
         "DogAccuracyPoints",
-        "HandlerCheckPoints",
+        "DogReadingPoints",
         "Ranking"
     }
         For Each columnName As String In columnsPointsData
@@ -1652,7 +1659,7 @@ Public Class TrailStatsDisplay
     Private _runnerFoundPoints As Integer
     Private _dogSpeedPoints As Integer
     Private _dogAccuracyPoints As Integer
-    Private _handlerCheckPoints As Integer
+    Private _dogReadingPoints As Integer
     Private _totalPoints As Integer
     Private _DogName As String ' Přidáme i DogName, protože to je editovatelný sloupec
     Private _HandlerName As String
@@ -1764,15 +1771,15 @@ Public Class TrailStatsDisplay
         End Set
     End Property
 
-    <DisplayName("Reading Cues Points")>
-    Public Property HandlerCheckPoints As Integer
+    <DisplayName("Dog Reading Points")>
+    Public Property dogReadingPoints As Integer
         Get
-            Return _handlerCheckPoints
+            Return _dogReadingPoints
         End Get
         Set(value As Integer)
-            If _handlerCheckPoints <> value Then
-                _handlerCheckPoints = value
-                OnPropertyChanged(NameOf(HandlerCheckPoints))
+            If _dogReadingPoints <> value Then
+                _dogReadingPoints = value
+                OnPropertyChanged(NameOf(dogReadingPoints))
                 CalculateTotalPoints()
             End If
         End Set
@@ -1799,6 +1806,9 @@ Public Class TrailStatsDisplay
 
     <DisplayName("Trail Age min")>
     Public Property TrailAge As Double ' age of the trail 
+
+    <DisplayName("Weighted Time")>
+    Public Property WeightedTimePerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
 
     <DisplayName("Weighted Distance Along Trail")>
     Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
@@ -1831,7 +1841,7 @@ Public Class TrailStatsDisplay
     ' 3. METODA PRO PŘEPOČET
 
     Public Sub CalculateTotalPoints()
-        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.HandlerCheckPoints
+        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.DogReadingPoints
 
         ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
         If _totalPoints <> newTotal Then
@@ -1891,8 +1901,8 @@ Public Class CategoryInfo
     <JsonPropertyName("PointsForAccuracyMax")>
     Public Property PointsForAccuracyMax As Integer = 100
 
-    <JsonPropertyName("PointsForHandlerMax")>
-    Public Property PointsForHandlerMax As Integer = 100
+    <JsonPropertyName("DogReadingPointsMax")>
+    Public Property PointsForDogReadingMax As Integer = 100
 
 
     <JsonIgnore>

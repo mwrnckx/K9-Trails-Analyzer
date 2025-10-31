@@ -415,4 +415,16 @@
   <data name="TabCompetition.Text" xml:space="preserve">
     <value>Punktowanie</value>
   </data>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Przetwarzanie Gpx</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Pomoc</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Kategoria</value>
+  </data>
+  <data name="mnuFactoryReset.Text" xml:space="preserve">
+    <value>Reset do ustawień fabrycznych</value>
+  </data>
 </root>

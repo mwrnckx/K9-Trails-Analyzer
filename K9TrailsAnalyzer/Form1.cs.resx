@@ -341,13 +341,13 @@
     <value />
   </data>
   <data name="mnuPointForFindText.Text" xml:space="preserve">
-    <value>Max. Body za nalezení</value>
+    <value>Max. body za nalezení</value>
   </data>
   <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
-    <value>Body za Km/H.</value>
+    <value>Body za km/h.</value>
   </data>
   <data name="mnuPointInCompetition.Text" xml:space="preserve">
-    <value>Nastavte body ve zkoušce</value>
+    <value>Nastavte body pro hodnocení kategorie</value>
   </data>
   <data name="ToolStripMenuItem.Text" xml:space="preserve">
     <value>Nastavení</value>
@@ -369,5 +369,20 @@
   </data>
   <data name="TabCompetition.Text" xml:space="preserve">
     <value>Bodování</value>
+  </data>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Gpx zpracování</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Pomoc</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Max. body za čtení psa</value>
+  </data>
+  <data name="mnuFactoryReset.Text" xml:space="preserve">
+    <value>Obnovení továrního nastavení</value>
   </data>
 </root>

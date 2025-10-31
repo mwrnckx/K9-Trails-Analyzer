@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <EmbeddedResource Remove="frmPleaseWait.resx" />
+    <EmbeddedResource Remove="Localization\Strings.en.resx" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,11 +38,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Localization\Strings.en.resx">
-      <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <LastGenOutput>Strings.en.Designer.vb</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Localization\Strings.cs.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <LastGenOutput>Strings.cs.Designer.vb</LastGenOutput>

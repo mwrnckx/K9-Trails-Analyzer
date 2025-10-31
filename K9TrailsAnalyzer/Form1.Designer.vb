@@ -36,9 +36,10 @@ Partial Class Form1
         btnCreateVideos = New Button()
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
+        mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuExportAs = New ToolStripMenuItem()
         mnuExit = New ToolStripMenuItem()
-        mnuSettings = New ToolStripMenuItem()
+        mnuGPXprocessing = New ToolStripMenuItem()
         mnuPrependDateToFileName = New ToolStripMenuItem()
         mnuTrimGPSNoise = New ToolStripMenuItem()
         mnuMergingTracks = New ToolStripMenuItem()
@@ -50,7 +51,7 @@ Partial Class Form1
         mnuUkrainian = New ToolStripMenuItem()
         mnuPolish = New ToolStripMenuItem()
         mnuRussian = New ToolStripMenuItem()
-        ToolStripMenuItem = New ToolStripMenuItem()
+        mnuCategory = New ToolStripMenuItem()
         mnucbActiveCategory = New ToolStripComboBox()
         mnuSelect_directory_gpx_files = New ToolStripMenuItem()
         mnuRenameCurrentCategory = New ToolStripMenuItem()
@@ -63,16 +64,15 @@ Partial Class Form1
         mnuPointsForSpeed = New ToolStripTextBox()
         mnuPointsForAccuracyText = New ToolStripMenuItem()
         mnuPointsForAccuracy = New ToolStripTextBox()
-        mnuPointsForHandlerText = New ToolStripMenuItem()
-        mnuPointsForHandler = New ToolStripTextBox()
+        mnuDogReadingPointsText = New ToolStripMenuItem()
+        mnuDogReadingPoints = New ToolStripTextBox()
+        mnuHelp = New ToolStripMenuItem()
+        mnuAbout = New ToolStripMenuItem()
+        mnuCheckForUpdates1 = New ToolStripMenuItem()
         ToolStripSeparator1 = New ToolStripSeparator()
-        mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuSetFFmpegPath = New ToolStripMenuItem()
         ToolStripSeparator2 = New ToolStripSeparator()
         mnuFactoryReset = New ToolStripMenuItem()
-        HelpToolStripMenuItem = New ToolStripMenuItem()
-        mnuAbout = New ToolStripMenuItem()
-        mnuCheckForUpdates1 = New ToolStripMenuItem()
         mnuCheckUpdates = New ToolStripMenuItem()
         rtbWarnings = New RichTextBox()
         TabControl1 = New TabControl()
@@ -94,7 +94,7 @@ Partial Class Form1
         TabCompetition = New TabPage()
         panelForDgv = New Panel()
         dgvCompetition = New DataGridView()
-        bsCompetitions = New BindingSource()
+        bsCompetitions = New BindingSource(components)
         StatusStrip1.SuspendLayout()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
@@ -104,6 +104,7 @@ Partial Class Form1
         TabCompetition.SuspendLayout()
         panelForDgv.SuspendLayout()
         CType(dgvCompetition, ISupportInitialize).BeginInit()
+        CType(bsCompetitions, ISupportInitialize).BeginInit()
         SuspendLayout()
         ' 
         ' ToolTip1
@@ -137,14 +138,19 @@ Partial Class Form1
         MenuStrip1.BackColor = Color.DarkSeaGreen
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuSettings, mnuLanguage, ToolStripMenuItem, HelpToolStripMenuItem})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuGPXprocessing, mnuLanguage, mnuCategory, mnuHelp})
         MenuStrip1.Name = "MenuStrip1"
         ' 
         ' mnuFile
         ' 
-        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuExportAs, mnuExit})
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelectADirectoryToSaveVideo, mnuExportAs, mnuExit})
         resources.ApplyResources(mnuFile, "mnuFile")
         mnuFile.Name = "mnuFile"
+        ' 
+        ' mnuSelectADirectoryToSaveVideo
+        ' 
+        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
+        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
         ' 
         ' mnuExportAs
         ' 
@@ -156,11 +162,11 @@ Partial Class Form1
         mnuExit.Name = "mnuExit"
         resources.ApplyResources(mnuExit, "mnuExit")
         ' 
-        ' mnuSettings
+        ' mnuGPXprocessing
         ' 
-        mnuSettings.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuMergingTracks, mnuProcessProcessed})
-        resources.ApplyResources(mnuSettings, "mnuSettings")
-        mnuSettings.Name = "mnuSettings"
+        mnuGPXprocessing.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuMergingTracks, mnuProcessProcessed})
+        resources.ApplyResources(mnuGPXprocessing, "mnuGPXprocessing")
+        mnuGPXprocessing.Name = "mnuGPXprocessing"
         ' 
         ' mnuPrependDateToFileName
         ' 
@@ -231,11 +237,11 @@ Partial Class Form1
         resources.ApplyResources(mnuRussian, "mnuRussian")
         mnuRussian.Tag = "ru"
         ' 
-        ' ToolStripMenuItem
+        ' mnuCategory
         ' 
-        ToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointInCompetition, ToolStripSeparator1, mnuSelectADirectoryToSaveVideo, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
-        resources.ApplyResources(ToolStripMenuItem, "ToolStripMenuItem")
-        ToolStripMenuItem.Name = "ToolStripMenuItem"
+        mnuCategory.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointInCompetition})
+        resources.ApplyResources(mnuCategory, "mnuCategory")
+        mnuCategory.Name = "mnuCategory"
         ' 
         ' mnucbActiveCategory
         ' 
@@ -264,7 +270,7 @@ Partial Class Form1
         ' 
         ' mnuPointInCompetition
         ' 
-        mnuPointInCompetition.DropDownItems.AddRange(New ToolStripItem() {mnuPointForFindText, mnuPointsForSpeedText, mnuPointsForAccuracyText, mnuPointsForHandlerText})
+        mnuPointInCompetition.DropDownItems.AddRange(New ToolStripItem() {mnuPointForFindText, mnuPointsForSpeedText, mnuPointsForAccuracyText, mnuDogReadingPointsText})
         mnuPointInCompetition.Name = "mnuPointInCompetition"
         resources.ApplyResources(mnuPointInCompetition, "mnuPointInCompetition")
         ' 
@@ -301,26 +307,37 @@ Partial Class Form1
         resources.ApplyResources(mnuPointsForAccuracy, "mnuPointsForAccuracy")
         mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
         ' 
-        ' mnuPointsForHandlerText
+        ' mnuDogReadingPointsText
         ' 
-        mnuPointsForHandlerText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForHandler})
-        mnuPointsForHandlerText.Name = "mnuPointsForHandlerText"
-        resources.ApplyResources(mnuPointsForHandlerText, "mnuPointsForHandlerText")
+        mnuDogReadingPointsText.DropDownItems.AddRange(New ToolStripItem() {mnuDogReadingPoints})
+        mnuDogReadingPointsText.Name = "mnuDogReadingPointsText"
+        resources.ApplyResources(mnuDogReadingPointsText, "mnuDogReadingPointsText")
         ' 
-        ' mnuPointsForHandler
+        ' mnuDogReadingPoints
         ' 
-        resources.ApplyResources(mnuPointsForHandler, "mnuPointsForHandler")
-        mnuPointsForHandler.Name = "mnuPointsForHandler"
+        resources.ApplyResources(mnuDogReadingPoints, "mnuDogReadingPoints")
+        mnuDogReadingPoints.Name = "mnuDogReadingPoints"
+        ' 
+        ' mnuHelp
+        ' 
+        mnuHelp.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1, ToolStripSeparator1, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
+        mnuHelp.Name = "mnuHelp"
+        resources.ApplyResources(mnuHelp, "mnuHelp")
+        ' 
+        ' mnuAbout
+        ' 
+        mnuAbout.Name = "mnuAbout"
+        resources.ApplyResources(mnuAbout, "mnuAbout")
+        ' 
+        ' mnuCheckForUpdates1
+        ' 
+        mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
+        resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
         ' 
         ' ToolStripSeparator1
         ' 
         ToolStripSeparator1.Name = "ToolStripSeparator1"
         resources.ApplyResources(ToolStripSeparator1, "ToolStripSeparator1")
-        ' 
-        ' mnuSelectADirectoryToSaveVideo
-        ' 
-        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
-        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
         ' 
         ' mnuSetFFmpegPath
         ' 
@@ -336,22 +353,6 @@ Partial Class Form1
         ' 
         mnuFactoryReset.Name = "mnuFactoryReset"
         resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
-        ' 
-        ' HelpToolStripMenuItem
-        ' 
-        HelpToolStripMenuItem.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1})
-        HelpToolStripMenuItem.Name = "HelpToolStripMenuItem"
-        resources.ApplyResources(HelpToolStripMenuItem, "HelpToolStripMenuItem")
-        ' 
-        ' mnuAbout
-        ' 
-        mnuAbout.Name = "mnuAbout"
-        resources.ApplyResources(mnuAbout, "mnuAbout")
-        ' 
-        ' mnuCheckForUpdates1
-        ' 
-        mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
-        resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
         ' 
         ' mnuCheckUpdates
         ' 
@@ -499,7 +500,7 @@ Partial Class Form1
         dgvCompetition.BackgroundColor = Color.Salmon
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12F)
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle1.ForeColor = Color.Maroon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
@@ -508,7 +509,7 @@ Partial Class Form1
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
         DataGridViewCellStyle2.BackColor = Color.Beige
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12F)
+        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -540,6 +541,7 @@ Partial Class Form1
         TabCompetition.ResumeLayout(False)
         panelForDgv.ResumeLayout(False)
         CType(dgvCompetition, ISupportInitialize).EndInit()
+        CType(bsCompetitions, ISupportInitialize).EndInit()
         ResumeLayout(False)
         PerformLayout()
 
@@ -600,8 +602,6 @@ Partial Class Form1
 
         mnuPrependDateToFileName.Checked = True ' My.Settings.PrependDateToName
         'mnuTrimGPSNoise.Checked = My.Settings.TrimGPSnoise
-        'mnucbActiveCategory.SelectedItem = My.Settings.ActiveDog 'todo: načítat z json!
-
 
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
@@ -615,7 +615,7 @@ Partial Class Form1
         mnuPointsForFind.Text = Me.ActiveCategoryInfo.PointsForFindMax
         mnuPointsForSpeed.Text = Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed
         mnuPointsForAccuracy.Text = Me.ActiveCategoryInfo.PointsForAccuracyMax
-        mnuPointsForHandler.Text = Me.ActiveCategoryInfo.PointsForHandlerMax
+        mnuDogReadingPoints.Text = Me.ActiveCategoryInfo.PointsForDogReadingMax
 
 
         ReadHelp()
@@ -655,7 +655,7 @@ Partial Class Form1
     End Sub
 
 
-    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus, mnuPointsForHandler.LostFocus, mnuPointsForSpeed.LostFocus, mnuPointsForAccuracy.LostFocus
+    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus, mnuDogReadingPoints.LostFocus, mnuPointsForSpeed.LostFocus, mnuPointsForAccuracy.LostFocus
         If Integer.TryParse(mnuPointsForFind.Text, Nothing) Then
             Me.ActiveCategoryInfo.PointsForFindMax = mnuPointsForFind.Text
         End If
@@ -665,8 +665,8 @@ Partial Class Form1
         If Integer.TryParse(mnuPointsForAccuracy.Text, Nothing) Then
             Me.ActiveCategoryInfo.PointsForAccuracyMax = mnuPointsForAccuracy.Text
         End If
-        If Integer.TryParse(mnuPointsForHandler.Text, Nothing) Then
-            Me.ActiveCategoryInfo.PointsForHandlerMax = mnuPointsForHandler.Text
+        If Integer.TryParse(mnuDogReadingPoints.Text, Nothing) Then
+            Me.ActiveCategoryInfo.PointsForDogReadingMax = mnuDogReadingPoints.Text
         End If
         'aktualizace názvu menu
         'lokalizovaný text bez hodnot v závorce:
@@ -677,7 +677,7 @@ Partial Class Form1
     Me.ActiveCategoryInfo.PointsForFindMax,
     Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed,
     Me.ActiveCategoryInfo.PointsForAccuracyMax,
-    Me.ActiveCategoryInfo.PointsForHandlerMax)
+    Me.ActiveCategoryInfo.PointsForDogReadingMax)
 
     End Sub
 
@@ -700,7 +700,7 @@ Partial Class Form1
     Friend WithEvents mnuSelect_directory_gpx_files As ToolStripMenuItem
     Friend WithEvents StatusStrip1 As StatusStrip
     Friend WithEvents StatusLabel1 As ToolStripStatusLabel
-    Friend WithEvents mnuSettings As ToolStripMenuItem
+    Friend WithEvents mnuGPXprocessing As ToolStripMenuItem
     Friend WithEvents mnuPrependDateToFileName As ToolStripMenuItem
     Friend WithEvents mnuLanguage As ToolStripMenuItem
     Friend WithEvents mnuCzech As ToolStripMenuItem
@@ -712,7 +712,7 @@ Partial Class Form1
     Friend WithEvents mnuTrimGPSNoise As ToolStripMenuItem
     Friend WithEvents mnuExportAs As ToolStripMenuItem
     Friend WithEvents mnuMergingTracks As ToolStripMenuItem
-    Friend WithEvents ToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnuCategory As ToolStripMenuItem
     Friend WithEvents mnuFactoryReset As ToolStripMenuItem
     Friend WithEvents rtbWarnings As RichTextBox
     Friend WithEvents mnuAddNewCategory As ToolStripMenuItem
@@ -739,7 +739,7 @@ Partial Class Form1
     Private WithEvents btnCreateVideos As Button
     Friend WithEvents clmAge As ColumnHeader
     Friend WithEvents mnuCheckUpdates As ToolStripMenuItem
-    Friend WithEvents HelpToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents mnuHelp As ToolStripMenuItem
     Friend WithEvents mnuAbout As ToolStripMenuItem
     Friend WithEvents mnuCheckForUpdates1 As ToolStripMenuItem
     Friend WithEvents mnucbActiveCategory As ToolStripComboBox
@@ -752,14 +752,14 @@ Partial Class Form1
     Friend WithEvents mnuPointsForFind As ToolStripTextBox
     Friend WithEvents mnuPointsForSpeed As ToolStripTextBox
     Friend WithEvents mnuPointsForAccuracy As ToolStripTextBox
-    Friend WithEvents mnuPointsForHandler As ToolStripTextBox
+    Friend WithEvents mnuDogReadingPoints As ToolStripTextBox
     Friend WithEvents mnuPointInCompetition As ToolStripMenuItem
     Friend WithEvents mnuPointForFindText As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
     Friend WithEvents mnuPointsForSpeedText As ToolStripMenuItem
     Friend WithEvents mnuPointsForAccuracyText As ToolStripMenuItem
-    Friend WithEvents mnuPointsForHandlerText As ToolStripMenuItem
+    Friend WithEvents mnuDogReadingPointsText As ToolStripMenuItem
 
 
 End Class

@@ -348,13 +348,25 @@
   <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
     <value>Geben Sie die Anzahl der Punkte zum Finden der Riemenscheibe ein.</value>
   </data>
-  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
-    <value>Max. Punkte für den Hundeführer</value>
-  </data>
   <data name="TabStats.Text" xml:space="preserve">
     <value>Überblick</value>
   </data>
   <data name="TabCompetition.Text" xml:space="preserve">
     <value>Wertung</value>
+  </data>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Gpx-Verarbeitung</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Helfen</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Kategorie</value>
+  </data>
+  <data name="mnuFactoryReset.Text" xml:space="preserve">
+    <value>Werksreset</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Max. Punkte für Hundelesung</value>
   </data>
 </root>

@@ -336,4 +336,22 @@
   <data name="TabCompetition.Text" xml:space="preserve">
     <value>Скоринг</value>
   </data>
+  <data name="mnuPointsForHandler.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="mnuFactoryReset.Text" xml:space="preserve">
+    <value>Скидання до заводських налаштувань</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Довідка</value>
+  </data>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Обробка Gpx</value>
+  </data>
+  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
+    <value>Макс. бали для читання собак</value>
+  </data>
 </root>

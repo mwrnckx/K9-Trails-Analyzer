@@ -118,24 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>202, 17</value>
   </metadata>
   <metadata name="StatusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>309, 17</value>
+    <value>478, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="StatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>54, 17</value>
-  </data>
-  <data name="StatusLabel1.Text" xml:space="preserve">
-    <value>ToolStrip</value>
-  </data>
-  <data name="StatusLabel1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
-    <value>Directories can be set in the "File" menu</value>
-  </data>
   <data name="StatusStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 567</value>
   </data>
@@ -160,6 +148,18 @@
   </data>
   <data name="&gt;&gt;StatusStrip1.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="StatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>54, 17</value>
+  </data>
+  <data name="StatusLabel1.Text" xml:space="preserve">
+    <value>ToolStrip</value>
+  </data>
+  <data name="StatusLabel1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleLeft</value>
+  </data>
+  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
+    <value>Directories can be set in the "File" menu</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCreateVideos.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -206,10 +206,52 @@
     <value>0</value>
   </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>151, 17</value>
+    <value>328, 17</value>
   </metadata>
   <data name="MenuStrip1.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
+  </data>
+  <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="MenuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>5, 1, 0, 1</value>
+  </data>
+  <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 24</value>
+  </data>
+  <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="MenuStrip1.Text" xml:space="preserve">
+    <value>MenuStrip1</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Name" xml:space="preserve">
+    <value>MenuStrip1</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt</value>
+  </data>
+  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 22</value>
+  </data>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>276, 22</value>
+  </data>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Set output video folder</value>
   </data>
   <data name="mnuExportAs.Size" type="System.Drawing.Size, System.Drawing">
     <value>276, 22</value>
@@ -223,14 +265,14 @@
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Exit</value>
   </data>
-  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="mnuGPXprocessing.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+  <data name="mnuGPXprocessing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>132, 22</value>
   </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>File</value>
+  <data name="mnuGPXprocessing.Text" xml:space="preserve">
+    <value>Gpx processing</value>
   </data>
   <data name="mnuPrependDateToFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>388, 22</value>
@@ -265,14 +307,14 @@
   <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
     <value>Process files that have already been processed</value>
   </data>
-  <data name="mnuSettings.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>132, 22</value>
+  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 22</value>
   </data>
-  <data name="mnuSettings.Text" xml:space="preserve">
-    <value>Gpx processing</value>
+  <data name="mnuLanguage.Text" xml:space="preserve">
+    <value>Language</value>
   </data>
   <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 22</value>
@@ -310,14 +352,14 @@
   <data name="mnuRussian.Text" xml:space="preserve">
     <value>Русский</value>
   </data>
-  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="mnuCategory.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
     <value>84, 22</value>
   </data>
-  <data name="mnuLanguage.Text" xml:space="preserve">
-    <value>Language</value>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Category</value>
   </data>
   <data name="mnucbActiveCategory.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code SemiBold, 12pt, style=Bold</value>
@@ -352,6 +394,21 @@
   <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Delete current category</value>
   </data>
+  <data name="mnuPointInCompetition.Size" type="System.Drawing.Size, System.Drawing">
+    <value>420, 22</value>
+  </data>
+  <data name="mnuPointInCompetition.Text" xml:space="preserve">
+    <value>Set Points in Competition</value>
+  </data>
+  <data name="mnuPointInCompetition.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>TopRight</value>
+  </data>
+  <data name="mnuPointForFindText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 22</value>
+  </data>
+  <data name="mnuPointForFindText.Text" xml:space="preserve">
+    <value>Max. Points for Find</value>
+  </data>
   <data name="mnuPointsForFind.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
@@ -367,11 +424,11 @@
   <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
     <value>Enter the maximal number of points for finding the runner</value>
   </data>
-  <data name="mnuPointForFindText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>268, 22</value>
+  <data name="mnuPointsForSpeedText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 22</value>
   </data>
-  <data name="mnuPointForFindText.Text" xml:space="preserve">
-    <value>Max. Points for Find</value>
+  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
+    <value>Points for km/h</value>
   </data>
   <data name="mnuPointsForSpeed.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
@@ -388,11 +445,11 @@
   <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
     <value>Enter the number of points for speed (points per 1 km/h)</value>
   </data>
-  <data name="mnuPointsForSpeedText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>268, 22</value>
+  <data name="mnuPointsForAccuracyText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 22</value>
   </data>
-  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
-    <value>Points for km/h</value>
+  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
+    <value>Max. Points for Accuracy</value>
   </data>
   <data name="mnuPointsForAccuracy.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
@@ -409,74 +466,32 @@
   <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
     <value>Enter the maximum number of points for accuracy.</value>
   </data>
-  <data name="mnuPointsForAccuracyText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>268, 22</value>
+  <data name="mnuDogReadingPointsText.Size" type="System.Drawing.Size, System.Drawing">
+    <value>292, 22</value>
   </data>
-  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
-    <value>Max. Points for Accuracy</value>
+  <data name="mnuDogReadingPointsText.Text" xml:space="preserve">
+    <value>Max. points for dog reading</value>
   </data>
-  <data name="mnuPointsForHandler.MaxLength" type="System.Int32, mscorlib">
+  <data name="mnuDogReadingPoints.MaxLength" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
-  <data name="mnuPointsForHandler.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="mnuDogReadingPoints.Size" type="System.Drawing.Size, System.Drawing">
     <value>100, 23</value>
   </data>
-  <data name="mnuPointsForHandler.Text" xml:space="preserve">
+  <data name="mnuDogReadingPoints.Text" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="mnuPointsForHandler.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
+  <data name="mnuDogReadingPoints.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
     <value>Right</value>
   </data>
-  <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
-    <value>Enter the maximum number of points for the handler's ability to read the dog.</value>
+  <data name="mnuDogReadingPoints.ToolTipText" xml:space="preserve">
+    <value>Enter the maximum number of points for the doghandler's ability to read the dog.</value>
   </data>
-  <data name="mnuPointsForHandlerText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>268, 22</value>
+  <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 22</value>
   </data>
-  <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
-    <value>Max. Points for Handler</value>
-  </data>
-  <data name="mnuPointInCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
-  </data>
-  <data name="mnuPointInCompetition.Text" xml:space="preserve">
-    <value>Set Points in Competition</value>
-  </data>
-  <data name="mnuPointInCompetition.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
-  </data>
-  <data name="ToolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>417, 6</value>
-  </data>
-  <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
-  </data>
-  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
-    <value>Set output video folder</value>
-  </data>
-  <data name="mnuSetFFmpegPath.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
-  </data>
-  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
-    <value>Set FFmpeg path</value>
-  </data>
-  <data name="ToolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>417, 6</value>
-  </data>
-  <data name="mnuFactoryReset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
-  </data>
-  <data name="mnuFactoryReset.Text" xml:space="preserve">
-    <value>Factory reset</value>
-  </data>
-  <data name="ToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 10pt</value>
-  </data>
-  <data name="ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 22</value>
-  </data>
-  <data name="ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Settings</value>
+  <data name="mnuHelp.Text" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
     <value>212, 22</value>
@@ -490,38 +505,23 @@
   <data name="mnuCheckForUpdates1.Text" xml:space="preserve">
     <value>Check for updates</value>
   </data>
-  <data name="HelpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+  <data name="ToolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>209, 6</value>
   </data>
-  <data name="HelpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Help</value>
+  <data name="mnuSetFFmpegPath.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 22</value>
   </data>
-  <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="mnuSetFFmpegPath.Text" xml:space="preserve">
+    <value>Set FFmpeg path</value>
   </data>
-  <data name="MenuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>5, 1, 0, 1</value>
+  <data name="ToolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>209, 6</value>
   </data>
-  <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 24</value>
+  <data name="mnuFactoryReset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 22</value>
   </data>
-  <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>27</value>
-  </data>
-  <data name="MenuStrip1.Text" xml:space="preserve">
-    <value>MenuStrip1</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Name" xml:space="preserve">
-    <value>MenuStrip1</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;MenuStrip1.ZOrder" xml:space="preserve">
-    <value>3</value>
+  <data name="mnuFactoryReset.Text" xml:space="preserve">
+    <value>Factory reset</value>
   </data>
   <data name="mnuCheckUpdates.Size" type="System.Drawing.Size, System.Drawing">
     <value>32, 19</value>
@@ -559,6 +559,147 @@
   <data name="&gt;&gt;rtbWarnings.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="&gt;&gt;TabStats.Name" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;TabStats.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TabStats.Parent" xml:space="preserve">
+    <value>TabControl1</value>
+  </data>
+  <data name="&gt;&gt;TabStats.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;TabVideoExport.Name" xml:space="preserve">
+    <value>TabVideoExport</value>
+  </data>
+  <data name="&gt;&gt;TabVideoExport.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TabVideoExport.Parent" xml:space="preserve">
+    <value>TabControl1</value>
+  </data>
+  <data name="&gt;&gt;TabVideoExport.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;TabCompetition.Name" xml:space="preserve">
+    <value>TabCompetition</value>
+  </data>
+  <data name="&gt;&gt;TabCompetition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TabCompetition.Parent" xml:space="preserve">
+    <value>TabControl1</value>
+  </data>
+  <data name="&gt;&gt;TabCompetition.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="TabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="TabControl1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 24</value>
+  </data>
+  <data name="TabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
+  </data>
+  <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 427</value>
+  </data>
+  <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
+    <value>32</value>
+  </data>
+  <data name="&gt;&gt;TabControl1.Name" xml:space="preserve">
+    <value>TabControl1</value>
+  </data>
+  <data name="&gt;&gt;TabControl1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TabControl1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;TabControl1.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;rtbOutput.Name" xml:space="preserve">
+    <value>rtbOutput</value>
+  </data>
+  <data name="&gt;&gt;rtbOutput.Type" xml:space="preserve">
+    <value>System.Windows.Forms.RichTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;rtbOutput.Parent" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;rtbOutput.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.Name" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.Parent" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;btnCharts.Name" xml:space="preserve">
+    <value>btnCharts</value>
+  </data>
+  <data name="&gt;&gt;btnCharts.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnCharts.Parent" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;btnCharts.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;btnReadGpxFiles.Name" xml:space="preserve">
+    <value>btnReadGpxFiles</value>
+  </data>
+  <data name="&gt;&gt;btnReadGpxFiles.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnReadGpxFiles.Parent" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;btnReadGpxFiles.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="TabStats.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 30</value>
+  </data>
+  <data name="TabStats.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
+  </data>
+  <data name="TabStats.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
+  </data>
+  <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
+    <value>976, 393</value>
+  </data>
+  <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="&gt;&gt;TabStats.Name" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;TabStats.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TabStats.Parent" xml:space="preserve">
+    <value>TabControl1</value>
+  </data>
+  <data name="&gt;&gt;TabStats.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="rtbOutput.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
@@ -591,6 +732,75 @@
   </data>
   <data name="&gt;&gt;rtbOutput.ZOrder" xml:space="preserve">
     <value>0</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.Name" xml:space="preserve">
+    <value>cmbTimeInterval</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.Parent" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;cmbTimeInterval.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.Name" xml:space="preserve">
+    <value>dtpEndDate</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.Parent" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;dtpEndDate.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.Name" xml:space="preserve">
+    <value>dtpStartDate</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DateTimePicker, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.Parent" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;dtpStartDate.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="gbPeriod.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
+  </data>
+  <data name="gbPeriod.Location" type="System.Drawing.Point, System.Drawing">
+    <value>19, 13</value>
+  </data>
+  <data name="gbPeriod.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gbPeriod.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="gbPeriod.Size" type="System.Drawing.Size, System.Drawing">
+    <value>260, 137</value>
+  </data>
+  <data name="gbPeriod.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
+  </data>
+  <data name="gbPeriod.Text" xml:space="preserve">
+    <value>Select period</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.Name" xml:space="preserve">
+    <value>gbPeriod</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.Parent" xml:space="preserve">
+    <value>TabStats</value>
+  </data>
+  <data name="&gt;&gt;gbPeriod.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="cmbTimeInterval.Items" xml:space="preserve">
     <value>Last 7 days</value>
@@ -694,39 +904,6 @@
   <data name="&gt;&gt;dtpStartDate.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="gbPeriod.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
-  </data>
-  <data name="gbPeriod.Location" type="System.Drawing.Point, System.Drawing">
-    <value>19, 13</value>
-  </data>
-  <data name="gbPeriod.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="gbPeriod.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="gbPeriod.Size" type="System.Drawing.Size, System.Drawing">
-    <value>260, 137</value>
-  </data>
-  <data name="gbPeriod.TabIndex" type="System.Int32, mscorlib">
-    <value>33</value>
-  </data>
-  <data name="gbPeriod.Text" xml:space="preserve">
-    <value>Select period</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.Name" xml:space="preserve">
-    <value>gbPeriod</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.Parent" xml:space="preserve">
-    <value>TabStats</value>
-  </data>
-  <data name="&gt;&gt;gbPeriod.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="btnCharts.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
@@ -802,81 +979,6 @@
   <data name="&gt;&gt;btnReadGpxFiles.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="TabStats.Location" type="System.Drawing.Point, System.Drawing">
-    <value>4, 30</value>
-  </data>
-  <data name="TabStats.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="TabStats.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 393</value>
-  </data>
-  <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="TabStats.Text" xml:space="preserve">
-    <value>Overview</value>
-  </data>
-  <data name="&gt;&gt;TabStats.Name" xml:space="preserve">
-    <value>TabStats</value>
-  </data>
-  <data name="&gt;&gt;TabStats.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabPage, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;TabStats.Parent" xml:space="preserve">
-    <value>TabControl1</value>
-  </data>
-  <data name="&gt;&gt;TabStats.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="lvGpxFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
-  </data>
-  <data name="clmFileName.Text" xml:space="preserve">
-    <value>File</value>
-  </data>
-  <data name="clmFileName.Width" type="System.Int32, mscorlib">
-    <value>300</value>
-  </data>
-  <data name="clmDate.Text" xml:space="preserve">
-    <value>Date</value>
-  </data>
-  <data name="clmDate.Width" type="System.Int32, mscorlib">
-    <value>180</value>
-  </data>
-  <data name="clmLength.Text" xml:space="preserve">
-    <value>Length</value>
-  </data>
-  <data name="clmLength.Width" type="System.Int32, mscorlib">
-    <value>80</value>
-  </data>
-  <data name="clmAge.Text" xml:space="preserve">
-    <value>Age </value>
-  </data>
-  <data name="clmAge.Width" type="System.Int32, mscorlib">
-    <value>80</value>
-  </data>
-  <data name="clmTrkCount.Text" xml:space="preserve">
-    <value>Number of tracks</value>
-  </data>
-  <data name="clmTrkCount.Width" type="System.Int32, mscorlib">
-    <value>180</value>
-  </data>
-  <data name="lvGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>-3, 0</value>
-  </data>
-  <data name="lvGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
-  </data>
-  <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 388</value>
-  </data>
-  <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
-    <value>33</value>
-  </data>
   <data name="&gt;&gt;lvGpxFiles.Name" xml:space="preserve">
     <value>lvGpxFiles</value>
   </data>
@@ -919,44 +1021,62 @@
   <data name="&gt;&gt;TabVideoExport.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="panelForDgv.AutoScroll" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="lvGpxFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="dgvCompetition.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="lvGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>-3, 0</value>
   </data>
-  <data name="dgvCompetition.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
-    <value>None</value>
+  <data name="lvGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>3, 2, 3, 2</value>
   </data>
-  <data name="dgvCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>3000, 2000</value>
+  <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>976, 388</value>
   </data>
-  <data name="dgvCompetition.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
+    <value>33</value>
   </data>
-  <data name="&gt;&gt;dgvCompetition.Name" xml:space="preserve">
-    <value>dgvCompetition</value>
+  <data name="&gt;&gt;lvGpxFiles.Name" xml:space="preserve">
+    <value>lvGpxFiles</value>
   </data>
-  <data name="&gt;&gt;dgvCompetition.Type" xml:space="preserve">
-    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;lvGpxFiles.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;dgvCompetition.Parent" xml:space="preserve">
-    <value>panelForDgv</value>
+  <data name="&gt;&gt;lvGpxFiles.Parent" xml:space="preserve">
+    <value>TabVideoExport</value>
   </data>
-  <data name="&gt;&gt;dgvCompetition.ZOrder" xml:space="preserve">
-    <value>0</value>
+  <data name="&gt;&gt;lvGpxFiles.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
-  <data name="panelForDgv.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="clmFileName.Text" xml:space="preserve">
+    <value>File</value>
   </data>
-  <data name="panelForDgv.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+  <data name="clmFileName.Width" type="System.Int32, mscorlib">
+    <value>300</value>
   </data>
-  <data name="panelForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 393</value>
+  <data name="clmDate.Text" xml:space="preserve">
+    <value>Date</value>
   </data>
-  <data name="panelForDgv.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+  <data name="clmDate.Width" type="System.Int32, mscorlib">
+    <value>180</value>
+  </data>
+  <data name="clmLength.Text" xml:space="preserve">
+    <value>Length</value>
+  </data>
+  <data name="clmLength.Width" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <data name="clmAge.Text" xml:space="preserve">
+    <value>Age </value>
+  </data>
+  <data name="clmAge.Width" type="System.Int32, mscorlib">
+    <value>80</value>
+  </data>
+  <data name="clmTrkCount.Text" xml:space="preserve">
+    <value>Number of tracks</value>
+  </data>
+  <data name="clmTrkCount.Width" type="System.Int32, mscorlib">
+    <value>180</value>
   </data>
   <data name="&gt;&gt;panelForDgv.Name" xml:space="preserve">
     <value>panelForDgv</value>
@@ -994,33 +1114,72 @@
   <data name="&gt;&gt;TabCompetition.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="TabControl1.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
-    <value>Fill</value>
+  <data name="panelForDgv.AutoScroll" type="System.Boolean, mscorlib">
+    <value>True</value>
   </data>
-  <data name="TabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 24</value>
+  <data name="&gt;&gt;dgvCompetition.Name" xml:space="preserve">
+    <value>dgvCompetition</value>
   </data>
-  <data name="TabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>3, 2, 3, 2</value>
+  <data name="&gt;&gt;dgvCompetition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 427</value>
+  <data name="&gt;&gt;dgvCompetition.Parent" xml:space="preserve">
+    <value>panelForDgv</value>
   </data>
-  <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
-    <value>32</value>
-  </data>
-  <data name="&gt;&gt;TabControl1.Name" xml:space="preserve">
-    <value>TabControl1</value>
-  </data>
-  <data name="&gt;&gt;TabControl1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TabControl, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;TabControl1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;TabControl1.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;dgvCompetition.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="panelForDgv.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
+  <data name="panelForDgv.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="panelForDgv.Size" type="System.Drawing.Size, System.Drawing">
+    <value>976, 393</value>
+  </data>
+  <data name="panelForDgv.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;panelForDgv.Name" xml:space="preserve">
+    <value>panelForDgv</value>
+  </data>
+  <data name="&gt;&gt;panelForDgv.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;panelForDgv.Parent" xml:space="preserve">
+    <value>TabCompetition</value>
+  </data>
+  <data name="&gt;&gt;panelForDgv.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="dgvCompetition.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="dgvCompetition.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
+    <value>None</value>
+  </data>
+  <data name="dgvCompetition.Size" type="System.Drawing.Size, System.Drawing">
+    <value>3000, 2000</value>
+  </data>
+  <data name="dgvCompetition.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;dgvCompetition.Name" xml:space="preserve">
+    <value>dgvCompetition</value>
+  </data>
+  <data name="&gt;&gt;dgvCompetition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;dgvCompetition.Parent" xml:space="preserve">
+    <value>panelForDgv</value>
+  </data>
+  <data name="&gt;&gt;dgvCompetition.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <metadata name="bsCompetitions.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -1060,6 +1219,12 @@
   <data name="&gt;&gt;mnuFile.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuSelectADirectoryToSaveVideo.Name" xml:space="preserve">
+    <value>mnuSelectADirectoryToSaveVideo</value>
+  </data>
+  <data name="&gt;&gt;mnuSelectADirectoryToSaveVideo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuExportAs.Name" xml:space="preserve">
     <value>mnuExportAs</value>
   </data>
@@ -1072,10 +1237,10 @@
   <data name="&gt;&gt;mnuExit.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuSettings.Name" xml:space="preserve">
-    <value>mnuSettings</value>
+  <data name="&gt;&gt;mnuGPXprocessing.Name" xml:space="preserve">
+    <value>mnuGPXprocessing</value>
   </data>
-  <data name="&gt;&gt;mnuSettings.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuGPXprocessing.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuPrependDateToFileName.Name" xml:space="preserve">
@@ -1144,10 +1309,10 @@
   <data name="&gt;&gt;mnuRussian.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;ToolStripMenuItem.Name" xml:space="preserve">
-    <value>ToolStripMenuItem</value>
+  <data name="&gt;&gt;mnuCategory.Name" xml:space="preserve">
+    <value>mnuCategory</value>
   </data>
-  <data name="&gt;&gt;ToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
@@ -1222,29 +1387,41 @@
   <data name="&gt;&gt;mnuPointsForAccuracy.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuPointsForHandlerText.Name" xml:space="preserve">
-    <value>mnuPointsForHandlerText</value>
+  <data name="&gt;&gt;mnuDogReadingPointsText.Name" xml:space="preserve">
+    <value>mnuDogReadingPointsText</value>
   </data>
-  <data name="&gt;&gt;mnuPointsForHandlerText.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuDogReadingPointsText.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuPointsForHandler.Name" xml:space="preserve">
-    <value>mnuPointsForHandler</value>
+  <data name="&gt;&gt;mnuDogReadingPoints.Name" xml:space="preserve">
+    <value>mnuDogReadingPoints</value>
   </data>
-  <data name="&gt;&gt;mnuPointsForHandler.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuDogReadingPoints.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">
+    <value>mnuHelp</value>
+  </data>
+  <data name="&gt;&gt;mnuHelp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuAbout.Name" xml:space="preserve">
+    <value>mnuAbout</value>
+  </data>
+  <data name="&gt;&gt;mnuAbout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuCheckForUpdates1.Name" xml:space="preserve">
+    <value>mnuCheckForUpdates1</value>
+  </data>
+  <data name="&gt;&gt;mnuCheckForUpdates1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;ToolStripSeparator1.Name" xml:space="preserve">
     <value>ToolStripSeparator1</value>
   </data>
   <data name="&gt;&gt;ToolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuSelectADirectoryToSaveVideo.Name" xml:space="preserve">
-    <value>mnuSelectADirectoryToSaveVideo</value>
-  </data>
-  <data name="&gt;&gt;mnuSelectADirectoryToSaveVideo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuSetFFmpegPath.Name" xml:space="preserve">
     <value>mnuSetFFmpegPath</value>
@@ -1262,24 +1439,6 @@
     <value>mnuFactoryReset</value>
   </data>
   <data name="&gt;&gt;mnuFactoryReset.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;HelpToolStripMenuItem.Name" xml:space="preserve">
-    <value>HelpToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;HelpToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuAbout.Name" xml:space="preserve">
-    <value>mnuAbout</value>
-  </data>
-  <data name="&gt;&gt;mnuAbout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuCheckForUpdates1.Name" xml:space="preserve">
-    <value>mnuCheckForUpdates1</value>
-  </data>
-  <data name="&gt;&gt;mnuCheckForUpdates1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuCheckUpdates.Name" xml:space="preserve">
@@ -1317,6 +1476,12 @@
   </data>
   <data name="&gt;&gt;clmTrkCount.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;bsCompetitions.Name" xml:space="preserve">
+    <value>bsCompetitions</value>
+  </data>
+  <data name="&gt;&gt;bsCompetitions.Type" xml:space="preserve">
+    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>Form1</value>

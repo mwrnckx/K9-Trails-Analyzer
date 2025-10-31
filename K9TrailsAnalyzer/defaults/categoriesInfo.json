@@ -6,7 +6,7 @@
       "PointsForFindMax": 100,
     "PointsPerKmhGrossSpeed": 20,
     "PointsForAccuracyMax": 100,
-    "PointsForHandlerMax": 100
+    "PointsForDogReadingMax": 100
     },
     {
     "id": "002",
@@ -15,7 +15,7 @@
       "PointsForFindMax": 100,
     "PointsPerKmhGrossSpeed": 20,
     "PointsForAccuracyMax": 100,
-    "PointsForHandlerMax": 100
+    "PointsForDogReadingMax": 100
     },
      {
     "id": "003",
@@ -24,6 +24,6 @@
       "PointsForFindMax": 100,
     "PointsPerKmhGrossSpeed": 20,
     "PointsForAccuracyMax": 100,
-    "PointsForHandlerMax": 100
+    "PointsForDogReadingMax": 100
     }
 ]
