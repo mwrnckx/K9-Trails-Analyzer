@@ -236,15 +236,15 @@ Public Class GpxFileManager
                     If Not _gpxRecord.IsAlreadyProcessed Then
                         _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description) 'async kvůli počasí!
                     End If
-                    Dim pointsTotal As Integer = _gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints
-                    Dim performancePoints As String = $"🏆Total: {pointsTotal} points{vbCrLf}
-❤Final Find: {_gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
-🚀Speed: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints} points ({_gpxRecord.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
-🎯Dog Accuracy: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
-👁Reading Cues: {_gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForHandlerMax})."
-                    For Each kvp In _gpxRecord.LocalisedReports
-                        kvp.Value.PerformancePoints.Text = performancePoints
-                    Next
+                    '                    Dim pointsTotal As Integer = _gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints
+                    '                    Dim performancePoints As String = $"🏆Total: {pointsTotal} points{vbCrLf}
+                    '❤Final Find: {_gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
+                    '🚀Speed: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints} points ({_gpxRecord.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
+                    '🎯Dog Accuracy: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
+                    '👁Reading Cues: {_gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForHandlerMax})."
+                    '                    For Each kvp In _gpxRecord.LocalisedReports
+                    '                        kvp.Value.PerformancePoints.Text = performancePoints
+                    '                    Next
 
                     If _gpxRecord.IsAlreadyProcessed = False Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku Runner
@@ -621,7 +621,7 @@ Public Structure TrailStatsStructure
     Public Property PoitsInMTCompetition As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, HandlerCheckPoints As Integer) ' number of points in MT Competition according to the rules
     Public Property CheckpointsEval As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
-    Public Property runnerFound As Boolean ' whether dog found the runner or not
+    Public Property RunnerFound As Boolean ' whether dog found the runner or not
 End Structure
 
 Public Class GPXRecord
@@ -1219,8 +1219,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Return (dateTimeFromFileName, fileNameWithoutDate)
         Catch ex As Exception
             Debug.WriteLine($"{fileName} - Error in date format")
-                Return (Nothing, fileName)
-            End Try
+            Return (Nothing, fileName)
+        End Try
         'Else
         '    Debug.WriteLine($"{fileName} - Date not found")
         '    Return (Nothing, fileName)
@@ -1309,7 +1309,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 trailPart = (Me.TrailDistance / 1000.0).ToString("F1") & NBSP & "km"
             End If
             If ageFromTime.TotalHours > 0 Then
-                trailPart &= "  ⌛:" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
+                trailPart &= "  ⌛" & NBSP & ageFromTime.TotalHours.ToString("F1") & NBSP & "h"
             End If
 
         End If
@@ -1476,6 +1476,25 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                 End Select
             End If
         Next i
+
+        For Each kvp In Me.LocalisedReports
+            Dim txtTotal = Localizer.GetString("Total", kvp.Key)
+            Dim txtpoints = Localizer.GetString("points", kvp.Key) 'todo dodělat lokalizaci
+            Dim txtof = Localizer.GetString("ofPoints", kvp.Key)
+            Dim txtFinalFind = Localizer.GetString("FinalFind", kvp.Key)
+            Dim txtSpeed = Localizer.GetString("Speed", kvp.Key)
+            Dim txtAccuracy = Localizer.GetString("Accuracy", kvp.Key)
+            Dim txtReadingCues = Localizer.GetString("ReadingCues", kvp.Key)
+            Dim pointsTotal As Integer = Me.TrailStats.PoitsInMTCompetition.RunnerFoundPoints + Me.TrailStats.PoitsInMTCompetition.DogSpeedPoints + Me.TrailStats.PoitsInMTCompetition.DogAccuracyPoints + Me.TrailStats.PoitsInMTCompetition.HandlerCheckPoints
+            Dim performancePoints As String = $"🏆{txtTotal}: {pointsTotal} {txtpoints}{vbCrLf}
+        ❤{txtFinalFind}: {Me.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
+        🚀{txtSpeed}: {Me.TrailStats.PoitsInMTCompetition.DogSpeedPoints} {txtpoints} ({Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
+        🎯{txtAccuracy}: {Me.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
+        👁{txtReadingCues}: {Me.TrailStats.PoitsInMTCompetition.HandlerCheckPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForHandlerMax})."
+
+            kvp.Value.PerformancePoints.Text = performancePoints
+        Next
+
 
         Return newDescription.ToString().Trim()
 
@@ -1823,7 +1842,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
        .DogGrossSpeed = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
         .Deviation = If(movementAnalysis.MovingTime.TotalSeconds > 0, movementAnalysis.TotalWeightedDeviation / movementAnalysis.MovingTime.TotalSeconds, -1.0),
         .CheckpointsEval = checkPointsEvals,
-        .runnerFound = If(Weight(movementAnalysis.MinDistanceToRunnerEnd) >= 0.75, True, False), ' up to distance of 15 meters full weight (gps accuracy?), after that zero
+        .RunnerFound = If(Weight(movementAnalysis.MinDistanceToRunnerEnd) >= 0.75, True, False), ' up to distance of 15 meters full weight (gps accuracy?), after that zero
         .MaxTeamDistance = maxDistance
     }
         If movementAnalysis.MovingTime.TotalHours > 0 Then
@@ -2228,7 +2247,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         ' --- Step 1: Calculate points based on the primary outcome (Find vs. No-Find) ---
 
         ' --- SUCCESS PATH: The runner was found ---
-        If stats.runnerFound Then
+        If stats.RunnerFound Then
             RunnerFoundPoints = POINTS_FOR_FIND
         Else
             ' --- FAILURE PATH: The runner was not found ---
@@ -2793,11 +2812,13 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             Dim localizedReport As TrailReport = Me.LocalisedReports(key)
             Dim reportNode As XmlNode = Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "report", "", True, "lang", key, GpxReader.K9_NAMESPACE_URI)
             'přidá do <report> <dogName>, <goal>, <trail>, <performance>, <weather>
+            'todo: performancePoints!!!!
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "dogName", localizedReport.Category.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trail", localizedReport.Trail.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            Dim ScoringNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "scoring", localizedReport.PerformancePoints.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.WriteWeatherDataToXml(reportNode, weatherNode, localizedReport.WeatherData)
         Next
         Return True
@@ -2818,11 +2839,13 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             For Each reportNode As XmlNode In reportNodes
                 Dim lang As String = reportNode.Attributes("lang")?.Value
                 If String.IsNullOrEmpty(lang) Then Continue For ' pokud není jazyk, přeskočíme
+                'todo: performancePoints!!!
                 Dim dogNameNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "dogName", reportNode)
                 Dim goalNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "goal", reportNode)
                 Dim trailNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "trail", reportNode)
                 Dim performanceNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "performance", reportNode)
                 Dim weatherNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weather", reportNode)
+                Dim scoringNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "scoring", reportNode)
                 'Dim weatherDataNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weatherdata", reportNode)
                 Dim weatherData As (temperature As Double?,
                                                   windSpeed As Double?,
@@ -2837,7 +2860,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                    If(goalNode?.InnerText, ""),
                     If(trailNode?.InnerText, ""),
                     If(performanceNode?.InnerText, ""),
-                  "",'points not stored in XML, calculated on the fly according to poits in category
+                       If(scoringNode?.InnerText, ""),
                    weatherData,
                     If(weatherNode?.InnerText, ""))
 
@@ -2909,7 +2932,64 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Return (t, ws, wd, p, rh, cc)
     End Function
 
+    ' Uloží tuple do XML elementu pomocí CreateAndAddElement
+    'todo: přepsat na atributy scoringu!!!!
+    Private Sub WriteScoringDataToXml(parentNode As XmlElement, weatherNode As XmlNode,
+                                  weatherData As (temperature As Double?,
+                                                  windSpeed As Double?,
+                                                  windDirection As Double?,
+                                                  precipitation As Double?,
+                                                  relHumidity As Double?,
+                                                  cloudCover As Double?))
 
+        '' 1️⃣ Vytvoříme prázdný element <weatherdata> v tvém namespace
+        'Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(parentNode,
+        '                                                GpxReader.K9_PREFIX & ":weatherdata",
+        '                                                "",
+        '                                                True,
+        '                                                "",
+        '                                                "",
+        '                                                GpxReader.K9_NAMESPACE_URI)
+
+        ' 2️⃣ Funkce pro zápis atributu
+        Dim setAttr = Sub(name As String, value As Double?)
+                          If value.HasValue Then
+                              CType(weatherNode, XmlElement).SetAttribute(name, value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                          Else
+                              CType(weatherNode, XmlElement).SetAttribute(name, "")
+                          End If
+                      End Sub
+
+        ' 3️⃣ Nastavení atributů
+        setAttr("temperature", weatherData.temperature)
+        setAttr("windSpeed", weatherData.windSpeed)
+        setAttr("windDirection", weatherData.windDirection)
+        setAttr("precipitation", weatherData.precipitation)
+        setAttr("relHumidity", weatherData.relHumidity)
+        setAttr("cloudCover", weatherData.cloudCover)
+    End Sub
+
+    ' Načte tuple z XML elementu
+    Private Function ReadScoringDataFromXml(weatherDataNode As XmlNode) As (Double?, Double?, Double?, Double?, Double?, Double?)
+        Dim parseNullable = Function(text As String) As Double?
+                                If String.IsNullOrWhiteSpace(text) Then Return Nothing
+                                Dim result As Double
+                                If Double.TryParse(text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, result) Then
+                                    Return result
+                                Else
+                                    Return Nothing
+                                End If
+                            End Function
+        'todo: přepsat na atributy scoringu!!
+        Dim t = parseNullable(weatherDataNode?.Attributes("temperature")?.Value)
+        Dim ws = parseNullable(weatherDataNode?.Attributes("windSpeed")?.Value)
+        Dim wd = parseNullable(weatherDataNode?.Attributes("windDirection")?.Value)
+        Dim p = parseNullable(weatherDataNode?.Attributes("precipitation")?.Value)
+        Dim rh = parseNullable(weatherDataNode?.Attributes("relHumidity")?.Value)
+        Dim cc = parseNullable(weatherDataNode?.Attributes("cloudCover")?.Value)
+
+        Return (t, ws, wd, p, rh, cc)
+    End Function
 
 End Class
 
@@ -2939,6 +3019,8 @@ Public Class GpxReader
             Return Path.GetFileName(FilePath)
         End Get
     End Property
+
+
 
     'Public Property Nodes As XmlNodeList
     Public Property rootNode As XmlNode

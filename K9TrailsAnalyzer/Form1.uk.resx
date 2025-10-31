@@ -264,9 +264,6 @@
   <data name="clmLength.Text" xml:space="preserve">
     <value>Довжина</value>
   </data>
-  <data name="TabStats.Text" xml:space="preserve">
-    <value>Статистика</value>
-  </data>
   <data name="clmAge.Text" xml:space="preserve">
     <value>Вік</value>
   </data>
@@ -332,5 +329,11 @@
   </data>
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
     <value>Введіть максимальну кількість балів для здатності обробника читати собаку.</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Огляд</value>
+  </data>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Скоринг</value>
   </data>
 </root>

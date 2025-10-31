@@ -282,9 +282,6 @@
   <data name="btnCreateVideos.ToolTip" xml:space="preserve">
     <value>Создать видео из выбранных файлов</value>
   </data>
-  <data name="TabStats.Text" xml:space="preserve">
-    <value>Статистика</value>
-  </data>
   <data name="SToolStripMenuItem.Text" xml:space="preserve">
     <value>Настройки</value>
   </data>
@@ -336,10 +333,16 @@
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
     <value>Введите максимальное количество баллов за умение хендлера читать собаку.</value>
   </data>
-  <data name="TabCompetition.Text" xml:space="preserve">
-    <value>Испытание по мантрейлингу</value>
-  </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Макс. Очки для хендлера</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Обзор</value>
+  </data>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Подсчет очков</value>
+  </data>
+  <data name="mnuPointInCompetition.Text" xml:space="preserve">
+    <value>Установленные очки в соревновании</value>
   </data>
 </root>

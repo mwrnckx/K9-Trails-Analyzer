@@ -19,6 +19,7 @@ Imports Windows.Win32.System
 
 
 
+
 Partial Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
@@ -137,15 +138,14 @@ Partial Public Class Form1
                 .RunnerFoundPoints = stats.PoitsInMTCompetition.RunnerFoundPoints,
                 .DogSpeedPoints = stats.PoitsInMTCompetition.DogSpeedPoints,
                 .DogAccuracyPoints = stats.PoitsInMTCompetition.DogAccuracyPoints,
-                .HandlerCheckPoints = stats.PoitsInMTCompetition.HandlerCheckPoints,
-                .Notes = ""
-            })
+                .HandlerCheckPoints = stats.PoitsInMTCompetition.HandlerCheckPoints
+                 })
 
             Dim displayItem = displayList.Last()
-            displayItem.TotalPoints = displayItem.RunnerFoundPoints +
-                               displayItem.DogSpeedPoints +
-                               displayItem.DogAccuracyPoints +
-                               displayItem.HandlerCheckPoints
+            'displayItem.TotalPoints = displayItem.RunnerFoundPoints +
+            '                   displayItem.DogSpeedPoints +
+            '                   displayItem.DogAccuracyPoints +
+            '                   displayItem.HandlerCheckPoints
             ' Nyní přidejte data pro první dva checkpointy z CheckpointsEval
             Dim firstIndex As Integer = 0
             Dim secondIndex As Integer = 0
@@ -171,20 +171,61 @@ Partial Public Class Form1
             End If
         Next i
 
-        displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints)) ' Seřadit sestupně 
+        'displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints)) ' Seřadit sestupně 
 
-        'vypíše pořadí v soutěži:
-        Dim ranking As Integer = 1
-        For Each item In displayList
-            item.Ranking = ranking.ToString & "."
-            ranking += 1
+        ''vypíše pořadí v soutěži:
+        'Dim ranking As Integer = 1
+        'For Each item In displayList
+        '    item.Ranking = ranking.ToString & "."
+        '    ranking += 1
+        'Next
+
+        For Each item In Me.displayList
+            ' Přihlášení k události PropertyChanged každého objektu
+            AddHandler item.PropertyChanged, AddressOf Me.TrailItem_PropertyChanged
         Next
+
+        UpdateRankingAndDisplay(False) ' Aktualizuje řazení a pořadí
 
         dgvCompetition.Columns.Clear()
         Me.bsCompetitions.DataSource = Me.displayList 'bindingSource kvůli řazení sloupců
         Me.dgvCompetition.DataSource = Me.bsCompetitions
         'zformátovat dgvCompetition:
         Me.FormatDgvCompetition()
+    End Sub
+
+    ' V modulu formuláře (.vb)
+
+    Private Sub TrailItem_PropertyChanged(sender As Object, e As PropertyChangedEventArgs)
+
+        ' Zkontrolujte, zda se změnily vypočítané TotalPoints.
+        If e.PropertyName = NameOf(TrailStatsDisplay.TotalPoints) Then
+            ' TotalPoints se změnily, musíme znovu seřadit celý seznam a aktualizovat pořadí
+            Me.UpdateRankingAndDisplay(True)
+        End If
+
+    End Sub
+
+    Private Sub UpdateRankingAndDisplay(Optional resetBindings As Boolean = False)
+        ' 1. Seřadit displayList (sestupně podle TotalPoints)
+        ' Funkce CompareTo pro Integer je nejpřímější. Pro sestupné řazení se vymění a a b
+        Me.displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints))
+
+        ' 2. Aktualizovat vlastnost Ranking
+        Dim ranking As Integer = 1
+        For Each item In Me.displayList
+            ' Důležité: Nastavte Ranking pomocí vlastnosti, kde máte implementovaný INotifyPropertyChanged
+            ' i pro Ranking. Pokud Ranking nemá INotifyPropertyChanged, musíte ho přidat.
+            ' Předpokládáme, že jej nyní přidáme do TrailStatsDisplay (viz Krok 2).
+            item.Ranking = ranking.ToString() & "."
+            ranking += 1
+        Next
+
+        ' 3. Vynutit aktualizaci DataGridView (klíčové)
+        ' Protože jsme změnili pořadí v podkladovém listu, musíme BindingSource
+        ' upozornit, že se všechna data změnila.
+        If resetBindings Then Me.bsCompetitions.ResetBindings(False)
+
     End Sub
 
     Private Sub FormatDgvCompetition()
@@ -296,6 +337,11 @@ Partial Public Class Form1
             End If
         Next
         Me.dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font = New Font(Me.dgvCompetition.Columns("TotalPoints").DefaultCellStyle.Font, FontStyle.Bold)
+
+        ' Ranking je pouze pro čtení
+        If Me.dgvCompetition.Columns.Contains(NameOf(TrailStatsDisplay.Ranking)) Then
+            Me.dgvCompetition.Columns(NameOf(TrailStatsDisplay.Ranking)).ReadOnly = True
+        End If
 
     End Sub
     ' Funkce nahradí mezery v textu záhlaví za zalomení řádku (vbCrLf)
@@ -1592,29 +1638,149 @@ End Class
 
 
 Public Class TrailStatsDisplay
+    Implements INotifyPropertyChanged ' Implementace rozhraní
+
+    ' Událost INotifyPropertyChanged
+    Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
+
+    ' Metoda pro spuštění události PropertyChanged
+    Protected Sub OnPropertyChanged(ByVal name As String)
+        RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs(name))
+    End Sub
+
+    ' Privátní proměnné pro zálohované pole (backing fields)
+    Private _runnerFoundPoints As Integer
+    Private _dogSpeedPoints As Integer
+    Private _dogAccuracyPoints As Integer
+    Private _handlerCheckPoints As Integer
+    Private _totalPoints As Integer
+    Private _DogName As String ' Přidáme i DogName, protože to je editovatelný sloupec
+    Private _HandlerName As String
+    Private _ranking As String
+
     <DisplayName("File")>
     Public Property GPXFilename As String ' 
+
     <DisplayName("Start")>
     Public Property StartTime As Date ' start time of the trail (from the runner's track)
 
-    <DisplayName("Dog")>
-    Public Property DogName As String ' 
-    <DisplayName("Handler")>
-    Public Property HandlerName As String ' name of the handler 
 
+    <DisplayName("Dog")>
+    Public Property DogName As String
+        Get
+            Return _DogName
+        End Get
+        Set(value As String)
+            If _DogName <> value Then
+                _DogName = value
+                OnPropertyChanged(NameOf(DogName))
+            End If
+        End Set
+    End Property
+
+
+    <DisplayName("Handler")>
+    Public Property HandlerName As String
+        Get
+            Return _HandlerName
+        End Get
+        Set(value As String)
+            If _HandlerName <> value Then
+                _HandlerName = value
+                OnPropertyChanged(NameOf(HandlerName))
+            End If
+        End Set
+    End Property
+
+
+    ' 2. VLASTNOSTi, KTERÁ SE PŘEPOČÍTÁVÁJÍ:
     <DisplayName("Ranking")>
     Public Property Ranking As String ' 
+        Get
+            Return _ranking
+        End Get
+        Set(value As String)
+            If _ranking <> value Then
+                _ranking = value
+                OnPropertyChanged(NameOf(Ranking))
+            End If
+        End Set
+    End Property
 
     <DisplayName("Total Points")>
-    Public Property TotalPoints As Integer
+    Public ReadOnly Property TotalPoints As Integer
+        Get
+            Return _totalPoints
+        End Get
+    End Property
+
+    ' 1. VLASTNOSTI, KTERÉ MŮŽE UŽIVATEL EDITOVAT:
+    ' U těchto vlastností přidáme logiku INotifyPropertyChanged a automatický přepočet
+
     <DisplayName("Successful Find Points")>
     Public Property RunnerFoundPoints As Integer
+        Get
+            Return _runnerFoundPoints
+        End Get
+        Set(value As Integer)
+            If _runnerFoundPoints <> value Then
+                _runnerFoundPoints = value
+                OnPropertyChanged(NameOf(RunnerFoundPoints))
+
+                ' Zde voláme metodu pro přepočet, která zajistí,
+                ' že se aktualizuje i TotalPoints
+                CalculateTotalPoints()
+            End If
+        End Set
+    End Property
+
+
+
     <DisplayName("Dog Speed Points")>
     Public Property DogSpeedPoints As Integer
+        Get
+            Return _dogSpeedPoints
+        End Get
+        Set(value As Integer)
+            If _dogSpeedPoints <> value Then
+                _dogSpeedPoints = value
+                OnPropertyChanged(NameOf(DogSpeedPoints))
+                CalculateTotalPoints()
+            End If
+        End Set
+    End Property
+
     <DisplayName("Dog Accuracy Points")>
     Public Property DogAccuracyPoints As Integer
+        Get
+            Return _dogAccuracyPoints
+        End Get
+        Set(value As Integer)
+            If _dogAccuracyPoints <> value Then
+                _dogAccuracyPoints = value
+                OnPropertyChanged(NameOf(DogAccuracyPoints))
+                CalculateTotalPoints()
+            End If
+        End Set
+    End Property
+
     <DisplayName("Reading Cues Points")>
-    Public Property HandlerCheckPoints As Integer ' number of points in MT Competition according to the rules
+    Public Property HandlerCheckPoints As Integer
+        Get
+            Return _handlerCheckPoints
+        End Get
+        Set(value As Integer)
+            If _handlerCheckPoints <> value Then
+                _handlerCheckPoints = value
+                OnPropertyChanged(NameOf(HandlerCheckPoints))
+                CalculateTotalPoints()
+            End If
+        End Set
+    End Property
+
+    '3. Ostatní vlastnosti (GPXFilename, StartTime, DogName atd.) mohou zůstat jako Auto-Implemented Properties,
+    ' protože jejich hodnota by se neměla po startu měnit, nebo je nemusíte notifikovat.
+    ' 
 
     <DisplayName("Dog Speed km/h")>
     Public Property DogGrossSpeedKmh As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
@@ -1661,8 +1827,25 @@ Public Class TrailStatsDisplay
     <DisplayName("Runner name")>
     Public Property RunnerName As String '
 
-    Public Property Notes As String
+
+    ' 3. METODA PRO PŘEPOČET
+
+    Public Sub CalculateTotalPoints()
+        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.HandlerCheckPoints
+
+        ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
+        If _totalPoints <> newTotal Then
+            _totalPoints = newTotal
+
+            ' KLÍČOVÝ KROK: Oznámíme, že se TotalPoints změnilo
+            OnPropertyChanged(NameOf(TotalPoints))
+        End If
+    End Sub
+
+
 End Class
+
+
 
 
 

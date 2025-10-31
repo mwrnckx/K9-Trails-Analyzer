@@ -358,6 +358,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný points.
+        '''</summary>
+        Friend Shared ReadOnly Property points() As String
+            Get
+                Return ResourceManager.GetString("points", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Next time ask again.
         '''</summary>
         Friend Shared ReadOnly Property rbAskAgein() As String

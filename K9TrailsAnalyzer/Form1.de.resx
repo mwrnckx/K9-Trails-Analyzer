@@ -291,9 +291,6 @@
   <data name="TabVideoExport.Text" xml:space="preserve">
     <value>🎬 Videoexport</value>
   </data>
-  <data name="TabStats.Text" xml:space="preserve">
-    <value>Statistiken</value>
-  </data>
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Ende</value>
   </data>
@@ -353,5 +350,11 @@
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Max. Punkte für den Hundeführer</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Überblick</value>
+  </data>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Wertung</value>
   </data>
 </root>

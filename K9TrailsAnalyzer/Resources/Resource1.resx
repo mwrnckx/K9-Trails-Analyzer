@@ -296,4 +296,7 @@ If there are only two routes, it's pretty straightforward - the first is the sub
   <data name="article" xml:space="preserve">
     <value>Checkpoint</value>
   </data>
+  <data name="points" xml:space="preserve">
+    <value>points</value>
+  </data>
 </root>

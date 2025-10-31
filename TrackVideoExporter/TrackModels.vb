@@ -360,13 +360,8 @@ Public Class TrailReport
     Public Property weather As StyledText
 
     Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
-    ''' <summary>
-    ''' Initializes a new instance of the TrailDescription class with destination, trail and performance descriptions.
-    ''' </summary>
-    ''' <param name="dogName">styledText description of the dog name.</param>
-    ''' <remarks>
-    ''' The weather conditions are initialized with a placeholder text.
-    ''' </remarks>
+
+
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
     ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
@@ -410,7 +405,7 @@ Public Class TrailReport
     ''' Converts the TrailReport to a list of StyledText objects.   Competition parts only.
     ''' </summary>
     ''' <returns></returns>
-    Public Function ToCompetitionList(Optional title As String = "Points") As List(Of StyledText)
+    Public Function ToCompetitionList(Optional title As String = "Scoring") As List(Of StyledText)
         Me.Title.Text = title
         Dim result As New List(Of StyledText) From {
           Me.Title,

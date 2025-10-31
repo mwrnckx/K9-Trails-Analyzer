@@ -6,19 +6,25 @@ Imports System.Drawing.Text
 Imports System.Globalization
 Imports System.IO
 Imports System.Reflection.Metadata
+Imports System.Resources
 Imports System.Text.RegularExpressions
 Imports System.Windows.Forms
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar
+Imports TrackVideoExporter.My.Resources
+Imports TrackVideoExporter.TrackVideoExporter
 
 
 Public Class PngSequenceCreator
     Private renderer As PngRenderer
     Dim PNGTimes As New List(Of DateTime) ' Časové značky pro PNG obrázky, pokud nejsou, vytvoří se z GPS bodů psa)
     Public frameInterval As Double
+    'Private Localizator As TrackVideoExporter.Localizer
+
     'Public bgPNG As Bitmap
 
     Public Sub New(renderer As PngRenderer)
         Me.renderer = renderer
+
     End Sub
 
     Public Sub CreateFrames(tracks As List(Of TrackAsPointsF), staticBgTransparent As Bitmap, staticbgMap As Bitmap, outputDir As DirectoryInfo, pngTimes As List(Of DateTime), LocalisedReports As Dictionary(Of String, TrailReport))
@@ -28,13 +34,17 @@ Public Class PngSequenceCreator
         For Each key In keys
             'Dim textParts As New List(Of (Text As String, Color As Color, FontStyle As FontStyle))
             Dim trailReport = LocalisedReports(key)
-            Dim staticTextbmp = renderer.RenderStaticText(trailReport.ToBasicList("Trail description"))
+            Dim title = Localizer.GetString("Trail_description", key)
+            Dim staticTextbmp = renderer.RenderStaticText(trailReport.ToBasicList(title))
             Dim filename = IO.Path.Combine(outputDir.FullName, key & "-" & "TrailDescription.png")
             staticTextbmp.Save(filename, ImageFormat.Png)
 
             'hodnocení Competition Points
             Dim trailReportPoints As TrailReport = LocalisedReports(key)
-            Dim staticTextbmpPoints = renderer.RenderStaticText(trailReportPoints.ToCompetitionList("Points"))
+
+
+            title = Localizer.GetString("Scoring", key)
+            Dim staticTextbmpPoints = renderer.RenderStaticText(trailReportPoints.ToCompetitionList(Title))
             Dim filenamePoints = IO.Path.Combine(outputDir.FullName, key & "-" & "Points.png")
             staticTextbmpPoints.Save(filenamePoints, ImageFormat.Png)
         Next key

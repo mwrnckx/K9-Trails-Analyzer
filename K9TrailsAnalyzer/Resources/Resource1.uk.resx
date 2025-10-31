@@ -123,6 +123,9 @@
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Довжина всіх слідів (км)</value>
   </data>
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Зважена довжина стежки (км)</value>
+  </data>
   <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Вік слідів (години)</value>
   </data>
@@ -261,6 +264,9 @@
   <data name="txtperformanceLabel" xml:space="preserve">
     <value>Виконання команди K9</value>
   </data>
+  <data name="txtRunner" xml:space="preserve">
+    <value>бігун</value>
+  </data>
   <data name="txtEditDescLabel" xml:space="preserve">
     <value>Відредагуйте коментарі до тренувального Сесіона. Ці коментарі будуть збережені у файлі GPX та відображатись у таких програмах, як gpxsee.org та накладні відео. Якщо ви пишете коментарі у своєму додатку GPS, додайте "G:" Перед описом мети "T:" Перед описом сліду та "D:" До опису роботи команди. Ви можете написати переклад англійською мовою у другому ряду, якщо бажаєте.</value>
   </data>
@@ -287,13 +293,14 @@
   <data name="RunnerTrail" xml:space="preserve">
     <value>Слід бігуна</value>
   </data>
-  <data name="txtRunner" xml:space="preserve">
-    <value>бігун</value>
-  </data>
-  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
-    <value>Зважена довжина стежки (км)</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>контрольна точка</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="points" xml:space="preserve">
+    <value>балів</value>
   </data>
 </root>

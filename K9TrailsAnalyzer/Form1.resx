@@ -818,7 +818,7 @@
     <value>0</value>
   </data>
   <data name="TabStats.Text" xml:space="preserve">
-    <value>Statistics</value>
+    <value>Overview</value>
   </data>
   <data name="&gt;&gt;TabStats.Name" xml:space="preserve">
     <value>TabStats</value>
@@ -980,7 +980,7 @@
     <value>2</value>
   </data>
   <data name="TabCompetition.Text" xml:space="preserve">
-    <value>Mantrailing Competition</value>
+    <value>Scoring</value>
   </data>
   <data name="&gt;&gt;TabCompetition.Name" xml:space="preserve">
     <value>TabCompetition</value>

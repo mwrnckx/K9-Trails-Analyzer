@@ -123,7 +123,9 @@
   <data name="Y-AxisLabelLength" xml:space="preserve">
     <value>Długość śladów (km)</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
+    <value>Ważona długość szlaku (km)</value>
+  </data>
   <data name="Y-AxisLabelAge" xml:space="preserve">
     <value>Wiek tras (godziny)</value>
   </data>
@@ -262,6 +264,9 @@
   <data name="txtperformanceLabel" xml:space="preserve">
     <value>Wydajność zespołu K9</value>
   </data>
+  <data name="txtRunner" xml:space="preserve">
+    <value>biegacz</value>
+  </data>
   <data name="txtEditDescLabel" xml:space="preserve">
     <value>Edytuj komentarze do Sesji Szkolenia. Te komentarze zostaną zapisane w pliku GPX i wyświetlone w aplikacjach takich jak gpxsee.org i nakładki. Jeśli piszesz komentarze w aplikacji GPS, dodaj „G:” przed opisem celu „T:” Przed opisem szlaku i „D:” przed opisem zespołu. Jeśli chcesz, możesz napisać tłumaczenie na angielski w drugim rzędzie.</value>
   </data>
@@ -288,13 +293,14 @@ Jeśli są tylko dwie trasy, jest to dość proste - pierwszy to szlak tematyczn
   <data name="RunnerTrail" xml:space="preserve">
     <value>Ścieżka biegacza</value>
   </data>
-  <data name="txtRunner" xml:space="preserve">
-    <value>biegacz</value>
-  </data>
-  <data name="Y-AxisLabelLengthAge" xml:space="preserve">
-    <value>Ważona długość szlaku (km)</value>
-  </data>
   <data name="article" xml:space="preserve">
     <value>Punkt kontrolny</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="points" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="points" xml:space="preserve">
+    <value>zwrotnica</value>
   </data>
 </root>

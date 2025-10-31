@@ -343,9 +343,6 @@
   <data name="mnuExit.Text" xml:space="preserve">
     <value>Koniec</value>
   </data>
-  <data name="TabStats.Text" xml:space="preserve">
-    <value>Statystyka</value>
-  </data>
   <data name="clmAge.Text" xml:space="preserve">
     <value>Wiek</value>
   </data>
@@ -411,5 +408,11 @@
   </data>
   <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
     <value>Wprowadź liczbę punktów za znalezienie koła pasowego.</value>
+  </data>
+  <data name="TabStats.Text" xml:space="preserve">
+    <value>Przegląd</value>
+  </data>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Punktowanie</value>
   </data>
 </root>

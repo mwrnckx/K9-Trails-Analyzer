@@ -242,7 +242,7 @@
     <value />
   </data>
   <data name="TabStats.Text" xml:space="preserve">
-    <value>Statistika</value>
+    <value>Přehled</value>
   </data>
   <data name="TabStats.ToolTip" xml:space="preserve">
     <value />
@@ -366,5 +366,8 @@
   </data>
   <data name="mnuPointsForHandler.ToolTipText" xml:space="preserve">
     <value>Zadejte max. počet bodů za schopnost psovoda číst psa.</value>
+  </data>
+  <data name="TabCompetition.Text" xml:space="preserve">
+    <value>Bodování</value>
   </data>
 </root>
