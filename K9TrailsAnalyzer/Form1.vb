@@ -1,5 +1,6 @@
 ﻿Imports System.ComponentModel
 Imports System.Data.Common
+Imports System.Diagnostics.Metrics
 Imports System.DirectoryServices.ActiveDirectory
 Imports System.Globalization
 Imports System.IO
@@ -13,6 +14,7 @@ Imports System.Threading
 Imports System.Windows.Forms.DataVisualization.Charting
 Imports GPXTrailAnalyzer.My.Resources
 Imports Microsoft.VisualBasic.Logging
+Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
 Imports Windows.Win32.System
 
@@ -24,7 +26,7 @@ Partial Public Class Form1
     Private currentCulture As CultureInfo = Thread.CurrentThread.CurrentCulture
     Private GPXFilesManager As GpxFileManager
     Private ReadOnly CategoriesInfoPath As String = Path.Combine(Application.StartupPath, "AppData", "categoriesInfo.json")
-    Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "AppData", "config.json")
+    'Private ReadOnly ConfigPath As String = Path.Combine(Application.StartupPath, "AppData", "config.json")
     Private sortColumnName As String = String.Empty 'třídění dgvCompetition
     Private sortDirection As SortOrder = SortOrder.None
     Private CategoriesInfo As List(Of CategoryInfo)
@@ -121,10 +123,12 @@ Partial Public Class Form1
         displayList = New List(Of TrailStatsDisplay)()
         For i As Integer = GPXFilesManager.GpxRecords.Count - 1 To 0 Step -1
             Dim record As GPXRecord = GPXFilesManager.GpxRecords(i)
-            Dim stats As TrailStatsStructure = record.TrailStats
+            Dim stats As TrackVideoExporter.TrailStats = record.TrailStats
             displayList.Add(New TrailStatsDisplay With {
+                .OriginalRecord = record,
                 .GPXFilename = IO.Path.GetFileNameWithoutExtension(GPXFilesManager.GpxRecords(i).Reader.FilePath),'.Substring(11),
-                .DogName = "",
+                .DogName = stats.PointsInMTCompetition.dogName,
+                .HandlerName = stats.PointsInMTCompetition.handlerName,
                  .RunnerDistance = stats.RunnerDistance,
                  .TotalTime = stats.TotalTime.Minutes,
                 .DogGrossSpeedKmh = stats.DogGrossSpeed,
@@ -136,10 +140,10 @@ Partial Public Class Form1
                 .WeightedTimePerCent = stats.WeightedTimePerCent / 100, 'je v % převedeno zpět na desetinné číslo
                 .StartTime = record.TrailStart.Time,
                 .TrailAge = stats.TrailAge.TotalMinutes,
-                .RunnerFoundPoints = stats.PoitsInMTCompetition.RunnerFoundPoints,
-                .DogSpeedPoints = stats.PoitsInMTCompetition.DogSpeedPoints,
-                .DogAccuracyPoints = stats.PoitsInMTCompetition.DogAccuracyPoints,
-                .dogReadingPoints = stats.PoitsInMTCompetition.DogReadingPoints
+                .RunnerFoundPoints = stats.PointsInMTCompetition.RunnerFoundPoints,
+                .DogSpeedPoints = stats.PointsInMTCompetition.DogSpeedPoints,
+                .DogAccuracyPoints = stats.PointsInMTCompetition.DogAccuracyPoints,
+                .dogReadingPoints = stats.PointsInMTCompetition.DogReadingPoints
                  })
 
             Dim displayItem = displayList.Last()
@@ -159,14 +163,14 @@ Partial Public Class Form1
                     With displayItem
                         .SecondCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(secondIndex).deviationFromTrail
                         .SecondCheckpointEvalDistance = stats.CheckpointsEval(secondIndex).distanceAlongTrail
-                        .SecondCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(secondIndex).dogGrossSpeed
+                        .SecondCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(secondIndex).dogGrossSpeedkmh
                     End With
                 End If
                 If firstIndex >= 0 Then
                     With displayItem
                         .FirstCheckpointEvalDeviationFromTrail = stats.CheckpointsEval(firstIndex).deviationFromTrail
                         .FirstCheckpointEvalDistance = stats.CheckpointsEval(firstIndex).distanceAlongTrail
-                        .FirstCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(firstIndex).dogGrossSpeed
+                        .FirstCheckpointEvaldogGrossSpeed = stats.CheckpointsEval(firstIndex).dogGrossSpeedkmh
                     End With
                 End If
             End If
@@ -195,7 +199,6 @@ Partial Public Class Form1
         Me.FormatDgvCompetition()
     End Sub
 
-    ' V modulu formuláře (.vb)
 
     Private Sub TrailItem_PropertyChanged(sender As Object, e As PropertyChangedEventArgs)
 
@@ -205,6 +208,49 @@ Partial Public Class Form1
             Me.UpdateRankingAndDisplay(True)
         End If
 
+        Dim changedItem As TrailStatsDisplay = TryCast(sender, TrailStatsDisplay)
+
+        If changedItem IsNot Nothing AndAlso changedItem.OriginalRecord IsNot Nothing Then
+
+            ' 1. Získat KOPII celé nadřazené struktury TrailStats.
+            Dim currentStats As TrackVideoExporter.TrailStats = changedItem.OriginalRecord.TrailStats
+
+            ' 2. Získat KOPII vnitřní struktury PointsInMTCompetition, kterou budeme měnit.
+            Dim pointsStruct As TrackVideoExporter.ScoringData = currentStats.PointsInMTCompetition
+
+            Select Case e.PropertyName
+                Case NameOf(TrailStatsDisplay.RunnerFoundPoints)
+                    pointsStruct.RunnerFoundPoints = changedItem.RunnerFoundPoints
+
+                Case NameOf(TrailStatsDisplay.DogSpeedPoints)
+                    pointsStruct.DogSpeedPoints = changedItem.DogSpeedPoints
+
+                Case NameOf(TrailStatsDisplay.DogAccuracyPoints)
+                    pointsStruct.DogAccuracyPoints = changedItem.DogAccuracyPoints
+
+                Case NameOf(TrailStatsDisplay.dogReadingPoints)
+                    pointsStruct.DogReadingPoints = changedItem.dogReadingPoints
+
+                Case NameOf(TrailStatsDisplay.DogName)
+                    pointsStruct.dogName = changedItem.DogName
+
+                Case NameOf(TrailStatsDisplay.HandlerName)
+                    pointsStruct.handlerName = changedItem.HandlerName
+                Case Else
+                    Return 'není třeba nic zapisovat, proto return
+            End Select
+
+            ' 3. Po modifikaci PŘIŘADIT upravenou strukturu PointsInMTCompetition ZPĚT do KOPIE TrailStats.
+            currentStats.PointsInMTCompetition = pointsStruct
+
+            ' 4. KLÍČOVÝ KROK: PŘIŘADIT celou upravenou strukturu TrailStats ZPĚT do OriginalRecord.
+            ' Tím se změna propíše do skutečného místa v paměti.
+            changedItem.OriginalRecord.TrailStats = currentStats
+
+            changedItem.OriginalRecord.BuildLocalisedScoring()
+            changedItem.OriginalRecord.WriteLocalizedReports()
+            changedItem.OriginalRecord.Save()
+        End If
     End Sub
 
     Private Sub UpdateRankingAndDisplay(Optional resetBindings As Boolean = False)
@@ -234,7 +280,7 @@ Partial Public Class Form1
         ' Krok 3: Projít sloupce, lokalizovat, vynutit zalomení a nastavit Autosize
         For Each column As DataGridViewColumn In Me.dgvCompetition.Columns
 
-            ' Příklad získání lokalizovaného textu TODO!!!!!!
+            ' Příklad získání lokalizovaného textu TODO:!!!!!!
             Dim propertyName As String = column.DataPropertyName
             Dim resourceKey As String = "Header_" & propertyName
             Dim localizedText As String = My.Resources.ResourceManager.GetString(resourceKey, My.Resources.Culture)
@@ -1048,7 +1094,8 @@ Partial Public Class Form1
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 ActiveCategoryInfo.RemoteDirectory = folderDialog.SelectedPath
                 mbox($"The gpx files for the dog {ActiveCategoryInfo.Name} will be imported from the {ActiveCategoryInfo.RemoteDirectory} folder.")
-                SaveCategoriesInfo()
+                SaveUnifiedConfig()
+                'SaveCategoriesInfo()
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
                 My.Settings.Save()
@@ -1109,52 +1156,96 @@ Partial Public Class Form1
         CloseGrafs()
     End Sub
 
-    'Private Sub mnuDogName_Click(sender As Object, e As EventArgs) Handles mnuDogName.Click
-    '    My.Settings.DogName = InputBox("Set name of the dog:", Application.ProductName, My.Settings.DogName)
-    '    My.Settings.Save()
+    Private unifiedConfig As UnifiedConfig ' Uložte si instanci této třídy na úrovni třídy/modulu
+
+    Private Sub LoadUnifiedConfig()
+        Dim UnifiedConfigPath As String = CategoriesInfoPath ' Definujte si novou cestu
+
+        If File.Exists(UnifiedConfigPath) Then
+            Dim json = File.ReadAllText(UnifiedConfigPath, Encoding.UTF8)
+            Dim opts = New JsonSerializerOptions With {
+            .PropertyNameCaseInsensitive = True ' Nastavení můžete ponechat
+        }
+
+            ' 1. Deserializace do kontejnerové třídy
+            unifiedConfig = JsonSerializer.Deserialize(Of UnifiedConfig)(json, opts)
+        Else
+            ' 2. Pokud soubor neexistuje, vytvořte novou instanci s výchozími hodnotami
+            unifiedConfig = New UnifiedConfig()
+        End If
+
+        ' 3. Přiřazení hodnot do vašich stávajících proměnných (pro snadnou integraci)
+        CategoriesInfo = unifiedConfig.CategoriesInfo
+
+        If unifiedConfig.activeDoguration IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(unifiedConfig.activeDoguration.ActiveDogId) Then
+            ActiveDogId = unifiedConfig.activeDoguration.ActiveDogId
+        Else
+            ' Zajistěte, že je activeDoguration alespoň inicializovaný, pokud se v souboru nenašel
+            unifiedConfig.activeDoguration = New activeDog()
+        End If
+    End Sub
+    'Private Sub LoadCategories()
+    '    If File.Exists(CategoriesInfoPath) Then
+    '        Dim json = File.ReadAllText(CategoriesInfoPath, Encoding.UTF8)
+    '        Dim opts = New JsonSerializerOptions With {
+    '            .PropertyNameCaseInsensitive = True
+    '        }
+    '        CategoriesInfo = JsonSerializer.Deserialize(Of List(Of CategoryInfo))(json, opts)
+    '    Else
+    '        CategoriesInfo = New List(Of CategoryInfo)()
+    '    End If
     'End Sub
 
-    ' ----- načtení a uložení dogsInfo.json -----
-    Private Sub LoadCategories()
-        If File.Exists(CategoriesInfoPath) Then
-            Dim json = File.ReadAllText(CategoriesInfoPath, Encoding.UTF8)
-            Dim opts = New JsonSerializerOptions With {
-                .PropertyNameCaseInsensitive = True
-            }
-            CategoriesInfo = JsonSerializer.Deserialize(Of List(Of CategoryInfo))(json, opts)
-        Else
-            CategoriesInfo = New List(Of CategoryInfo)()
-        End If
+
+    Private Sub SaveUnifiedConfig()
+        Dim UnifiedConfigPath As String = CategoriesInfoPath ' Stejná cesta jako při načítání
+
+        ' 1. Aktualizace dat v kontejneru
+        ' Předpokládáme, že vaše CategoriesInfo je už aktualizováno
+        unifiedConfig.CategoriesInfo = CategoriesInfo
+
+        ' Aktualizace activeDog, ve kterém se nachází ActiveDogId
+        unifiedConfig.activeDoguration.ActiveDogId = ActiveDogId
+
+
+        Dim options As New JsonSerializerOptions With {
+        .WriteIndented = True,
+        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    }
+
+        ' 2. Serializace celé kontejnerové třídy
+        Directory.CreateDirectory(Path.GetDirectoryName(UnifiedConfigPath))
+        File.WriteAllText(UnifiedConfigPath, JsonSerializer.Serialize(unifiedConfig, options), Encoding.UTF8)
     End Sub
 
-    Private Sub SaveCategoriesInfo()
-        Dim options As New JsonSerializerOptions With {
-            .WriteIndented = True,
-            .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
-        }
-        Directory.CreateDirectory(Path.GetDirectoryName(CategoriesInfoPath))
-        File.WriteAllText(CategoriesInfoPath, JsonSerializer.Serialize(CategoriesInfo, options), Encoding.UTF8)
-    End Sub
+    'Private Sub SaveCategoriesInfo()
+    '    Dim options As New JsonSerializerOptions With {
+    '        .WriteIndented = True,
+    '        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping ' aby se diakritika neescapeovala
+    '    }
+    '    Directory.CreateDirectory(Path.GetDirectoryName(CategoriesInfoPath))
+    '    File.WriteAllText(CategoriesInfoPath, JsonSerializer.Serialize(CategoriesInfo, options), Encoding.UTF8)
+    'End Sub
 
     ' ----- načtení a uložení config.json (aktivní pes) -----
-    Private Sub LoadConfig()
-        If File.Exists(ConfigPath) Then
-            Dim json = File.ReadAllText(ConfigPath, Encoding.UTF8)
-            Dim cfg = JsonSerializer.Deserialize(Of AppConfig)(json)
-            If cfg IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(cfg.ActiveDogId) Then
-                ActiveDogId = cfg.ActiveDogId
-            End If
-        End If
-    End Sub
+    'Private Sub LoadConfig()
+    '    If File.Exists(ConfigPath) Then
+    '        Dim json = File.ReadAllText(ConfigPath, Encoding.UTF8)
+    '        Dim cfg = JsonSerializer.Deserialize(Of activeDog)(json)
+    '        If cfg IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(cfg.ActiveDogId) Then
+    '            ActiveDogId = cfg.ActiveDogId
+    '        End If
+    '    End If
+    'End Sub
 
-    Private Sub SaveConfig()
-        Dim options As New JsonSerializerOptions With {
-            .WriteIndented = True,
-            .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        }
-        Dim cfg As New AppConfig With {.ActiveDogId = ActiveDogId}
-        File.WriteAllText(ConfigPath, JsonSerializer.Serialize(cfg, options), Encoding.UTF8)
-    End Sub
+    'Private Sub SaveConfig()
+    '    Dim options As New JsonSerializerOptions With {
+    '        .WriteIndented = True,
+    '        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+    '    }
+    '    Dim cfg As New activeDog With {.ActiveDogId = ActiveDogId}
+    '    File.WriteAllText(ConfigPath, JsonSerializer.Serialize(cfg, options), Encoding.UTF8)
+    'End Sub
 
     ' ----- naplnění ToolStripComboBoxu objekty CategoryInfo -----
     Private Sub PopulateCategoriesToolStrip()
@@ -1201,7 +1292,8 @@ Partial Public Class Form1
         ''lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
         'My.Settings.Save()
         ' uložíme config (aby se volba pamatovala)
-        SaveConfig()
+        SaveUnifiedConfig()
+        'SaveConfig()
         ClearDgvCompetition()
         lvGpxFiles.Items.Clear()
         ' tady můžeš volat další inicializace pro aktivního psa
@@ -1241,8 +1333,8 @@ Partial Public Class Form1
         CategoriesInfo.Add(New CategoryInfo With {.Id = newId,
                      .Name = dogName,
                      .RemoteDirectory = dogRemotePath})
-
-        SaveCategoriesInfo()
+        SaveUnifiedConfig()
+        'SaveCategoriesInfo()
 
 
 
@@ -1362,6 +1454,7 @@ Partial Public Class Form1
             Try
                 record.Description = Await record.BuildLocalisedDescriptionAsync(record.Description) 'async kvůli počasí!
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
+                record.BuildLocalisedScoring()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()
@@ -1541,7 +1634,8 @@ Partial Public Class Form1
         CategoriesInfo.Remove(dogToRemove)
 
         ' Ulož seznam zpět do JSON
-        SaveCategoriesInfo()
+        SaveUnifiedConfig()
+        'SaveCategoriesInfo()
 
         ' Pokud byl aktivní, přepnout na jiného
         If ActiveDogId = dogId Then
@@ -1568,7 +1662,9 @@ Partial Public Class Form1
                 Else
                     ActiveCategoryInfo.Name = newName
                     ' případně uložit do JSON
-                    SaveCategoriesInfo()
+
+                    SaveUnifiedConfig()
+                    'SaveCategoriesInfo()
                     PopulateCategoriesToolStrip()
                 End If
             End If
@@ -1636,6 +1732,7 @@ Partial Public Class Form1
             'RecalculateRow(e.RowIndex)
         End If
     End Sub
+
 End Class
 
 ''' <summary>
@@ -1646,7 +1743,17 @@ End Class
 
 Public Class TrailStatsDisplay
     Implements INotifyPropertyChanged ' Implementace rozhraní
+    ' Interní reference na původní data
+    Private _originalRecord As GPXRecord
 
+    Friend Property OriginalRecord As GPXRecord
+        Get
+            Return _originalRecord
+        End Get
+        Set(value As GPXRecord)
+            _originalRecord = value
+        End Set
+    End Property
     ' Událost INotifyPropertyChanged
     Public Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
 
@@ -1841,7 +1948,7 @@ Public Class TrailStatsDisplay
     ' 3. METODA PRO PŘEPOČET
 
     Public Sub CalculateTotalPoints()
-        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.DogReadingPoints
+        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.dogReadingPoints
 
         ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
         If _totalPoints <> newTotal Then
@@ -1893,16 +2000,16 @@ Public Class CategoryInfo
 
     ' Konfigurační body pro disciplíny (uživatelsky nastavitelné)
     <JsonPropertyName("PointsForFindMax")>
-    Public Property PointsForFindMax As Integer = 100
+    Public Property PointsForFindMax As Integer
 
     <JsonPropertyName("PointsPerKmhGrossSpeed")>
-    Public Property PointsPerKmhGrossSpeed As Double = 20
+    Public Property PointsPerKmhGrossSpeed As Double
 
     <JsonPropertyName("PointsForAccuracyMax")>
-    Public Property PointsForAccuracyMax As Integer = 100
+    Public Property PointsForAccuracyMax As Integer
 
-    <JsonPropertyName("DogReadingPointsMax")>
-    Public Property PointsForDogReadingMax As Integer = 100
+    <JsonPropertyName("PointsForDogReadingMax")>
+    Public Property PointsForDogReadingMax As Integer
 
 
     <JsonIgnore>
@@ -1939,7 +2046,22 @@ End Class
 
 
 ' --- jednoduchá konfigurace pro aktivního psa ---
-Public Class AppConfig
+Public Class activeDog
     <JsonPropertyName("activeDogId")>
     Public Property ActiveDogId As String
+End Class
+
+
+Public Class UnifiedConfig
+    <JsonPropertyName("categoriesInfo")>
+    Public Property CategoriesInfo As List(Of CategoryInfo)
+
+    <JsonPropertyName("activeDog")>
+    Public Property activeDoguration As activeDog
+
+    ' Volitelně můžete přidat konstruktor pro inicializaci seznamu
+    Public Sub New()
+        CategoriesInfo = New List(Of CategoryInfo)()
+        activeDoguration = New activeDog() ' Zajistí, že activeDog není Nothing
+    End Sub
 End Class

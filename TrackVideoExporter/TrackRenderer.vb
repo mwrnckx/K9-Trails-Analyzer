@@ -381,8 +381,8 @@ Public Class PngRenderer
                     ' popis, poslední bod atd.
 
                     'Dim font As New Font("Cascadia Code", emSize, FontStyle.Bold)
-                    Dim popis As String = frameTime.ToString("HH:mm:ss")
-                    Dim textSize = g.MeasureString(popis, font) 'todo: přidat doglabel
+                    Dim popis As String = frameTime.ToString("HH:mm:ss") 'todo: přidat doglabel?
+                    Dim textSize = g.MeasureString(popis, font)
                     Dim offsetX As Single
                     If p.X - textSize.Width - radius < 0 Then
                         ' není místo vlevo, napiš text vpravo od elipsy

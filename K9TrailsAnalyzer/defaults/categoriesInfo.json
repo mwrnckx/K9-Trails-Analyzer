@@ -1,4 +1,5 @@
-﻿[
+﻿{
+  "categoriesInfo":[
   {
     "id": "001",
     "name": "Rex (demo_dog)",
@@ -26,4 +27,8 @@
     "PointsForAccuracyMax": 100,
     "PointsForDogReadingMax": 100
     }
-]
+],
+  "activeDog": {
+    "activeDogId": "001"
+  }
+}

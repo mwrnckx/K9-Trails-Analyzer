@@ -157,7 +157,7 @@ Public Class TrackAsTrkNode 'track as trkNode
     ''' XmlNode representing the entire trk element in the GPX file.
     ''' </summary>
     Public Property TrkNode As XmlNode
-    'todo tohle asi smazat, nedává to smysl...
+
     Public ReadOnly Property StartTrackGeoPoint As TrackGeoPoint
         Get
             Dim conv As New TrackConverter
@@ -361,6 +361,9 @@ Public Class TrailReport
 
     Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
 
+    'Public Property ScoringData As ScoringData
+
+
 
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
@@ -375,6 +378,7 @@ Public Class TrailReport
         Me.PerformancePoints = New StyledText(points, Color.Maroon, mainFont, "")
         Me.weather = New StyledText(weather, Color.Maroon, mainFont, "")
         Me.WeatherData = _weatherdata
+        'Me.ScoringData = _scoringData
     End Sub
     Public Sub New()
         ' Default constructor for serialization or other purposes
@@ -416,6 +420,43 @@ Public Class TrailReport
     End Function
 End Class
 
+''' <summary>
+''' structure for returning calculation results.
+''' </summary>
+Public Class TrailStats
+    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
+    Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
+    Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+    Public Property WeightedTimePerCent As Double ' Total time of the dog with weighting by deviation divided by total time
+    Public Property TrailAge As TimeSpan ' age of the trail 
+    Public Property TotalTime As TimeSpan ' total time of the dog's route
+    Public Property MovingTime As TimeSpan ' net time the dog moved
+    Public Property StoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
+    Public Property DogNetSpeed As Double ' net speed (moving time only), calculated from the length of the dog's route
+    Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
+    Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
+    Public Property PointsInMTCompetition As ScoringData '(RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer, dogName As String, handlerName As String) ' number of points in MT Competition according to the rules
+    Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
+    Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+    Public Property RunnerFound As Boolean ' whether dog found the runner or not
+End Class
+
+' Struktura pro data checkpointu
+Public Structure CheckpointData
+    Public distanceAlongTrail As Double
+    Public deviationFromTrail As Double
+    Public dogGrossSpeedkmh As Double
+End Structure
+
+Public Class ScoringData
+    Public Property RunnerFoundPoints As Integer
+    Public Property DogSpeedPoints As Integer
+    Public Property DogAccuracyPoints As Integer
+    Public Property DogReadingPoints As Integer
+    Public Property dogName As String
+    Public Property handlerName As String
+End Class
 
 
 

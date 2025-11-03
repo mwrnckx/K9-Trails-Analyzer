@@ -74,6 +74,15 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Dog Reading.
+        '''</summary>
+        Friend Shared ReadOnly Property DogReading() As String
+            Get
+                Return ResourceManager.GetString("DogReading", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný FinalFind.
         '''</summary>
         Friend Shared ReadOnly Property FinalFind() As String
@@ -97,15 +106,6 @@ Namespace My.Resources
         Friend Shared ReadOnly Property points() As String
             Get
                 Return ResourceManager.GetString("points", resourceCulture)
-            End Get
-        End Property
-        
-        '''<summary>
-        '''  Vyhledá lokalizovaný řetězec podobný Reading Cues.
-        '''</summary>
-        Friend Shared ReadOnly Property ReadingCues() As String
-            Get
-                Return ResourceManager.GetString("ReadingCues", resourceCulture)
             End Get
         End Property
         

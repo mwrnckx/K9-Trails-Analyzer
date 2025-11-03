@@ -223,11 +223,7 @@ Public Class GpxFileManager
                 Try
                     If Not _gpxRecord.IsAlreadyProcessed Then 'možno přeskočit, už to proběhlo...
                         _gpxRecord.RenamewptNode(My.Resources.Resource1.article) 'renaming wpt to "article"
-                        'If prependDateToName Then
-                        '    Dim newFilename As String = _gpxRecord.PrependDateToFilename(_gpxRecord.FileName)
-                        '    If _gpxRecord.FileName <> newFilename Then _gpxRecord.RenameFile(newFilename)
-                        'End If
-                        'If trimGPS_Noise Then _gpxRecord.TrimGPSnoise(12) 'ořízne nevýznamné konce a začátky trailů, když se stojí na místě.
+                        '_gpxRecord.TrailStats = _gpxRecord.CalculateTrackStats(_gpxRecord.Tracks, _gpxRecord.WptNodes)
                     End If
 
                     _gpxRecord.Description = _gpxRecord.BuildSummaryDescription() 'vytvoří popis, pokud není, nebo doplní věk trasy do popisu
@@ -235,16 +231,9 @@ Public Class GpxFileManager
                     If _gpxRecord.LocalisedReports Is Nothing OrElse _gpxRecord.LocalisedReports.Count = 0 Then _gpxRecord.IsAlreadyProcessed = False
                     If Not _gpxRecord.IsAlreadyProcessed Then
                         _gpxRecord.Description = Await _gpxRecord.BuildLocalisedDescriptionAsync(_gpxRecord.Description) 'async kvůli počasí!
+                        _gpxRecord.BuildLocalisedScoring()
                     End If
-                    '                    Dim pointsTotal As Integer = _gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints + _gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints
-                    '                    Dim performancePoints As String = $"🏆Total: {pointsTotal} points{vbCrLf}
-                    '❤Final Find: {_gpxRecord.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
-                    '🚀Speed: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogSpeedPoints} points ({_gpxRecord.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
-                    '🎯Dog Accuracy: {_gpxRecord.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
-                    '👁Reading Cues: {_gpxRecord.TrailStats.PoitsInMTCompetition.HandlerCheckPoints} points (of {_gpxRecord.ActiveCategoryInfo.PointsForDogReadingMax})."
-                    '                    For Each kvp In _gpxRecord.LocalisedReports
-                    '                        kvp.Value.PerformancePoints.Text = performancePoints
-                    '                    Next
+                    '                
 
                     If _gpxRecord.IsAlreadyProcessed = False Then 'možno přeskočit, už to proběhlo...
                     _gpxRecord.WriteDescription() 'zapíše agregovaný popis do tracku Runner
@@ -603,27 +592,27 @@ Be carefull with this!!!!!"
 
 
 End Class
-''' <summary>
-''' structure for returning calculation results.
-''' </summary>
-Public Structure TrailStatsStructure
-    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
-    Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
-    Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property WeightedTimePerCent As Double ' Total time of the dog with weighting by deviation divided by total time
-    Public Property TrailAge As TimeSpan ' age of the trail 
-    Public Property TotalTime As TimeSpan ' total time of the dog's route
-    Public Property MovingTime As TimeSpan ' net time the dog moved
-    Public Property StoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
-    Public Property DogNetSpeed As Double ' net speed (moving time only), calculated from the length of the dog's route
-    Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
-    Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
-    Public Property PoitsInMTCompetition As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer) ' number of points in MT Competition according to the rules
-    Public Property CheckpointsEval As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
-    Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
-    Public Property RunnerFound As Boolean ' whether dog found the runner or not
-End Structure
+'''' <summary>
+'''' structure for returning calculation results.
+'''' </summary>
+'Public Class TrailStats
+'    Public Property DogDistance As Double ' Distance actually traveled by the dog (measured from the dog's route)
+'    Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
+'    Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+'    Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
+'    Public Property WeightedTimePerCent As Double ' Total time of the dog with weighting by deviation divided by total time
+'    Public Property TrailAge As TimeSpan ' age of the trail 
+'    Public Property TotalTime As TimeSpan ' total time of the dog's route
+'    Public Property MovingTime As TimeSpan ' net time the dog moved
+'    Public Property StoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
+'    Public Property DogNetSpeed As Double ' net speed (moving time only), calculated from the length of the dog's route
+'    Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
+'    Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
+'    Public Property PointsInMTCompetition As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer, dogName As String, handlerName As String) ' number of points in MT Competition according to the rules
+'    Public Property CheckpointsEval As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
+'    Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
+'    Public Property RunnerFound As Boolean ' whether dog found the runner or not
+'End Class
 
 Public Class GPXRecord
 
@@ -683,16 +672,19 @@ Public Class GPXRecord
         End Get
     End Property
 
-    Dim _TrailStats As TrailStatsStructure
-    Public ReadOnly Property TrailStats As TrailStatsStructure
+    Dim _TrailStats As New TrailStats
+    Public Property TrailStats As TrailStats
         Get
-            If _TrailStats.DogDistance > 0 Or _TrailStats.RunnerDistance > 0 Then Return _TrailStats 'cache
-            If Me.Tracks.Count = 0 Then Return New TrailStatsStructure
-
-            _TrailStats = Me.CalculateTrackStats(Me.Tracks, Me.WptNodes) 'vypočte statistiky
+            ' Vraci _TrailStats, pokud je inicializovany.
+            ' Pokud neni inicializovany, vrati novy, prazdny objekt.
+            If _TrailStats Is Nothing Then
+                _TrailStats = New TrailStats()
+            End If
             Return _TrailStats
         End Get
-
+        Set(value As TrailStats)
+            _TrailStats = value
+        End Set
     End Property
 
 
@@ -810,6 +802,8 @@ Public Class GPXRecord
     Public LocalisedReports As New Dictionary(Of String, TrailReport)
     'Private Property WindDirection As Double = 0.0 ' Směr větru v stupních
     Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
+    'Public Property ScoringData As (_runnerFoundPoints As Double?, _SpeedPoints As Double?, _dogAccuracyPoints As Double?, _dogReadingPoints As Double?, _dogName As String, _handlerName As String)
+
 
     'Private ReadOnly Property gpxDirectory As String
     'Private ReadOnly Property BackupDirectory As String
@@ -839,7 +833,10 @@ Public Class GPXRecord
         End If
 
 
-        Me.LocalisedReports = ReadLocalisedReport()
+        If Not ReadLocalisedReport(Me.LocalisedReports) Then
+            Me.TrailStats = CalculateTrackStats(Me.Tracks, Me.WptNodes)
+            Me.IsAlreadyProcessed = False 'kvůli zápisu dat
+        End If
 
     End Sub
 
@@ -1404,7 +1401,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         Dim newDescription As String = ""
         If Me.LocalisedReports Is Nothing OrElse Me.LocalisedReports.Count = 0 Then
             Dim desc = ExtractDescriptionParts(summaryDescription)
-            lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant() 'todo
+            lang = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
             Me.LocalisedReports.Add(lang, desc)
             newDescription = Await BuildDescription(desc)
         End If
@@ -1478,28 +1475,38 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             End If
         Next i
 
-        For Each kvp In Me.LocalisedReports
+        Return newDescription.ToString().Trim()
+
+    End Function
+
+    Public Sub BuildLocalisedScoring()
+        For Each kvp As KeyValuePair(Of String, TrailReport) In Me.LocalisedReports
             Dim txtTotal = Localizer.GetString("Total", kvp.Key)
             Dim txtpoints = Localizer.GetString("points", kvp.Key) 'todo dodělat lokalizaci
             Dim txtof = Localizer.GetString("ofPoints", kvp.Key)
             Dim txtFinalFind = Localizer.GetString("FinalFind", kvp.Key)
             Dim txtSpeed = Localizer.GetString("Speed", kvp.Key)
             Dim txtAccuracy = Localizer.GetString("Accuracy", kvp.Key)
-            Dim txtReadingCues = Localizer.GetString("ReadingCues", kvp.Key)
-            Dim pointsTotal As Integer = Me.TrailStats.PoitsInMTCompetition.RunnerFoundPoints + Me.TrailStats.PoitsInMTCompetition.DogSpeedPoints + Me.TrailStats.PoitsInMTCompetition.DogAccuracyPoints + Me.TrailStats.PoitsInMTCompetition.DogReadingPoints
+            Dim txtDogReading = Localizer.GetString("DogReading", kvp.Key)
+            Dim pointsTotal As Integer = Me.TrailStats.PointsInMTCompetition.RunnerFoundPoints + Me.TrailStats.PointsInMTCompetition.DogSpeedPoints + Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints + Me.TrailStats.PointsInMTCompetition.DogReadingPoints
             Dim performancePoints As String = $"🏆{txtTotal}: {pointsTotal} {txtpoints}{vbCrLf}
-        ❤{txtFinalFind}: {Me.TrailStats.PoitsInMTCompetition.RunnerFoundPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
-        🚀{txtSpeed}: {Me.TrailStats.PoitsInMTCompetition.DogSpeedPoints} {txtpoints} ({Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
-        🎯{txtAccuracy}: {Me.TrailStats.PoitsInMTCompetition.DogAccuracyPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
-        👁{txtReadingCues}: {Me.TrailStats.PoitsInMTCompetition.DogReadingPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForDogReadingMax})."
+        ❤{txtFinalFind}: {Me.TrailStats.PointsInMTCompetition.RunnerFoundPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForFindMax}),{vbCrLf}
+        🚀{txtSpeed}: {Me.TrailStats.PointsInMTCompetition.DogSpeedPoints} {txtpoints} ({Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed} per km/h),{vbCrLf}
+        🎯{txtAccuracy}: {Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForAccuracyMax}),{vbCrLf}
+        👁{txtDogReading}: {Me.TrailStats.PointsInMTCompetition.DogReadingPoints} {txtpoints} ({txtof} {Me.ActiveCategoryInfo.PointsForDogReadingMax})."
 
             kvp.Value.PerformancePoints.Text = performancePoints
+            'kvp.Value.ScoringData = New ScoringData With {
+            '   .RunnerFoundPoints = Me.TrailStats.PointsInMTCompetition.RunnerFoundPoints,
+            '   .DogSpeedPoints = Me.TrailStats.PointsInMTCompetition.DogSpeedPoints,
+            '   .DogAccuracyPoints = Me.TrailStats.PointsInMTCompetition.DogAccuracyPoints,
+            '  .DogReadingPoints = Me.TrailStats.PointsInMTCompetition.DogReadingPoints,
+            '   .dogName = Me.TrailStats.PointsInMTCompetition.dogName,
+            '  .handlerName = Me.TrailStats.PointsInMTCompetition.handlerName
+            '}
+
         Next
-
-
-        Return newDescription.ToString().Trim()
-
-    End Function
+    End Sub
 
 
     '' Funkce pro sloučení názvů souborů z dvou GPX záznamů
@@ -1783,7 +1790,8 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' <param name="_tracks"></param>
     ''' <param name="checkPoints"></param>
     ''' <returns>TrackStatsStructure</returns>
-    Public Function CalculateTrackStats(_tracks As List(Of TrackAsTrkNode), checkPoints As TrackAsTrkPts) As TrailStatsStructure
+    Public Function CalculateTrackStats(_tracks As List(Of TrackAsTrkNode), checkPoints As TrackAsTrkPts) As TrailStats
+        'todo: přeskočit to co je načteno z gpxRecordu!!!!
         Dim runnerTrkNode As XmlNode = Nothing
         Dim dogTrkNode As XmlNode = Nothing
         For Each track As TrackAsTrkNode In _tracks
@@ -1796,14 +1804,14 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
 
         ' --- KROK 1: Příprava všech dat ---
         Dim preparedData = PrepareTrackData(dogTrkNode, runnerTrkNode)
-        If preparedData.DogGeoPoints Is Nothing OrElse preparedData.DogGeoPoints.Count < 2 Then Return New TrailStatsStructure With {
+        If preparedData.DogGeoPoints Is Nothing OrElse preparedData.DogGeoPoints.Count < 2 Then Return New TrailStats With {
         .RunnerDistance = preparedData.RunnerTotalDistance,
         .TrailAge = GetAge()
          } ' Není co analyzovat
 
         ' --- KROK 2: Analýza pohybu a sledování stopy ---
         Dim movementAnalysis = AnalyzeDogMovement(preparedData.DogGeoPoints, preparedData.dogXY, preparedData.RunnerXY, preparedData.Lat0, preparedData.Lon0)
-        Dim checkPointsEvals As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) = Nothing
+        Dim checkPointsEvals As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) = Nothing
         Dim maxDistance As Double = 0.0
         ' --- KROK 3: Vyhodnocení checkpointů ---
         'GrossSpeed: The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
@@ -1824,14 +1832,14 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
                     maxWeight = _weight
                     maxDistance = cp.distanceAlongTrail
                     max_index = i
-                    _dogGrossSpeed = cp.dogGrossSpeed
+                    _dogGrossSpeed = cp.dogGrossSpeedkmh
                 End If
             Next
         End If
 
 
         ' --- KROK 4: Sestavení předběžných statistik a výpočet finálního skóre ---
-        Dim preliminaryStats As New TrailStatsStructure With {
+        Dim preliminaryStats As New TrailStats With {
         .DogDistance = preparedData.dogTotalDistance,
         .RunnerDistance = preparedData.RunnerTotalDistance,
         .WeightedDistanceAlongTrailPerCent = movementAnalysis.weightedDistance / preparedData.RunnerTotalDistance * 100.0,'jako procento z délky kladečovy stopy
@@ -1842,7 +1850,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
         .StoppedTime = movementAnalysis.stoppedTime,
         .TotalTime = movementAnalysis.movingTime + movementAnalysis.stoppedTime,
        .DogGrossSpeed = _dogGrossSpeed,'The biggest scoring benefit is a checkpoint where the dog is as far away as possible while staying as close to the route as possible.
-        .Deviation = If(movementAnalysis.movingTime.TotalSeconds > 0, movementAnalysis.weightedDeviation / movementAnalysis.movingTime.TotalSeconds, -1.0),
+        .Deviation = If(movementAnalysis.movingTime.TotalSeconds > 0, movementAnalysis.averageDeviation, -1.0),
         .CheckpointsEval = checkPointsEvals,
         .RunnerFound = If(Weight(movementAnalysis.MinDistanceToRunnerEnd) >= 0.75, True, False), ' up to distance of 15 meters full weight (gps accuracy?), after that zero
         .MaxTeamDistance = maxDistance
@@ -1851,7 +1859,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
             preliminaryStats.DogNetSpeed = (preparedData.dogTotalDistance / 1000.0) / movementAnalysis.movingTime.TotalHours
         End If
 
-        preliminaryStats.PoitsInMTCompetition = CalculateCompetitionScore(preliminaryStats)
+        preliminaryStats.PointsInMTCompetition = CalculateCompetitionScore(preliminaryStats)
         ' --- KROK 5: Vrácení kompletních výsledků ---
         Return preliminaryStats
 
@@ -1962,7 +1970,7 @@ $"(?<eu2>(\d+){Separator}(\d+){Separator}(\d+))"
     ''' - MinDistanceToRunnerEnd: The minimum distance (in meters) the dog came to the very last point of the runner's track (the goal/end point).
     ''' </returns>
     Private Function AnalyzeDogMovement(dogGeoPoints As List(Of TrackGeoPoint), dogXY As List(Of (X As Double, Y As Double)), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double) _
-As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double, weightedTime As TimeSpan, weightedDeviation As Double, MinDistanceToRunnerEnd As Double)
+As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double, weightedTime As TimeSpan, averageDeviation As Double, MinDistanceToRunnerEnd As Double)
         Dim conv As New TrackConverter()
         ' --- Setting constants ---
         Const MOVING_SPEED_THRESHOLD_MS As Double = 0.277 ' 1.0 km/h
@@ -1973,8 +1981,10 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         Dim movingTime As TimeSpan = TimeSpan.Zero
         Dim stoppedTime As TimeSpan = TimeSpan.Zero
         Dim weightedTime As TimeSpan = TimeSpan.Zero ' Původní init
+        Dim totalTime As TimeSpan = TimeSpan.Zero
         Dim weightedDistance As Double = 0.0
-        Dim weightedDeviation As Double = 0.0 ' Sum (deviation * segment time) -> [m*s]
+        Dim averageDeviation As Double  ' average by time
+        Dim deviationXTime As Double = 0.0 '[metr krát sekunda]
         Dim minDeviationFromRunnerEnd As Double = Double.MaxValue
 
         ' --- Initialization of state variables for the loop ---
@@ -1995,8 +2005,8 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             Dim timeDiff As TimeSpan = point2.Time - point1.Time
             ' Skip invalid segments (no time or negative time)
             If timeDiff.TotalSeconds <= 0 Then Continue For
-            Dim distanceMeters As Double = Math.Sqrt((dogXY(i).X - dogXY(i + 1).X) ^ 2 + (dogXY(i).Y - dogXY(i + 1).Y) ^ 2) 'conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
-            Dim speedMs As Double = distanceMeters / timeDiff.TotalSeconds
+            Dim distance As Double = Math.Sqrt((dogXY(i).X - dogXY(i + 1).X) ^ 2 + (dogXY(i).Y - dogXY(i + 1).Y) ^ 2) 'conv.HaversineDistance(point1.Location.Lat, point1.Location.Lon, point2.Location.Lat, point2.Location.Lon, "m")
+            Dim speedMs As Double = distance / timeDiff.TotalSeconds
 
             ' --- 1. State machine logic (Hysteresis) ---
             If i = 0 Then
@@ -2013,25 +2023,28 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
 
             ' *** ZMĚNA: Proměnné pro váženou analýzu deklarujeme mimo stavový blok, aby byly dostupné ***
             Dim deviation As Double = 0.0
-            Dim _weight As Double = 0.0
-            Dim projection As (ClosestSegmentIndex As Integer, DeviationMeters As Double) = Nothing
+            Dim weight As Double = 0.0
+            Dim projection As (ClosestSegmentIndex As Integer, Deviation As Double) = Nothing
 
             ' *** NOVÝ BLOK: Tracking analysis (provádí se PRO VŠECHNY SEGMENTY) ***
             If runnerXY.Count > 1 Then
 
                 ' Find the nearest point on the path of the runner (přesunuto z bloku Moving)
                 projection = FindClosestProjectionOnTrack(dogXY(i + 1), runnerXY, currentRunnerSearchIndex)
-                deviation = projection.DeviationMeters
+                deviation = projection.Deviation
                 currentRunnerSearchIndex = projection.ClosestSegmentIndex ' Update the start for the next search
 
                 ' Calculate the weight by deviation (přesunuto z bloku Moving)
-                _weight = Weight(deviation)
+                weight = GPXRecord.Weight(deviation)
 
                 ' *** NOVÉ: Započtení váženého času (provedeno BEZ OHLEDU na stav pohybu) ***
-                If _weight > 0 Then
+                If weight > 0 Then
                     ' timeDiff.TotalSeconds * _weight dá čas v sekundách, převedeme na TimeSpan
-                    weightedTime = weightedTime.Add(TimeSpan.FromSeconds(timeDiff.TotalSeconds * _weight))
+                    weightedTime = weightedTime.Add(timeDiff * weight)
                 End If
+                ' Add the time-weighted deviation (přesunuto sem z Tracking analysis bloku)
+                deviationXTime += deviation * timeDiff.TotalSeconds
+
             End If
 
             ' --- 3. Accumulation of statistics by state (Původní blok) ---
@@ -2040,11 +2053,9 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
 
                 ' --- 4. Weighted Metrics (provádí se POUZE když se pes pohybuje a máme trasu kladeče) ---
                 If runnerXY.Count > 1 Then
-                    ' Add the time-weighted deviation (přesunuto sem z Tracking analysis bloku)
-                    weightedDeviation += deviation * timeDiff.TotalSeconds
 
                     ' Add the weighted distance along the path of the runner (původní kód)
-                    If _weight > 0 AndAlso projection.ClosestSegmentIndex > lastCreditedRunnerSegmentIndex Then
+                    If weight > 0 AndAlso projection.ClosestSegmentIndex > lastCreditedRunnerSegmentIndex Then
                         Dim segmentJump = projection.ClosestSegmentIndex - lastCreditedRunnerSegmentIndex
 
                         ' Case 1: The dog follows the track smoothly or shortens slightly
@@ -2053,14 +2064,14 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                                 Dim p1 = runnerXY(k)
                                 Dim p2 = runnerXY(k + 1)
                                 Dim runnerSegmentLength As Double = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2)
-                                weightedDistance += runnerSegmentLength * _weight
+                                weightedDistance += runnerSegmentLength * weight
                             Next
                             ' Case 2: The dog skipped a large segment, we only count the segment where it got "caught" again
                         Else
                             Dim p1 = runnerXY(projection.ClosestSegmentIndex)
                             Dim p2 = runnerXY(projection.ClosestSegmentIndex + 1)
                             Dim runnerSegmentLength As Double = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2)
-                            weightedDistance += runnerSegmentLength * _weight
+                            weightedDistance += runnerSegmentLength * weight
                         End If
 
                         lastCreditedRunnerSegmentIndex = projection.ClosestSegmentIndex
@@ -2071,7 +2082,8 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             End If
 
         Next i
-
+        averageDeviation = deviationXTime / (movingTime + stoppedTime).TotalSeconds
+        'Dim deviationPoints As Double = Weight(averageDeviation)
         ' Update the minimum distance to the end of the runner's path
         Dim index As Integer = 0
         If runnerEndPoint IsNot Nothing Then
@@ -2087,8 +2099,9 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         End If
 
 
+
         ' --- Returning results ---
-        Return (movingTime, stoppedTime, weightedDistance, weightedTime, weightedDeviation, minDeviationFromRunnerEnd)
+        Return (movingTime, stoppedTime, weightedDistance, weightedTime, averageDeviation, minDeviationFromRunnerEnd)
 
     End Function
 
@@ -2268,9 +2281,9 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
     ''' <param name="lon0">Reference longitude for coordinate conversion.</param>
     ''' <returns>A list of tuples, where each tuple contains the distance from the start of the trail in kilometers, the waypoint's deviation from the trail in meters and gross speed of the team as distancealongTrail to the checkpoint/time from start to the checkPoint.</returns>
     Private Function EvaluateCheckPoints(checkPoints As TrackAsTrkPts, dogGeoPoints As List(Of TrackGeoPoint), runnerGeoPoints As List(Of TrackGeoPoint), runnerXY As List(Of (X As Double, Y As Double)), lat0 As Double, lon0 As Double, totalRunnerDistanceKm As Double) _
-    As List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
+    As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
         Dim conv As New TrackConverter()
-        Dim results As New List(Of (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
+        Dim results As New List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeedkmh As Double))
         Dim converter As New TrackConverter
         ' If there's no runner track to compare against, we can't evaluate anything.
         If runnerXY.Count < 2 OrElse runnerGeoPoints.Count < 2 Then
@@ -2362,7 +2375,10 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                 Dim timeDiffHours As Double = (checkPointTime - dogStartTime).TotalHours
                 ' Calculate gross speed (distanceAlongTrail / total time) in km/h
                 Dim dogGrossSpeedkmh As Double = If(timeDiffHours > 0, distanceAlongTrailMeters / 1000.0 / timeDiffHours, 0.0) ' in km/h
-                results.Add((distanceAlongTrailMeters, minDeviation, dogGrossSpeedkmh))
+                results.Add(New CheckpointData With {
+                            .distanceAlongTrail = distanceAlongTrailMeters,
+                            .deviationFromTrail = minDeviation,
+                            .dogGrossSpeedkmh = dogGrossSpeedkmh})
             End If
         Next
 
@@ -2372,80 +2388,136 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
     ''' <summary>
     ''' Calculates the final Competition score based on the analyzed track statistics.
     ''' </summary>
-    ''' <param name="stats">The complete TrackStats object containing all performance metrics.</param>
-    ''' <param name="runnerFound">A boolean indicating if the runner was successfully found.</param>
-    ''' <returns>The final integer score for the team.</returns>
-    Private Function CalculateCompetitionScore(stats As TrailStatsStructure) As (RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, dogReadingPoints As Integer)
+    ''' <param name="stats">The complete TrackStatsStructure object containing all performance metrics.</param>
+    ''' <param name="recalculate">A boolean indicating whether to force a recalculation, ignoring existing scores even if they are present.</param>
+    ''' <returns>A tuple containing the individual score components and handler/dog names.</returns>
+    Private Function CalculateCompetitionScore(stats As TrailStats) As ScoringData
 
-        ' --- Scoring Configuration ---
-        ' By defining all scoring parameters here, you can easily tweak the rules later.
+        ' --- 1. Scoring Configuration ---
+        ' Define all scoring parameters based on the active category configuration.
 
         ' A) Points for major objectives
-        Dim POINTS_FOR_FIND As Integer = ActiveCategoryInfo.PointsForFindMax ' Points for successfully finding the runner
-        Dim POINTS_FOR_DOG_READING As Integer = ActiveCategoryInfo.PointsForDogReadingMax / 2 ' Points for each correctly reached checkpoint (waypoint). There are two checkpoints evaluated. 
-        Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveCategoryInfo.PointsPerKmhGrossSpeed ' Bonus points for each km/h of gross speed.
-        Dim PointsForDogAccuracy As Integer = ActiveCategoryInfo.PointsForAccuracyMax ' Maximum points for dog accuracy (trail following).
+        Dim POINTS_FOR_FIND As Integer = ActiveCategoryInfo.PointsForFindMax               ' Max points for successfully finding the runner.
+        ' B) Checkpoint reading points (Divided by 2 as typically two checkpoints are evaluated).
+        Dim POINTS_FOR_DOG_READING_MAX_CHECKPOINT As Integer = ActiveCategoryInfo.PointsForDogReadingMax / 2
+        ' C) Bonus points for each km/h of gross speed.
+        Dim POINTS_PER_KMH_GROSS_SPEED As Double = ActiveCategoryInfo.PointsPerKmhGrossSpeed
+        ' D) Maximum points for dog accuracy (trail following).
+        Dim POINTS_FOR_DOG_ACCURACY_MAX As Integer = ActiveCategoryInfo.PointsForAccuracyMax
 
-        ' --- Initial check ---
+        ' --- 2. Initial Validity Check ---
         If stats.TotalTime.TotalSeconds <= 0 Then
-            Return (0, 0, 0, 0) ' No activity to score.
+            ' Return zero points if no time was recorded (no activity to score).
+            Return New ScoringData With {.RunnerFoundPoints = 0,
+                .DogSpeedPoints = 0,
+                .DogAccuracyPoints = 0,
+                .DogReadingPoints = 0,
+                .dogName = stats.PointsInMTCompetition.dogName,
+                .handlerName = stats.PointsInMTCompetition.handlerName}
         End If
-        ' --- Step 0: Initialize score accumulators ---
-        Dim RunnerFoundPoints, DogSpeedPoints, DogAccuracyPoints As Integer
-        Dim dogReadingPoints As Integer = 0
 
-        ' --- Step 1: Calculate points based on the primary outcome (Find vs. No-Find) ---
+        ' --- 3. Initialize Score Accumulators ---
+        Dim RunnerFoundPoints As Integer = 0
+        Dim DogSpeedPoints As Integer = 0
+        Dim DogAccuracyPoints As Integer = 0
+        Dim DogReadingPoints As Integer = 0
 
-        ' --- SUCCESS PATH: The runner was found ---
+
+        ' --------------------------------------------------------------------------------
+        ' --- STEP 1: Calculate Runner Found Points (Primary Objective) ---
+        ' --------------------------------------------------------------------------------
+
+
         If stats.RunnerFound Then
-            RunnerFoundPoints = POINTS_FOR_FIND
-        Else
-            ' --- FAILURE PATH: The runner was not found ---
-            RunnerFoundPoints = 0
-        End If
+                ' SUCCESS PATH: Full points for the find.
+                RunnerFoundPoints = POINTS_FOR_FIND
+            Else
+                ' FAILURE PATH: Zero points for no find.
+                RunnerFoundPoints = 0
+            End If
 
 
-        ' --- Step 2: Calculate bonus points for performance metrics ---
-        ' Add bonus points for speed. We use gross speed as it rewards overall efficiency.
+        ' --------------------------------------------------------------------------------
+        ' --- STEP 2: Calculate Dog Speed Points (Bonus for Overall Efficiency) ---
+        ' --------------------------------------------------------------------------------
+
+
         If stats.DogGrossSpeed > 0 Then
-            Dim weight As Double = stats.MaxTeamDistance / stats.RunnerDistance ' weight according to the max distance reached along the trail
-            DogSpeedPoints = CInt(Math.Round(stats.DogGrossSpeed * POINTS_PER_KMH_GROSS_SPEED * weight))
-        End If
+                ' Calculate a distance weight: rewards speed based on how far into the trail the team reached.
+                Dim distanceWeight As Double = stats.MaxTeamDistance / stats.RunnerDistance
 
-        '--- Step 3: Calculate points for trail following  ---
-        ' Award points for the portion of the trail the dog followed correctly.
-        ' This is where WeightedDistanceAlongTrailKm is the perfect metric.
+                ' Score = GrossSpeed [km/h] * PointsPerKmh * DistanceWeight (Rounded)
+                DogSpeedPoints = CInt(Math.Round(stats.DogGrossSpeed * POINTS_PER_KMH_GROSS_SPEED * distanceWeight))
+            End If
 
+
+        ' --------------------------------------------------------------------------------
+        ' --- STEP 3: Calculate Dog Accuracy Points (Trail Following) ---
+        ' --------------------------------------------------------------------------------
+
+
+        ' Check for invalid or non-numeric percentage values before calculating.
         If Double.IsNaN(stats.WeightedDistanceAlongTrailPerCent) OrElse
            Double.IsInfinity(stats.WeightedDistanceAlongTrailPerCent) OrElse
-           stats.WeightedDistanceAlongTrailPerCent < Integer.MinValue OrElse
-           stats.WeightedDistanceAlongTrailPerCent > Integer.MaxValue Then
-            DogAccuracyPoints = 0
-        Else 'accuracy has two parts: by length and by time
-            DogAccuracyPoints = CInt(stats.WeightedDistanceAlongTrailPerCent / 100 * PointsForDogAccuracy / 2)
-            DogAccuracyPoints += CInt(stats.WeightedTimePerCent / 100 * PointsForDogAccuracy / 2)
+           stats.WeightedDistanceAlongTrailPerCent < 0 OrElse
+           stats.WeightedTimePerCent < 0 Then
+
+                DogAccuracyPoints = 0 ' Assign zero if data is invalid/missing.
+            Else
+                ' Accuracy score is usually a 50/50 blend of time-based and distance-based accuracy.
+
+                ' 50% of max score from distance accuracy: (Percentage / 100) * (MaxPoints / 2)
+                DogAccuracyPoints = CInt(stats.WeightedDistanceAlongTrailPerCent / 100 * (POINTS_FOR_DOG_ACCURACY_MAX / 2))
+
+                ' Add 50% of max score from time accuracy: (Percentage / 100) * (MaxPoints / 2)
+                DogAccuracyPoints += CInt(stats.WeightedTimePerCent / 100 * (POINTS_FOR_DOG_ACCURACY_MAX / 2))
+            End If
+
+
+        ' --------------------------------------------------------------------------------
+        ' --- STEP 4: Calculate Dog Reading Points (Checkpoints) ---
+        ' --------------------------------------------------------------------------------
+
+        If stats.CheckpointsEval IsNot Nothing AndAlso stats.CheckpointsEval.Count >= 2 Then
+                ' Note: The last item in CheckpointsEval is the final dog position, NOT a scored checkpoint.
+                ' We generally evaluate the last two actual checkpoints.
+
+                ' Determine the index range for the last two potential checkpoints.
+                Dim lastActualCheckpointIndex As Integer = stats.CheckpointsEval.Count - 2
+                Dim startIndex As Integer = Math.Max(lastActualCheckpointIndex - 1, 0) ' Start at the second-to-last or the first point (index 0)
+                Dim endIndex As Integer = lastActualCheckpointIndex ' The last actual checkpoint index
+
+                For i As Integer = startIndex To endIndex
+                    Dim checkPointEval = stats.CheckpointsEval(i)
+                    Dim Deviation As Double = checkPointEval.deviationFromTrail
+
+                    ' Calculate a weight (0.0 to 1.0) based on deviation from the trail.
+                    Dim weightFactor As Double = Weight(Deviation) ' Assumes Weight(double) function exists.
+
+                    ' Score contribution for this checkpoint:
+                    ' (Distance up to CP / Total Runner Distance) * WeightFactor * MaxPointsPerCheckpoint
+                    DogReadingPoints += CInt((checkPointEval.distanceAlongTrail / stats.RunnerDistance) * weightFactor * POINTS_FOR_DOG_READING_MAX_CHECKPOINT)
+                Next
+
+                ' TODO: The original code's comment about whether the judge marks the find location 
+                ' as a checkpoint suggests the loop boundary (endIndex) may need adjustment 
+                ' if the 'find' is sometimes included in CheckpointsEval.
+            End If
+
+
+        ' --------------------------------------------------------------------------------
+        ' --- Final Step: Return all calculated scores ---
+        ' --------------------------------------------------------------------------------
+        If stats.PointsInMTCompetition Is Nothing Then
+            stats.PointsInMTCompetition = New ScoringData
         End If
-
-
-        '--- Step 4: Calculate points for each reached checkpoint ---
-        If stats.CheckpointsEval IsNot Nothing AndAlso stats.CheckpointsEval.Count > 1 Then
-            ' the VERY LAST item in CheckPointsEval
-            ' is the dog's final position, not a  checkpoint.
-            'points for the last waypoint:
-            Dim lastCheckPointIndex = stats.CheckpointsEval.Count - 2 'the last point is final point of the dog
-            Dim preLastIndex = lastCheckPointIndex - 1
-
-            For i As Integer = Math.Max(lastCheckPointIndex - 1, 0) To lastCheckPointIndex ' TODO: V případě nálezu kladeče rozhodčí  nálezu ozznačí jako checkpoint nebo ne? 
-                Dim checkPointEval = stats.CheckpointsEval(i)
-                Dim Deviation = checkPointEval.deviationFromTrail
-                ' Výpočet váhy podle vzdálenosti (Deviation)
-                Dim _weight As Double = Weight(Deviation)
-                dogReadingPoints += (checkPointEval.distanceAlongTrail / (stats.RunnerDistance)) * _weight * POINTS_FOR_DOG_READING  '
-            Next
-        End If
-
-        ' --- Final Step: 
-        Return (RunnerFoundPoints, DogSpeedPoints, DogAccuracyPoints, dogReadingPoints)
+        Return New ScoringData With {
+        .RunnerFoundPoints = RunnerFoundPoints,
+        .DogSpeedPoints = DogSpeedPoints,
+        .DogAccuracyPoints = DogAccuracyPoints,
+        .DogReadingPoints = DogReadingPoints,
+        .dogName = stats.PointsInMTCompetition.dogName,
+        .handlerName = stats.PointsInMTCompetition.handlerName}
 
     End Function
 
@@ -2834,6 +2906,7 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
 
     Public Function Save() As Boolean
         Me.Reader.Save()
+        SetCreatedModifiedDate() 'znovu nastaví datum na původní
         RaiseEvent WarningOccurred($"File {Me.Reader.FileName} has been saved successfully.", Color.DarkGreen)
         Return True
     End Function
@@ -2963,29 +3036,36 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             Dim localizedReport As TrailReport = Me.LocalisedReports(key)
             Dim reportNode As XmlNode = Me.Reader.CreateAndAddElement(extensionsNode, GpxReader.K9_PREFIX & ":" & "report", "", True, "lang", key, GpxReader.K9_NAMESPACE_URI)
             'přidá do <report> <dogName>, <goal>, <trail>, <performance>, <weather>
-            'todo: performancePoints!!!!
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "dogName", localizedReport.Category.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "goal", localizedReport.Goal.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "trail", localizedReport.Trail.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "performance", localizedReport.Performance.Text, True,,, GpxReader.K9_NAMESPACE_URI)
             Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "weather", localizedReport.weather.Text, True,,, GpxReader.K9_NAMESPACE_URI)
+            WriteWeatherDataToXml(reportNode, weatherNode, localizedReport.WeatherData)
             Dim ScoringNode As XmlNode = Me.Reader.CreateAndAddElement(reportNode, GpxReader.K9_PREFIX & ":" & "scoring", localizedReport.PerformancePoints.Text, True,,, GpxReader.K9_NAMESPACE_URI)
-            Me.WriteWeatherDataToXml(reportNode, weatherNode, localizedReport.WeatherData)
+            WriteScoringDataToXml(reportNode, ScoringNode, Me.TrailStats.PointsInMTCompetition)
         Next
+
+        WriteTrailStatsToXml(extensionsNode, Me.TrailStats)
         Return True
     End Function
 
-    Public Function ReadLocalisedReport() As Dictionary(Of String, TrailReport)
-        Dim reports As New Dictionary(Of String, TrailReport)()
+    Public Function ReadLocalisedReport(ByRef reports As Dictionary(Of String, TrailReport)) As Boolean
+        'Dim reports As New Dictionary(Of String, TrailReport)()
         Try
             Dim metadataNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "metadata", Me.Reader.rootNode)
-            If metadataNode Is Nothing Then Return reports '< If metadata> vůbec neexistuje
+            If metadataNode Is Nothing Then Return False '< If metadata> vůbec neexistuje
             Dim extensionsNode As XmlNode = Me.Reader.SelectSingleChildNode(Me.Reader.GPX_DEFAULT_PREFIX & ":" & "extensions", metadataNode)
-            If extensionsNode Is Nothing Then Return reports ' <extensions> vůbec neexistuje
+            If extensionsNode Is Nothing Then Return False ' <extensions> vůbec neexistuje
 
+            Dim loadedStats As TrailStats = Nothing
+            Dim loadedScoring As ScoringData = Nothing
+            Dim isStatsLoaded As Boolean = ReadTrailStatsFromXml(extensionsNode, loadedStats)
+            Dim isScoringLoaded As Boolean = False
             ' Získání všech <K9TrailsAnalyzer:report> uzlů
             Dim reportNodes As XmlNodeList = Me.Reader.SelectAllChildNodes(GpxReader.K9_PREFIX & ":" & "report", extensionsNode)
-            If reportNodes Is Nothing OrElse reportNodes.Count = 0 Then Return reports ' žádné reporty
+            If reportNodes Is Nothing OrElse reportNodes.Count = 0 Then Return False ' žádné reporty
+
             ' Pro každý report uzel vytvoříme TrailReport objekt
             For Each reportNode As XmlNode In reportNodes
                 Dim lang As String = reportNode.Attributes("lang")?.Value
@@ -2996,37 +3076,40 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                 Dim trailNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "trail", reportNode)
                 Dim performanceNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "performance", reportNode)
                 Dim weatherNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weather", reportNode)
+                Me.WeatherData = ReadWeatherDataFromXml(weatherNode)
+
                 Dim scoringNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "scoring", reportNode)
-                'Dim weatherDataNode As XmlNode = Me.Reader.SelectSingleChildNode(GpxReader.K9_PREFIX & ":" & "weatherdata", reportNode)
-                Dim weatherData As (temperature As Double?,
-                                                  windSpeed As Double?,
-                                                  windDirection As Double?,
-                                                  precipitation As Double?,
-                                                  relHumidity As Double?,
-                                                  cloudCover As Double?)
-                weatherData = ReadWeatherDataFromXml(weatherNode)
-                Me.WeatherData = weatherData
+
+                isScoringLoaded = ReadScoringDataFromXml(scoringNode, loadedScoring)
+
                 Dim localizedReport As New TrailReport("",
                    If(dogNameNode?.InnerText, ""),
                    If(goalNode?.InnerText, ""),
                     If(trailNode?.InnerText, ""),
                     If(performanceNode?.InnerText, ""),
                        If(scoringNode?.InnerText, ""),
-                   weatherData,
+                   Me.WeatherData,
                     If(weatherNode?.InnerText, ""))
 
                 If Not reports.ContainsKey(lang) Then reports.Add(lang, localizedReport)
             Next reportNode
+            If isStatsLoaded AndAlso isScoringLoaded Then
+                loadedStats.PointsInMTCompetition = loadedScoring
+                Me.TrailStats = loadedStats ' Nastaví kompletní objekt přes Set sekci property
+                Return True 'Me.TrailStats = loadedStats ' Nastaví kompletní objekt přes Set sekci property
+            Else
+                Return False '  Me.TrailStats = CalculateTrackStats(Me.Tracks, Me.WptNodes)
+            End If
 
-            Return reports
+
         Catch ex As Exception
-            Return reports
+            Return False
         End Try
 
     End Function
 
     ' Uloží tuple do XML elementu pomocí CreateAndAddElement
-    Private Sub WriteWeatherDataToXml(parentNode As XmlElement, weatherNode As XmlNode,
+    Private Shared Sub WriteWeatherDataToXml(parentNode As XmlElement, weatherNode As XmlNode,
                                   weatherData As (temperature As Double?,
                                                   windSpeed As Double?,
                                                   windDirection As Double?,
@@ -3034,14 +3117,6 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                                                   relHumidity As Double?,
                                                   cloudCover As Double?))
 
-        '' 1️⃣ Vytvoříme prázdný element <weatherdata> v tvém namespace
-        'Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(parentNode,
-        '                                                GpxReader.K9_PREFIX & ":weatherdata",
-        '                                                "",
-        '                                                True,
-        '                                                "",
-        '                                                "",
-        '                                                GpxReader.K9_NAMESPACE_URI)
 
         ' 2️⃣ Funkce pro zápis atributu
         Dim setAttr = Sub(name As String, value As Double?)
@@ -3062,7 +3137,7 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
     End Sub
 
     ' Načte tuple z XML elementu
-    Private Function ReadWeatherDataFromXml(weatherDataNode As XmlNode) As (Double?, Double?, Double?, Double?, Double?, Double?)
+    Private Shared Function ReadWeatherDataFromXml(weatherDataNode As XmlNode) As (Double?, Double?, Double?, Double?, Double?, Double?)
         Dim parseNullable = Function(text As String) As Double?
                                 If String.IsNullOrWhiteSpace(text) Then Return Nothing
                                 Dim result As Double
@@ -3084,65 +3159,224 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
     End Function
 
     ' Uloží tuple do XML elementu pomocí CreateAndAddElement
-    'todo: přepsat na atributy scoringu!!!!
-    Private Sub WriteScoringDataToXml(parentNode As XmlElement, weatherNode As XmlNode,
-                                  weatherData As (temperature As Double?,
-                                                  windSpeed As Double?,
-                                                  windDirection As Double?,
-                                                  precipitation As Double?,
-                                                  relHumidity As Double?,
-                                                  cloudCover As Double?))
+    Private Shared Sub WriteScoringDataToXml(parentNode As XmlElement, scoringNode As XmlNode,
+                                  scoringData As ScoringData)
 
-        '' 1️⃣ Vytvoříme prázdný element <weatherdata> v tvém namespace
-        'Dim weatherNode As XmlNode = Me.Reader.CreateAndAddElement(parentNode,
-        '                                                GpxReader.K9_PREFIX & ":weatherdata",
-        '                                                "",
-        '                                                True,
-        '                                                "",
-        '                                                "",
-        '                                                GpxReader.K9_NAMESPACE_URI)
 
         ' 2️⃣ Funkce pro zápis atributu
         Dim setAttr = Sub(name As String, value As Double?)
                           If value.HasValue Then
-                              CType(weatherNode, XmlElement).SetAttribute(name, value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))
+                              CType(scoringNode, XmlElement).SetAttribute(name, value.Value.ToString(System.Globalization.CultureInfo.InvariantCulture))
                           Else
-                              CType(weatherNode, XmlElement).SetAttribute(name, "")
+                              CType(scoringNode, XmlElement).SetAttribute(name, "")
                           End If
                       End Sub
 
         ' 3️⃣ Nastavení atributů
-        setAttr("temperature", weatherData.temperature)
-        setAttr("windSpeed", weatherData.windSpeed)
-        setAttr("windDirection", weatherData.windDirection)
-        setAttr("precipitation", weatherData.precipitation)
-        setAttr("relHumidity", weatherData.relHumidity)
-        setAttr("cloudCover", weatherData.cloudCover)
+        setAttr("runnerFoundPoints", scoringData.RunnerFoundPoints)
+        setAttr("speedPoints", scoringData.DogSpeedPoints)
+        setAttr("accuracyPoints", scoringData.DogAccuracyPoints)
+        setAttr("dogReadingPoints", scoringData.DogReadingPoints)
+        CType(scoringNode, XmlElement).SetAttribute("dogName", scoringData.dogName)
+        CType(scoringNode, XmlElement).SetAttribute("handlerName", scoringData.handlerName)
     End Sub
 
-    ' Načte tuple z XML elementu
-    Private Function ReadScoringDataFromXml(weatherDataNode As XmlNode) As (Double?, Double?, Double?, Double?, Double?, Double?)
-        Dim parseNullable = Function(text As String) As Double?
-                                If String.IsNullOrWhiteSpace(text) Then Return Nothing
-                                Dim result As Double
-                                If Double.TryParse(text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, result) Then
-                                    Return result
-                                Else
-                                    Return Nothing
-                                End If
-                            End Function
-        'todo: přepsat na atributy scoringu!!
-        Dim t = parseNullable(weatherDataNode?.Attributes("temperature")?.Value)
-        Dim ws = parseNullable(weatherDataNode?.Attributes("windSpeed")?.Value)
-        Dim wd = parseNullable(weatherDataNode?.Attributes("windDirection")?.Value)
-        Dim p = parseNullable(weatherDataNode?.Attributes("precipitation")?.Value)
-        Dim rh = parseNullable(weatherDataNode?.Attributes("relHumidity")?.Value)
-        Dim cc = parseNullable(weatherDataNode?.Attributes("cloudCover")?.Value)
+    Private Shared Sub WriteTrailStatsToXml(parentNode As XmlElement, statsData As TrailStats)
 
-        Return (t, ws, wd, p, rh, cc)
+        ' 1. Vytvoření elementu <TrailStats>
+        Dim trailStatsNode As XmlElement = parentNode.OwnerDocument.CreateElement("trailStats")
+
+        ' 2. Definice pomocných funkcí pro zápis atributů (pro Double, TimeSpan, Boolean)
+        Dim setAttrDouble = Sub(node As XmlElement, name As String, value As Double)
+                                node.SetAttribute(name, value.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture))
+                            End Sub
+
+        Dim setAttrTimeSpan = Sub(node As XmlElement, name As String, value As TimeSpan)
+                                  ' Ukládáme čas jako celkový počet sekund (double) pro snadné načtení.
+                                  node.SetAttribute(name, value.TotalSeconds.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture))
+                              End Sub
+
+        Dim setAttrBoolean = Sub(node As XmlElement, name As String, value As Boolean)
+                                 node.SetAttribute(name, If(value, "True", "False"))
+                             End Sub
+
+        ' 3. Nastavení atributů pro Double/procenta do <TrailStats>
+        setAttrDouble(trailStatsNode, "dogDistance", statsData.DogDistance)
+        setAttrDouble(trailStatsNode, "runnerDistance", statsData.RunnerDistance)
+        setAttrDouble(trailStatsNode, "weightedDistanceAlongTrail", statsData.WeightedDistanceAlongTrail)
+        setAttrDouble(trailStatsNode, "weightedDistanceAlongTrailPerCent", statsData.WeightedDistanceAlongTrailPerCent)
+        setAttrDouble(trailStatsNode, "weightedTimePerCent", statsData.WeightedTimePerCent)
+        setAttrDouble(trailStatsNode, "dogNetSpeed", statsData.DogNetSpeed)
+        setAttrDouble(trailStatsNode, "dogGrossSpeed", statsData.DogGrossSpeed)
+        setAttrDouble(trailStatsNode, "deviation", statsData.Deviation)
+        setAttrDouble(trailStatsNode, "maxTeamDistance", statsData.MaxTeamDistance)
+
+        ' 4. Nastavení atributů pro TimeSpan
+        setAttrTimeSpan(trailStatsNode, "trailAge", statsData.TrailAge)
+        setAttrTimeSpan(trailStatsNode, "totalTime", statsData.TotalTime)
+        setAttrTimeSpan(trailStatsNode, "movingTime", statsData.MovingTime)
+        setAttrTimeSpan(trailStatsNode, "stoppedTime", statsData.StoppedTime)
+
+        ' 5. Nastavení atributů pro Boolean
+        setAttrBoolean(trailStatsNode, "runnerFound", statsData.RunnerFound)
+
+        ' --------------------------------------------------------------------------------
+        ' 6. ZÁPIS CHECKPOINTŮ (CheckpointsEval)
+        ' --------------------------------------------------------------------------------
+
+        If statsData.CheckpointsEval IsNot Nothing AndAlso statsData.CheckpointsEval.Count > 0 Then
+
+            ' Vytvoření kontejnerového nodu pro všechny checkpointy: <Checkpoints>
+            Dim checkpointsContainerNode As XmlElement = parentNode.OwnerDocument.CreateElement("Checkpoints")
+
+            ' Iterace přes všechny vyhodnocené checkpointy
+            For Each cpEval In statsData.CheckpointsEval
+
+                ' Vytvoření nodu pro jeden checkpoint: <Checkpoint>
+                Dim cpNode As XmlElement = parentNode.OwnerDocument.CreateElement("checkpoint")
+
+                ' Zápis hodnot jako atributy:
+                ' U anonymních tuple (jak byly v původní definici) musíte přistupovat přes Item1, Item2, Item3.
+                ' Pokud používáte explicitní strukturu (viz poznámka 1), použijte názvy property.
+                setAttrDouble(cpNode, "distanceAlongTrail", cpEval.distanceAlongTrail)
+                setAttrDouble(cpNode, "deviationFromTrail", cpEval.deviationFromTrail)
+                setAttrDouble(cpNode, "dogGrossSpeed", cpEval.dogGrossSpeedkmh)
+
+                ' Přidání <Checkpoint> do <Checkpoints>
+                checkpointsContainerNode.AppendChild(cpNode)
+            Next
+
+            ' Přidání <Checkpoints> do <TrailStats>
+            trailStatsNode.AppendChild(checkpointsContainerNode)
+        End If
+
+        ' 7. PŘIDÁNÍ <TrailStats> do hlavního nodu
+        parentNode.AppendChild(trailStatsNode)
+
+    End Sub
+
+    ''' <summary>
+    ''' Reads competition scoring data from the provided XML node.
+    ''' </summary>
+    Public Shared Function ReadScoringDataFromXml(scoringNode As XmlNode, ByRef _scoringData As ScoringData) As Boolean
+        If scoringNode Is Nothing Then Return False
+
+        _scoringData = New ScoringData With {
+        .RunnerFoundPoints = ParseInteger(scoringNode, "runnerFoundPoints"),
+        .DogSpeedPoints = ParseInteger(scoringNode, "speedPoints"),
+        .DogAccuracyPoints = ParseInteger(scoringNode, "accuracyPoints"),
+        .DogReadingPoints = ParseInteger(scoringNode, "dogReadingPoints")
+    }
+
+        ' Dog and Handler names (String attributes)
+        _scoringData.dogName = scoringNode?.Attributes("dogName")?.Value
+        _scoringData.handlerName = scoringNode?.Attributes("handlerName")?.Value
+
+        If _scoringData.dogName Is Nothing Then _scoringData.dogName = ""
+        If _scoringData.handlerName Is Nothing Then _scoringData.handlerName = ""
+
+        Return True
+    End Function
+
+    ''' <summary>
+    ''' Reads detailed trail statistics and checkpoint data from the parent XML node.
+    ''' </summary>
+    ''' <returns>True if the TrailStats node was successfully found and parsed; False otherwise.</returns>
+    Public Shared Function ReadTrailStatsFromXml(parentNode As XmlElement, ByRef stats As TrailStats) As Boolean
+
+        ' Find the TrailStats element
+        Dim statsNode As XmlNode = parentNode?.SelectSingleNode("trailStats")
+
+        If statsNode Is Nothing Then
+            ' Nenašli jsme uzel, načtení bylo neúspěšné. 
+            stats = New TrailStats() ' Vratte prázdný objekt
+            Return False
+        End If
+
+        stats = New TrailStats With {
+              .DogDistance = ParseDouble(statsNode, "dogDistance"),
+        .RunnerDistance = ParseDouble(statsNode, "runnerDistance"),
+        .WeightedDistanceAlongTrail = ParseDouble(statsNode, "weightedDistanceAlongTrail"),
+        .WeightedDistanceAlongTrailPerCent = ParseDouble(statsNode, "weightedDistanceAlongTrailPerCent"),
+        .WeightedTimePerCent = ParseDouble(statsNode, "weightedTimePerCent"),
+        .DogNetSpeed = ParseDouble(statsNode, "dogNetSpeed"),
+        .DogGrossSpeed = ParseDouble(statsNode, "dogGrossSpeed"),
+        .Deviation = ParseDouble(statsNode, "deviation"),
+        .MaxTeamDistance = ParseDouble(statsNode, "maxTeamDistance"),' --- Read TimeSpan attributes (stored as seconds) ---
+        .TrailAge = ParseTimeSpan(statsNode, "trailAge"),
+        .TotalTime = ParseTimeSpan(statsNode, "totalTime"),
+        .MovingTime = ParseTimeSpan(statsNode, "movingTime"),
+        .StoppedTime = ParseTimeSpan(statsNode, "stoppedTime"),' --- Read Boolean attribute ---
+        .RunnerFound = ParseBoolean(statsNode, "runnerFound")
+    }
+
+        ' --- Read CheckpointsEval (List of Tuples) ---
+        stats.CheckpointsEval = New List(Of CheckpointData) ' (distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double))()
+
+        ' Find the Checkpoints container
+        Dim checkpointsContainer As XmlNode = statsNode.SelectSingleNode("checkpoints")
+
+        If checkpointsContainer IsNot Nothing Then
+            ' Iterate over all Checkpoint elements
+            For Each cpNode As XmlNode In checkpointsContainer.SelectNodes("checkpoint")
+
+                Dim distAlong As Double = ParseDouble(cpNode, "distanceAlongTrail")
+                Dim devFrom As Double = ParseDouble(cpNode, "deviationFromTrail")
+                Dim grossSpeed As Double = ParseDouble(cpNode, "dogGrossSpeed")
+
+                ' Add the parsed tuple to the list
+                stats.CheckpointsEval.Add(New CheckpointData With {
+                                          .distanceAlongTrail = distAlong,
+                                          .deviationFromTrail = devFrom,
+                                          .dogGrossSpeedkmh = grossSpeed})
+            Next
+        End If
+
+        Return True
+    End Function
+
+    ' Helper pro bezpečné parsování Double z atributu.
+    Private Shared Function ParseDouble(node As XmlNode, attributeName As String) As Double
+        Dim attrValue As String = node?.Attributes(attributeName)?.Value
+        If String.IsNullOrWhiteSpace(attrValue) Then Return 0.0
+
+        Dim result As Double
+        ' Použití InvariantCulture pro parsování čísel s tečkou.
+        If Double.TryParse(attrValue, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, result) Then
+            Return result
+        Else
+            Return 0.0
+        End If
+    End Function
+
+    ' Helper pro bezpečné parsování Integer z atributu.
+    Private Shared Function ParseInteger(node As XmlNode, attributeName As String) As Integer
+        Dim attrValue As String = node?.Attributes(attributeName)?.Value
+        If String.IsNullOrWhiteSpace(attrValue) Then Return 0
+
+        Dim result As Integer
+        If Integer.TryParse(attrValue, System.Globalization.CultureInfo.InvariantCulture, result) Then
+            Return result
+        Else
+            Return 0
+        End If
+    End Function
+
+    ' Helper pro bezpečné parsování TimeSpan (předpokládá, že je uložen jako celkový počet sekund Double).
+    Private Shared Function ParseTimeSpan(node As XmlNode, attributeName As String) As TimeSpan
+        Dim seconds As Double = ParseDouble(node, attributeName)
+        Return TimeSpan.FromSeconds(seconds)
+    End Function
+
+    ' Helper pro bezpečné parsování Boolean (předpokládá, že je uložen jako "True" nebo "False").
+    Private Shared Function ParseBoolean(node As XmlNode, attributeName As String) As Boolean
+        Dim attrValue As String = node?.Attributes(attributeName)?.Value
+        Return Boolean.TryParse(attrValue, Nothing) ' TryParse vrátí False při selhání
     End Function
 
 End Class
+
+
 
 
 Module TrackDisplayLogic

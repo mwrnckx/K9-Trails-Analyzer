@@ -592,9 +592,9 @@ Partial Class Form1
             End If
             IO.File.Move(file, appdataPath) 'pokud tam už něco je nepřepisuje se!
         Next
-
-        LoadCategories()
-        LoadConfig()
+        LoadUnifiedConfig()
+        'LoadCategories()
+        'LoadConfig()
         PopulateCategoriesToolStrip()
 
         WriteRTBWarning("Logs:", Color.Maroon)

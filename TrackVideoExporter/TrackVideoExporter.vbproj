@@ -40,8 +40,7 @@
   <ItemGroup>
     <EmbeddedResource Update="Localization\Strings.cs.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <LastGenOutput>Strings.cs.Designer.vb</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator></Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Localization\Strings.resx">
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
