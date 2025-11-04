@@ -359,7 +359,7 @@ Public Class TrailReport
     ''' <remarks>Contains temperature, wind speed, wind direction, precipitation, relative humidity, and cloud cover.</remarks>
     Public Property weather As StyledText
 
-    Public Property WeatherData As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
+    Public Property WeatherData As WeatherData '(_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
 
     'Public Property ScoringData As ScoringData
 
@@ -368,7 +368,7 @@ Public Class TrailReport
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
     ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
-    Public Sub New(title As String, category As String, goal As String, trail As String, performance As String, points As String, _weatherdata As (_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?), Optional weather As String = " ")
+    Public Sub New(title As String, category As String, goal As String, trail As String, performance As String, points As String, _weatherdata As WeatherData, Optional weather As String = " ")
         Dim mainFont As New Font("Segoe UI Semibold", 12, FontStyle.Bold)
         Me.Title = New StyledText(title, Color.Firebrick, mainFont, "")
         Me.Category = New StyledText(category, Color.Maroon, mainFont, dogLabel)
@@ -456,6 +456,15 @@ Public Class ScoringData
     Public Property DogReadingPoints As Integer
     Public Property dogName As String
     Public Property handlerName As String
+End Class
+
+Public Class WeatherData
+    Public Property temperature As Double
+    Public Property windSpeed As Double
+    Public Property windDirection As Double
+    Public Property precipitation As Double
+    Public Property relHumidity As Double
+    Public Property cloudCover As Double
 End Class
 
 

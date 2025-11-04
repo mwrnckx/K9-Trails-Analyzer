@@ -13,11 +13,11 @@ Public Class frmEditComments
     Public Property GpxFileName As String
 
 
-    Public ReadOnly Property AllParts As TrailReport
-        Get
-            Return New TrailReport("", Me.Category, Me.GoalPart, Me.TrailPart, Me.DogPart, "", (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
-        End Get
-    End Property
+    'Public ReadOnly Property AllPartsyy As TrailReport
+    '    Get
+    '        Return New TrailReport("", Me.Category, Me.GoalPart, Me.TrailPart, Me.DogPart, "", (Nothing, Nothing, Nothing, Nothing, Nothing, Nothing))
+    '    End Get
+    'End Property
 
     Dim LanguageAbbreviations As New List(Of String) From {
     "cs", ' čeština

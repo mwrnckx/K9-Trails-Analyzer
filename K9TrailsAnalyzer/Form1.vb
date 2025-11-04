@@ -1481,7 +1481,7 @@ Partial Public Class Form1
         ' Pokud adresář neexistuje, vytvoř ho
         If Not directory.Exists Then directory.Create()
         Dim FFmpegPath As String = FindAnSaveFfmpegPath()
-        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData._windDirection, _gpxRecord.WeatherData._windSpeed)
+        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData.windDirection, _gpxRecord.WeatherData.windSpeed)
         AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
         Dim waitForm As New frmPleaseWait("I'm making an overlay video, please stand by...")
