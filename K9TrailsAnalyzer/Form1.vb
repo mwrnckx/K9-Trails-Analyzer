@@ -247,7 +247,7 @@ Partial Public Class Form1
             ' Tím se změna propíše do skutečného místa v paměti.
             changedItem.OriginalRecord.TrailStats = currentStats
 
-            changedItem.OriginalRecord.BuildLocalisedScoring()
+            changedItem.OriginalRecord.BuildLocalisedperformancePoints()
             changedItem.OriginalRecord.WriteLocalizedReports()
             changedItem.OriginalRecord.Save()
         End If
@@ -1452,9 +1452,9 @@ Partial Public Class Form1
             ' Pro test: vypiš vybrané cesty
             Debug.WriteLine(record)
             Try
-                record.Description = Await record.BuildLocalisedDescriptionAsync(record.Description) 'async kvůli počasí!
+                record.Description = record.BuildLocalisedDescription(record.Description) 'async kvůli počasí!
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
-                record.BuildLocalisedScoring()
+                record.BuildLocalisedperformancePoints()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()

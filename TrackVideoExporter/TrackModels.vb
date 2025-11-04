@@ -315,13 +315,182 @@ Public Class StyledText
 
 End Class
 
+Public Class TrailReport
+    ' 🔧 Lokálně nastav labely
+    Public Const dogLabel As String = "🐕"
+    Public Const goalLabel As String = "📍"
+    Public Const trailLabel As String = "👣"
+    Public Const performanceLabel As String = "🏅"
 
+    ' Nastavení základního fontu
+    Private Shared ReadOnly mainFont As New Font("Segoe UI Semibold", 12, FontStyle.Bold)
+
+    ' Soukromá pole pro String hodnoty
+    Private _titleText As String = ""
+    Private _categoryText As String = ""
+    Private _goalText As String = ""
+    Private _trailText As String = ""
+    Private _performanceText As String = ""
+    Private _performancePointsText As String = ""
+    Private _weatherText As String = " "
+
+    ' Veřejné StyledText vlastnosti (ReadOnly) - Získáte je, ale nemůžete je přímo nastavit
+    Public ReadOnly Property Title As StyledText
+        Get
+            Return New StyledText(_titleText, Color.Firebrick, mainFont, "")
+        End Get
+    End Property
+
+    Public ReadOnly Property Category As StyledText
+        Get
+            Return New StyledText(_categoryText, Color.Maroon, mainFont, dogLabel)
+        End Get
+    End Property
+
+    Public ReadOnly Property Goal As StyledText
+        Get
+            Return New StyledText(_goalText, Color.DarkGreen, mainFont, goalLabel)
+        End Get
+    End Property
+
+    Public ReadOnly Property Trail As StyledText
+        Get
+            Return New StyledText(_trailText, Color.DarkGreen, mainFont, trailLabel)
+        End Get
+    End Property
+
+    Public ReadOnly Property Performance As StyledText
+        Get
+            Return New StyledText(_performanceText, Color.DarkGreen, mainFont, performanceLabel)
+        End Get
+    End Property
+
+    Public ReadOnly Property PerformancePoints As StyledText
+        Get
+            Return New StyledText(_performancePointsText, Color.Maroon, mainFont, "")
+        End Get
+    End Property
+
+    Public ReadOnly Property Weather As StyledText
+        Get
+            Return New StyledText(_weatherText, Color.Maroon, mainFont, "")
+        End Get
+    End Property
+
+    ' Nové, veřejné VLASTNOSTI typu String pro snadné nastavení
+    Public Property TitleText As String
+        Get
+            Return _titleText
+        End Get
+        Set(value As String)
+            _titleText = value
+        End Set
+    End Property
+
+    Public Property CategoryText As String
+        Get
+            Return _categoryText
+        End Get
+        Set(value As String)
+            _categoryText = value
+        End Set
+    End Property
+
+    Public Property GoalText As String
+        Get
+            Return _goalText
+        End Get
+        Set(value As String)
+            _goalText = value
+        End Set
+    End Property
+
+    Public Property TrailText As String
+        Get
+            Return _trailText
+        End Get
+        Set(value As String)
+            _trailText = value
+        End Set
+    End Property
+
+    Public Property PerformanceText As String
+        Get
+            Return _performanceText
+        End Get
+        Set(value As String)
+            _performanceText = value
+        End Set
+    End Property
+
+    Public Property PerformancePointsText As String
+        Get
+            Return _performancePointsText
+        End Get
+        Set(value As String)
+            _performancePointsText = value
+        End Set
+    End Property
+
+    Public Property WeatherText As String
+        Get
+            Return _weatherText
+        End Get
+        Set(value As String)
+            _weatherText = value
+        End Set
+    End Property
+
+
+    ' Ponecháme i vaši WeatherData
+    Public Property WeatherData As WeatherData
+
+
+    ' Konstruktor pro snadné vytvoření a nastavení
+    Public Sub New(ByVal title As String, ByVal category As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ")
+        Me.TitleText = title
+        Me.CategoryText = category
+        Me.GoalText = goal
+        Me.TrailText = trail
+        Me.PerformanceText = performance
+        Me.PerformancePointsText = points
+        Me.WeatherText = weather
+        Me.WeatherData = _weatherdata
+    End Sub
+
+    ' Přetížený konstruktor pro new() bez argumentů
+    Public Sub New()
+    End Sub
+
+    ' Ponechání funkcí ToBasicList a ToCompetitionList s drobnou úpravou
+    Public Function ToBasicList(Optional title As String = "Trail description") As List(Of StyledText)
+        Me.TitleText = title ' Nastaví text do string vlastnosti, StyledText se vygeneruje v getteru
+        Dim result As New List(Of StyledText) From {
+            Me.Title,
+            Me.Category,
+            Me.Goal,
+            Me.Trail,
+            Me.Performance,
+            Me.Weather
+        }
+        Return result
+    End Function
+
+    Public Function ToCompetitionList(Optional title As String = "Scoring") As List(Of StyledText)
+        Me.TitleText = title
+        Dim result As New List(Of StyledText) From {
+          Me.Title,
+          Me.PerformancePoints
+        }
+        Return result
+    End Function
+End Class
 
 ''' <summary>
 ''' Contains a language-dependent description of the three main parts of the mantrailing treble:
 '''Goal''', ''Trail'', and ''Performance''.
 ''' </summary>
-Public Class TrailReport
+Public Class TrailReport_old
     ' 🔧 Lokálně nastav labely 
     Public Const dogLabel As String = "🐕"
     Public Const goalLabel As String = "📍"
@@ -335,8 +504,6 @@ Public Class TrailReport
     ''' Description of the goal of the training session.
     ''' </summary>
     Public Property Goal As StyledText
-
-
 
     ''' <summary>
     ''' Description of the course of the track - where and how it was led, terrain, length, age, etc.
@@ -358,17 +525,13 @@ Public Class TrailReport
     ''' </summary>
     ''' <remarks>Contains temperature, wind speed, wind direction, precipitation, relative humidity, and cloud cover.</remarks>
     Public Property weather As StyledText
-
     Public Property WeatherData As WeatherData '(_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
-
-    'Public Property ScoringData As ScoringData
-
 
 
     ''' <param name="goal">styledText description of the search goal.</param>
     ''' <param name="trail">styledText description of the trail course and parameters.</param>
     ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
-    Public Sub New(title As String, category As String, goal As String, trail As String, performance As String, points As String, _weatherdata As WeatherData, Optional weather As String = " ")
+    Public Sub SetStyledTexts(title As String, category As String, goal As String, trail As String, performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ")
         Dim mainFont As New Font("Segoe UI Semibold", 12, FontStyle.Bold)
         Me.Title = New StyledText(title, Color.Firebrick, mainFont, "")
         Me.Category = New StyledText(category, Color.Maroon, mainFont, dogLabel)
@@ -378,7 +541,6 @@ Public Class TrailReport
         Me.PerformancePoints = New StyledText(points, Color.Maroon, mainFont, "")
         Me.weather = New StyledText(weather, Color.Maroon, mainFont, "")
         Me.WeatherData = _weatherdata
-        'Me.ScoringData = _scoringData
     End Sub
     Public Sub New()
         ' Default constructor for serialization or other purposes
