@@ -486,101 +486,6 @@ Public Class TrailReport
     End Function
 End Class
 
-''' <summary>
-''' Contains a language-dependent description of the three main parts of the mantrailing treble:
-'''Goal''', ''Trail'', and ''Performance''.
-''' </summary>
-Public Class TrailReport_old
-    ' 🔧 Lokálně nastav labely 
-    Public Const dogLabel As String = "🐕"
-    Public Const goalLabel As String = "📍"
-    Public Const trailLabel As String = "👣"
-    Public Const performanceLabel As String = "🏅"
-
-    Public Property Title As StyledText
-
-    Public Property Category As StyledText
-    ''' <summary>
-    ''' Description of the goal of the training session.
-    ''' </summary>
-    Public Property Goal As StyledText
-
-    ''' <summary>
-    ''' Description of the course of the track - where and how it was led, terrain, length, age, etc.
-    ''' </summary>
-    Public Property Trail As StyledText
-
-    ''' <summary>
-    ''' Evaluation of the team's performance - how the dog and handler did on the given track.
-    ''' </summary>
-    Public Property Performance As StyledText
-
-    ''' <summary>
-    ''' Evaluation of the team's performance - how the dog and handler did on the given track.
-    ''' </summary>
-    Public Property PerformancePoints As StyledText
-
-    ''' <summary>
-    ''' Weather conditions during the training session.
-    ''' </summary>
-    ''' <remarks>Contains temperature, wind speed, wind direction, precipitation, relative humidity, and cloud cover.</remarks>
-    Public Property weather As StyledText
-    Public Property WeatherData As WeatherData '(_temperature As Double?, _windSpeed As Double?, _windDirection As Double?, _precipitation As Double?, _relHumidity As Double?, _cloudCover As Double?)
-
-
-    ''' <param name="goal">styledText description of the search goal.</param>
-    ''' <param name="trail">styledText description of the trail course and parameters.</param>
-    ''' <param name="performance">styledText evaluation of team performance (dog + driver).</param>
-    Public Sub SetStyledTexts(title As String, category As String, goal As String, trail As String, performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ")
-        Dim mainFont As New Font("Segoe UI Semibold", 12, FontStyle.Bold)
-        Me.Title = New StyledText(title, Color.Firebrick, mainFont, "")
-        Me.Category = New StyledText(category, Color.Maroon, mainFont, dogLabel)
-        Me.Goal = New StyledText(goal, Color.DarkGreen, mainFont, goalLabel)
-        Me.Trail = New StyledText(trail, Color.DarkGreen, mainFont, trailLabel)
-        Me.Performance = New StyledText(performance, Color.DarkGreen, mainFont, performanceLabel)
-        Me.PerformancePoints = New StyledText(points, Color.Maroon, mainFont, "")
-        Me.weather = New StyledText(weather, Color.Maroon, mainFont, "")
-        Me.WeatherData = _weatherdata
-    End Sub
-    Public Sub New()
-        ' Default constructor for serialization or other purposes
-        Me.Category = New StyledText("Dog Name", Color.DarkBlue, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
-        Me.Goal = New StyledText("Goal of the training session", Color.DarkGreen, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
-        Me.Trail = New StyledText("Course of the track", Color.Blue, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
-        Me.Performance = New StyledText("Evaluation of the team's performance", Color.Red, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
-        Me.weather = New StyledText("Weather conditions will be added later.", Color.Maroon, New Font("Cascadia Code", 12, FontStyle.Bold), " ")
-    End Sub
-    ''' <summary>
-    ''' Converts the TrailReport to a list of StyledText objects.   Basic parts only.
-    ''' </summary>
-    ''' <returns></returns>
-    Public Function ToBasicList(Optional title As String = "Trail description") As List(Of StyledText)
-        Me.Title.Text = title
-        Dim result As New List(Of StyledText) From {
-              Me.Title,
-        Me.Category,
-            Me.Goal,
-            Me.Trail,
-            Me.Performance,
-            Me.weather
-        }
-        Return result
-
-    End Function
-    ''' <summary>
-    ''' Converts the TrailReport to a list of StyledText objects.   Competition parts only.
-    ''' </summary>
-    ''' <returns></returns>
-    Public Function ToCompetitionList(Optional title As String = "Scoring") As List(Of StyledText)
-        Me.Title.Text = title
-        Dim result As New List(Of StyledText) From {
-          Me.Title,
-          Me.PerformancePoints
-        }
-        Return result
-
-    End Function
-End Class
 
 ''' <summary>
 ''' structure for returning calculation results.
@@ -592,12 +497,13 @@ Public Class TrailStats
     Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property WeightedTimePerCent As Double ' Total time of the dog with weighting by deviation divided by total time
     Public Property TrailAge As TimeSpan ' age of the trail 
-    Public Property TotalTime As TimeSpan ' total time of the dog's route
-    Public Property MovingTime As TimeSpan ' net time the dog moved
-    Public Property StoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
+    Public Property DogTotalTime As TimeSpan ' total time of the dog's route
+    Public Property DogMovingTime As TimeSpan ' net time the dog moved
+    Public Property DogStoppedTime As TimeSpan ' the time the handler stood the dog also stood or performed a perimeter (looking for a trail)
     Public Property DogNetSpeed As Double ' net speed (moving time only), calculated from the length of the dog's route
     Public Property DogGrossSpeed As Double 'gross speed calculated from the last checkpoint or the dog's last point if the dog is close to the track
-    Public Property Deviation As Double ' average deviation of the entire dog's route from the runner's track
+    Public Property AverDeviation As Double ' average deviation of the entire dog's route from the runner's track
+    Public Property MaxDeviationGeoPoints As TrackAsGeoPoints ' maximum deviation of the entire dog's route from the runner's track
     Public Property PointsInMTCompetition As ScoringData '(RunnerFoundPoints As Integer, DogSpeedPoints As Integer, DogAccuracyPoints As Integer, DogReadingPoints As Integer, dogName As String, handlerName As String) ' number of points in MT Competition according to the rules
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)

@@ -145,6 +145,7 @@ Public Class TrackConverter
     End Function
 
     Public Function ConvertTrackGeoPointsToPointsF(track As TrackAsGeoPoints, minTileX As Single, minTileY As Single, zoom As Integer) As TrackAsPointsF
+        If track Is Nothing Then Return New TrackAsPointsF(TrackType.Unknown, New List(Of TrackPointF))
         Dim _TrackAsPointsF As New TrackAsPointsF(track.TrackType, New List(Of TrackPointF))
         For Each geoPoint As TrackGeoPoint In track.TrackGeoPoints
             Dim pt = LatLonToPixel(geoPoint.Location.Lat, geoPoint.Location.Lon, zoom, minTileX, minTileY)

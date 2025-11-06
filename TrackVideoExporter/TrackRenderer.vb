@@ -161,7 +161,11 @@ Public Class PngRenderer
     ''' <param name="tracksAsPointsF">A list of tracks to be rendered as points.</param>
     ''' <param name="backgroundTiles">A tuple containing the background bitmap and its minimum tile X and Y coordinates.</param>
     ''' <returns>A <see cref="Bitmap"/> containing the rendered static map background.</returns>
-    Public Function RenderStaticMapBackground(tracksAsPointsF As List(Of TrackAsPointsF), backgroundTiles As (bgmap As Bitmap, minTileX As Single, minTileY As Single), Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Bitmap
+    Public Function RenderStaticMapBackground(tracksAsPointsF As List(Of TrackAsPointsF),
+                                              backgroundTiles As (bgmap As Bitmap,
+                                              minTileX As Single, minTileY As Single),
+                                              Optional maxDeviation As TrackAsPointsF = Nothing,
+                                              Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Bitmap
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
 
@@ -199,6 +203,14 @@ Public Class PngRenderer
                 DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
 
             Next
+
+            'maxDeviation
+            If maxDeviation IsNot Nothing AndAlso maxDeviation.TrackPointsF.Count > 0 Then
+                Dim brush As SolidBrush = New SolidBrush(Color.DarkRed) ' červená
+                Dim TrackPoints As List(Of PointF) = maxDeviation.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+                g.DrawLines(New Pen(brush, penWidth), TrackPoints.ToArray)
+                'Todo doplnit popis vzdálenosti apod. (nejprve je třaba ji vypočítat)
+            End If
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
                 Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
@@ -275,6 +287,8 @@ Public Class PngRenderer
 
             Next
 
+
+
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
                 Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
                 Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
@@ -301,55 +315,6 @@ Public Class PngRenderer
         Return staticBmp
     End Function
 
-    ''' <summary>
-    ''' Renders static text onto a new bitmap with a white background. The text will wrap and adjust font size to fit within the specified area.
-    ''' </summary>
-    ''' <param name="width">With of the new text bitmap.</param>
-    ''' <param name="height">height of the new text bitmap.</param>
-    ''' <returns>A <see cref="Bitmap"/> containing the rendered static text.</returns>
-    Public Function RenderStaticText_old(trailReportList As List(Of StyledText), Optional width As Integer = 1920, Optional height As Integer = 1440) As Bitmap
-        Dim maxWidth As Single = width * 0.9 ' maximální šířka textu, 90% šířky obrázku
-        Dim startX As Single = width * 0.05 ' začátek textu, 5% od levého okraje
-        Dim startY As Single = 0 ' začátek textu
-        Dim currentY As Single = startY
-        Dim fontSize As Int32 = CInt(height * 0.07) ' výchozí velikost písma
-
-        Dim staticText As New Bitmap(width, height, PixelFormat.Format32bppArgb)
-        Using g As Graphics = Graphics.FromImage(staticText)
-            g.TextRenderingHint = Drawing.Text.TextRenderingHint.SystemDefault ' Lepší kvalita textu
-
-            Dim fits As Boolean = False
-            Dim i As Integer = 0
-            Do Until (fits And i < 100)
-                i += 1
-                g.Clear(Color.LightYellow)
-                currentY = startY
-                fits = True
-                Dim lineHeight As Single
-
-                For Each part In trailReportList
-                    If part.Text IsNot Nothing AndAlso part.Text <> "" Then
-                        Using mainFont = New Font(part.Font.FontFamily, fontSize, part.Font.Style)
-
-                            Using textBrush As New SolidBrush(part.Color)
-                                Dim drawingArea As New RectangleF(startX, currentY, maxWidth, 2000)
-                                currentY = DrawWrappedTextWithEmoji(g, part.Label & "  " & part.Text, mainFont, textBrush, drawingArea)
-                            End Using
-                            lineHeight = mainFont.GetHeight(g)
-                        End Using
-
-                        If currentY + lineHeight > height Then
-                            fits = False
-                            fontSize = Math.Floor(fontSize * (height / (currentY + lineHeight))) - 1  ' Adaptivní zmenšení písma
-                            Exit For ' Není třeba pokračovat, už víme že se nevejde
-                        End If
-                    End If
-                Next
-            Loop
-        End Using
-
-        Return staticText
-    End Function
 
     ''' <summary>
     ''' Renders a single frame of the animation, including a static background and a moving track (e.g., a dog's trail).

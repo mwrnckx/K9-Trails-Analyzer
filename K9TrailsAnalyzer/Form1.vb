@@ -30,10 +30,10 @@ Partial Public Class Form1
     Private sortColumnName As String = String.Empty 'třídění dgvCompetition
     Private sortDirection As SortOrder = SortOrder.None
     Private CategoriesInfo As List(Of CategoryInfo)
-    Private ActiveDogId As String = String.Empty
+    Private ActiveCategoryId As String = String.Empty
     Private ReadOnly Property ActiveCategoryInfo As CategoryInfo
         Get
-            Return CategoriesInfo.FirstOrDefault(Function(d) d.Id = ActiveDogId)
+            Return CategoriesInfo.FirstOrDefault(Function(d) d.Id = ActiveCategoryId)
         End Get
     End Property
 
@@ -130,10 +130,10 @@ Partial Public Class Form1
                 .DogName = stats.PointsInMTCompetition.dogName,
                 .HandlerName = stats.PointsInMTCompetition.handlerName,
                  .RunnerDistance = stats.RunnerDistance,
-                 .TotalTime = stats.TotalTime.Minutes,
+                 .TotalTime = stats.DogTotalTime.Minutes,
                 .DogGrossSpeedKmh = stats.DogGrossSpeed,
                 .DogDistance = stats.DogDistance,
-                .Deviation = stats.Deviation,
+                .Deviation = stats.AverDeviation,
                 .MaxTeamDistance = stats.MaxTeamDistance,
                 .WeightedDistanceAlongTrail = stats.WeightedDistanceAlongTrail,
                 .WeightedDistanceAlongTrailPerCent = stats.WeightedDistanceAlongTrailPerCent / 100,'je v % převedeno zpět na desetinné číslo
@@ -247,7 +247,7 @@ Partial Public Class Form1
             ' Tím se změna propíše do skutečného místa v paměti.
             changedItem.OriginalRecord.TrailStats = currentStats
 
-            changedItem.OriginalRecord.BuildLocalisedperformancePoints()
+            changedItem.OriginalRecord.BuildLocalisedPerformancePoints()
             changedItem.OriginalRecord.WriteLocalizedReports()
             changedItem.OriginalRecord.Save()
         End If
@@ -500,8 +500,8 @@ Partial Public Class Form1
                 Else
                     Me.rtbOutput.AppendText("           ")
                 End If
-                If _gpxRecord.TrailStats.Deviation > 0 Then
-                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.Deviation.ToString("F1") & " m" & "   ")
+                If _gpxRecord.TrailStats.AverDeviation > 0 Then
+                    Me.rtbOutput.AppendText(_gpxRecord.TrailStats.AverDeviation.ToString("F1") & " m" & "   ")
                 Else
                     Me.rtbOutput.AppendText("        ")
                 End If
@@ -1178,7 +1178,7 @@ Partial Public Class Form1
         CategoriesInfo = unifiedConfig.CategoriesInfo
 
         If unifiedConfig.activeDoguration IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(unifiedConfig.activeDoguration.ActiveDogId) Then
-            ActiveDogId = unifiedConfig.activeDoguration.ActiveDogId
+            ActiveCategoryId = unifiedConfig.activeDoguration.ActiveDogId
         Else
             ' Zajistěte, že je activeDoguration alespoň inicializovaný, pokud se v souboru nenašel
             unifiedConfig.activeDoguration = New activeDog()
@@ -1205,7 +1205,7 @@ Partial Public Class Form1
         unifiedConfig.CategoriesInfo = CategoriesInfo
 
         ' Aktualizace activeDog, ve kterém se nachází ActiveDogId
-        unifiedConfig.activeDoguration.ActiveDogId = ActiveDogId
+        unifiedConfig.activeDoguration.ActiveDogId = ActiveCategoryId
 
 
         Dim options As New JsonSerializerOptions With {
@@ -1257,10 +1257,10 @@ Partial Public Class Form1
 
         ' pokud je nastaven ActiveDogId, vyber ho; jinak vyber první
         Dim selectedIndex As Integer = -1
-        If Not String.IsNullOrEmpty(ActiveDogId) Then
+        If Not String.IsNullOrEmpty(ActiveCategoryId) Then
             For i As Integer = 0 To mnucbActiveCategory.ComboBox.Items.Count - 1
                 Dim item As CategoryInfo = CType(mnucbActiveCategory.ComboBox.Items(i), CategoryInfo)
-                If item.Id = ActiveDogId Then
+                If item.Id = ActiveCategoryId Then
                     selectedIndex = i
                     Exit For
                 End If
@@ -1274,7 +1274,7 @@ Partial Public Class Form1
             ' zajistí, že ActiveDogId drží hodnotu
             Dim sel = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, CategoryInfo)
             If sel IsNot Nothing Then
-                ActiveDogId = sel.Id
+                ActiveCategoryId = sel.Id
                 'lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
             End If
         Else
@@ -1287,7 +1287,7 @@ Partial Public Class Form1
         Dim selected = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, CategoryInfo)
         If selected Is Nothing Then Return
         SetScrollState(1, selected.Id) ' nastavíme scroll state pro aktivního psa
-        ActiveDogId = selected.Id
+        ActiveCategoryId = selected.Id
         'My.Settings.ActiveDog = sel.Id ' uložíme jméno psa do nastavení
         ''lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
         'My.Settings.Save()
@@ -1302,28 +1302,27 @@ Partial Public Class Form1
 
     ' ----- příklad: přidání nového psa (mnuAddNewCategory click) -----
     Private Sub mnuAddNewCategory_Click(sender As Object, e As EventArgs) Handles mnuAddNewCategory.Click
-        Dim dogName = InputBox("Enter the name of the new dog:", "New dog")
-        If String.IsNullOrWhiteSpace(dogName) Then
-            MessageBox.Show("The name of the dog was not given.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        Dim categoryName = InputBox("Enter the name of the new Category:", "New Category")
+        If String.IsNullOrWhiteSpace(categoryName) Then
+            MessageBox.Show("The name of the category was not given.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
             Return
         End If
 
         ' vytvoříme nové ID (trojciferné)
         Dim newId As String = If(CategoriesInfo.Count = 0, "001", (CategoriesInfo.Select(Function(d) Integer.Parse(d.Id)).Max() + 1).ToString("D3"))
         ' vytvoříme složky
-        'Dim dogLocalBasePath = Path.Combine(DogsRootPath, newId)
 
-        Dim dogRemotePath = ActiveCategoryInfo.RemoteDirectory 'Path.Combine(My.Settings.Directory, dogName)
+        Dim categoryRemotePath = ActiveCategoryInfo.RemoteDirectory 'Path.Combine(My.Settings.Directory, dogName)
         Dim folderDialog As New FolderBrowserDialog()
-        folderDialog.SelectedPath = dogRemotePath
-        folderDialog.Description = $"Selecting the folder from where to load gpx files for the dog {dogName}."
+        folderDialog.SelectedPath = categoryRemotePath
+        folderDialog.Description = $"Selecting the folder from where to load gpx files for the category {categoryName}."
         folderDialog.UseDescriptionForTitle = True
         If False = (folderDialog.ShowDialog() = DialogResult.OK) Then
             ' pokud uživatel zrušil výběr, skončíme
-            MessageBox.Show("The dog was not added.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show("The category was not added.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Return
         ElseIf Directory.Exists(folderDialog.SelectedPath) Then
-            dogRemotePath = folderDialog.SelectedPath
+            categoryRemotePath = folderDialog.SelectedPath
         Else
             MessageBox.Show("The selected folder does not exist.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
             Return
@@ -1331,8 +1330,8 @@ Partial Public Class Form1
 
         ' přidáme do seznamu a uložíme
         CategoriesInfo.Add(New CategoryInfo With {.Id = newId,
-                     .Name = dogName,
-                     .RemoteDirectory = dogRemotePath})
+                     .Name = categoryName,
+                     .RemoteDirectory = categoryRemotePath})
         SaveUnifiedConfig()
         'SaveCategoriesInfo()
 
@@ -1346,7 +1345,7 @@ Partial Public Class Form1
             If d.Id = newId Then mnucbActiveCategory.ComboBox.SelectedIndex = i : Exit For
         Next
 
-        MessageBox.Show($"Pes '{dogName}' přidán s ID {newId}.", "Hotovo", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        MessageBox.Show($"Category '{categoryName}' added with ID {newId}.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
     End Sub
 
 
@@ -1454,7 +1453,7 @@ Partial Public Class Form1
             Try
                 record.Description = record.BuildLocalisedDescription(record.Description) 'async kvůli počasí!
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
-                record.BuildLocalisedperformancePoints()
+                record.BuildLocalisedPerformancePoints()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
                 record.IsAlreadyProcessed = True 'už byl soubor zpracován
                 record.Save()
@@ -1490,7 +1489,7 @@ Partial Public Class Form1
         ' Spustíme na pozadí, aby nezamrzlo UI
         Await Task.Run(Async Function()
                            ' Spustíme tvůj dlouhý proces
-                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports)
+                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.TrailStats.MaxDeviationGeoPoints, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports)
 
                            ' Po dokončení se vrať na UI thread a proveď akce
                            waitForm.Invoke(Sub()
@@ -1610,7 +1609,7 @@ Partial Public Class Form1
 
     Private Sub DeleteCurrentDogToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuDeleteCurrentCategory.Click
         ' Najdi psa podle ID
-        Dim dogId As String = ActiveDogId
+        Dim dogId As String = ActiveCategoryId
         Dim dogToRemove = CategoriesInfo.FirstOrDefault(Function(d) d.Id = dogId)
         If dogToRemove Is Nothing Then
             MessageBox.Show("Dog not found.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
@@ -1638,8 +1637,8 @@ Partial Public Class Form1
         'SaveCategoriesInfo()
 
         ' Pokud byl aktivní, přepnout na jiného
-        If ActiveDogId = dogId Then
-            ActiveDogId = If(CategoriesInfo.Count > 0, CategoriesInfo(0).Id, String.Empty)
+        If ActiveCategoryId = dogId Then
+            ActiveCategoryId = If(CategoriesInfo.Count > 0, CategoriesInfo(0).Id, String.Empty)
         End If
 
         ' Obnov UI (combo box apod.)
@@ -1733,6 +1732,11 @@ Partial Public Class Form1
         End If
     End Sub
 
+    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As EventArgs) Handles mnuPointInCompetition.DropDownClosed
+        'Todo když se změní hodnoty bodů v menu, přepočítat body ve všech záznamech
+        'ideálně až se změní všechny body a zavře se menu tedy asi při kliknutí mimo menu, snad je toto správná událost
+        'For Each record As TrailStatsDisplay In displayList?
+    End Sub
 End Class
 
 ''' <summary>
@@ -2000,16 +2004,16 @@ Public Class CategoryInfo
 
     ' Konfigurační body pro disciplíny (uživatelsky nastavitelné)
     <JsonPropertyName("PointsForFindMax")>
-    Public Property PointsForFindMax As Integer
+    Public Property PointsForFindMax As Integer = 100
 
     <JsonPropertyName("PointsPerKmhGrossSpeed")>
-    Public Property PointsPerKmhGrossSpeed As Double
+    Public Property PointsPerKmhGrossSpeed As Double = 20
 
     <JsonPropertyName("PointsForAccuracyMax")>
-    Public Property PointsForAccuracyMax As Integer
+    Public Property PointsForAccuracyMax As Integer = 100
 
     <JsonPropertyName("PointsForDogReadingMax")>
-    Public Property PointsForDogReadingMax As Integer
+    Public Property PointsForDogReadingMax As Integer = 100
 
 
     <JsonIgnore>
