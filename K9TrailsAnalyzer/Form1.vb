@@ -1418,7 +1418,7 @@ Partial Public Class Form1
     Private Async Sub btnCreateVideos_Click(sender As Object, e As EventArgs) Handles btnCreateVideos.Click
 
         If lvGpxFiles.CheckedItems.Count > 2 Then
-            If mboxq($"Are you sure you want to create videos from {lvGpxFiles.CheckedItems.Count} gpx records now? It can take a long time and there's no chance to stop it 🤣!", "Are you sure?") = DialogResult.No Then
+            If mboxq($"Are you sure you want to create videos from {lvGpxFiles.CheckedItems.Count} gpx records now? It can take a long time and there's no chance to stop it 🤣!") = DialogResult.No Then
                 Return
             End If
         End If

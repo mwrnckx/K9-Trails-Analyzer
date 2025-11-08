@@ -68,11 +68,12 @@ Public Class TrackGeoPoint
     ''' <summary>
     ''' The geographic coordinates (latitude and longitude).
     ''' </summary>
-    Public Property Location As Coordinates
+    Public Property Location As New Coordinates
     ''' <summary>
     ''' The timestamp corresponding to this geo point.
     ''' </summary>
-    Public Property Time As DateTime
+    Public Property Time As DateTime = Nothing
+
 End Class
 
 Public Class Coordinates
@@ -84,8 +85,6 @@ End Class
 ''' </summary>
 Public Class TrackAsGeoPoints
     Inherits TrackAs
-
-
     ''' <param name="trackType">The type of the track.</param>
     ''' <param name="trackGeoPoints">A list of geo points (latitude, longitude, timestamp) for the track.</param>
     Public Sub New(trackType As TrackType, trackGeoPoints As List(Of TrackGeoPoint))

@@ -130,11 +130,11 @@ Public Class TrackConverter
     ''' <param name="zoom">Zoom level of the tile map.</param>
     ''' <returns>List of <see cref="TrackAsPointsF"/> with 2D screen coordinates and timestamps.</returns>
     Public Function ConvertTracksGeoPointsToPointsF(_tracksAsGeoPoints As List(Of TrackAsGeoPoints), minTileX As Single, minTileY As Single, zoom As Integer) As List(Of TrackAsPointsF)
-        Dim latDistancePerDegree As Double = 111_320.0
-        Dim centerLat As Double = (minLat + maxLat) / 2
-        Dim lonDistancePerDegree As Double = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
-        Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
-        Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
+        'Dim latDistancePerDegree As Double = 111_320.0
+        'Dim centerLat As Double = (minLat + maxLat) / 2
+        'Dim lonDistancePerDegree As Double = Math.Cos(centerLat * Math.PI / 180) * latDistancePerDegree
+        'Dim widthInMeters As Double = (maxLon - minLon) * lonDistancePerDegree
+        'Dim heightInMeters As Double = (maxLat - minLat) * latDistancePerDegree
 
         Dim _tracksAsPointsF As New List(Of TrackAsPointsF)
         For Each Track In _tracksAsGeoPoints
@@ -293,7 +293,7 @@ Public Class TrackConverter
 
 
     ' Function to calculate the distance in km between two GPS points using the Haversine formula
-    Public Function HaversineDistance(lat1 As Double, lon1 As Double, lat2 As Double, lon2 As Double, units As String) As Double
+    Public Shared Function HaversineDistance(lat1 As Double, lon1 As Double, lat2 As Double, lon2 As Double, units As String) As Double
         Dim dLat As Double = DegToRad(lat2 - lat1)
         Dim dLon As Double = DegToRad(lon2 - lon1)
         ' Constants for converting degrees to radians and Earth's radius
@@ -311,7 +311,7 @@ Public Class TrackConverter
         End If
     End Function
     ' Function to convert degrees to radians
-    Private Function DegToRad(degrees As Double) As Double
+    Private Shared Function DegToRad(degrees As Double) As Double
         Const PI As Double = 3.14159265358979
         Return degrees * PI / 180
     End Function

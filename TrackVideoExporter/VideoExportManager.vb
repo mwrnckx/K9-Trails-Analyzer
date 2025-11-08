@@ -103,10 +103,15 @@ Namespace TrackVideoExporter
             Dim wayPointsAsPointsF As TrackAsPointsF =
                 converter.ConvertTrackGeoPointsToPointsF(
                     waypointsAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
+
             Dim maxDeviationPointsAsPointsF As TrackAsPointsF =
                 converter.ConvertTrackGeoPointsToPointsF(
                     maxDeviationAsGeoPoints, backgroundTiles.minTileX, backgroundTiles.minTileY, zoom)
-            Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF)
+            Dim maxDeviationMetres As Double = 0
+            If maxDeviationAsGeoPoints IsNot Nothing Then
+                maxDeviationMetres = TrackConverter.HaversineDistance(maxDeviationAsGeoPoints.TrackGeoPoints(0).Location.Lat, maxDeviationAsGeoPoints.TrackGeoPoints(0).Location.Lon, maxDeviationAsGeoPoints.TrackGeoPoints(1).Location.Lat, maxDeviationAsGeoPoints.TrackGeoPoints(1).Location.Lon, "m")
+            End If
+            Return Await CreateVideoFromPointsF(_TracksAsPointsF, maxDeviationPointsAsPointsF, wayPointsAsPointsF, maxDeviationMetres)
 
         End Function
 
@@ -118,7 +123,7 @@ Namespace TrackVideoExporter
         Public Async Function CreateVideoFromPointsF(
             _tracksAsPointsF As List(Of TrackAsPointsF),
             Optional maxDeviationAsPointsF As TrackAsPointsF = Nothing,
-            Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Task(Of Boolean)
+            Optional waypointsAsPointsF As TrackAsPointsF = Nothing, Optional maxDeviationMetres As Double = 0) As Task(Of Boolean)
 
             Dim pngDir As DirectoryInfo = Nothing
             Dim pngCreator As PngSequenceCreator = Nothing
@@ -128,7 +133,7 @@ Namespace TrackVideoExporter
                                Dim renderer As New PngRenderer(windDirection, windSpeed, Me.backgroundTiles)
                                renderer.CreateWindArrowBitmap(outputDir)
                                Dim staticBgTransparent = renderer.RenderStaticTransparentBackground(_tracksAsPointsF, backgroundTiles, waypointsAsPointsF)
-                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF)
+                               Dim staticBgMap = renderer.RenderStaticMapBackground(_tracksAsPointsF, backgroundTiles, maxDeviationAsPointsF, waypointsAsPointsF, maxDeviationMetres)
 
 
                                pngCreator = New PngSequenceCreator(renderer)

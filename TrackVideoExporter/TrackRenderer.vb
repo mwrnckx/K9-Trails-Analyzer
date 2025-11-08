@@ -165,7 +165,8 @@ Public Class PngRenderer
                                               backgroundTiles As (bgmap As Bitmap,
                                               minTileX As Single, minTileY As Single),
                                               Optional maxDeviation As TrackAsPointsF = Nothing,
-                                              Optional waypointsAsPointsF As TrackAsPointsF = Nothing) As Bitmap
+                                              Optional waypointsAsPointsF As TrackAsPointsF = Nothing,
+                                             Optional maxDeviationMetres As Double = 0) As Bitmap
         ' Vykresli statické stopy
         ' Vrátí bitmapu s podkladem
 
@@ -206,10 +207,32 @@ Public Class PngRenderer
 
             'maxDeviation
             If maxDeviation IsNot Nothing AndAlso maxDeviation.TrackPointsF.Count > 0 Then
-                Dim brush As SolidBrush = New SolidBrush(Color.DarkRed) ' červená
+                Dim deviationColor As Color = Color.DarkRed
+                Dim contrastColor As Color = GetContrastColor(deviationColor)
+
+                Dim brush As SolidBrush = New SolidBrush(deviationColor) ' 
                 Dim TrackPoints As List(Of PointF) = maxDeviation.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                g.DrawLines(New Pen(brush, penWidth), TrackPoints.ToArray)
-                'Todo doplnit popis vzdálenosti apod. (nejprve je třaba ji vypočítat)
+
+                Dim deviationPen As New Pen(brush, penWidth)
+                deviationPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor
+
+                deviationPen.StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor
+                g.DrawLines(deviationPen, TrackPoints.ToArray)
+
+                Dim center As PointF = New PointF((TrackPoints(0).X + TrackPoints(1).X) / 2, (TrackPoints(0).Y + TrackPoints(1).Y) / 2)  ' střed úsečky deviace
+                center = TrackPoints(0) 'ne střed ale počátek úsečky...
+                Dim popis As String = "max. deviation (" & maxDeviationMetres.ToString("0") & " m)"
+                Dim textSize = g.MeasureString(popis, font)
+                Dim textoffsetX As Single
+                If center.X - textSize.Width - radius < 0 Then
+                    ' není místo vlevo, napiš text vpravo od elipsy
+                    textoffsetX = radius
+                Else
+                    ' je místo, napiš text vlevo
+                    textoffsetX = -textSize.Width - radius
+                End If
+                Dim textPos As New PointF(center.X + textoffsetX, center.Y - textSize.Height / 2)
+                DrawTextWithOutline(g, popis, font, deviationColor, contrastColor, textPos, 2)
             End If
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
