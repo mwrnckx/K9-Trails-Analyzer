@@ -147,10 +147,7 @@ Partial Public Class Form1
                  })
 
             Dim displayItem = displayList.Last()
-            'displayItem.TotalPoints = displayItem.RunnerFoundPoints +
-            '                   displayItem.DogSpeedPoints +
-            '                   displayItem.DogAccuracyPoints +
-            '                   displayItem.HandlerCheckPoints
+
             ' Nyní přidejte data pro první dva checkpointy z CheckpointsEval
             Dim firstIndex As Integer = 0
             Dim secondIndex As Integer = 0
@@ -176,14 +173,6 @@ Partial Public Class Form1
             End If
         Next i
 
-        'displayList.Sort(Function(a, b) b.TotalPoints.CompareTo(a.TotalPoints)) ' Seřadit sestupně 
-
-        ''vypíše pořadí v soutěži:
-        'Dim ranking As Integer = 1
-        'For Each item In displayList
-        '    item.Ranking = ranking.ToString & "."
-        '    ranking += 1
-        'Next
 
         For Each item In Me.displayList
             ' Přihlášení k události PropertyChanged každého objektu
@@ -1472,12 +1461,10 @@ Partial Public Class Form1
     Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord) As Task(Of Boolean)
 
         ' Create a video from the dog track and save it in the video directory
-        ' Zjisti název souboru bez přípony
         Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.FileName)
-        ' Sestav cestu k novému adresáři
 
         Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
-        ' Pokud adresář neexistuje, vytvoř ho
+        ' If the directory does not exist, create it
         If Not directory.Exists Then directory.Create()
         Dim FFmpegPath As String = FindAnSaveFfmpegPath()
         Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData.windDirection, _gpxRecord.WeatherData.windSpeed)
@@ -1486,12 +1473,12 @@ Partial Public Class Form1
         Dim waitForm As New frmPleaseWait("I'm making an overlay video, please stand by...")
         waitForm.Show()
 
-        ' Spustíme na pozadí, aby nezamrzlo UI
+        ' Run in the background so the AI doesn't freeze
         Await Task.Run(Async Function()
-                           ' Spustíme tvůj dlouhý proces
+
                            Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.TrailStats.MaxDeviationGeoPoints, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports)
 
-                           ' Po dokončení se vrať na UI thread a proveď akce
+                           ' When finished, return to the UI thread and perform the actions
                            waitForm.Invoke(Sub()
                                                waitForm.Close()
 
@@ -1722,21 +1709,7 @@ Partial Public Class Form1
         dgvCompetition.Columns(columnIndex).HeaderCell.SortGlyphDirection = direction
     End Sub
 
-    Private Sub dgvCompetition_CellEndEdit(sender As Object, e As DataGridViewCellEventArgs) Handles dgvCompetition.CellEndEdit
-        '// Krok 1: Zjistěte, zda je editovaný sloupec ten, který má spustit přepočet
-        '// Např. sloupec s indexem 0 se změní
-        If (e.ColumnIndex = 0) Then
-            ' Pokud ano, pokračujte k přepočtu
-            '// Krok 2: Proveďte přepočet a aktualizaci
-            'RecalculateRow(e.RowIndex)
-        End If
-    End Sub
 
-    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As EventArgs) Handles mnuPointInCompetition.DropDownClosed
-        'Todo když se změní hodnoty bodů v menu, přepočítat body ve všech záznamech
-        'ideálně až se změní všechny body a zavře se menu tedy asi při kliknutí mimo menu, snad je toto správná událost
-        'For Each record As TrailStatsDisplay In displayList?
-    End Sub
 End Class
 
 ''' <summary>

@@ -36,62 +36,42 @@ This library lets you render the GPS trails (of the runner and the dog) and in t
 Imports TrackVideoExporter
 Imports TrackVideoExporter.TrackVideoExporter
 
- Public Async Function CreateVideoFromTracks() As Task(Of Boolean)
-     Dim allTracks As New List(Of TrackAsTrkPts)
-     For Each trkNode As XmlNode In Me.Reader.SelectNodes("trk")
-         Dim TrackAsTrkptsList As XmlNodeList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
-         Dim isMoving As Boolean = False 'default for other routes
-         Dim trackColor As Color = Color.Green ' Default color for other tracks
-         Dim label As String = Me.GetTrkType(trkNode).label
-         Dim trkType As String = Me.GetTrkType(trkNode).typ
-         If trkType.Trim().ToLower() = TrackTypes.Dog.Trim().ToLower() Then
-             isMoving = True
-             trackColor = Color.Red
-         ElseIf trkType.Trim().ToLower() = TrackTypes.Runner.Trim().ToLower() Then
-             trackColor = Color.Blue
-         End If
-         TrackAsTrkptsList = Me.Reader.SelectAllChildNodes("trkpt", trkNode)
-         allTracks.Add(New TrackAsTrkPts With {
-             .Label = label,
-             .Color = trackColor,
-             .IsMoving = isMoving,
-             .TrackPoints = TrackAsTrkptsList
-                         })
-     Next trkNode
 
-     ' Create a video from the tracks and save it in the video directory
-     ' Get file name without extension
-     Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(Me.Reader.FilePath)
-     ' Build a path to a new directory
-     If My.Settings.VideoDirectory = "" Then My.Settings.VideoDirectory = My.Settings.Directory
-     Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
-     ' If the directory does not exist, create it
-     If Not directory.Exists Then directory.Create()
+    Public Async Function CreateVideoFromGPXRecord(_gpxRecord As GPXRecord) As Task(Of Boolean)
 
-     Dim videoCreator As New VideoExportManager(directory, WeatherData._windDirectionWeatherData._windSpeed)
-     AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
+        ' Create a video from the dog &runner tracks and save it in the video directory
+        Dim gpxName = System.IO.Path.GetFileNameWithoutExtension(_gpxRecord.FileName)
 
-     Dim waitForm As New frmPleaseWait()
-     waitForm.Show()
+        Dim directory As New IO.DirectoryInfo(System.IO.Path.Combine(My.Settings.VideoDirectory, gpxName))
+        ' If the directory does not exist, create it
+        If Not directory.Exists Then directory.Create()
+        Dim FFmpegPath As String = FindAnSaveFfmpegPath()
+        Dim videoCreator As New VideoExportManager(FFmpegPath, directory, _gpxRecord.WeatherData.windDirection, _gpxRecord.WeatherData.windSpeed)
+        AddHandler videoCreator.WarningOccurred, AddressOf WriteRTBWarning
 
-     ' Run in the background so the AI doesn't freeze
-     Await Task.Run(Async Function()
-                 Dim success = Await videoCreator.CreateVideoFromTrkPts(allTracks, DescriptionParts, DescriptionPartsEng)
+        Dim waitForm As New frmPleaseWait("I'm making an overlay video, please stand by...")
+        waitForm.Show()
 
-                                    waitForm.Invoke(Sub()
-                                    waitForm.Close()
+        ' Run in the background so the AI doesn't freeze
+        Await Task.Run(Async Function()
 
-                                            If success Then
-                                                Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.mov")
-                                                Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "background.png")
-                                                Dim form As New frmVideoDone(videopath, bgPNGPath)
-                                                form.ShowDialog()
-                                                form.Dispose()
-                                            Else
-                                                MessageBox.Show("Video creation failed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                                            End If
-                                        End Sub)
-                    End Function)
+                           Dim success = Await videoCreator.CreateVideoFromTrkNodes(_gpxRecord.Tracks, _gpxRecord.TrailStats.MaxDeviationGeoPoints, _gpxRecord.WptNodes, _gpxRecord.LocalisedReports)
 
-     Return False
- End Function
+                           ' When finished, return to the UI thread and perform the actions
+                           waitForm.Invoke(Sub()
+                                               waitForm.Close()
+
+                                               If success Then
+                                                   Dim videopath As String = IO.Path.Combine(directory.FullName, "overlay.webm")
+                                                   Dim bgPNGPath As String = IO.Path.Combine(directory.FullName, "TracksOnMap.png")
+                                                   Dim form As New frmVideoDone(videopath, bgPNGPath)
+                                                   form.ShowDialog()
+                                                   form.Dispose()
+                                               Else
+                                                   MessageBox.Show("Video creation failed!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                                               End If
+                                           End Sub)
+                       End Function)
+
+        Return False
+    End Function

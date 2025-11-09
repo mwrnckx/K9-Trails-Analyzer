@@ -200,10 +200,10 @@
     <value>Русский</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Změň adresář s gpx soubory</value>
+    <value>Vyber adresář s gpx soubory</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>Změň adresář ve kterém jsou gpx soubory aktuálního psa</value>
+    <value>Vyber adresář ve kterém jsou gpx soubory aktuální kategorie</value>
   </data>
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Upravit název kategorie</value>

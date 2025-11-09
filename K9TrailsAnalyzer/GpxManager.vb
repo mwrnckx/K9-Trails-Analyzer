@@ -2549,9 +2549,6 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
     End Function
 
 
-
-
-
     Public Function AddTypeToTrk(trkNode As XmlNode, _trackType As TrackType) As Boolean
         ' Zkontroluj, jestli už <type> existuje
         Dim trackTypeText As String = _trackType.ToString

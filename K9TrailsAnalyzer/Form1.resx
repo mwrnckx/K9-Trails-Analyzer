@@ -335,10 +335,10 @@
     <value>420, 22</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Change directory with gpx files</value>
+    <value>Select directory with gpx files</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>Change the directory where the gpx files of the current dog are</value>
+    <value>Select the directory where the gpx files of the current category are</value>
   </data>
   <data name="mnuRenameCurrentCategory.Size" type="System.Drawing.Size, System.Drawing">
     <value>420, 22</value>

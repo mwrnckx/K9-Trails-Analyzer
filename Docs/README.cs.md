@@ -1,54 +1,96 @@
-﻿# K9 Trails Analyzer
+﻿# 🐾 K9 Trails Analyzer
 
-Tento projekt vznikl jako pomůcka pro psovody zabývající se mantrailingem nebo praktickými stopami. 
-Umožňuje načíst GPX záznamy z tréninků a analyzovat je (délka, stáří apod.). 
-Podstatnou součástí je i knihovna pro generování overlay videí (trasa psa a kladeče) pro použití do videí se záznamem práce psa. Na videu pak vidíte zároveň práci psa i jeho pozici na trailu, vzdálenost od trasy kladeče atd. Na videu je zobrazen i směr a síla větru! Je to vynikající pomůcka pro analýzu práce psa.
+**K9 Trails Analyzer** je nástroj určený pro psovody a trenéry zabývající se **mantrailingem** nebo **praktickým stopováním**.  
+Vznikl z potřeby **objektivně vyhodnocovat tréninky** a **lépe chápat chování psa při práci na stopě**.  
+Aplikace umožňuje **načítat a analyzovat GPX záznamy** z tréninků, měřit vzdálenosti, rychlost, stáří stopy i přesnost práce psa.  
 
+Kromě analýzy nabízí i **unikátní knihovnu pro tvorbu overlay videí**, která zobrazují **trasu psa, trasu kladeče, směr a sílu větru** a další doplňkové informace v reálném čase.  
+Tyto překryvy lze snadno kombinovat s videem z akční kamery a vytvořit tak **komplexní záznam trailu** – ideální pro výuku, rozbory i sdílení zkušeností.
 
-**K9 Trails Analyzer** je aplikace pro Windows, která zpracovává GPX soubory s GPS trasami kladeče (figuranta) a psa a poskytuje statistiky, jako je celková vzdálenost, stáří tras a průměrná rychlost psa. 
-Testováno pro aplikace Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, Locus map a další aplikace. 
+Od verze **1.0.26** je do aplikace postupně začleňován i **bodovací systém**, použitelný pro **závody v mantrailingu** a **praktickém stopování**.
 
-##  💡 Funkce
+---
 
-- **Čtení dat z GPX souborů**: Aplikace načítá GPX soubory z vybrané složky.
-- **Filtrování podle data**.
-- **Výpočet vzdálenosti**: Výpočet celkové délky tras ve vybraném období.
-- **Výpočet stáří tras**: Pokud je v souboru zaznamenána trasa kladeče i psa, aplikace vypočítá stáří trasy.
-- **Výpočet rychlosti**: Umožňuje vypočítat průměrnou rychlost psa na každé trase.
-- **Export**: Výsledky lze exportovat do formátů RTF, TXT nebo CSV pro tisk nebo další analýzu v Excelu.
-- **Zobrazení grafů**: Aplikace nabízí vizualizaci dat ve formě grafů, které zobrazují celkovou vzdálenost, délky jednotlivých tras, stáří tras a rychlost psa v čase.
-- 🎬 **Vytvoření videa** na kterém je trasa kladeče a pohyb psa v reálném čase na transparentním pozadí. Ve videu je šipka znázorňující směr a sílu větru. Toto video může být ve vhodném editoru (jako například [Shotcut](https://shotcut.org/)) spojeno se záznamem trailu z akční kamery.
+## 💡 Hlavní funkce
 
-## 🛠️ Instalace
+- **Načítání GPX souborů**  
+  Automatické rozpoznání tras psa a kladeče i v oddělených souborech, s možností jejich sloučení.  
+  Podporovány jsou záznamy z aplikací jako **Geo Tracker, OpenTracks, Mapy.cz, The Mantrailing App, [Locus Map](https://www.locusmap.app)** aj.
 
-1. Stáhněte si soubor ZIP ze sekce [Releases](https://github.com/mwrnckx/K9-Trails-AnalyzerII/releases).
-2. Rozbalte jej do libovolné složky.
-3. Spusťte `K9TrailsAnalyzer.exe`.
-4. V aplikaci je "přibaleno" několik gpx souborů ve složce Samples. Po spuštění (dokud nezměníte cílovou složku) se zpracovávají tyto soubory. Můžete si tedy bez obav vyzkoušet funkci programu na těchto souborech. Cílovou složku lze změnit v menu 'Soubor'.
+- **Analýza tras**
+  - Výpočet **celkové délky**, **stáří** a **průměrné rychlosti**  
+  - Možnost **filtrování podle data** a tréninkového období  
+  - Výpočet **odchylek psa od trasy kladeče**
 
+- **Vizualizace**
+  - Grafy délky tras, rychlosti a stáří trailů v čase  
+  - Možnost exportu grafů i dat  
 
-## 🧱 Závislosti
+- **Poznámky ke stopě**  
+  Editační formulář umožňuje zaznamenat komentáře ke každému tréninku.  
+  Poznámky se automaticky ukládají do overlay videa (formát PNG), takže se zobrazí i ve výsledném videu.
 
-- .NET 8.0
-- Aplikace používá externí software <a href="https://ffmpeg.org/">ffmpeg</a>. Nejnovější verze ffmpeg.exe je součástí souboru zip, takže se memusíte vůbec  o nic starat.
+- **🎬 Tvorba overlay videí**  
+  Generování videí s trasou psa, trasou kladeče, směrem a silou větru – s transparentním pozadím.  
+  Výsledné video lze kombinovat v editorech (např. [Shotcut](https://shotcut.org/)) s kamerovým záznamem psa v terénu.
+
+- **🏅 Bodovací systém pro závody**
+  - Nález kladeče  
+  - Rychlost práce  
+  - Přesnost práce  
+  - Čtení psa psovodem  
+
+- **📊 Export výsledků**  
+  Export do formátů **CSV**, **TXT**, **RTF** – vhodné pro tisk nebo další zpracování v Excelu.
+
+---
+
+## 🧱 Instalace
+
+1. Stáhni si aktuální verzi ze sekce [Releases](https://github.com/mwrnckx/K9-Trails-Analyzer/releases)  
+2. Rozbal ZIP do libovolné složky  
+3. Spusť `K9TrailsAnalyzer.exe`  
+4. Pro vyzkoušení je v adresáři **Samples** několik ukázkových GPX souborů, které se automaticky načtou při prvním spuštění  
+   Cílovou složku lze kdykoli změnit v menu **Soubor**
+
+---
+
+## ⚙️ Technické informace
+
+- Vyžaduje **.NET 8.0 Runtime**  
+- Pro generování videí využívá **[FFmpeg](https://ffmpeg.org/)**  
+  (součástí balíčku ZIP – není nutná žádná instalace)
+
+---
 
 ## 📂 Struktura projektu
 
 Toto řešení obsahuje dva projekty:
 
-- **K9-Trails-Analyzer** - hlavní aplikace ve formě Windows Forms (analýza GPX).
-- **[TrackVideoExporter](TrackVideoExporter.md)** - knihovna tříd sloužící ke generování překryvných videí
-  - tato knihovna je použitelná i samostatně, můžete ji použít ve svém vlastním projektu
+- **K9-Trails-Analyzer** – hlavní aplikace (Windows Forms)  
+  Slouží k načítání a analýze GPX dat.
 
+- **[TrackVideoExporter](TrackVideoExporter.md)** – knihovna tříd pro generování overlay videí  
+  Lze ji použít i samostatně v jiných projektech (např. pro výukové nebo analytické účely).
+
+---
 
 ## 🌍 Lokalizace
-- **English**
-- **Česky**
-- **Deutch**
-- **Polski**
-- **Русский**
-- **Українська**
+
+Aplikace je vícejazyčná a podporuje tyto jazyky:
+
+- 🇬🇧 English  
+- 🇨🇿 Čeština  
+- 🇩🇪 Deutsch  
+- 🇵🇱 Polski  
+- 🇷🇺 Русский  
+- 🇺🇦 Українська  
+
+---
 
 ## 📜 Licence
-Tento projekt je (tedy vlastně není 😉 ) licencován pod licencí UNLICENSED - podrobnosti naleznete v souboru UNLICENSE.
 
+Projekt je šířen jako **UNLICENSED** – detaily viz soubor `UNLICENSE`.  
+Jinými slovy: program můžeš volně používat, ale autor neručí za žádné škody, které ti způsobí (ani kdyby pes podle jeho analýzy našel místo kladeče sousedův gril — nebo horší, jeho klobásy 🐕🌭).
+
+---

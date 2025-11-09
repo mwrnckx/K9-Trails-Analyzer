@@ -178,7 +178,7 @@ Public Class PngRenderer
                 Dim position As New PointF(backgroundTiles.bgmap.Width, 0) ' pravý horní roh růžice
                 Dim scale As Single = 0.15
                 DrawWindArrow(g, position, scale, myWindArrow)
-                'DrawWindArrow(g, center, arrowlength, windDirection, windSpeed)
+                'DrawWindArrow(g, TrackPoints(0), arrowlength, windDirection, windSpeed)
             End If
             For Each track In tracksAsPointsF
                 Dim TrackPoints As List(Of PointF) = track.TrackPointsF.Select(Function(tp) tp.Location).ToList()
@@ -189,8 +189,8 @@ Public Class PngRenderer
                 Dim p As PointF = TrackPoints.Last  ' poslední bod, posunutý o offset
                 g.FillEllipse(New SolidBrush(track.Color), p.X - radius / 2, p.Y - radius / 2, radius, radius)
 
-                Dim popis As String = track.Label
-                Dim textSize = g.MeasureString(popis, font)
+                Dim description As String = track.Label
+                Dim textSize = g.MeasureString(description, font)
                 Dim textoffsetX As Single
                 Dim contrastColor As Color = GetContrastColor(track.Color)
                 If p.X - textSize.Width - radius < 0 Then
@@ -201,7 +201,7 @@ Public Class PngRenderer
                     textoffsetX = -textSize.Width - radius
                 End If
                 Dim textPos As New PointF(p.X + textoffsetX, p.Y - textSize.Height / 2)
-                DrawTextWithOutline(g, popis, font, track.Color, contrastColor, textPos, 2)
+                DrawTextWithOutline(g, description, font, track.Color, contrastColor, textPos, 2)
 
             Next
 
@@ -215,24 +215,21 @@ Public Class PngRenderer
 
                 Dim deviationPen As New Pen(brush, penWidth)
                 deviationPen.EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor
-
                 deviationPen.StartCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor
                 g.DrawLines(deviationPen, TrackPoints.ToArray)
 
-                Dim center As PointF = New PointF((TrackPoints(0).X + TrackPoints(1).X) / 2, (TrackPoints(0).Y + TrackPoints(1).Y) / 2)  ' střed úsečky deviace
-                center = TrackPoints(0) 'ne střed ale počátek úsečky...
-                Dim popis As String = "max. deviation (" & maxDeviationMetres.ToString("0") & " m)"
-                Dim textSize = g.MeasureString(popis, font)
+                Dim description As String = "max. deviation (" & maxDeviationMetres.ToString("0") & " m)"
+                Dim textSize = g.MeasureString(description, font)
                 Dim textoffsetX As Single
-                If center.X - textSize.Width - radius < 0 Then
-                    ' není místo vlevo, napiš text vpravo od elipsy
+                If TrackPoints(0).X - textSize.Width - radius < 0 Then
+                    ' no space left, type text to the right of the ellipsis
                     textoffsetX = radius
                 Else
-                    ' je místo, napiš text vlevo
+                    ' is the place, write the text on the left
                     textoffsetX = -textSize.Width - radius
                 End If
-                Dim textPos As New PointF(center.X + textoffsetX, center.Y - textSize.Height / 2)
-                DrawTextWithOutline(g, popis, font, deviationColor, contrastColor, textPos, 2)
+                Dim textPos As New PointF(TrackPoints(0).X + textoffsetX, TrackPoints(0).Y - textSize.Height / 2)
+                DrawTextWithOutline(g, description, font, deviationColor, contrastColor, textPos, 2)
             End If
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
@@ -242,18 +239,18 @@ Public Class PngRenderer
                     Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
                     Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
                     g.FillEllipse(brush, wpt.X - radius / 2, wpt.Y - radius / 2, radius, radius)
-                    Dim popis As String = waypointsAsPointsF.Label
-                    Dim textSize = g.MeasureString(popis, font)
+                    Dim description As String = "checkpoint" 'waypointsAsPointsF.Label
+                    Dim textSize = g.MeasureString(description, font)
                     Dim textoffsetX As Single
                     If wpt.X - textSize.Width - radius < 0 Then
-                        ' není místo vlevo, napiš text vpravo od elipsy
+                        ' no space left, type text to the right of the ellipsis
                         textoffsetX = radius
                     Else
-                        ' je místo, napiš text vlevo
+                        ' there's room, write the text on the left
                         textoffsetX = -textSize.Width - radius
                     End If
                     Dim textPos As New PointF(wpt.X + textoffsetX, wpt.Y - textSize.Height / 2)
-                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
+                    If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
                 Next
             End If
         End Using

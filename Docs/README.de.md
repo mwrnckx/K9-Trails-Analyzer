@@ -1,67 +1,97 @@
-﻿# K9 Trails Analyzer
+﻿# 🐾 K9 Trails Analyzer
 
-Dieses Projekt wurde als Werkzeug für Hundeführer entwickelt, die sich mit Mantrailing oder Geruchsspurverfolgung beschäftigen.  
-Es ermöglicht das Laden von GPX-Dateien aus Trainingseinheiten und deren Analyse (Entfernung, Alter der Spur usw.).  
-Ein zentraler Bestandteil des Projekts ist eine Bibliothek zur Erstellung von Overlay-Videos (Anzeige der Positionen von Hund und Spur), die mit Videoaufnahmen der Arbeit des Hundes kombiniert werden können. Das fertige Video zeigt sowohl das Verhalten des Hundes als auch seine Echtzeit-Position auf der Spur, inklusive Abstand zum Fährtenleger und visualisierter Windrichtung und -stärke!  
-Ein leistungsstarkes Werkzeug zur Analyse der Leistung deines Hundes.
+**K9 Trails Analyzer** ist ein Werkzeug für Hundeführer und Trainer, die sich mit **Mantrailing** oder **praktischer Fährtenarbeit** beschäftigen.  
+Es wurde entwickelt, um **Trainingseinheiten objektiv auszuwerten** und **das Verhalten des Hundes auf der Spur besser zu verstehen**.  
+Die Anwendung ermöglicht das **Laden und Analysieren von GPX-Aufzeichnungen** aus Trainings, einschließlich Messung von Distanzen, Geschwindigkeit, Spuralter und Genauigkeit der Arbeit des Hundes.  
 
-**K9 Trails Analyzer** ist eine Windows-Anwendung zur Verarbeitung von GPX-Dateien, die GPS-Tracks des Fährtenlegers und des Hundes enthalten, und stellt Statistiken wie Gesamtdistanz, Spuralter und Durchschnittsgeschwindigkeit bereit.  
-Getestet mit Apps wie Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, Locus Map und anderen.
+Neben der Analyse enthält sie eine **einzigartige Bibliothek zur Erstellung von Overlay-Videos**, die **die Spur des Hundes, die Route des Fährtenlegers, Windrichtung und -stärke** sowie weitere Informationen in Echtzeit anzeigen.  
+Diese Overlays können leicht mit Actioncam-Aufnahmen kombiniert werden, um ein **komplettes Trail-Video** zu erstellen – ideal für Schulungen, Auswertungen oder Erfahrungsaustausch.
 
----
-
-## 💡 Funktionen
-
-- **Liest GPX-Dateien**: Lade Tracks aus einem beliebigen Ordner.
-- **Datumsfilterung**: Fokussiere auf Spuren innerhalb eines ausgewählten Zeitfensters.
-- **Distanzberechnung**: Berechne die Gesamt- und Einzeltrack-Distanz.
-- ⏳ **Spuralter**: Wenn sowohl Fährtenleger- als auch Hundespur verfügbar sind, berechnet die App, wie alt die Spur war, als der Hund ihr folgte.
-- **Geschwindigkeitsanalyse**: Berechnet die durchschnittliche Geschwindigkeit des Hundes pro Spur.
-- **Exportoptionen**: Exportiere Ergebnisse in RTF, TXT oder CSV für den Druck oder zur weiteren Analyse in Excel.
-- **Diagramme und Visualisierung**: Zeigt Zusammenfassungen wie Gesamtdistanz, Tracklängen, Spuralter und Hundegeschwindigkeit über die Zeit.
-- 🎬 **Videoerstellung**: Erstelle transparente Overlay-Videos, die die Bewegungen von Fährtenleger und Hund in Echtzeit zeigen. Ein Windpfeil visualisiert Windrichtung und -stärke. Dieses Overlay kann mit Actioncam-Videos in einem Editor wie [Shotcut](https://shotcut.org/) kombiniert werden.
+Seit Version **1.0.26** enthält die Anwendung zudem ein **Punktesystem**, das sich für **Mantrailing-** und **Fährtenprüfungen** eignet.
 
 ---
 
-## 🛠️ Installation
+## 💡 Hauptfunktionen
 
-1. Lade die ZIP-Datei aus dem [Releases-Bereich](https://github.com/mwrnckx/K9-Trails-AnalyzerII/releases) herunter.
-2. Entpacke sie in einen beliebigen Ordner.
-3. Starte `K9TrailsAnalyzer.exe`.
-4. In der Anwendung befinden sich mehrere gpx-Dateien im Ordner Samples. Diese Dateien werden nach dem Start des Programms verarbeitet (bis Sie den Zielordner ändern). So können Sie die Funktionalität des Programms mit diesen Dateien sicher testen. Der Zielordner kann im Menü "Datei" geändert werden.
+- **GPX-Dateien laden**  
+  Erkennt automatisch Hundespur und Fährtenlegerroute, auch wenn sie in getrennten Dateien gespeichert sind, und bietet deren Zusammenführung an.  
+  Unterstützt werden Aufzeichnungen aus **Geo Tracker, OpenTracks, Mapy.com, The Mantrailing App, [Locus Map](https://www.locusmap.app)** u.a.
+
+- **Spuranalyse**
+  - Berechnung von **Gesamtdistanz**, **Spuralter** und **durchschnittlicher Geschwindigkeit**  
+  - **Filterung nach Datum** oder Trainingszeitraum  
+  - Berechnung der **Abweichung des Hundes** von der Route des Fährtenlegers  
+
+- **Visualisierung**
+  - Diagramme zu Spur­längen, Geschwindigkeiten und Alter im Zeitverlauf  
+  - Möglichkeit zum Export von Diagrammen und Daten  
+
+- **Notizen zur Spur**  
+  Formular zur Eingabe von Anmerkungen zu jeder Spur.  
+  Notizen werden automatisch als PNG in das Overlay-Video eingebettet und im Video angezeigt.
+
+- **🎬 Erstellung von Overlay-Videos**  
+  Generiert Videos mit Hundespur, Fährtenlegerroute sowie Windrichtung und -stärke – auf transparentem Hintergrund.  
+  Diese Videos können in Editoren wie [Shotcut](https://shotcut.org/) mit Actioncam-Aufnahmen kombiniert werden.
+
+- **🏅 Punktesystem für Wettkämpfe**
+  - Finden des Fährtenlegers  
+  - Arbeitsgeschwindigkeit  
+  - Arbeitsgenauigkeit  
+  - Lesen des Hundes durch den Hundeführer  
+
+- **📊 Export von Ergebnissen**  
+  Export in **CSV**, **TXT** oder **RTF** – geeignet zum Drucken oder für die Weiterverarbeitung in Excel.
 
 ---
 
-## 🧱 Abhängigkeiten
+## 🧱 Installation
 
-- [.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download)
-- Die Anwendung verwendet externe Software: [ffmpeg](https://ffmpeg.org/)  
-  Die aktuelle `ffmpeg.exe` ist bereits in der ZIP-Datei enthalten – keine manuelle Einrichtung erforderlich.
+1. Lade die aktuelle Version unter [Releases](https://github.com/mwrnckx/K9-Trails-Analyzer/releases) herunter  
+2. Entpacke das ZIP-Archiv in einen beliebigen Ordner  
+3. Starte `K9TrailsAnalyzer.exe`  
+4. Im Ordner **Samples** befinden sich Beispiel-GPX-Dateien, die beim ersten Start automatisch geladen werden  
+   Der Zielordner kann jederzeit im Menü **Datei** geändert werden.
+
+---
+
+## ⚙️ Technische Informationen
+
+- Benötigt **.NET 8.0 Runtime**  
+- Verwendet **[FFmpeg](https://ffmpeg.org/)** zur Videoerstellung  
+  (bereits im ZIP-Paket enthalten – keine Installation erforderlich)
 
 ---
 
 ## 📂 Projektstruktur
 
-Dieses Repository enthält zwei Teilprojekte:
+Das Lösungsprojekt enthält zwei Teilprojekte:
 
-- **K9-Trails-Analyzer** – die Haupt-Windows-Forms-Anwendung (GPX-Analyse)
-- **[TrackVideoExporter](TrackVideoExporter.md)** – eine Klassenbibliothek zur Erstellung von Overlay-Videos
-  - Diese Bibliothek ist modular aufgebaut und kann auch unabhängig in eigener Software verwendet werden.
+- **K9-Trails-Analyzer** – Hauptanwendung (Windows Forms)  
+  Zum Laden und Analysieren von GPX-Daten.
+
+- **[TrackVideoExporter](TrackVideoExporter.md)** – Klassenbibliothek zur Erstellung von Overlay-Videos  
+  Kann auch unabhängig in anderen Projekten verwendet werden (z. B. zu Schulungs- oder Analysezwecken).
 
 ---
 
-## 🌍 Lokalisierung
+## 🌍 Sprachen
 
-- **English**
-- **Česky**
-- **Deutsch**
-- **Polski**
-- **Русский**
-- **Українська**
+Die Anwendung ist mehrsprachig und unterstützt:
+
+- 🇬🇧 Englisch  
+- 🇨🇿 Tschechisch  
+- 🇩🇪 Deutsch  
+- 🇵🇱 Polnisch  
+- 🇷🇺 Russisch  
+- 🇺🇦 Ukrainisch  
 
 ---
 
 ## 📜 Lizenz
 
-Dieses Projekt ist **(naja, technisch gesehen… eigentlich nicht 😉)** unter der UNLICENSED-Lizenz lizenziert — siehe die Datei `UNLICENSE` für Details.
+Das Projekt wird unter **UNLICENSED** veröffentlicht – Details siehe Datei `UNLICENSE`.  
+Mit anderen Worten: Du darfst das Programm frei verwenden, aber der Autor übernimmt keine Haftung für eventuelle Schäden  
+(selbst wenn dein Hund laut Analyse statt des Fährtenlegers den Grill des Nachbarn – oder schlimmer, seine Würstchen – findet 🐕🌭).
 
+---
