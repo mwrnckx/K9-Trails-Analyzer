@@ -5,6 +5,7 @@ Imports System.Xml
 Public Class TrackPointF
     Public Property Location As PointF
     Public Property Time As DateTime
+    Public Property Name As String
 End Class
 
 Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentující trasy
@@ -42,8 +43,8 @@ Public MustInherit Class TrackAs 'track as vzor pro všechny třídy reprezentuj
                 Case TrackType.RunnerTrail : Return Color.Blue
                 Case TrackType.DogTrack : Return Color.Red
                 Case TrackType.CrossTrail : Return Color.Green
-                Case TrackType.article : Return Color.Orange
-                Case Else : Return Color.Black
+                Case TrackType.Article : Return Color.Black
+                Case Else : Return Color.DarkRed
             End Select
         End Get
     End Property
@@ -73,6 +74,7 @@ Public Class TrackGeoPoint
     ''' The timestamp corresponding to this geo point.
     ''' </summary>
     Public Property Time As DateTime = Nothing
+    Public Property name As String = ""
 
 End Class
 
@@ -263,7 +265,7 @@ Public Enum TrackType
     RunnerTrail
     DogTrack
     CrossTrail
-    article 'scent article or checkPoint
+    Article 'scent article or checkPoint
 End Enum
 
 ''' <summary>
@@ -494,7 +496,7 @@ Public Class TrailStats
     Public Property RunnerDistance As Double ' Distance actually traveled by the runner (measured from the runner's route)
     Public Property WeightedDistanceAlongTrail As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
     Public Property WeightedDistanceAlongTrailPerCent As Double ' Distance traveled by the dog as measured from the runners's route with weighting by deviation
-    Public Property WeightedTimePerCent As Double ' Total time of the dog with weighting by deviation divided by total time
+    Public Property WeightedTimePerCent As Double ' Total time of the dog  weighted by deviation divided by total time
     Public Property TrailAge As TimeSpan ' age of the trail 
     Public Property DogTotalTime As TimeSpan ' total time of the dog's route
     Public Property DogMovingTime As TimeSpan ' net time the dog moved
@@ -507,6 +509,7 @@ Public Class TrailStats
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
+    Public Property EarlyPickupFactor As Double 'whether dog found trail quickly
 End Class
 
 ' Struktura pro data checkpointu
@@ -521,6 +524,7 @@ Public Class ScoringData
     Public Property DogSpeedPoints As Integer
     Public Property DogAccuracyPoints As Integer
     Public Property DogReadingPoints As Integer
+    Public Property EarlyPickupPoints As Integer
     Public Property dogName As String
     Public Property handlerName As String
 End Class

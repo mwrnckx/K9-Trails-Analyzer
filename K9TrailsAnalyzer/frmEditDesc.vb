@@ -89,10 +89,9 @@ Public Class frmEditComments
     End Sub
 
     Private Sub SaveFormData()
-        ' Tato subrutina obsahuje veškerou logiku pro uložení dat z RichTextBoxů
-        Me.TrailDescription.Goal.Text = txtGoal.Text
-        Me.TrailDescription.Trail.Text = txtTrail.Text
-        Me.TrailDescription.Performance.Text = txtPerformance.Text
+        Me.TrailDescription.GoalText = txtGoal.Text
+        Me.TrailDescription.TrailText = txtTrail.Text
+        Me.TrailDescription.PerformanceText = txtPerformance.Text
         If Me.Language Is Nothing Then
             Me.Language = ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
         ElseIf Me.Language <> ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() Then

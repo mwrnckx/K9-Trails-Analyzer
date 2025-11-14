@@ -94,10 +94,18 @@ Public Class TrackConverter
                 Debug.WriteLine("Time node not found in trkpt.")
                 time = DateTime.MinValue
             End If
+            Dim nameNode As XmlNode = SelectSingleChildNode("name", trkptnode)
+            Dim name
+            If nameNode IsNot Nothing Then
+                name = nameNode.InnerText
+            Else name = ""
+            End If
+
 
             Dim geopoint As New TrackGeoPoint With {
                 .Location = New Coordinates With {.Lat = lat, .Lon = lon},
-                .Time = time
+                .Time = time,
+                .name = name
             }
             trackGeoPoints.Add(geopoint)
         Next
@@ -151,7 +159,8 @@ Public Class TrackConverter
             Dim pt = LatLonToPixel(geoPoint.Location.Lat, geoPoint.Location.Lon, zoom, minTileX, minTileY)
             Dim _trackpointF As New TrackPointF With {
                 .Location = New PointF With {.X = pt.X, .Y = pt.Y},
-                .Time = geoPoint.Time
+                .Time = geoPoint.Time,
+                .Name = geoPoint.name
             }
             _TrackAsPointsF.TrackPointsF.Add(_trackpointF)
         Next
@@ -194,7 +203,7 @@ Public Class TrackConverter
     ''' <param name="childName">Name of the child element to select (e.g., "time").</param>
     ''' <param name="parent">The parent XmlNode (e.g., trkpt).</param>
     ''' <returns>The selected XmlNode, or Nothing if not found.</returns>
-    Public Function SelectSingleChildNode(childName As String, parent As XmlNode) As XmlNode
+    Public Shared Function SelectSingleChildNode(childName As String, parent As XmlNode) As XmlNode
         Dim nsmgr As New XmlNamespaceManager(parent.OwnerDocument.NameTable)
         Dim ns As String = parent.GetNamespaceOfPrefix("")
         nsmgr.AddNamespace("gpx", ns)
@@ -210,7 +219,7 @@ Public Class TrackConverter
         Return parent.SelectNodes($"gpx:{childName}", nsmgr)
     End Function
 
-    Public Function CreateAndAddElement(parentNode As XmlElement,
+    Public Shared Function CreateAndAddElement(parentNode As XmlElement,
                                 XpathchildNodeName As String,
                                 value As String,
                                 insertAfter As Boolean,
@@ -251,14 +260,14 @@ Public Class TrackConverter
     End Function
 
     ' Metoda pro rekurentní výběr všech poduzlů z uzlu Node
-    Public Function SelectAllChildNodes(XpathChildName As String, node As XmlNode) As XmlNodeList
+    Public Shared Function SelectAllChildNodes(XpathChildName As String, node As XmlNode) As XmlNodeList
         Dim nsmgr As New XmlNamespaceManager(node.OwnerDocument.NameTable)
         Dim ns As String = node.GetNamespaceOfPrefix("")
         nsmgr.AddNamespace("gpx", ns)
         Return node.SelectNodes(".//" & XpathChildName, nsmgr)
     End Function
 
-    Public Function CreateElement(nodename As String, parent As XmlNode, Optional _namespaceUri As String = Nothing) As XmlNode
+    Public Shared Function CreateElement(nodename As String, parent As XmlNode, Optional _namespaceUri As String = Nothing) As XmlNode
         Dim xmlDoc As XmlDocument = parent.OwnerDocument
         If _namespaceUri IsNot Nothing Then
             ' Pokud je zadán jmenný prostor, použijeme ho

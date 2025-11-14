@@ -205,6 +205,48 @@
   <data name="&gt;&gt;btnCreateVideos.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
+  <data name="btnRecalculateScore.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="btnRecalculateScore.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="btnRecalculateScore.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt, style=Bold</value>
+  </data>
+  <data name="btnRecalculateScore.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="btnRecalculateScore.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="btnRecalculateScore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="btnRecalculateScore.Size" type="System.Drawing.Size, System.Drawing">
+    <value>108, 30</value>
+  </data>
+  <data name="btnRecalculateScore.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="btnRecalculateScore.Text" xml:space="preserve">
+    <value>Recalculate</value>
+  </data>
+  <data name="btnRecalculateScore.ToolTip" xml:space="preserve">
+    <value>Deletes changes made by the user or recalculates when scoring rules are changed</value>
+  </data>
+  <data name="&gt;&gt;btnRecalculateScore.Name" xml:space="preserve">
+    <value>btnRecalculateScore</value>
+  </data>
+  <data name="&gt;&gt;btnRecalculateScore.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnRecalculateScore.Parent" xml:space="preserve">
+    <value>panelForDgv</value>
+  </data>
+  <data name="&gt;&gt;btnRecalculateScore.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>328, 17</value>
   </metadata>
@@ -923,7 +965,7 @@
     <value>True</value>
   </data>
   <data name="dgvCompetition.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
+    <value>0, 30</value>
   </data>
   <data name="dgvCompetition.ScrollBars" type="System.Windows.Forms.ScrollBars, System.Windows.Forms">
     <value>None</value>
@@ -944,7 +986,7 @@
     <value>panelForDgv</value>
   </data>
   <data name="&gt;&gt;dgvCompetition.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="panelForDgv.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>

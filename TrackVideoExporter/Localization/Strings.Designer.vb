@@ -81,7 +81,16 @@ Namespace My.Resources
                 Return ResourceManager.GetString("DogReading", resourceCulture)
             End Get
         End Property
-        
+
+        '''<summary>
+        '''  Vyhledá lokalizovaný řetězec podobný Pick-up.
+        '''</summary>
+        Friend Shared ReadOnly Property EarlyPickUp() As String
+            Get
+                Return ResourceManager.GetString("EarlyPickUp", resourceCulture)
+            End Get
+        End Property
+
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný FinalFind.
         '''</summary>

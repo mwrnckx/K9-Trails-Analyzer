@@ -207,7 +207,7 @@ Public Class PngRenderer
 
             'maxDeviation
             If maxDeviation IsNot Nothing AndAlso maxDeviation.TrackPointsF.Count > 0 Then
-                Dim deviationColor As Color = Color.DarkRed
+                Dim deviationColor As Color = maxDeviation.Color
                 Dim contrastColor As Color = GetContrastColor(deviationColor)
 
                 Dim brush As SolidBrush = New SolidBrush(deviationColor) ' 
@@ -234,22 +234,34 @@ Public Class PngRenderer
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
                 Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
-                Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                For Each wpt In TrackPoints
-                    Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
+
+                ' 1. Seřadíme původní body (TrackPointsF) podle Time vzestupně (od nejstaršího k nejmladšímu)
+                Dim sortedTrackPoints = waypointsAsPointsF.TrackPointsF.OrderBy(Function(tp) tp.Time)
+
+                ' 2. Následně můžeme iterovat seřazenou kolekci, kde každý prvek je stále původní typ 
+                '    s vlastností Location a Time.
+                Dim i As Integer = 1
+                For Each wpt In sortedTrackPoints
+                    ' Pro přístup k souřadnicím použijte Location
+                    Dim location As PointF = wpt.Location
+
+
+                    'Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
+                    'For Each wpt In TrackPoints
+                    'Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
                     Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
-                    g.FillEllipse(brush, wpt.X - radius / 2, wpt.Y - radius / 2, radius, radius)
-                    Dim description As String = "checkpoint" 'waypointsAsPointsF.Label
+                    g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
+                    Dim description As String = wpt.Name ' $"checkpoint {i}" 'waypointsAsPointsF.Label
                     Dim textSize = g.MeasureString(description, font)
                     Dim textoffsetX As Single
-                    If wpt.X - textSize.Width - radius < 0 Then
+                    If location.X - textSize.Width - radius < 0 Then
                         ' no space left, type text to the right of the ellipsis
                         textoffsetX = radius
                     Else
                         ' there's room, write the text on the left
                         textoffsetX = -textSize.Width - radius
                     End If
-                    Dim textPos As New PointF(wpt.X + textoffsetX, wpt.Y - textSize.Height / 2)
+                    Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
                     If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, description, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
                 Next
             End If
@@ -311,22 +323,24 @@ Public Class PngRenderer
 
             If waypointsAsPointsF IsNot Nothing AndAlso waypointsAsPointsF.TrackPointsF.Count > 0 Then
                 Dim brush As SolidBrush = New SolidBrush(waypointsAsPointsF.Color) ' plná barva pro statické stopy
-                Dim TrackPoints As List(Of PointF) = waypointsAsPointsF.TrackPointsF.Select(Function(tp) tp.Location).ToList()
-                For Each wpt In TrackPoints
-                    Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
+                Dim i As Integer = 1
+                For Each wpt In waypointsAsPointsF.TrackPointsF
+                    Dim location As PointF = wpt.Location
+
+                    'Dim time As String = waypointsAsPointsF.TrackPointsF.Last.Time.ToString("HH:mm")
                     Dim contrastColor As Color = GetContrastColor(waypointsAsPointsF.Color)
-                    g.FillEllipse(brush, wpt.X - radius / 2, wpt.Y - radius / 2, radius, radius)
-                    Dim popis As String = waypointsAsPointsF.Label
+                    g.FillEllipse(brush, location.X - radius / 2, location.Y - radius / 2, radius, radius)
+                    Dim popis As String = wpt.Name '$"{waypointsAsPointsF.Label} {i}"
                     Dim textSize = g.MeasureString(popis, font)
                     Dim textoffsetX As Single
-                    If wpt.X - textSize.Width - radius < 0 Then
+                    If location.X - textSize.Width - radius < 0 Then
                         ' není místo vlevo, napiš text vpravo od elipsy
                         textoffsetX = radius
                     Else
                         ' je místo, napiš text vlevo
                         textoffsetX = -textSize.Width - radius
                     End If
-                    Dim textPos As New PointF(wpt.X + textoffsetX, wpt.Y - textSize.Height / 2)
+                    Dim textPos As New PointF(location.X + textoffsetX, location.Y - textSize.Height / 2)
                     If Not waypointsAsPointsF.IsMoving Then DrawTextWithOutline(g, popis, font, waypointsAsPointsF.Color, contrastColor, textPos, 2)
                 Next
             End If

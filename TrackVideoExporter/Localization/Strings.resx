@@ -121,7 +121,7 @@
     <value>Accuracy</value>
   </data>
   <data name="FinalFind" xml:space="preserve">
-    <value>FinalFind</value>
+    <value>Final Find</value>
   </data>
   <data name="ofPoints" xml:space="preserve">
     <value>of</value>
@@ -143,5 +143,8 @@
   </data>
   <data name="Trail_description" xml:space="preserve">
     <value>Trail description</value>
+  </data>
+  <data name="EarlyPickUp" xml:space="preserve">
+    <value>Trail Pick</value>
   </data>
 </root>

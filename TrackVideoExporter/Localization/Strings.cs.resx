@@ -144,4 +144,7 @@
   <data name="Trail_description" xml:space="preserve">
     <value>Popis trailu</value>
   </data>
+  <data name="EarlyPickUp" xml:space="preserve">
+    <value>Rozlišení</value>
+  </data>
 </root>

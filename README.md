@@ -2,10 +2,10 @@
 
 ## 🔍 What is this?
 
-K9 Trails Analyzer is a Windows tool for analyzing GPX tracks from mantrailing/tracking sessions.  
+K9 Trails Analyzer is a Windows aplication for analyzing GPX tracks from mantrailing/tracking trainings and/or competitions.  
 -- Provides detailed stats about track length, age, dog speed, dog's deviation from runner's track 
 -- Generates overlay video with wind direction and real-time GPS position, i.e. it shows the dog's movement along the trail, its distance from the runner's track, and other key details. This video can be combined with the trail footage from the action camera.
--- Calculates the scores of individual trails, which can be used especially for practical tracking competitions
+-- Calculates the scores of individual trails, which can be used especially for practical-tracking competitions
 
 This project is designed to assist dog handlers/trainers/competition organizers involved in mantrailing or practical scent tracking.
 
@@ -34,8 +34,12 @@ This project is designed to assist dog handlers/trainers/competition organizers 
 <a href="https://youtu.be/ybdye8DgJPo?si=jcZ0djv3o6PSQma9"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/miniaturaYT.png" width="350"></a>
 
 # Video with GPS track overlay on youtube: 
-<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/videoScreenshot.png" width="350"></a>
+<a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/videoScreenshot.png" width="350"></a>
 # Screenshots from the video:
-<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
-<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/overlay.jpg" width="350"></a>
-<a href="https://youtu.be/eCV6jZYwUaE"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/en-TrailDescription.png" width="350"></a>
+<a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/TrailsOnMap.png" width="350"></a>
+<a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/overlay.png" width="350"></a>
+<a href="https://youtu.be/TjPnITBn1ms"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/en-TrailDescription.png" width="350"></a>
+
+# Scoring in mantrailing/practical tracking competitions: 
+<a href="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/Scoring.png"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/Scoring.png" width="350"></a>
+<a href="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/en-Points.png"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/en-Points.png" width="350"></a>

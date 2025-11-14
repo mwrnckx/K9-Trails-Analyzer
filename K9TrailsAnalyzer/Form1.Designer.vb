@@ -34,6 +34,7 @@ Partial Class Form1
         StatusStrip1 = New StatusStrip()
         StatusLabel1 = New ToolStripStatusLabel()
         btnCreateVideos = New Button()
+        btnRecalculateScore = New Button()
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
@@ -132,6 +133,14 @@ Partial Class Form1
         btnCreateVideos.Name = "btnCreateVideos"
         ToolTip1.SetToolTip(btnCreateVideos, resources.GetString("btnCreateVideos.ToolTip"))
         btnCreateVideos.UseVisualStyleBackColor = False
+        ' 
+        ' btnRecalculateScore
+        ' 
+        resources.ApplyResources(btnRecalculateScore, "btnRecalculateScore")
+        btnRecalculateScore.BackColor = Color.DarkSeaGreen
+        btnRecalculateScore.Name = "btnRecalculateScore"
+        ToolTip1.SetToolTip(btnRecalculateScore, resources.GetString("btnRecalculateScore.ToolTip"))
+        btnRecalculateScore.UseVisualStyleBackColor = False
         ' 
         ' MenuStrip1
         ' 
@@ -489,6 +498,7 @@ Partial Class Form1
         ' 
         resources.ApplyResources(panelForDgv, "panelForDgv")
         panelForDgv.BackColor = Color.Transparent
+        panelForDgv.Controls.Add(btnRecalculateScore)
         panelForDgv.Controls.Add(dgvCompetition)
         panelForDgv.Name = "panelForDgv"
         ' 
@@ -540,6 +550,7 @@ Partial Class Form1
         TabVideoExport.PerformLayout()
         TabCompetition.ResumeLayout(False)
         panelForDgv.ResumeLayout(False)
+        panelForDgv.PerformLayout()
         CType(dgvCompetition, ISupportInitialize).EndInit()
         CType(bsCompetitions, ISupportInitialize).EndInit()
         ResumeLayout(False)
@@ -760,6 +771,7 @@ Partial Class Form1
     Friend WithEvents mnuPointsForSpeedText As ToolStripMenuItem
     Friend WithEvents mnuPointsForAccuracyText As ToolStripMenuItem
     Friend WithEvents mnuDogReadingPointsText As ToolStripMenuItem
+    Private WithEvents btnRecalculateScore As Button
 
 
 End Class

@@ -127,6 +127,15 @@
     <None Update="Resources\emoji\1F4CF.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\emoji\1F500.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\emoji\1F50E.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\emoji\1F575.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\emoji\1F680.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

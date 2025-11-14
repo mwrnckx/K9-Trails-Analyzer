@@ -143,6 +143,7 @@ Partial Public Class Form1
                 .RunnerFoundPoints = stats.PointsInMTCompetition.RunnerFoundPoints,
                 .DogSpeedPoints = stats.PointsInMTCompetition.DogSpeedPoints,
                 .DogAccuracyPoints = stats.PointsInMTCompetition.DogAccuracyPoints,
+                .earlyPickupPoints = stats.PointsInMTCompetition.EarlyPickupPoints,
                 .dogReadingPoints = stats.PointsInMTCompetition.DogReadingPoints
                  })
 
@@ -359,6 +360,7 @@ Partial Public Class Form1
 
         Dim columnsPointsData As String() = {
     "TotalPoints",
+    "earlyPickUpPoints",
     "RunnerFoundPoints",
    "DogSpeedPoints",
         "DogAccuracyPoints",
@@ -1285,8 +1287,8 @@ Partial Public Class Form1
         'SaveConfig()
         ClearDgvCompetition()
         lvGpxFiles.Items.Clear()
-        ' tady můžeš volat další inicializace pro aktivního psa
-        ' e.g. RefreshOriginalsFolderForActiveDog()
+        Me.btnCharts.Visible = False
+        Me.rtbOutput.Clear()
     End Sub
 
     ' ----- příklad: přidání nového psa (mnuAddNewCategory click) -----
@@ -1709,7 +1711,18 @@ Partial Public Class Form1
         dgvCompetition.Columns(columnIndex).HeaderCell.SortGlyphDirection = direction
     End Sub
 
+    Private Sub btnRecalculateScore_Click(sender As Object, e As EventArgs) Handles btnRecalculateScore.Click
 
+        For Each gpxRecord In GPXFilesManager.GpxRecords
+            gpxRecord.TrailStats.PointsInMTCompetition = gpxRecord.CalculateCompetitionScore(gpxRecord.TrailStats)
+            gpxRecord.BuildLocalisedPerformancePoints()
+            gpxRecord.BuildLocalisedWeatherText()
+            gpxRecord.WriteLocalizedReports()
+            gpxRecord.Save()
+        Next
+
+        FillDgvCompetition()
+    End Sub
 End Class
 
 ''' <summary>
@@ -1744,6 +1757,7 @@ Public Class TrailStatsDisplay
     Private _dogSpeedPoints As Integer
     Private _dogAccuracyPoints As Integer
     Private _dogReadingPoints As Integer
+    Private _earlyPickupPoints As Integer
     Private _totalPoints As Integer
     Private _DogName As String ' Přidáme i DogName, protože to je editovatelný sloupec
     Private _HandlerName As String
@@ -1869,6 +1883,22 @@ Public Class TrailStatsDisplay
         End Set
     End Property
 
+    <DisplayName("Early Pickup Points")>
+    Public Property earlyPickupPoints As Integer
+        Get
+            Return _earlyPickupPoints
+        End Get
+        Set(value As Integer)
+            If _earlyPickupPoints <> value Then
+                _earlyPickupPoints = value
+                OnPropertyChanged(NameOf(earlyPickupPoints))
+                CalculateTotalPoints()
+            End If
+        End Set
+    End Property
+
+
+
     '3. Ostatní vlastnosti (GPXFilename, StartTime, DogName atd.) mohou zůstat jako Auto-Implemented Properties,
     ' protože jejich hodnota by se neměla po startu měnit, nebo je nemusíte notifikovat.
     ' 
@@ -1925,7 +1955,7 @@ Public Class TrailStatsDisplay
     ' 3. METODA PRO PŘEPOČET
 
     Public Sub CalculateTotalPoints()
-        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.dogReadingPoints
+        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.dogReadingPoints + Me.earlyPickupPoints
 
         ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
         If _totalPoints <> newTotal Then
@@ -1987,6 +2017,9 @@ Public Class CategoryInfo
 
     <JsonPropertyName("PointsForDogReadingMax")>
     Public Property PointsForDogReadingMax As Integer = 100
+
+    <JsonPropertyName("PointsForEarlyPickUpMax")>
+    Public Property PointsForEarlyPickUpMax As Integer = 100
 
 
     <JsonIgnore>
