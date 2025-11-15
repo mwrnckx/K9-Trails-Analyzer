@@ -990,12 +990,10 @@ Partial Public Class Form1
         If menuIcon Is Nothing Then
             menuIcon = Me.mnuEnglish.Image ' Zajistí, že nebude Nothing
         End If
-        ' Nastavení obrázku na ToolStripMenuItem
 
         mnuLanguage.Image = menuIcon
-        Me.mnuPointInCompetition.Tag = Me.mnuPointInCompetition.Text
 
-        'mnuCzech.Image = resizeImage(My.Resources.czech_flag, Nothing, 18)
+
     End Sub
 
     Private Function resizeImage(menuIcon As Image, width As Integer, height As Integer) As Image
@@ -1085,7 +1083,7 @@ Partial Public Class Form1
             If sender Is mnuSelect_directory_gpx_files Or sender Is btnReadGpxFiles Then
                 ActiveCategoryInfo.RemoteDirectory = folderDialog.SelectedPath
                 mbox($"The gpx files for the dog {ActiveCategoryInfo.Name} will be imported from the {ActiveCategoryInfo.RemoteDirectory} folder.")
-                SaveUnifiedConfig()
+                SaveConfig()
                 'SaveCategoriesInfo()
             ElseIf sender Is mnuSelectADirectoryToSaveVideo Or sender Is btnCreateVideos Then
                 My.Settings.VideoDirectory = folderDialog.SelectedPath
@@ -1147,7 +1145,7 @@ Partial Public Class Form1
         CloseGrafs()
     End Sub
 
-    Private unifiedConfig As UnifiedConfig ' Uložte si instanci této třídy na úrovni třídy/modulu
+    Private Config As Config ' Uložte si instanci této třídy na úrovni třídy/modulu
 
     Private Sub LoadUnifiedConfig()
         Dim UnifiedConfigPath As String = CategoriesInfoPath ' Definujte si novou cestu
@@ -1159,20 +1157,20 @@ Partial Public Class Form1
         }
 
             ' 1. Deserializace do kontejnerové třídy
-            unifiedConfig = JsonSerializer.Deserialize(Of UnifiedConfig)(json, opts)
+            Config = JsonSerializer.Deserialize(Of Config)(json, opts)
         Else
             ' 2. Pokud soubor neexistuje, vytvořte novou instanci s výchozími hodnotami
-            unifiedConfig = New UnifiedConfig()
+            Config = New Config()
         End If
 
         ' 3. Přiřazení hodnot do vašich stávajících proměnných (pro snadnou integraci)
-        CategoriesInfo = unifiedConfig.CategoriesInfo
+        CategoriesInfo = Config.CategoriesInfo
 
-        If unifiedConfig.activeDoguration IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(unifiedConfig.activeDoguration.ActiveDogId) Then
-            ActiveCategoryId = unifiedConfig.activeDoguration.ActiveDogId
+        If Config.ActiveCategory IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(Config.ActiveCategory.ActiveCategoryId) Then
+            ActiveCategoryId = Config.ActiveCategory.ActiveCategoryId
         Else
-            ' Zajistěte, že je activeDoguration alespoň inicializovaný, pokud se v souboru nenašel
-            unifiedConfig.activeDoguration = New activeDog()
+            ' Zajistěte, že je activeCategory alespoň inicializovaný, pokud se v souboru nenašel
+            Config.ActiveCategory = New activeCategory()
         End If
     End Sub
     'Private Sub LoadCategories()
@@ -1188,15 +1186,15 @@ Partial Public Class Form1
     'End Sub
 
 
-    Private Sub SaveUnifiedConfig()
-        Dim UnifiedConfigPath As String = CategoriesInfoPath ' Stejná cesta jako při načítání
+    Private Sub SaveConfig()
+        Dim ConfigPath As String = CategoriesInfoPath ' Stejná cesta jako při načítání
 
         ' 1. Aktualizace dat v kontejneru
         ' Předpokládáme, že vaše CategoriesInfo je už aktualizováno
-        unifiedConfig.CategoriesInfo = CategoriesInfo
+        Config.CategoriesInfo = CategoriesInfo
 
-        ' Aktualizace activeDog, ve kterém se nachází ActiveDogId
-        unifiedConfig.activeDoguration.ActiveDogId = ActiveCategoryId
+        ' Aktualizace activeCategory, ve kterém se nachází ActiveCategoryId
+        Config.ActiveCategory.ActiveCategoryId = ActiveCategoryId
 
 
         Dim options As New JsonSerializerOptions With {
@@ -1205,8 +1203,8 @@ Partial Public Class Form1
     }
 
         ' 2. Serializace celé kontejnerové třídy
-        Directory.CreateDirectory(Path.GetDirectoryName(UnifiedConfigPath))
-        File.WriteAllText(UnifiedConfigPath, JsonSerializer.Serialize(unifiedConfig, options), Encoding.UTF8)
+        Directory.CreateDirectory(Path.GetDirectoryName(ConfigPath))
+        File.WriteAllText(ConfigPath, JsonSerializer.Serialize(Config, options), Encoding.UTF8)
     End Sub
 
     'Private Sub SaveCategoriesInfo()
@@ -1222,9 +1220,9 @@ Partial Public Class Form1
     'Private Sub LoadConfig()
     '    If File.Exists(ConfigPath) Then
     '        Dim json = File.ReadAllText(ConfigPath, Encoding.UTF8)
-    '        Dim cfg = JsonSerializer.Deserialize(Of activeDog)(json)
-    '        If cfg IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(cfg.ActiveDogId) Then
-    '            ActiveDogId = cfg.ActiveDogId
+    '        Dim cfg = JsonSerializer.Deserialize(Of activeCategory)(json)
+    '        If cfg IsNot Nothing AndAlso Not String.IsNullOrWhiteSpace(cfg.ActiveCategoryId) Then
+    '            ActiveCategoryId = cfg.ActiveCategoryId
     '        End If
     '    End If
     'End Sub
@@ -1234,7 +1232,7 @@ Partial Public Class Form1
     '        .WriteIndented = True,
     '        .Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
     '    }
-    '    Dim cfg As New activeDog With {.ActiveDogId = ActiveDogId}
+    '    Dim cfg As New activeCategory With {.ActiveCategoryId = ActiveCategoryId}
     '    File.WriteAllText(ConfigPath, JsonSerializer.Serialize(cfg, options), Encoding.UTF8)
     'End Sub
 
@@ -1246,7 +1244,7 @@ Partial Public Class Form1
             mnucbActiveCategory.ComboBox.Items.Add(d) ' zobrazí se Name díky ToString()
         Next
 
-        ' pokud je nastaven ActiveDogId, vyber ho; jinak vyber první
+        ' pokud je nastaven ActiveCategoryId, vyber ho; jinak vyber první
         Dim selectedIndex As Integer = -1
         If Not String.IsNullOrEmpty(ActiveCategoryId) Then
             For i As Integer = 0 To mnucbActiveCategory.ComboBox.Items.Count - 1
@@ -1262,7 +1260,7 @@ Partial Public Class Form1
 
         If selectedIndex >= 0 Then
             mnucbActiveCategory.ComboBox.SelectedIndex = selectedIndex
-            ' zajistí, že ActiveDogId drží hodnotu
+            ' zajistí, že ActiveCategoryId drží hodnotu
             Dim sel = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, CategoryInfo)
             If sel IsNot Nothing Then
                 ActiveCategoryId = sel.Id
@@ -1283,7 +1281,7 @@ Partial Public Class Form1
         ''lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
         'My.Settings.Save()
         ' uložíme config (aby se volba pamatovala)
-        SaveUnifiedConfig()
+        SaveConfig()
         'SaveConfig()
         ClearDgvCompetition()
         lvGpxFiles.Items.Clear()
@@ -1323,7 +1321,7 @@ Partial Public Class Form1
         CategoriesInfo.Add(New CategoryInfo With {.Id = newId,
                      .Name = categoryName,
                      .RemoteDirectory = categoryRemotePath})
-        SaveUnifiedConfig()
+        SaveConfig()
         'SaveCategoriesInfo()
 
 
@@ -1622,7 +1620,7 @@ Partial Public Class Form1
         CategoriesInfo.Remove(dogToRemove)
 
         ' Ulož seznam zpět do JSON
-        SaveUnifiedConfig()
+        SaveConfig()
         'SaveCategoriesInfo()
 
         ' Pokud byl aktivní, přepnout na jiného
@@ -1651,7 +1649,7 @@ Partial Public Class Form1
                     ActiveCategoryInfo.Name = newName
                     ' případně uložit do JSON
 
-                    SaveUnifiedConfig()
+                    SaveConfig()
                     'SaveCategoriesInfo()
                     PopulateCategoriesToolStrip()
                 End If
@@ -1711,17 +1709,30 @@ Partial Public Class Form1
         dgvCompetition.Columns(columnIndex).HeaderCell.SortGlyphDirection = direction
     End Sub
 
-    Private Sub btnRecalculateScore_Click(sender As Object, e As EventArgs) Handles btnRecalculateScore.Click
+    Private Sub RecalculateScoreAndSave()
 
-        For Each gpxRecord In GPXFilesManager.GpxRecords
-            gpxRecord.TrailStats.PointsInMTCompetition = gpxRecord.CalculateCompetitionScore(gpxRecord.TrailStats)
-            gpxRecord.BuildLocalisedPerformancePoints()
-            gpxRecord.BuildLocalisedWeatherText()
-            gpxRecord.WriteLocalizedReports()
-            gpxRecord.Save()
+        For Each _gpxRecord In GPXFilesManager.GpxRecords
+            Dim isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.Tracks, _gpxRecord.WptNodes, _gpxRecord.TrailStats)
+            If isTrackStatsCalculated Then
+                _gpxRecord.WriteTrailStatsToXml(_gpxRecord.TrailStats)
+                _gpxRecord.IsSaved = False
+            End If
+            _gpxRecord.TrailStats.PointsInMTCompetition = _gpxRecord.CalculateCompetitionScore(_gpxRecord.TrailStats)
+            _gpxRecord.BuildLocalisedPerformancePoints()
+            _gpxRecord.BuildLocalisedWeatherText()
+            _gpxRecord.WriteLocalizedReports()
+            _gpxRecord.Save()
         Next
 
         FillDgvCompetition()
+    End Sub
+
+    Private Sub btnEditPoints_Click(sender As Object, e As EventArgs) Handles btnEditPoints.Click
+        Dim EditCategoryPoints As New frmEditCategoryPoints(Me.ActiveCategoryInfo)
+        If EditCategoryPoints.ShowDialog() = DialogResult.OK Then
+            RecalculateScoreAndSave()
+            SaveConfig()
+        End If
     End Sub
 End Class
 
@@ -2055,23 +2066,23 @@ Public Class CategoryInfo
 End Class
 
 
-' --- jednoduchá konfigurace pro aktivního psa ---
-Public Class activeDog
-    <JsonPropertyName("activeDogId")>
-    Public Property ActiveDogId As String
+' --- Vybraná kategorie ---
+Public Class activeCategory
+    <JsonPropertyName("activeCategoryId")>
+    Public Property ActiveCategoryId As String
 End Class
 
 
-Public Class UnifiedConfig
+Public Class Config
     <JsonPropertyName("categoriesInfo")>
     Public Property CategoriesInfo As List(Of CategoryInfo)
 
-    <JsonPropertyName("activeDog")>
-    Public Property activeDoguration As activeDog
+    <JsonPropertyName("activeCategory")>
+    Public Property ActiveCategory As activeCategory
 
     ' Volitelně můžete přidat konstruktor pro inicializaci seznamu
     Public Sub New()
         CategoriesInfo = New List(Of CategoryInfo)()
-        activeDoguration = New activeDog() ' Zajistí, že activeDog není Nothing
+        ActiveCategory = New activeCategory() ' Zajistí, že activeCategory není Nothing
     End Sub
 End Class

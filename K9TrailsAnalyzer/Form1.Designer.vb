@@ -34,7 +34,6 @@ Partial Class Form1
         StatusStrip1 = New StatusStrip()
         StatusLabel1 = New ToolStripStatusLabel()
         btnCreateVideos = New Button()
-        btnRecalculateScore = New Button()
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
@@ -53,20 +52,10 @@ Partial Class Form1
         mnuPolish = New ToolStripMenuItem()
         mnuRussian = New ToolStripMenuItem()
         mnuCategory = New ToolStripMenuItem()
-        mnucbActiveCategory = New ToolStripComboBox()
         mnuSelect_directory_gpx_files = New ToolStripMenuItem()
         mnuRenameCurrentCategory = New ToolStripMenuItem()
         mnuAddNewCategory = New ToolStripMenuItem()
         mnuDeleteCurrentCategory = New ToolStripMenuItem()
-        mnuPointInCompetition = New ToolStripMenuItem()
-        mnuPointForFindText = New ToolStripMenuItem()
-        mnuPointsForFind = New ToolStripTextBox()
-        mnuPointsForSpeedText = New ToolStripMenuItem()
-        mnuPointsForSpeed = New ToolStripTextBox()
-        mnuPointsForAccuracyText = New ToolStripMenuItem()
-        mnuPointsForAccuracy = New ToolStripTextBox()
-        mnuDogReadingPointsText = New ToolStripMenuItem()
-        mnuDogReadingPoints = New ToolStripTextBox()
         mnuHelp = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
@@ -74,6 +63,7 @@ Partial Class Form1
         mnuSetFFmpegPath = New ToolStripMenuItem()
         ToolStripSeparator2 = New ToolStripSeparator()
         mnuFactoryReset = New ToolStripMenuItem()
+        mnucbActiveCategory = New ToolStripComboBox()
         mnuCheckUpdates = New ToolStripMenuItem()
         rtbWarnings = New RichTextBox()
         TabControl1 = New TabControl()
@@ -93,7 +83,9 @@ Partial Class Form1
         clmAge = New ColumnHeader()
         clmTrkCount = New ColumnHeader()
         TabCompetition = New TabPage()
-        panelForDgv = New Panel()
+        pnlForDgv = New Panel()
+        ToolStrCategorySettings = New ToolStrip()
+        btnEditPoints = New ToolStripButton()
         dgvCompetition = New DataGridView()
         bsCompetitions = New BindingSource(components)
         StatusStrip1.SuspendLayout()
@@ -103,7 +95,8 @@ Partial Class Form1
         gbPeriod.SuspendLayout()
         TabVideoExport.SuspendLayout()
         TabCompetition.SuspendLayout()
-        panelForDgv.SuspendLayout()
+        pnlForDgv.SuspendLayout()
+        ToolStrCategorySettings.SuspendLayout()
         CType(dgvCompetition, ISupportInitialize).BeginInit()
         CType(bsCompetitions, ISupportInitialize).BeginInit()
         SuspendLayout()
@@ -134,20 +127,12 @@ Partial Class Form1
         ToolTip1.SetToolTip(btnCreateVideos, resources.GetString("btnCreateVideos.ToolTip"))
         btnCreateVideos.UseVisualStyleBackColor = False
         ' 
-        ' btnRecalculateScore
-        ' 
-        resources.ApplyResources(btnRecalculateScore, "btnRecalculateScore")
-        btnRecalculateScore.BackColor = Color.DarkSeaGreen
-        btnRecalculateScore.Name = "btnRecalculateScore"
-        ToolTip1.SetToolTip(btnRecalculateScore, resources.GetString("btnRecalculateScore.ToolTip"))
-        btnRecalculateScore.UseVisualStyleBackColor = False
-        ' 
         ' MenuStrip1
         ' 
         MenuStrip1.BackColor = Color.DarkSeaGreen
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuGPXprocessing, mnuLanguage, mnuCategory, mnuHelp})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuGPXprocessing, mnuLanguage, mnuCategory, mnuHelp, mnucbActiveCategory})
         MenuStrip1.Name = "MenuStrip1"
         ' 
         ' mnuFile
@@ -248,14 +233,9 @@ Partial Class Form1
         ' 
         ' mnuCategory
         ' 
-        mnuCategory.DropDownItems.AddRange(New ToolStripItem() {mnucbActiveCategory, mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory, mnuPointInCompetition})
+        mnuCategory.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory})
         resources.ApplyResources(mnuCategory, "mnuCategory")
         mnuCategory.Name = "mnuCategory"
-        ' 
-        ' mnucbActiveCategory
-        ' 
-        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
-        mnucbActiveCategory.Name = "mnucbActiveCategory"
         ' 
         ' mnuSelect_directory_gpx_files
         ' 
@@ -276,56 +256,6 @@ Partial Class Form1
         ' 
         mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
         resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
-        ' 
-        ' mnuPointInCompetition
-        ' 
-        mnuPointInCompetition.DropDownItems.AddRange(New ToolStripItem() {mnuPointForFindText, mnuPointsForSpeedText, mnuPointsForAccuracyText, mnuDogReadingPointsText})
-        mnuPointInCompetition.Name = "mnuPointInCompetition"
-        resources.ApplyResources(mnuPointInCompetition, "mnuPointInCompetition")
-        ' 
-        ' mnuPointForFindText
-        ' 
-        mnuPointForFindText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForFind})
-        mnuPointForFindText.Name = "mnuPointForFindText"
-        resources.ApplyResources(mnuPointForFindText, "mnuPointForFindText")
-        ' 
-        ' mnuPointsForFind
-        ' 
-        resources.ApplyResources(mnuPointsForFind, "mnuPointsForFind")
-        mnuPointsForFind.Name = "mnuPointsForFind"
-        ' 
-        ' mnuPointsForSpeedText
-        ' 
-        mnuPointsForSpeedText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForSpeed})
-        mnuPointsForSpeedText.Name = "mnuPointsForSpeedText"
-        resources.ApplyResources(mnuPointsForSpeedText, "mnuPointsForSpeedText")
-        ' 
-        ' mnuPointsForSpeed
-        ' 
-        resources.ApplyResources(mnuPointsForSpeed, "mnuPointsForSpeed")
-        mnuPointsForSpeed.Name = "mnuPointsForSpeed"
-        ' 
-        ' mnuPointsForAccuracyText
-        ' 
-        mnuPointsForAccuracyText.DropDownItems.AddRange(New ToolStripItem() {mnuPointsForAccuracy})
-        mnuPointsForAccuracyText.Name = "mnuPointsForAccuracyText"
-        resources.ApplyResources(mnuPointsForAccuracyText, "mnuPointsForAccuracyText")
-        ' 
-        ' mnuPointsForAccuracy
-        ' 
-        resources.ApplyResources(mnuPointsForAccuracy, "mnuPointsForAccuracy")
-        mnuPointsForAccuracy.Name = "mnuPointsForAccuracy"
-        ' 
-        ' mnuDogReadingPointsText
-        ' 
-        mnuDogReadingPointsText.DropDownItems.AddRange(New ToolStripItem() {mnuDogReadingPoints})
-        mnuDogReadingPointsText.Name = "mnuDogReadingPointsText"
-        resources.ApplyResources(mnuDogReadingPointsText, "mnuDogReadingPointsText")
-        ' 
-        ' mnuDogReadingPoints
-        ' 
-        resources.ApplyResources(mnuDogReadingPoints, "mnuDogReadingPoints")
-        mnuDogReadingPoints.Name = "mnuDogReadingPoints"
         ' 
         ' mnuHelp
         ' 
@@ -362,6 +292,14 @@ Partial Class Form1
         ' 
         mnuFactoryReset.Name = "mnuFactoryReset"
         resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
+        ' 
+        ' mnucbActiveCategory
+        ' 
+        mnucbActiveCategory.BackColor = Color.LightYellow
+        mnucbActiveCategory.DropDownStyle = ComboBoxStyle.DropDownList
+        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
+        mnucbActiveCategory.ForeColor = SystemColors.ControlText
+        mnucbActiveCategory.Name = "mnucbActiveCategory"
         ' 
         ' mnuCheckUpdates
         ' 
@@ -490,17 +428,30 @@ Partial Class Form1
         ' TabCompetition
         ' 
         TabCompetition.BackColor = Color.Salmon
-        TabCompetition.Controls.Add(panelForDgv)
+        TabCompetition.Controls.Add(pnlForDgv)
         resources.ApplyResources(TabCompetition, "TabCompetition")
         TabCompetition.Name = "TabCompetition"
         ' 
-        ' panelForDgv
+        ' pnlForDgv
         ' 
-        resources.ApplyResources(panelForDgv, "panelForDgv")
-        panelForDgv.BackColor = Color.Transparent
-        panelForDgv.Controls.Add(btnRecalculateScore)
-        panelForDgv.Controls.Add(dgvCompetition)
-        panelForDgv.Name = "panelForDgv"
+        resources.ApplyResources(pnlForDgv, "pnlForDgv")
+        pnlForDgv.BackColor = Color.Transparent
+        pnlForDgv.Controls.Add(ToolStrCategorySettings)
+        pnlForDgv.Controls.Add(dgvCompetition)
+        pnlForDgv.Name = "pnlForDgv"
+        ' 
+        ' ToolStrCategorySettings
+        ' 
+        resources.ApplyResources(ToolStrCategorySettings, "ToolStrCategorySettings")
+        ToolStrCategorySettings.Items.AddRange(New ToolStripItem() {btnEditPoints})
+        ToolStrCategorySettings.Name = "ToolStrCategorySettings"
+        ' 
+        ' btnEditPoints
+        ' 
+        btnEditPoints.BackColor = Color.DarkSeaGreen
+        btnEditPoints.DisplayStyle = ToolStripItemDisplayStyle.Text
+        resources.ApplyResources(btnEditPoints, "btnEditPoints")
+        btnEditPoints.Name = "btnEditPoints"
         ' 
         ' dgvCompetition
         ' 
@@ -510,7 +461,7 @@ Partial Class Form1
         dgvCompetition.BackgroundColor = Color.Salmon
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
         DataGridViewCellStyle1.BackColor = Color.Salmon
-        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12F)
+        DataGridViewCellStyle1.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle1.ForeColor = Color.Maroon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText
@@ -519,7 +470,7 @@ Partial Class Form1
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
         DataGridViewCellStyle2.BackColor = Color.Beige
-        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12F)
+        DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
         DataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText
@@ -549,8 +500,10 @@ Partial Class Form1
         TabVideoExport.ResumeLayout(False)
         TabVideoExport.PerformLayout()
         TabCompetition.ResumeLayout(False)
-        panelForDgv.ResumeLayout(False)
-        panelForDgv.PerformLayout()
+        pnlForDgv.ResumeLayout(False)
+        pnlForDgv.PerformLayout()
+        ToolStrCategorySettings.ResumeLayout(False)
+        ToolStrCategorySettings.PerformLayout()
         CType(dgvCompetition, ISupportInitialize).EndInit()
         CType(bsCompetitions, ISupportInitialize).EndInit()
         ResumeLayout(False)
@@ -623,12 +576,6 @@ Partial Class Form1
         SetTooltips()
 
 
-        mnuPointsForFind.Text = Me.ActiveCategoryInfo.PointsForFindMax
-        mnuPointsForSpeed.Text = Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed
-        mnuPointsForAccuracy.Text = Me.ActiveCategoryInfo.PointsForAccuracyMax
-        mnuDogReadingPoints.Text = Me.ActiveCategoryInfo.PointsForDogReadingMax
-
-
         ReadHelp()
 
         ' Nastavení fontu a barvy textu
@@ -663,44 +610,6 @@ Partial Class Form1
                 Me.rtbOutput.Rtf = (My.Resources.readme_uk)
 
         End Select
-    End Sub
-
-
-    Private Sub mnuPointsForFind_LostFocus(sender As Object, e As Object) Handles mnuPointsForFind.LostFocus, mnuDogReadingPoints.LostFocus, mnuPointsForSpeed.LostFocus, mnuPointsForAccuracy.LostFocus
-        If Integer.TryParse(mnuPointsForFind.Text, Nothing) Then
-            Me.ActiveCategoryInfo.PointsForFindMax = mnuPointsForFind.Text
-        End If
-        If Integer.TryParse(mnuPointsForSpeed.Text, Nothing) Then
-            Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed = mnuPointsForSpeed.Text
-        End If
-        If Integer.TryParse(mnuPointsForAccuracy.Text, Nothing) Then
-            Me.ActiveCategoryInfo.PointsForAccuracyMax = mnuPointsForAccuracy.Text
-        End If
-        If Integer.TryParse(mnuDogReadingPoints.Text, Nothing) Then
-            Me.ActiveCategoryInfo.PointsForDogReadingMax = mnuDogReadingPoints.Text
-        End If
-        'aktualizace názvu menu
-        'lokalizovaný text bez hodnot v závorce:
-        Dim baseText As String = CStr(Me.mnuPointInCompetition.Tag)
-
-        Me.mnuPointInCompetition.Text = String.Format("{0} ({1}, {2}, {3}, {4})",
-    baseText,
-    Me.ActiveCategoryInfo.PointsForFindMax,
-    Me.ActiveCategoryInfo.PointsPerKmhGrossSpeed,
-    Me.ActiveCategoryInfo.PointsForAccuracyMax,
-    Me.ActiveCategoryInfo.PointsForDogReadingMax)
-
-    End Sub
-
-
-
-    Private Sub mnuPointsForFind_KeyPress(sender As Object, e As KeyPressEventArgs) Handles mnuPointsForFind.KeyPress
-        ' Pokud chceš, můžeš nastavit validaci vstupu pouze na čísla:
-
-        If Not Char.IsControl(e.KeyChar) AndAlso Not Char.IsDigit(e.KeyChar) Then
-            e.Handled = True
-
-        End If
     End Sub
 
 
@@ -760,18 +669,11 @@ Partial Class Form1
     Private WithEvents bsCompetitions As BindingSource
     ' 1. Vytvoříme nový Panel, který bude sloužit jako scroll-kontejner.
     Friend WithEvents panelForDgv As Panel
-    Friend WithEvents mnuPointsForFind As ToolStripTextBox
-    Friend WithEvents mnuPointsForSpeed As ToolStripTextBox
-    Friend WithEvents mnuPointsForAccuracy As ToolStripTextBox
-    Friend WithEvents mnuDogReadingPoints As ToolStripTextBox
-    Friend WithEvents mnuPointInCompetition As ToolStripMenuItem
-    Friend WithEvents mnuPointForFindText As ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As ToolStripSeparator
     Friend WithEvents ToolStripSeparator2 As ToolStripSeparator
-    Friend WithEvents mnuPointsForSpeedText As ToolStripMenuItem
-    Friend WithEvents mnuPointsForAccuracyText As ToolStripMenuItem
-    Friend WithEvents mnuDogReadingPointsText As ToolStripMenuItem
-    Private WithEvents btnRecalculateScore As Button
+    Friend WithEvents pnlForDgv As Panel
+    Friend WithEvents ToolStrCategorySettings As ToolStrip
+    Friend WithEvents btnEditPoints As ToolStripButton
 
 
 End Class

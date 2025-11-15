@@ -342,9 +342,6 @@
   <data name="mnuFactoryReset.Text" xml:space="preserve">
     <value>Скидання до заводських налаштувань</value>
   </data>
-  <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Категорія</value>
-  </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Довідка</value>
   </data>
@@ -353,5 +350,8 @@
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Макс. бали для читання собак</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Параметри категорії</value>
   </data>
 </root>

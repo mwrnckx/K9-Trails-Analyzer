@@ -421,10 +421,10 @@
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Pomoc</value>
   </data>
-  <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Kategoria</value>
-  </data>
   <data name="mnuFactoryReset.Text" xml:space="preserve">
     <value>Reset do ustawień fabrycznych</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Ustawienia kategorii</value>
   </data>
 </root>

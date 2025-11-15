@@ -377,12 +377,15 @@
     <value>Pomoc</value>
   </data>
   <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Kategorie</value>
+    <value>Nastavení kategorie</value>
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Max. body za čtení psa</value>
   </data>
   <data name="mnuFactoryReset.Text" xml:space="preserve">
     <value>Obnovení továrního nastavení</value>
+  </data>
+  <data name="btnEditPoints.ToolTipText" xml:space="preserve">
+    <value>Odstraní změny provedené uživatelem nebo přepočítá, když se změní pravidla hodnocení</value>
   </data>
 </root>

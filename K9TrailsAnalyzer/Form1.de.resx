@@ -360,13 +360,13 @@
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Helfen</value>
   </data>
-  <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Kategorie</value>
-  </data>
   <data name="mnuFactoryReset.Text" xml:space="preserve">
     <value>Werksreset</value>
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Max. Punkte für Hundelesung</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Kategorieeinstellungen</value>
   </data>
 </root>

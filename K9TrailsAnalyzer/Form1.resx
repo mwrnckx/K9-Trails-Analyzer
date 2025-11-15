@@ -205,48 +205,6 @@
   <data name="&gt;&gt;btnCreateVideos.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
-  <data name="btnRecalculateScore.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="btnRecalculateScore.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
-  </data>
-  <data name="btnRecalculateScore.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 10pt, style=Bold</value>
-  </data>
-  <data name="btnRecalculateScore.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="btnRecalculateScore.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="btnRecalculateScore.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 4, 4, 4</value>
-  </data>
-  <data name="btnRecalculateScore.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 30</value>
-  </data>
-  <data name="btnRecalculateScore.TabIndex" type="System.Int32, mscorlib">
-    <value>35</value>
-  </data>
-  <data name="btnRecalculateScore.Text" xml:space="preserve">
-    <value>Recalculate</value>
-  </data>
-  <data name="btnRecalculateScore.ToolTip" xml:space="preserve">
-    <value>Deletes changes made by the user or recalculates when scoring rules are changed</value>
-  </data>
-  <data name="&gt;&gt;btnRecalculateScore.Name" xml:space="preserve">
-    <value>btnRecalculateScore</value>
-  </data>
-  <data name="&gt;&gt;btnRecalculateScore.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;btnRecalculateScore.Parent" xml:space="preserve">
-    <value>panelForDgv</value>
-  </data>
-  <data name="&gt;&gt;btnRecalculateScore.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>328, 17</value>
   </metadata>
@@ -275,7 +233,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+    <value>52, 33</value>
   </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>File</value>
@@ -313,11 +271,14 @@
   <data name="mnuProcessProcessed.ToolTipText" xml:space="preserve">
     <value>Process files that have already been processed</value>
   </data>
+  <data name="mnuProcessProcessed.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="mnuGPXprocessing.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuGPXprocessing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>132, 22</value>
+    <value>132, 33</value>
   </data>
   <data name="mnuGPXprocessing.Text" xml:space="preserve">
     <value>Gpx processing</value>
@@ -362,19 +323,13 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 22</value>
+    <value>84, 33</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Language</value>
   </data>
-  <data name="mnucbActiveCategory.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code SemiBold, 12pt, style=Bold</value>
-  </data>
-  <data name="mnucbActiveCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 29</value>
-  </data>
   <data name="mnuSelect_directory_gpx_files.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
+    <value>324, 22</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
     <value>Select directory with gpx files</value>
@@ -383,124 +338,31 @@
     <value>Select the directory where the gpx files of the current category are</value>
   </data>
   <data name="mnuRenameCurrentCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
+    <value>324, 22</value>
   </data>
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Edit category name</value>
   </data>
   <data name="mnuAddNewCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
+    <value>324, 22</value>
   </data>
   <data name="mnuAddNewCategory.Text" xml:space="preserve">
     <value>Add another category</value>
   </data>
   <data name="mnuDeleteCurrentCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
+    <value>324, 22</value>
   </data>
   <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Delete current category</value>
-  </data>
-  <data name="mnuPointsForFind.MaxLength" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="mnuPointsForFind.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="mnuPointsForFind.Text" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="mnuPointsForFind.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="mnuPointsForFind.ToolTipText" xml:space="preserve">
-    <value>Enter the maximal number of points for finding the runner</value>
-  </data>
-  <data name="mnuPointForFindText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 22</value>
-  </data>
-  <data name="mnuPointForFindText.Text" xml:space="preserve">
-    <value>Max. Points for Find</value>
-  </data>
-  <data name="mnuPointsForSpeed.MaxLength" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="mnuPointsForSpeed.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="mnuPointsForSpeed.Text" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="mnuPointsForSpeed.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="mnuPointsForSpeed.ToolTipText" xml:space="preserve">
-    <value>Enter the number of points for speed (points per 1 km/h)</value>
-  </data>
-  <data name="mnuPointsForSpeedText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 22</value>
-  </data>
-  <data name="mnuPointsForSpeedText.Text" xml:space="preserve">
-    <value>Points for km/h</value>
-  </data>
-  <data name="mnuPointsForAccuracy.MaxLength" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="mnuPointsForAccuracy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="mnuPointsForAccuracy.Text" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="mnuPointsForAccuracy.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="mnuPointsForAccuracy.ToolTipText" xml:space="preserve">
-    <value>Enter the maximum number of points for accuracy.</value>
-  </data>
-  <data name="mnuPointsForAccuracyText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 22</value>
-  </data>
-  <data name="mnuPointsForAccuracyText.Text" xml:space="preserve">
-    <value>Max. Points for Accuracy</value>
-  </data>
-  <data name="mnuDogReadingPoints.MaxLength" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="mnuDogReadingPoints.Size" type="System.Drawing.Size, System.Drawing">
-    <value>100, 23</value>
-  </data>
-  <data name="mnuDogReadingPoints.Text" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="mnuDogReadingPoints.TextBoxTextAlign" type="System.Windows.Forms.HorizontalAlignment, System.Windows.Forms">
-    <value>Right</value>
-  </data>
-  <data name="mnuDogReadingPoints.ToolTipText" xml:space="preserve">
-    <value>Enter the maximum number of points for the doghandler's ability to read the dog.</value>
-  </data>
-  <data name="mnuDogReadingPointsText.Size" type="System.Drawing.Size, System.Drawing">
-    <value>292, 22</value>
-  </data>
-  <data name="mnuDogReadingPointsText.Text" xml:space="preserve">
-    <value>Max. points for dog reading</value>
-  </data>
-  <data name="mnuPointInCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>420, 22</value>
-  </data>
-  <data name="mnuPointInCompetition.Text" xml:space="preserve">
-    <value>Set Points in Competition</value>
-  </data>
-  <data name="mnuPointInCompetition.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>TopRight</value>
   </data>
   <data name="mnuCategory.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 22</value>
+    <value>84, 33</value>
   </data>
   <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Category</value>
+    <value>Category Settings</value>
   </data>
   <data name="mnuAbout.Size" type="System.Drawing.Size, System.Drawing">
     <value>212, 22</value>
@@ -533,10 +395,31 @@
     <value>Factory reset</value>
   </data>
   <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 22</value>
+    <value>52, 33</value>
   </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Help</value>
+  </data>
+  <data name="mnucbActiveCategory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="mnucbActiveCategory.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 14pt, style=Bold</value>
+  </data>
+  <data name="mnucbActiveCategory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>360, 33</value>
+  </data>
+  <data name="KategorieToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="KategorieToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 16pt, style=Bold</value>
+  </data>
+  <data name="KategorieToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>311, 33</value>
+  </data>
+  <data name="KategorieToolStripMenuItem.Text" xml:space="preserve">
+    <value>Kategorie: začátečníci</value>
   </data>
   <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -545,7 +428,7 @@
     <value>5, 1, 0, 1</value>
   </data>
   <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 24</value>
+    <value>984, 35</value>
   </data>
   <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
@@ -611,7 +494,7 @@
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbOutput.Size" type="System.Drawing.Size, System.Drawing">
-    <value>676, 374</value>
+    <value>676, 363</value>
   </data>
   <data name="rtbOutput.TabIndex" type="System.Int32, mscorlib">
     <value>34</value>
@@ -854,7 +737,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 393</value>
+    <value>976, 382</value>
   </data>
   <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -941,7 +824,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabVideoExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 393</value>
+    <value>976, 382</value>
   </data>
   <data name="TabVideoExport.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -961,8 +844,59 @@
   <data name="&gt;&gt;TabVideoExport.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="panelForDgv.AutoScroll" type="System.Boolean, mscorlib">
+  <data name="pnlForDgv.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <metadata name="ToolStrCategorySettings.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>631, 17</value>
+  </metadata>
+  <data name="ToolStrCategorySettings.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 12pt</value>
+  </data>
+  <data name="btnEditPoints.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACNSURBVDhPY/j27dt/SjADiHByciILoxjw4f1HkjDJBjy/
+        dfL/iW5TME2WASe6Tf4fqpUCG0KWARAXmBB2waSzr/4vuPQawwB0jNWArH0v/ksvfATGhAzBMABZMzGG
+        oBig07ASQzM2Q0Ds1hMvMQ1A14SOQRpBGMYHuZYkA7BhkKspMgCEqWcAJZiBUgAABzX8nOIkzeMAAAAA
+        SUVORK5CYII=
+</value>
+  </data>
+  <data name="btnEditPoints.ImageTransparentColor" type="System.Drawing.Color, System.Drawing">
+    <value>Magenta</value>
+  </data>
+  <data name="btnEditPoints.Size" type="System.Drawing.Size, System.Drawing">
+    <value>212, 25</value>
+  </data>
+  <data name="btnEditPoints.Text" xml:space="preserve">
+    <value>Set points in category</value>
+  </data>
+  <data name="btnEditPoints.ToolTipText" xml:space="preserve">
+    <value>Deletes changes made by the user or recalculates when scoring rules are changed</value>
+  </data>
+  <data name="ToolStrCategorySettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="ToolStrCategorySettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>3000, 28</value>
+  </data>
+  <data name="ToolStrCategorySettings.TabIndex" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="ToolStrCategorySettings.Text" xml:space="preserve">
+    <value>ToolStrip1</value>
+  </data>
+  <data name="&gt;&gt;ToolStrCategorySettings.Name" xml:space="preserve">
+    <value>ToolStrCategorySettings</value>
+  </data>
+  <data name="&gt;&gt;ToolStrCategorySettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ToolStrCategorySettings.Parent" xml:space="preserve">
+    <value>pnlForDgv</value>
+  </data>
+  <data name="&gt;&gt;ToolStrCategorySettings.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="dgvCompetition.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 30</value>
@@ -983,40 +917,40 @@
     <value>System.Windows.Forms.DataGridView, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;dgvCompetition.Parent" xml:space="preserve">
-    <value>panelForDgv</value>
+    <value>pnlForDgv</value>
   </data>
   <data name="&gt;&gt;dgvCompetition.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="panelForDgv.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+  <data name="pnlForDgv.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
-  <data name="panelForDgv.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="pnlForDgv.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
-  <data name="panelForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 393</value>
+  <data name="pnlForDgv.Size" type="System.Drawing.Size, System.Drawing">
+    <value>976, 382</value>
   </data>
-  <data name="panelForDgv.TabIndex" type="System.Int32, mscorlib">
+  <data name="pnlForDgv.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="&gt;&gt;panelForDgv.Name" xml:space="preserve">
-    <value>panelForDgv</value>
+  <data name="&gt;&gt;pnlForDgv.Name" xml:space="preserve">
+    <value>pnlForDgv</value>
   </data>
-  <data name="&gt;&gt;panelForDgv.Type" xml:space="preserve">
+  <data name="&gt;&gt;pnlForDgv.Type" xml:space="preserve">
     <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;panelForDgv.Parent" xml:space="preserve">
+  <data name="&gt;&gt;pnlForDgv.Parent" xml:space="preserve">
     <value>TabCompetition</value>
   </data>
-  <data name="&gt;&gt;panelForDgv.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;pnlForDgv.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="TabCompetition.Location" type="System.Drawing.Point, System.Drawing">
     <value>4, 30</value>
   </data>
   <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 393</value>
+    <value>976, 382</value>
   </data>
   <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -1040,13 +974,13 @@
     <value>Fill</value>
   </data>
   <data name="TabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 24</value>
+    <value>0, 35</value>
   </data>
   <data name="TabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 427</value>
+    <value>984, 416</value>
   </data>
   <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
@@ -1201,12 +1135,6 @@
   <data name="&gt;&gt;mnuCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
-    <value>mnucbActiveCategory</value>
-  </data>
-  <data name="&gt;&gt;mnucbActiveCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;mnuSelect_directory_gpx_files.Name" xml:space="preserve">
     <value>mnuSelect_directory_gpx_files</value>
   </data>
@@ -1230,60 +1158,6 @@
   </data>
   <data name="&gt;&gt;mnuDeleteCurrentCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointInCompetition.Name" xml:space="preserve">
-    <value>mnuPointInCompetition</value>
-  </data>
-  <data name="&gt;&gt;mnuPointInCompetition.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointForFindText.Name" xml:space="preserve">
-    <value>mnuPointForFindText</value>
-  </data>
-  <data name="&gt;&gt;mnuPointForFindText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForFind.Name" xml:space="preserve">
-    <value>mnuPointsForFind</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForFind.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForSpeedText.Name" xml:space="preserve">
-    <value>mnuPointsForSpeedText</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForSpeedText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForSpeed.Name" xml:space="preserve">
-    <value>mnuPointsForSpeed</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForSpeed.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForAccuracyText.Name" xml:space="preserve">
-    <value>mnuPointsForAccuracyText</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForAccuracyText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForAccuracy.Name" xml:space="preserve">
-    <value>mnuPointsForAccuracy</value>
-  </data>
-  <data name="&gt;&gt;mnuPointsForAccuracy.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuDogReadingPointsText.Name" xml:space="preserve">
-    <value>mnuDogReadingPointsText</value>
-  </data>
-  <data name="&gt;&gt;mnuDogReadingPointsText.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuDogReadingPoints.Name" xml:space="preserve">
-    <value>mnuDogReadingPoints</value>
-  </data>
-  <data name="&gt;&gt;mnuDogReadingPoints.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripTextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">
     <value>mnuHelp</value>
@@ -1327,6 +1201,18 @@
   <data name="&gt;&gt;mnuFactoryReset.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
+    <value>mnucbActiveCategory</value>
+  </data>
+  <data name="&gt;&gt;mnucbActiveCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;KategorieToolStripMenuItem.Name" xml:space="preserve">
+    <value>KategorieToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;KategorieToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuCheckUpdates.Name" xml:space="preserve">
     <value>mnuCheckUpdates</value>
   </data>
@@ -1362,6 +1248,12 @@
   </data>
   <data name="&gt;&gt;clmTrkCount.Type" xml:space="preserve">
     <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;btnEditPoints.Name" xml:space="preserve">
+    <value>btnEditPoints</value>
+  </data>
+  <data name="&gt;&gt;btnEditPoints.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;bsCompetitions.Name" xml:space="preserve">
     <value>bsCompetitions</value>

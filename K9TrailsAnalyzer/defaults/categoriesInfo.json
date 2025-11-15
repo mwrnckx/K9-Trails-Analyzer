@@ -28,7 +28,7 @@
     "PointsForDogReadingMax": 100
     }
 ],
-  "activeDog": {
-    "activeDogId": "001"
+  "activeCategory": {
+    "activeCategoryId": "001"
   }
 }

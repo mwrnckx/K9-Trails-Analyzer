@@ -348,13 +348,13 @@
   <data name="mnuGPXprocessing.Text" xml:space="preserve">
     <value>Gpx-обработка</value>
   </data>
-  <data name="mnuCategory.Text" xml:space="preserve">
-    <value>Категория</value>
-  </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Помощь</value>
   </data>
   <data name="mnuPointsForHandlerText.Text" xml:space="preserve">
     <value>Макс. баллы за чтение собаки</value>
+  </data>
+  <data name="mnuCategory.Text" xml:space="preserve">
+    <value>Настройки категории</value>
   </data>
 </root>
