@@ -2031,8 +2031,6 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         ' --- Setting constants ---
         Const MOVING_SPEED_THRESHOLD_MS As Double = 0.277 ' 1.0 km/h
         Const STOPPED_SPEED_THRESHOLD_MS As Double = 0.1 ' 0.36 km/h
-        'Const MAX_SEGMENT_JUMP As Integer = 5 ' Maximum allowed "jump" of segments on the paver route
-        'Const MAX_SKIPPED_DISTANCE As Double = 20.0 ' Maximum allowed skipped distance on the RUNNER route in meters
         ' --- Initialization of accumulation variables ---
         Dim movingTime As TimeSpan = TimeSpan.Zero
         Dim stoppedTime As TimeSpan = TimeSpan.Zero
@@ -2060,7 +2058,8 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
         Dim earlyWeightedDistance As Double = 0.0
         Dim earlyDogDistance As Double = 0.0
         Dim earlyTime As TimeSpan = TimeSpan.Zero
-        Dim earlyLimitDistance As Double = 50.0 ' m
+        Const EARLY_LIMIT_TIME = 60 '60 s ČAS na vyhledání nášlapu, pak plus 1 s na každý m prvního úseku
+        Const ERLY_LIMIT_DISTANCE As Double = 60.0 ' m pro hodnocení startu se počítá čas za jak dlouho urazí tuto vzdálenost 
         'Dim earlyLimitTime As TimeSpan = TimeSpan.FromMinutes(3)
         Dim earlyEnded As Boolean = False
 
@@ -2158,27 +2157,11 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
                         weightedDistance += distanceIncrement * weight
 
 
-                        '' Case 1: The dog follows the track smoothly or shortens slightly
-                        'If segmentJump <= MAX_SEGMENT_JUMP Then
-                        '    For k As Integer = lastCreditedRunnerSegmentIndex + 1 To projection.ClosestSegmentIndex
-                        '        Dim p1 = runnerXY(k)
-                        '        Dim p2 = runnerXY(k + 1)
-                        '        Dim runnerSegmentLength As Double = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2)
-                        '        weightedDistance += runnerSegmentLength * weight
-                        '    Next
-                        '    ' Case 2: The dog skipped a large segment, we only count the segment where it got "caught" again
-                        'Else
-                        '    Dim p1 = runnerXY(projection.ClosestSegmentIndex)
-                        '    Dim p2 = runnerXY(projection.ClosestSegmentIndex + 1)
-                        '    Dim runnerSegmentLength As Double = Math.Sqrt((p1.X - p2.X) ^ 2 + (p1.Y - p2.Y) ^ 2)
-                        '    weightedDistance += runnerSegmentLength * weight
-                        'End If
-
                         ' ---  Early phase accumulation (Pick-up analysis) ---
                         If Not earlyEnded Then
                             earlyDogDistance = weightedDistance
                             ' --- kontrola  limitu ---
-                            If earlyDogDistance >= earlyLimitDistance Then
+                            If earlyDogDistance >= ERLY_LIMIT_DISTANCE Then
                                 earlyEnded = True
                             End If
                         End If
@@ -2203,7 +2186,7 @@ As (movingTime As TimeSpan, stoppedTime As TimeSpan, weightedDistance As Double,
             ' Final calculation of average deviation weighted by time
             averageDeviation = deviationXTime / (movingTime + stoppedTime).TotalSeconds
             ' Final calculation of early pick-up factor:
-            Dim time_oneHalf As Double = 40 + earlyLimitDistance  '40 s na vyhledání nášlapu, pak 1 s/1 m prvního úseku
+            Dim time_oneHalf As Double = EARLY_LIMIT_TIME + ERLY_LIMIT_DISTANCE  '60 s na vyhledání nášlapu, pak plus 1 s na každý metr prvního úseku
 
             If earlyEnded Then
                 earlyPickUpFactor = Weight(earlyTime.TotalSeconds, time_oneHalf, 4) 'v čase time_oneHalf  má váha hodnotu O,5

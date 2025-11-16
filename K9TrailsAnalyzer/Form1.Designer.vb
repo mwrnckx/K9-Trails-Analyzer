@@ -37,12 +37,12 @@ Partial Class Form1
         MenuStrip1 = New MenuStrip()
         mnuFile = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
+        mnuMergingTracks = New ToolStripMenuItem()
         mnuExportAs = New ToolStripMenuItem()
         mnuExit = New ToolStripMenuItem()
         mnuGPXprocessing = New ToolStripMenuItem()
         mnuPrependDateToFileName = New ToolStripMenuItem()
         mnuTrimGPSNoise = New ToolStripMenuItem()
-        mnuMergingTracks = New ToolStripMenuItem()
         mnuProcessProcessed = New ToolStripMenuItem()
         mnuLanguage = New ToolStripMenuItem()
         mnuEnglish = New ToolStripMenuItem()
@@ -56,6 +56,7 @@ Partial Class Form1
         mnuRenameCurrentCategory = New ToolStripMenuItem()
         mnuAddNewCategory = New ToolStripMenuItem()
         mnuDeleteCurrentCategory = New ToolStripMenuItem()
+        mnucbActiveCategory = New ToolStripComboBox()
         mnuHelp = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
@@ -63,7 +64,6 @@ Partial Class Form1
         mnuSetFFmpegPath = New ToolStripMenuItem()
         ToolStripSeparator2 = New ToolStripSeparator()
         mnuFactoryReset = New ToolStripMenuItem()
-        mnucbActiveCategory = New ToolStripComboBox()
         mnuCheckUpdates = New ToolStripMenuItem()
         rtbWarnings = New RichTextBox()
         TabControl1 = New TabControl()
@@ -132,12 +132,12 @@ Partial Class Form1
         MenuStrip1.BackColor = Color.DarkSeaGreen
         resources.ApplyResources(MenuStrip1, "MenuStrip1")
         MenuStrip1.ImageScalingSize = New Size(24, 24)
-        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuFile, mnuGPXprocessing, mnuLanguage, mnuCategory, mnuHelp, mnucbActiveCategory})
+        MenuStrip1.Items.AddRange(New ToolStripItem() {mnuGPXprocessing, mnucbActiveCategory, mnuFile, mnuCategory, mnuHelp, mnuLanguage})
         MenuStrip1.Name = "MenuStrip1"
         ' 
         ' mnuFile
         ' 
-        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelectADirectoryToSaveVideo, mnuExportAs, mnuExit})
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelectADirectoryToSaveVideo, mnuMergingTracks, mnuExportAs, mnuExit})
         resources.ApplyResources(mnuFile, "mnuFile")
         mnuFile.Name = "mnuFile"
         ' 
@@ -145,6 +145,11 @@ Partial Class Form1
         ' 
         mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
         resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
+        ' 
+        ' mnuMergingTracks
+        ' 
+        mnuMergingTracks.Name = "mnuMergingTracks"
+        resources.ApplyResources(mnuMergingTracks, "mnuMergingTracks")
         ' 
         ' mnuExportAs
         ' 
@@ -158,7 +163,7 @@ Partial Class Form1
         ' 
         ' mnuGPXprocessing
         ' 
-        mnuGPXprocessing.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuMergingTracks, mnuProcessProcessed})
+        mnuGPXprocessing.DropDownItems.AddRange(New ToolStripItem() {mnuPrependDateToFileName, mnuTrimGPSNoise, mnuProcessProcessed})
         resources.ApplyResources(mnuGPXprocessing, "mnuGPXprocessing")
         mnuGPXprocessing.Name = "mnuGPXprocessing"
         ' 
@@ -177,11 +182,6 @@ Partial Class Form1
         mnuTrimGPSNoise.CheckState = CheckState.Checked
         mnuTrimGPSNoise.Name = "mnuTrimGPSNoise"
         resources.ApplyResources(mnuTrimGPSNoise, "mnuTrimGPSNoise")
-        ' 
-        ' mnuMergingTracks
-        ' 
-        mnuMergingTracks.Name = "mnuMergingTracks"
-        resources.ApplyResources(mnuMergingTracks, "mnuMergingTracks")
         ' 
         ' mnuProcessProcessed
         ' 
@@ -257,6 +257,14 @@ Partial Class Form1
         mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
         resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
         ' 
+        ' mnucbActiveCategory
+        ' 
+        mnucbActiveCategory.BackColor = Color.LightYellow
+        mnucbActiveCategory.DropDownStyle = ComboBoxStyle.DropDownList
+        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
+        mnucbActiveCategory.ForeColor = SystemColors.ControlText
+        mnucbActiveCategory.Name = "mnucbActiveCategory"
+        ' 
         ' mnuHelp
         ' 
         mnuHelp.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1, ToolStripSeparator1, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
@@ -292,14 +300,6 @@ Partial Class Form1
         ' 
         mnuFactoryReset.Name = "mnuFactoryReset"
         resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
-        ' 
-        ' mnucbActiveCategory
-        ' 
-        mnucbActiveCategory.BackColor = Color.LightYellow
-        mnucbActiveCategory.DropDownStyle = ComboBoxStyle.DropDownList
-        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
-        mnucbActiveCategory.ForeColor = SystemColors.ControlText
-        mnucbActiveCategory.Name = "mnucbActiveCategory"
         ' 
         ' mnuCheckUpdates
         ' 

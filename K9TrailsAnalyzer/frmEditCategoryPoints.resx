@@ -136,7 +136,7 @@
     <value>11</value>
   </data>
   <data name="lblFind.Text" xml:space="preserve">
-    <value>Find – max bodů:</value>
+    <value>Runner Found – Max Points:</value>
   </data>
   <data name="&gt;&gt;lblFind.Name" xml:space="preserve">
     <value>lblFind</value>
@@ -166,7 +166,7 @@
     <value>10</value>
   </data>
   <data name="lblSpeed.Text" xml:space="preserve">
-    <value>Rychlost – bodů / km/h:</value>
+    <value>Speed – Points / km/h:</value>
   </data>
   <data name="&gt;&gt;lblSpeed.Name" xml:space="preserve">
     <value>lblSpeed</value>
@@ -196,7 +196,7 @@
     <value>9</value>
   </data>
   <data name="lblAcc.Text" xml:space="preserve">
-    <value>Přesnost – max bodů:</value>
+    <value>Accuracy - Max Points:</value>
   </data>
   <data name="&gt;&gt;lblAcc.Name" xml:space="preserve">
     <value>lblAcc</value>
@@ -226,7 +226,7 @@
     <value>8</value>
   </data>
   <data name="lblRead.Text" xml:space="preserve">
-    <value>Čtení psa – max bodů:</value>
+    <value>Dog Reading - Max Pionts:</value>
   </data>
   <data name="&gt;&gt;lblRead.Name" xml:space="preserve">
     <value>lblRead</value>
@@ -256,7 +256,7 @@
     <value>7</value>
   </data>
   <data name="lblPick.Text" xml:space="preserve">
-    <value>Trail pick – max bodů:</value>
+    <value>Trail pick – Max Points:</value>
   </data>
   <data name="&gt;&gt;lblPick.Name" xml:space="preserve">
     <value>lblPick</value>
@@ -437,7 +437,7 @@
     <value>0</value>
   </data>
   <data name="btnCancel.Text" xml:space="preserve">
-    <value>Storno</value>
+    <value>Cancel</value>
   </data>
   <data name="&gt;&gt;btnCancel.Name" xml:space="preserve">
     <value>btnCancel</value>
@@ -470,7 +470,7 @@
     <value>CenterParent</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Úprava bodování</value>
+    <value>Edit Scoring Rules</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>frmEditCategoryPoints</value>

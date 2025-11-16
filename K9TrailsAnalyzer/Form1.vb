@@ -876,20 +876,23 @@ Partial Public Class Form1
             Dim ctrl = stack.Pop()
             resources.ApplyResources(ctrl, ctrl.Name)
             If TypeOf ctrl Is ComboBox Then
-                Dim cmb = DirectCast(ctrl, ComboBox)
-                Dim selIndex As Integer = cmb.SelectedIndex
-                cmb.Items.Clear()
 
-                Dim i As Integer = 0
-                Do
-                    Dim key As String = If(i = 0, $"{cmb.Name}.Items", $"{cmb.Name}.Items{i}")
-                    Dim item As String = resources.GetString(key)
-                    If item Is Nothing Then Exit Do
-                    cmb.Items.Add(item)
-                    i += 1
-                Loop
-                cmb.SelectedIndex = selIndex 'last 365 days
+                If ctrl.Name = cmbTimeInterval.Name Then
+                    Dim cmb = DirectCast(ctrl, ComboBox)
 
+                    Dim selIndex As Integer = cmb.SelectedIndex
+                    cmb.Items.Clear()
+
+                    Dim i As Integer = 0
+                    Do
+                        Dim key As String = If(i = 0, $"{cmb.Name}.Items", $"{cmb.Name}.Items{i}")
+                        Dim item As String = resources.GetString(key)
+                        If item Is Nothing Then Exit Do
+                        cmb.Items.Add(item)
+                        i += 1
+                    Loop
+                    cmb.SelectedIndex = selIndex 'last 365 days
+                End If
             End If
 
             For Each child As Control In ctrl.Controls
@@ -1521,8 +1524,12 @@ Partial Public Class Form1
             mboxEx("This tab is not ready yet." & vbCrLf & "First you need to load the gpx files - click on the salmon button!")
             e.Cancel = True
         ElseIf e.TabPage Is TabCompetition AndAlso dgvCompetition.RowCount <= 0 Then
-            Me.FillDgvCompetition()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
 
+            Dim waitForm As New frmPleaseWait("I'm reading GPX files, please stand by...")
+            waitForm.Show()
+            waitForm.Refresh()
+            Me.FillDgvCompetition()  'naplní datagridView s přehledem tras a jejich statistikami pro závody
+            waitForm.Close()
         End If
     End Sub
 
@@ -1660,6 +1667,11 @@ Partial Public Class Form1
 
 
     Private Sub dgvCompetition_ColumnHeaderMouseClick(sender As Object, e As DataGridViewCellMouseEventArgs) Handles dgvCompetition.ColumnHeaderMouseClick
+
+        Dim waitForm As New frmPleaseWait("Please stand by...")
+        waitForm.Show()
+        waitForm.Refresh()
+        'todo: zjistit proč tohle trvá tak dlouho!!!
         Dim columnName As String = dgvCompetition.Columns(e.ColumnIndex).DataPropertyName
 
         ' Zjištění směru seřazení
@@ -1692,6 +1704,7 @@ Partial Public Class Form1
 
         ' Volitelné: Zobrazení šipky pro indikaci seřazení
         SetSortGlyph(e.ColumnIndex, sortDirection)
+        waitForm.Close()
     End Sub
 
     ' --- Pomocné funkce pro dynamické získání hodnoty vlastnosti (Reflection) ---
@@ -1711,6 +1724,10 @@ Partial Public Class Form1
 
     Private Sub RecalculateScoreAndSave()
 
+        Dim waitForm As New frmPleaseWait("I'm reading GPX files, please stand by...")
+        waitForm.Show()
+        waitForm.Refresh()
+
         For Each _gpxRecord In GPXFilesManager.GpxRecords
             Dim isTrackStatsCalculated = _gpxRecord.CalculateTrackStats(_gpxRecord.Tracks, _gpxRecord.WptNodes, _gpxRecord.TrailStats)
             If isTrackStatsCalculated Then
@@ -1725,15 +1742,19 @@ Partial Public Class Form1
         Next
 
         FillDgvCompetition()
+        waitForm.Close()
     End Sub
 
     Private Sub btnEditPoints_Click(sender As Object, e As EventArgs) Handles btnEditPoints.Click
         Dim EditCategoryPoints As New frmEditCategoryPoints(Me.ActiveCategoryInfo)
         If EditCategoryPoints.ShowDialog() = DialogResult.OK Then
+
             RecalculateScoreAndSave()
             SaveConfig()
         End If
     End Sub
+
+
 End Class
 
 ''' <summary>

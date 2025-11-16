@@ -211,33 +211,6 @@
   <data name="MenuStrip1.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
-    <value>276, 22</value>
-  </data>
-  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
-    <value>Set output video folder</value>
-  </data>
-  <data name="mnuExportAs.Size" type="System.Drawing.Size, System.Drawing">
-    <value>276, 22</value>
-  </data>
-  <data name="mnuExportAs.Text" xml:space="preserve">
-    <value>Export as (rtf. txt, csv)</value>
-  </data>
-  <data name="mnuExit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>276, 22</value>
-  </data>
-  <data name="mnuExit.Text" xml:space="preserve">
-    <value>Exit</value>
-  </data>
-  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code, 10pt</value>
-  </data>
-  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 33</value>
-  </data>
-  <data name="mnuFile.Text" xml:space="preserve">
-    <value>File</value>
-  </data>
   <data name="mnuPrependDateToFileName.Size" type="System.Drawing.Size, System.Drawing">
     <value>388, 22</value>
   </data>
@@ -255,12 +228,6 @@
   </data>
   <data name="mnuTrimGPSNoise.Visible" type="System.Boolean, mscorlib">
     <value>False</value>
-  </data>
-  <data name="mnuMergingTracks.Size" type="System.Drawing.Size, System.Drawing">
-    <value>388, 22</value>
-  </data>
-  <data name="mnuMergingTracks.Text" xml:space="preserve">
-    <value>Match Runner and Dog Tracks</value>
   </data>
   <data name="mnuProcessProcessed.Size" type="System.Drawing.Size, System.Drawing">
     <value>388, 22</value>
@@ -283,50 +250,50 @@
   <data name="mnuGPXprocessing.Text" xml:space="preserve">
     <value>Gpx processing</value>
   </data>
-  <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnuGPXprocessing.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
-  <data name="mnuEnglish.Text" xml:space="preserve">
-    <value>English</value>
+  <data name="mnucbActiveCategory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
   </data>
-  <data name="mnuGerman.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnucbActiveCategory.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 14pt, style=Bold</value>
   </data>
-  <data name="mnuGerman.Text" xml:space="preserve">
-    <value>Deutch</value>
+  <data name="mnucbActiveCategory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>360, 33</value>
   </data>
-  <data name="mnuCzech.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>388, 22</value>
   </data>
-  <data name="mnuCzech.Text" xml:space="preserve">
-    <value>Česky</value>
+  <data name="mnuSelectADirectoryToSaveVideo.Text" xml:space="preserve">
+    <value>Set output video folder</value>
   </data>
-  <data name="mnuUkrainian.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnuMergingTracks.Size" type="System.Drawing.Size, System.Drawing">
+    <value>388, 22</value>
   </data>
-  <data name="mnuUkrainian.Text" xml:space="preserve">
-    <value>Українська</value>
+  <data name="mnuMergingTracks.Text" xml:space="preserve">
+    <value>Merge Runner and Dog Tracks in one file</value>
   </data>
-  <data name="mnuPolish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnuExportAs.Size" type="System.Drawing.Size, System.Drawing">
+    <value>388, 22</value>
   </data>
-  <data name="mnuPolish.Text" xml:space="preserve">
-    <value>Polski</value>
+  <data name="mnuExportAs.Text" xml:space="preserve">
+    <value>Export as (rtf. txt, csv)</value>
   </data>
-  <data name="mnuRussian.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 22</value>
+  <data name="mnuExit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>388, 22</value>
   </data>
-  <data name="mnuRussian.Text" xml:space="preserve">
-    <value>Русский</value>
+  <data name="mnuExit.Text" xml:space="preserve">
+    <value>Exit</value>
   </data>
-  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
+  <data name="mnuFile.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt</value>
   </data>
-  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 33</value>
+  <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
+    <value>52, 33</value>
   </data>
-  <data name="mnuLanguage.Text" xml:space="preserve">
-    <value>Language</value>
+  <data name="mnuFile.Text" xml:space="preserve">
+    <value>File</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Size" type="System.Drawing.Size, System.Drawing">
     <value>324, 22</value>
@@ -359,7 +326,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 33</value>
+    <value>156, 33</value>
   </data>
   <data name="mnuCategory.Text" xml:space="preserve">
     <value>Category Settings</value>
@@ -400,26 +367,50 @@
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Help</value>
   </data>
-  <data name="mnucbActiveCategory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
-    <value>Flat</value>
+  <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="mnucbActiveCategory.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code SemiBold, 14pt, style=Bold</value>
+  <data name="mnuEnglish.Text" xml:space="preserve">
+    <value>English</value>
   </data>
-  <data name="mnucbActiveCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>360, 33</value>
+  <data name="mnuGerman.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="KategorieToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="mnuGerman.Text" xml:space="preserve">
+    <value>Deutch</value>
   </data>
-  <data name="KategorieToolStripMenuItem.Font" type="System.Drawing.Font, System.Drawing">
-    <value>Cascadia Code SemiBold, 16pt, style=Bold</value>
+  <data name="mnuCzech.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="KategorieToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>311, 33</value>
+  <data name="mnuCzech.Text" xml:space="preserve">
+    <value>Česky</value>
   </data>
-  <data name="KategorieToolStripMenuItem.Text" xml:space="preserve">
-    <value>Kategorie: začátečníci</value>
+  <data name="mnuUkrainian.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="mnuUkrainian.Text" xml:space="preserve">
+    <value>Українська</value>
+  </data>
+  <data name="mnuPolish.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="mnuPolish.Text" xml:space="preserve">
+    <value>Polski</value>
+  </data>
+  <data name="mnuRussian.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="mnuRussian.Text" xml:space="preserve">
+    <value>Русский</value>
+  </data>
+  <data name="mnuLanguage.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code, 10pt</value>
+  </data>
+  <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
+    <value>84, 33</value>
+  </data>
+  <data name="mnuLanguage.Text" xml:space="preserve">
+    <value>Language</value>
   </data>
   <data name="MenuStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
@@ -1045,6 +1036,12 @@
   <data name="&gt;&gt;mnuSelectADirectoryToSaveVideo.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnuMergingTracks.Name" xml:space="preserve">
+    <value>mnuMergingTracks</value>
+  </data>
+  <data name="&gt;&gt;mnuMergingTracks.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuExportAs.Name" xml:space="preserve">
     <value>mnuExportAs</value>
   </data>
@@ -1073,12 +1070,6 @@
     <value>mnuTrimGPSNoise</value>
   </data>
   <data name="&gt;&gt;mnuTrimGPSNoise.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuMergingTracks.Name" xml:space="preserve">
-    <value>mnuMergingTracks</value>
-  </data>
-  <data name="&gt;&gt;mnuMergingTracks.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuProcessProcessed.Name" xml:space="preserve">
@@ -1159,6 +1150,12 @@
   <data name="&gt;&gt;mnuDeleteCurrentCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
+    <value>mnucbActiveCategory</value>
+  </data>
+  <data name="&gt;&gt;mnucbActiveCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">
     <value>mnuHelp</value>
   </data>
@@ -1199,18 +1196,6 @@
     <value>mnuFactoryReset</value>
   </data>
   <data name="&gt;&gt;mnuFactoryReset.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
-    <value>mnucbActiveCategory</value>
-  </data>
-  <data name="&gt;&gt;mnucbActiveCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;KategorieToolStripMenuItem.Name" xml:space="preserve">
-    <value>KategorieToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;KategorieToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuCheckUpdates.Name" xml:space="preserve">

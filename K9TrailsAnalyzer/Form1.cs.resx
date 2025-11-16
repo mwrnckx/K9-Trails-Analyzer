@@ -179,7 +179,7 @@
     <value>404, 22</value>
   </data>
   <data name="mnuMergingTracks.Text" xml:space="preserve">
-    <value>Spáruj trasy kladeče a psa</value>
+    <value>Spáruj trasy kladeče a psa do jednoho souboru</value>
   </data>
   <data name="mnuProcessProcessed.Size" type="System.Drawing.Size, System.Drawing">
     <value>404, 22</value>
