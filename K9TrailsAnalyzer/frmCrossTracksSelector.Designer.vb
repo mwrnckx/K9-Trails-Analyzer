@@ -50,7 +50,7 @@ Partial Class frmCrossTrailSelector
         ' 
         ' txtInfo
         ' 
-        txtInfo.BackColor = Color.Beige
+        txtInfo.BackColor = color.lightyellow
         resources.ApplyResources(txtInfo, "txtInfo")
         txtInfo.Name = "txtInfo"
         ' 
@@ -59,11 +59,11 @@ Partial Class frmCrossTrailSelector
         dgvTracks.AllowUserToAddRows = False
         dgvTracks.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill
         dgvTracks.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells
-        dgvTracks.BackgroundColor = Color.Beige
+        dgvTracks.BackgroundColor = color.lightyellow
         dgvTracks.BorderStyle = BorderStyle.None
         dgvTracks.CellBorderStyle = DataGridViewCellBorderStyle.Single
         DataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle1.BackColor = Color.Beige
+        DataGridViewCellStyle1.BackColor = color.lightyellow
         DataGridViewCellStyle1.Font = New Font("Cascadia Code", 14.0F, FontStyle.Bold, GraphicsUnit.Point, CByte(238))
         DataGridViewCellStyle1.ForeColor = Color.DarkSalmon
         DataGridViewCellStyle1.SelectionBackColor = SystemColors.GradientActiveCaption
@@ -73,7 +73,7 @@ Partial Class frmCrossTrailSelector
         dgvTracks.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         dgvTracks.Columns.AddRange(New DataGridViewColumn() {nameColumn, startColumn, descColumn, typeColumn})
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter
-        DataGridViewCellStyle2.BackColor = Color.Beige
+        DataGridViewCellStyle2.BackColor = color.lightyellow
         DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F, FontStyle.Regular, GraphicsUnit.Point, CByte(238))
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.GradientActiveCaption
@@ -107,7 +107,7 @@ Partial Class frmCrossTrailSelector
         typeColumn.DataPropertyName = "TrackType"
         resources.ApplyResources(typeColumn, "typeColumn")
         typeColumn.Name = "typeColumn"
-        typeColumn.DefaultCellStyle.BackColor = Color.Beige
+        typeColumn.DefaultCellStyle.BackColor = color.lightyellow
         typeColumn.DefaultCellStyle.ForeColor = Color.Maroon
 
 
@@ -116,7 +116,7 @@ Partial Class frmCrossTrailSelector
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
-        BackColor = Color.Beige
+        BackColor = color.lightyellow
         Controls.Add(txtInfo)
         Controls.Add(btnOK)
         Controls.Add(dgvTracks)

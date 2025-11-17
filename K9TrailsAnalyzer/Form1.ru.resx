@@ -357,4 +357,10 @@
   <data name="mnuCategory.Text" xml:space="preserve">
     <value>Настройки категории</value>
   </data>
+  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
+    <value>Открыть локальную папку GPX</value>
+  </data>
+  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
+    <value>Открывает локальную папку в проводнике</value>
+  </data>
 </root>

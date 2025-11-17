@@ -39,6 +39,7 @@ Od verze **1.0.26** je do aplikace postupně začleňován i **bodovací systém
   - Rychlost práce  
   - Přesnost práce  
   - Čtení psa psovodem  
+  - Vyhledání stopy při startu
 
 - **📊 Export výsledků**  
   Export do formátů **CSV**, **TXT**, **RTF** – vhodné pro tisk nebo další zpracování v Excelu.

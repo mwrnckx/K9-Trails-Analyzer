@@ -121,7 +121,7 @@
     <value>Přesnost</value>
   </data>
   <data name="FinalFind" xml:space="preserve">
-    <value>Nález</value>
+    <value>Nález osoby</value>
   </data>
   <data name="ofPoints" xml:space="preserve">
     <value>ze</value>
@@ -144,7 +144,7 @@
   <data name="Trail_description" xml:space="preserve">
     <value>Popis trailu</value>
   </data>
-  <data name="EarlyPickUp" xml:space="preserve">
-    <value>Rozlišení</value>
+  <data name="TrailPickup" xml:space="preserve">
+    <value>Vyhledání stopy</value>
   </data>
 </root>

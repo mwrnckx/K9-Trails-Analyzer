@@ -9,7 +9,7 @@ Public Class frmPleaseWait
     Public Sub New(label As String)
         InitializeComponent()
         Me.Text = "Please Wait"
-        Me.BackColor = Color.Beige
+        Me.BackColor = Color.LightYellow
         Me.ControlBox = False
         Me.Size = New Size(400, 150)
         Me.StartPosition = FormStartPosition.CenterScreen

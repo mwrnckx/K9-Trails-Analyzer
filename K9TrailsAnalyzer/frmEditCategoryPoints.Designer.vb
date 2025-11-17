@@ -53,55 +53,55 @@ Partial Class frmEditCategoryPoints
         ' 
         ' numFind
         ' 
-        numFind.BackColor = Color.LightYellow
-        numFind.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         resources.ApplyResources(numFind, "numFind")
+        numFind.BackColor = SystemColors.Window
+        numFind.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         numFind.Name = "numFind"
         ' 
         ' numSpeed
         ' 
-        numSpeed.BackColor = Color.LightYellow
-        numSpeed.Increment = New Decimal(New Integer() {5, 0, 0, 0})
         resources.ApplyResources(numSpeed, "numSpeed")
+        numSpeed.BackColor = SystemColors.Window
+        numSpeed.Increment = New Decimal(New Integer() {5, 0, 0, 0})
         numSpeed.Maximum = New Decimal(New Integer() {50, 0, 0, 0})
         numSpeed.Name = "numSpeed"
         ' 
         ' numAcc
         ' 
-        numAcc.BackColor = Color.LightYellow
-        numAcc.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         resources.ApplyResources(numAcc, "numAcc")
+        numAcc.BackColor = SystemColors.Window
+        numAcc.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         numAcc.Name = "numAcc"
         ' 
         ' numRead
         ' 
-        numRead.BackColor = Color.LightYellow
-        numRead.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         resources.ApplyResources(numRead, "numRead")
+        numRead.BackColor = SystemColors.Window
+        numRead.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         numRead.Name = "numRead"
         ' 
         ' numPick
         ' 
-        numPick.BackColor = Color.LightYellow
-        numPick.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         resources.ApplyResources(numPick, "numPick")
+        numPick.BackColor = SystemColors.Window
+        numPick.Increment = New Decimal(New Integer() {10, 0, 0, 0})
         numPick.Name = "numPick"
         ' 
         ' btnOK
         ' 
-        btnOK.BackColor = Color.SeaGreen
+        resources.ApplyResources(btnOK, "btnOK")
+        btnOK.BackColor = Color.Goldenrod
         btnOK.DialogResult = DialogResult.OK
         btnOK.FlatAppearance.BorderSize = 0
-        resources.ApplyResources(btnOK, "btnOK")
         btnOK.Name = "btnOK"
         btnOK.UseVisualStyleBackColor = False
         ' 
         ' btnCancel
         ' 
-        btnCancel.BackColor = Color.SeaGreen
+        resources.ApplyResources(btnCancel, "btnCancel")
+        btnCancel.BackColor = Color.Goldenrod
         btnCancel.DialogResult = DialogResult.Cancel
         btnCancel.FlatAppearance.BorderSize = 0
-        resources.ApplyResources(btnCancel, "btnCancel")
         btnCancel.Name = "btnCancel"
         btnCancel.UseVisualStyleBackColor = False
         ' 
@@ -109,7 +109,7 @@ Partial Class frmEditCategoryPoints
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
-        BackColor = Color.Salmon
+        BackColor = Color.LightYellow
         Controls.Add(btnCancel)
         Controls.Add(btnOK)
         Controls.Add(numPick)

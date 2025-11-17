@@ -85,9 +85,9 @@ Namespace My.Resources
         '''<summary>
         '''  Vyhledá lokalizovaný řetězec podobný Pick-up.
         '''</summary>
-        Friend Shared ReadOnly Property EarlyPickUp() As String
+        Friend Shared ReadOnly Property TrailPickup() As String
             Get
-                Return ResourceManager.GetString("EarlyPickUp", resourceCulture)
+                Return ResourceManager.GetString("TrailPickup", resourceCulture)
             End Get
         End Property
 

@@ -427,4 +427,10 @@
   <data name="mnuCategory.Text" xml:space="preserve">
     <value>Ustawienia kategorii</value>
   </data>
+  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
+    <value>Otwórz lokalny folder GPX</value>
+  </data>
+  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
+    <value>Otwiera folder lokalny w Eksploratorze</value>
+  </data>
 </root>

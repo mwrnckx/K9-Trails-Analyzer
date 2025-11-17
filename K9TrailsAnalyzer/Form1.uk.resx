@@ -354,4 +354,10 @@
   <data name="mnuCategory.Text" xml:space="preserve">
     <value>Параметри категорії</value>
   </data>
+  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
+    <value>Відкрийте локальну папку GPX</value>
+  </data>
+  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
+    <value>Відкриває локальну папку в Провіднику</value>
+  </data>
 </root>

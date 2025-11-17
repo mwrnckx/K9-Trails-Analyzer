@@ -31,32 +31,25 @@ Partial Class Form1
         Dim DataGridViewCellStyle1 As DataGridViewCellStyle = New DataGridViewCellStyle()
         Dim DataGridViewCellStyle2 As DataGridViewCellStyle = New DataGridViewCellStyle()
         ToolTip1 = New ToolTip(components)
-        StatusStrip1 = New StatusStrip()
-        StatusLabel1 = New ToolStripStatusLabel()
         btnCreateVideos = New Button()
+        lblRemoteDirectory = New Label()
         MenuStrip1 = New MenuStrip()
+        mnuGPXprocessing = New ToolStripMenuItem()
+        mnuPrependDateToFileName = New ToolStripMenuItem()
+        mnuTrimGPSNoise = New ToolStripMenuItem()
+        mnuProcessProcessed = New ToolStripMenuItem()
+        mnucbActiveCategory = New ToolStripComboBox()
         mnuFile = New ToolStripMenuItem()
         mnuSelectADirectoryToSaveVideo = New ToolStripMenuItem()
         mnuMergingTracks = New ToolStripMenuItem()
         mnuExportAs = New ToolStripMenuItem()
         mnuExit = New ToolStripMenuItem()
-        mnuGPXprocessing = New ToolStripMenuItem()
-        mnuPrependDateToFileName = New ToolStripMenuItem()
-        mnuTrimGPSNoise = New ToolStripMenuItem()
-        mnuProcessProcessed = New ToolStripMenuItem()
-        mnuLanguage = New ToolStripMenuItem()
-        mnuEnglish = New ToolStripMenuItem()
-        mnuGerman = New ToolStripMenuItem()
-        mnuCzech = New ToolStripMenuItem()
-        mnuUkrainian = New ToolStripMenuItem()
-        mnuPolish = New ToolStripMenuItem()
-        mnuRussian = New ToolStripMenuItem()
         mnuCategory = New ToolStripMenuItem()
         mnuSelect_directory_gpx_files = New ToolStripMenuItem()
+        mnuOpenLocalFolder = New ToolStripMenuItem()
         mnuRenameCurrentCategory = New ToolStripMenuItem()
         mnuAddNewCategory = New ToolStripMenuItem()
         mnuDeleteCurrentCategory = New ToolStripMenuItem()
-        mnucbActiveCategory = New ToolStripComboBox()
         mnuHelp = New ToolStripMenuItem()
         mnuAbout = New ToolStripMenuItem()
         mnuCheckForUpdates1 = New ToolStripMenuItem()
@@ -64,6 +57,13 @@ Partial Class Form1
         mnuSetFFmpegPath = New ToolStripMenuItem()
         ToolStripSeparator2 = New ToolStripSeparator()
         mnuFactoryReset = New ToolStripMenuItem()
+        mnuLanguage = New ToolStripMenuItem()
+        mnuEnglish = New ToolStripMenuItem()
+        mnuGerman = New ToolStripMenuItem()
+        mnuCzech = New ToolStripMenuItem()
+        mnuUkrainian = New ToolStripMenuItem()
+        mnuPolish = New ToolStripMenuItem()
+        mnuRussian = New ToolStripMenuItem()
         mnuCheckUpdates = New ToolStripMenuItem()
         rtbWarnings = New RichTextBox()
         TabControl1 = New TabControl()
@@ -88,7 +88,8 @@ Partial Class Form1
         btnEditPoints = New ToolStripButton()
         dgvCompetition = New DataGridView()
         bsCompetitions = New BindingSource(components)
-        StatusStrip1.SuspendLayout()
+        pnlCategory = New Panel()
+        cbActiveCategory = New ComboBox()
         MenuStrip1.SuspendLayout()
         TabControl1.SuspendLayout()
         TabStats.SuspendLayout()
@@ -99,25 +100,12 @@ Partial Class Form1
         ToolStrCategorySettings.SuspendLayout()
         CType(dgvCompetition, ISupportInitialize).BeginInit()
         CType(bsCompetitions, ISupportInitialize).BeginInit()
+        pnlCategory.SuspendLayout()
         SuspendLayout()
         ' 
         ' ToolTip1
         ' 
         ToolTip1.IsBalloon = True
-        ' 
-        ' StatusStrip1
-        ' 
-        StatusStrip1.ImageScalingSize = New Size(24, 24)
-        StatusStrip1.Items.AddRange(New ToolStripItem() {StatusLabel1})
-        resources.ApplyResources(StatusStrip1, "StatusStrip1")
-        StatusStrip1.Name = "StatusStrip1"
-        StatusStrip1.SizingGrip = False
-        ToolTip1.SetToolTip(StatusStrip1, resources.GetString("StatusStrip1.ToolTip"))
-        ' 
-        ' StatusLabel1
-        ' 
-        StatusLabel1.Name = "StatusLabel1"
-        resources.ApplyResources(StatusLabel1, "StatusLabel1")
         ' 
         ' btnCreateVideos
         ' 
@@ -127,6 +115,13 @@ Partial Class Form1
         ToolTip1.SetToolTip(btnCreateVideos, resources.GetString("btnCreateVideos.ToolTip"))
         btnCreateVideos.UseVisualStyleBackColor = False
         ' 
+        ' lblRemoteDirectory
+        ' 
+        lblRemoteDirectory.BackColor = Color.LightYellow
+        resources.ApplyResources(lblRemoteDirectory, "lblRemoteDirectory")
+        lblRemoteDirectory.Name = "lblRemoteDirectory"
+        ToolTip1.SetToolTip(lblRemoteDirectory, resources.GetString("lblRemoteDirectory.ToolTip"))
+        ' 
         ' MenuStrip1
         ' 
         MenuStrip1.BackColor = Color.DarkSeaGreen
@@ -134,32 +129,6 @@ Partial Class Form1
         MenuStrip1.ImageScalingSize = New Size(24, 24)
         MenuStrip1.Items.AddRange(New ToolStripItem() {mnuGPXprocessing, mnucbActiveCategory, mnuFile, mnuCategory, mnuHelp, mnuLanguage})
         MenuStrip1.Name = "MenuStrip1"
-        ' 
-        ' mnuFile
-        ' 
-        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelectADirectoryToSaveVideo, mnuMergingTracks, mnuExportAs, mnuExit})
-        resources.ApplyResources(mnuFile, "mnuFile")
-        mnuFile.Name = "mnuFile"
-        ' 
-        ' mnuSelectADirectoryToSaveVideo
-        ' 
-        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
-        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
-        ' 
-        ' mnuMergingTracks
-        ' 
-        mnuMergingTracks.Name = "mnuMergingTracks"
-        resources.ApplyResources(mnuMergingTracks, "mnuMergingTracks")
-        ' 
-        ' mnuExportAs
-        ' 
-        mnuExportAs.Name = "mnuExportAs"
-        resources.ApplyResources(mnuExportAs, "mnuExportAs")
-        ' 
-        ' mnuExit
-        ' 
-        mnuExit.Name = "mnuExit"
-        resources.ApplyResources(mnuExit, "mnuExit")
         ' 
         ' mnuGPXprocessing
         ' 
@@ -188,6 +157,107 @@ Partial Class Form1
         mnuProcessProcessed.CheckOnClick = True
         mnuProcessProcessed.Name = "mnuProcessProcessed"
         resources.ApplyResources(mnuProcessProcessed, "mnuProcessProcessed")
+        ' 
+        ' mnucbActiveCategory
+        ' 
+        mnucbActiveCategory.BackColor = Color.LightYellow
+        mnucbActiveCategory.DropDownStyle = ComboBoxStyle.DropDownList
+        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
+        mnucbActiveCategory.ForeColor = SystemColors.ControlText
+        mnucbActiveCategory.Name = "mnucbActiveCategory"
+        ' 
+        ' mnuFile
+        ' 
+        mnuFile.DropDownItems.AddRange(New ToolStripItem() {mnuSelectADirectoryToSaveVideo, mnuMergingTracks, mnuExportAs, mnuExit})
+        resources.ApplyResources(mnuFile, "mnuFile")
+        mnuFile.Name = "mnuFile"
+        ' 
+        ' mnuSelectADirectoryToSaveVideo
+        ' 
+        mnuSelectADirectoryToSaveVideo.Name = "mnuSelectADirectoryToSaveVideo"
+        resources.ApplyResources(mnuSelectADirectoryToSaveVideo, "mnuSelectADirectoryToSaveVideo")
+        ' 
+        ' mnuMergingTracks
+        ' 
+        mnuMergingTracks.Name = "mnuMergingTracks"
+        resources.ApplyResources(mnuMergingTracks, "mnuMergingTracks")
+        ' 
+        ' mnuExportAs
+        ' 
+        mnuExportAs.Name = "mnuExportAs"
+        resources.ApplyResources(mnuExportAs, "mnuExportAs")
+        ' 
+        ' mnuExit
+        ' 
+        mnuExit.Name = "mnuExit"
+        resources.ApplyResources(mnuExit, "mnuExit")
+        ' 
+        ' mnuCategory
+        ' 
+        mnuCategory.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuOpenLocalFolder, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory})
+        resources.ApplyResources(mnuCategory, "mnuCategory")
+        mnuCategory.Name = "mnuCategory"
+        ' 
+        ' mnuSelect_directory_gpx_files
+        ' 
+        mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
+        resources.ApplyResources(mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
+        ' 
+        ' mnuOpenLocalFolder
+        ' 
+        mnuOpenLocalFolder.Name = "mnuOpenLocalFolder"
+        resources.ApplyResources(mnuOpenLocalFolder, "mnuOpenLocalFolder")
+        ' 
+        ' mnuRenameCurrentCategory
+        ' 
+        mnuRenameCurrentCategory.Name = "mnuRenameCurrentCategory"
+        resources.ApplyResources(mnuRenameCurrentCategory, "mnuRenameCurrentCategory")
+        ' 
+        ' mnuAddNewCategory
+        ' 
+        mnuAddNewCategory.Name = "mnuAddNewCategory"
+        resources.ApplyResources(mnuAddNewCategory, "mnuAddNewCategory")
+        ' 
+        ' mnuDeleteCurrentCategory
+        ' 
+        mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
+        resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
+        ' 
+        ' mnuHelp
+        ' 
+        mnuHelp.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1, ToolStripSeparator1, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
+        mnuHelp.Name = "mnuHelp"
+        resources.ApplyResources(mnuHelp, "mnuHelp")
+        ' 
+        ' mnuAbout
+        ' 
+        mnuAbout.Name = "mnuAbout"
+        resources.ApplyResources(mnuAbout, "mnuAbout")
+        ' 
+        ' mnuCheckForUpdates1
+        ' 
+        mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
+        resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
+        ' 
+        ' ToolStripSeparator1
+        ' 
+        ToolStripSeparator1.Name = "ToolStripSeparator1"
+        resources.ApplyResources(ToolStripSeparator1, "ToolStripSeparator1")
+        ' 
+        ' mnuSetFFmpegPath
+        ' 
+        mnuSetFFmpegPath.Name = "mnuSetFFmpegPath"
+        resources.ApplyResources(mnuSetFFmpegPath, "mnuSetFFmpegPath")
+        ' 
+        ' ToolStripSeparator2
+        ' 
+        ToolStripSeparator2.Name = "ToolStripSeparator2"
+        resources.ApplyResources(ToolStripSeparator2, "ToolStripSeparator2")
+        ' 
+        ' mnuFactoryReset
+        ' 
+        mnuFactoryReset.Name = "mnuFactoryReset"
+        resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
         ' 
         ' mnuLanguage
         ' 
@@ -231,76 +301,6 @@ Partial Class Form1
         resources.ApplyResources(mnuRussian, "mnuRussian")
         mnuRussian.Tag = "ru"
         ' 
-        ' mnuCategory
-        ' 
-        mnuCategory.DropDownItems.AddRange(New ToolStripItem() {mnuSelect_directory_gpx_files, mnuRenameCurrentCategory, mnuAddNewCategory, mnuDeleteCurrentCategory})
-        resources.ApplyResources(mnuCategory, "mnuCategory")
-        mnuCategory.Name = "mnuCategory"
-        ' 
-        ' mnuSelect_directory_gpx_files
-        ' 
-        mnuSelect_directory_gpx_files.Name = "mnuSelect_directory_gpx_files"
-        resources.ApplyResources(mnuSelect_directory_gpx_files, "mnuSelect_directory_gpx_files")
-        ' 
-        ' mnuRenameCurrentCategory
-        ' 
-        mnuRenameCurrentCategory.Name = "mnuRenameCurrentCategory"
-        resources.ApplyResources(mnuRenameCurrentCategory, "mnuRenameCurrentCategory")
-        ' 
-        ' mnuAddNewCategory
-        ' 
-        mnuAddNewCategory.Name = "mnuAddNewCategory"
-        resources.ApplyResources(mnuAddNewCategory, "mnuAddNewCategory")
-        ' 
-        ' mnuDeleteCurrentCategory
-        ' 
-        mnuDeleteCurrentCategory.Name = "mnuDeleteCurrentCategory"
-        resources.ApplyResources(mnuDeleteCurrentCategory, "mnuDeleteCurrentCategory")
-        ' 
-        ' mnucbActiveCategory
-        ' 
-        mnucbActiveCategory.BackColor = Color.LightYellow
-        mnucbActiveCategory.DropDownStyle = ComboBoxStyle.DropDownList
-        resources.ApplyResources(mnucbActiveCategory, "mnucbActiveCategory")
-        mnucbActiveCategory.ForeColor = SystemColors.ControlText
-        mnucbActiveCategory.Name = "mnucbActiveCategory"
-        ' 
-        ' mnuHelp
-        ' 
-        mnuHelp.DropDownItems.AddRange(New ToolStripItem() {mnuAbout, mnuCheckForUpdates1, ToolStripSeparator1, mnuSetFFmpegPath, ToolStripSeparator2, mnuFactoryReset})
-        mnuHelp.Name = "mnuHelp"
-        resources.ApplyResources(mnuHelp, "mnuHelp")
-        ' 
-        ' mnuAbout
-        ' 
-        mnuAbout.Name = "mnuAbout"
-        resources.ApplyResources(mnuAbout, "mnuAbout")
-        ' 
-        ' mnuCheckForUpdates1
-        ' 
-        mnuCheckForUpdates1.Name = "mnuCheckForUpdates1"
-        resources.ApplyResources(mnuCheckForUpdates1, "mnuCheckForUpdates1")
-        ' 
-        ' ToolStripSeparator1
-        ' 
-        ToolStripSeparator1.Name = "ToolStripSeparator1"
-        resources.ApplyResources(ToolStripSeparator1, "ToolStripSeparator1")
-        ' 
-        ' mnuSetFFmpegPath
-        ' 
-        mnuSetFFmpegPath.Name = "mnuSetFFmpegPath"
-        resources.ApplyResources(mnuSetFFmpegPath, "mnuSetFFmpegPath")
-        ' 
-        ' ToolStripSeparator2
-        ' 
-        ToolStripSeparator2.Name = "ToolStripSeparator2"
-        resources.ApplyResources(ToolStripSeparator2, "ToolStripSeparator2")
-        ' 
-        ' mnuFactoryReset
-        ' 
-        mnuFactoryReset.Name = "mnuFactoryReset"
-        resources.ApplyResources(mnuFactoryReset, "mnuFactoryReset")
-        ' 
         ' mnuCheckUpdates
         ' 
         mnuCheckUpdates.Name = "mnuCheckUpdates"
@@ -308,7 +308,7 @@ Partial Class Form1
         ' 
         ' rtbWarnings
         ' 
-        rtbWarnings.BackColor = Color.Beige
+        rtbWarnings.BackColor = Color.LightYellow
         resources.ApplyResources(rtbWarnings, "rtbWarnings")
         rtbWarnings.Name = "rtbWarnings"
         ' 
@@ -335,12 +335,12 @@ Partial Class Form1
         ' rtbOutput
         ' 
         resources.ApplyResources(rtbOutput, "rtbOutput")
-        rtbOutput.BackColor = Color.Beige
+        rtbOutput.BackColor = Color.LightYellow
         rtbOutput.Name = "rtbOutput"
         ' 
         ' gbPeriod
         ' 
-        gbPeriod.BackColor = Color.Beige
+        gbPeriod.BackColor = Color.LightYellow
         gbPeriod.Controls.Add(cmbTimeInterval)
         gbPeriod.Controls.Add(dtpEndDate)
         gbPeriod.Controls.Add(dtpStartDate)
@@ -351,7 +351,7 @@ Partial Class Form1
         ' 
         ' cmbTimeInterval
         ' 
-        cmbTimeInterval.BackColor = Color.Beige
+        cmbTimeInterval.BackColor = Color.LightYellow
         cmbTimeInterval.FormattingEnabled = True
         cmbTimeInterval.Items.AddRange(New Object() {resources.GetString("cmbTimeInterval.Items"), resources.GetString("cmbTimeInterval.Items1"), resources.GetString("cmbTimeInterval.Items2"), resources.GetString("cmbTimeInterval.Items3"), resources.GetString("cmbTimeInterval.Items4"), resources.GetString("cmbTimeInterval.Items5")})
         resources.ApplyResources(cmbTimeInterval, "cmbTimeInterval")
@@ -360,14 +360,14 @@ Partial Class Form1
         ' dtpEndDate
         ' 
         resources.ApplyResources(dtpEndDate, "dtpEndDate")
-        dtpEndDate.CalendarMonthBackground = Color.Beige
+        dtpEndDate.CalendarMonthBackground = Color.LightYellow
         dtpEndDate.Format = DateTimePickerFormat.Custom
         dtpEndDate.Name = "dtpEndDate"
         ' 
         ' dtpStartDate
         ' 
         resources.ApplyResources(dtpStartDate, "dtpStartDate")
-        dtpStartDate.CalendarMonthBackground = Color.Beige
+        dtpStartDate.CalendarMonthBackground = Color.LightYellow
         dtpStartDate.CalendarTitleBackColor = SystemColors.ActiveCaptionText
         dtpStartDate.Format = DateTimePickerFormat.Custom
         dtpStartDate.Name = "dtpStartDate"
@@ -388,7 +388,7 @@ Partial Class Form1
         ' 
         ' TabVideoExport
         ' 
-        TabVideoExport.BackColor = Color.Beige
+        TabVideoExport.BackColor = Color.LightYellow
         TabVideoExport.Controls.Add(btnCreateVideos)
         TabVideoExport.Controls.Add(lvGpxFiles)
         resources.ApplyResources(TabVideoExport, "TabVideoExport")
@@ -397,10 +397,10 @@ Partial Class Form1
         ' 
         ' lvGpxFiles
         ' 
-        resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
         lvGpxFiles.BackColor = Color.DarkSeaGreen
         lvGpxFiles.CheckBoxes = True
         lvGpxFiles.Columns.AddRange(New ColumnHeader() {clmFileName, clmDate, clmLength, clmAge, clmTrkCount})
+        resources.ApplyResources(lvGpxFiles, "lvGpxFiles")
         lvGpxFiles.Name = "lvGpxFiles"
         lvGpxFiles.UseCompatibleStateImageBehavior = False
         lvGpxFiles.View = View.Details
@@ -469,7 +469,7 @@ Partial Class Form1
         dgvCompetition.ColumnHeadersDefaultCellStyle = DataGridViewCellStyle1
         dgvCompetition.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize
         DataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleRight
-        DataGridViewCellStyle2.BackColor = Color.Beige
+        DataGridViewCellStyle2.BackColor = Color.LightYellow
         DataGridViewCellStyle2.Font = New Font("Cascadia Code", 12.0F)
         DataGridViewCellStyle2.ForeColor = Color.Maroon
         DataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight
@@ -480,18 +480,31 @@ Partial Class Form1
         resources.ApplyResources(dgvCompetition, "dgvCompetition")
         dgvCompetition.Name = "dgvCompetition"
         ' 
+        ' pnlCategory
+        ' 
+        pnlCategory.BackColor = Color.LightYellow
+        pnlCategory.Controls.Add(lblRemoteDirectory)
+        pnlCategory.Controls.Add(cbActiveCategory)
+        resources.ApplyResources(pnlCategory, "pnlCategory")
+        pnlCategory.Name = "pnlCategory"
+        ' 
+        ' cbActiveCategory
+        ' 
+        cbActiveCategory.BackColor = Color.LightYellow
+        resources.ApplyResources(cbActiveCategory, "cbActiveCategory")
+        cbActiveCategory.FormattingEnabled = True
+        cbActiveCategory.Name = "cbActiveCategory"
+        ' 
         ' Form1
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Dpi
-        Controls.Add(TabControl1)
         Controls.Add(rtbWarnings)
-        Controls.Add(StatusStrip1)
+        Controls.Add(TabControl1)
+        Controls.Add(pnlCategory)
         Controls.Add(MenuStrip1)
         MainMenuStrip = MenuStrip1
         Name = "Form1"
-        StatusStrip1.ResumeLayout(False)
-        StatusStrip1.PerformLayout()
         MenuStrip1.ResumeLayout(False)
         MenuStrip1.PerformLayout()
         TabControl1.ResumeLayout(False)
@@ -506,6 +519,7 @@ Partial Class Form1
         ToolStrCategorySettings.PerformLayout()
         CType(dgvCompetition, ISupportInitialize).EndInit()
         CType(bsCompetitions, ISupportInitialize).EndInit()
+        pnlCategory.ResumeLayout(False)
         ResumeLayout(False)
         PerformLayout()
 
@@ -570,7 +584,10 @@ Partial Class Form1
         CreateGpxFileManager()
         Me.cmbTimeInterval.SelectedIndex = 2 'last 365 days
 
-        Me.StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveCategoryInfo.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
+        lblRemoteDirectory.Width = Me.Width - lblRemoteDirectory.Left - 20
+        lblRemoteDirectory.Text = ShortenPathToFit(lblRemoteDirectory, $"Source GPX folder: {ActiveCategoryInfo.RemoteDirectory}")
+        ToolTip1.SetToolTip(lblRemoteDirectory, ActiveCategoryInfo.RemoteDirectory)  ' tady jde celá cesta
+
         Dim resources = New ComponentResourceManager(Me.GetType())
         LocalizeMenuItems(MenuStrip1.Items, resources)
         SetTooltips()
@@ -618,8 +635,6 @@ Partial Class Form1
     Friend WithEvents MenuStrip1 As MenuStrip
     Friend WithEvents mnuFile As ToolStripMenuItem
     Friend WithEvents mnuSelect_directory_gpx_files As ToolStripMenuItem
-    Friend WithEvents StatusStrip1 As StatusStrip
-    Friend WithEvents StatusLabel1 As ToolStripStatusLabel
     Friend WithEvents mnuGPXprocessing As ToolStripMenuItem
     Friend WithEvents mnuPrependDateToFileName As ToolStripMenuItem
     Friend WithEvents mnuLanguage As ToolStripMenuItem
@@ -674,6 +689,10 @@ Partial Class Form1
     Friend WithEvents pnlForDgv As Panel
     Friend WithEvents ToolStrCategorySettings As ToolStrip
     Friend WithEvents btnEditPoints As ToolStripButton
+    Friend WithEvents mnuOpenLocalFolder As ToolStripMenuItem
+    Friend WithEvents pnlCategory As Panel
+    Friend WithEvents cbActiveCategory As ComboBox
+    Friend WithEvents lblRemoteDirectory As Label
 
 
 End Class

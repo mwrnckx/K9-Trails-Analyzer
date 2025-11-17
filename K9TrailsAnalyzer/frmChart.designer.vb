@@ -36,13 +36,13 @@ Partial Class frmChart
         ' 
         ' chart1
         ' 
-        chart1.BackColor = Color.Beige
+        chart1.BackColor = color.lightyellow
         ChartArea2.AxisX.LabelStyle.Font = New Font("Cascadia Code SemiBold", 12F)
         ChartArea2.AxisX.TitleFont = New Font("Cascadia Code SemiBold", 12F)
         ChartArea2.AxisY.LabelStyle.Font = New Font("Cascadia Code SemiBold", 12F)
         ChartArea2.AxisY.Minimum = 0R
         ChartArea2.AxisY.TitleFont = New Font("Cascadia Code SemiBold", 12F)
-        ChartArea2.BackColor = Color.Beige
+        ChartArea2.BackColor = color.lightyellow
         ChartArea2.Name = "ChartArea1"
         chart1.ChartAreas.Add(ChartArea2)
         chart1.Dock = DockStyle.Fill
@@ -57,7 +57,7 @@ Partial Class frmChart
         ' 
         ' MenuStrip1
         ' 
-        MenuStrip1.BackColor = Color.Beige
+        MenuStrip1.BackColor = color.lightyellow
         MenuStrip1.ImageScalingSize = New Size(24, 24)
         MenuStrip1.Items.AddRange(New ToolStripItem() {SaveAsToolStripMenuItem})
         MenuStrip1.Location = New Point(0, 0)

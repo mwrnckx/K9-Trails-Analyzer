@@ -143,8 +143,8 @@ Partial Public Class Form1
                 .RunnerFoundPoints = stats.PointsInMTCompetition.RunnerFoundPoints,
                 .DogSpeedPoints = stats.PointsInMTCompetition.DogSpeedPoints,
                 .DogAccuracyPoints = stats.PointsInMTCompetition.DogAccuracyPoints,
-                .earlyPickupPoints = stats.PointsInMTCompetition.EarlyPickupPoints,
-                .dogReadingPoints = stats.PointsInMTCompetition.DogReadingPoints
+                .TrailPickupPoints = stats.PointsInMTCompetition.TrailPickupPoints,
+                .DogReadingPoints = stats.PointsInMTCompetition.DogReadingPoints
                  })
 
             Dim displayItem = displayList.Last()
@@ -218,14 +218,18 @@ Partial Public Class Form1
                 Case NameOf(TrailStatsDisplay.DogAccuracyPoints)
                     pointsStruct.DogAccuracyPoints = changedItem.DogAccuracyPoints
 
-                Case NameOf(TrailStatsDisplay.dogReadingPoints)
-                    pointsStruct.DogReadingPoints = changedItem.dogReadingPoints
+                Case NameOf(TrailStatsDisplay.DogReadingPoints)
+                    pointsStruct.DogReadingPoints = changedItem.DogReadingPoints
+
+                Case NameOf(TrailStatsDisplay.TrailPickupPoints)
+                    pointsStruct.TrailPickupPoints = changedItem.TrailPickupPoints
 
                 Case NameOf(TrailStatsDisplay.DogName)
                     pointsStruct.dogName = changedItem.DogName
 
                 Case NameOf(TrailStatsDisplay.HandlerName)
                     pointsStruct.handlerName = changedItem.HandlerName
+
                 Case Else
                     Return 'není třeba nic zapisovat, proto return
             End Select
@@ -360,7 +364,7 @@ Partial Public Class Form1
 
         Dim columnsPointsData As String() = {
     "TotalPoints",
-    "earlyPickUpPoints",
+    "TrailPickupPoints",
     "RunnerFoundPoints",
    "DogSpeedPoints",
         "DogAccuracyPoints",
@@ -1097,9 +1101,6 @@ Partial Public Class Form1
 
         End If
 
-
-        StatusLabel1.Text = $"GPX files downloaded from: {ZkratCestu(ActiveCategoryInfo.RemoteDirectory, 130)}" & vbCrLf & $"Video exported to: {ZkratCestu(My.Settings.VideoDirectory, 130)}"
-
     End Sub
 
 
@@ -1118,6 +1119,40 @@ Partial Public Class Form1
 
         Return zacatek & "  ...  " & konec
     End Function
+
+    Private Function ShortenPathToFit(control As Control, fullPath As String) As String
+        Dim ellipsis As String = " … "
+
+        ' Změříme, jestli se celý text vejde
+        Dim fullSize = TextRenderer.MeasureText(fullPath, control.Font)
+        If fullSize.Width <= control.Width Then
+            Return fullPath
+        End If
+
+        ' Když se nevejde, postupně zkracujeme střed
+        Dim leftPart As Integer = fullPath.Length \ 2
+        Dim rightPart As Integer = fullPath.Length - leftPart
+
+        While leftPart > 1 And rightPart > 1
+            Dim leftPartText As String = (fullPath.Substring(0, leftPart))
+            Dim rightPartText As String = (fullPath.Substring(fullPath.Length - rightPart))
+            Dim candidate = leftPartText &
+                        ellipsis &
+                       rightPartText
+
+            Dim candSize = TextRenderer.MeasureText(candidate, control.Font)
+            If candSize.Width <= control.Width Then
+                Return candidate
+            End If
+
+            leftPart -= 1
+            rightPart -= 1
+        End While
+
+        ' Nouzovka – kdyby bylo okno extrémně malé
+        Return ellipsis
+    End Function
+
 
     Private Sub mnuMergingTracks_Click(sender As Object, e As EventArgs) Handles mnuMergingTracks.Click
         Dim message, title, defaultValue As String
@@ -1242,9 +1277,11 @@ Partial Public Class Form1
     ' ----- naplnění ToolStripComboBoxu objekty CategoryInfo -----
     Private Sub PopulateCategoriesToolStrip()
         mnucbActiveCategory.ComboBox.Items.Clear()
+        cbActiveCategory.Items.Clear()
 
         For Each d As CategoryInfo In CategoriesInfo
             mnucbActiveCategory.ComboBox.Items.Add(d) ' zobrazí se Name díky ToString()
+            cbActiveCategory.Items.Add(d)
         Next
 
         ' pokud je nastaven ActiveCategoryId, vyber ho; jinak vyber první
@@ -1257,9 +1294,17 @@ Partial Public Class Form1
                     Exit For
                 End If
             Next
+            For i As Integer = 0 To cbActiveCategory.Items.Count - 1
+                Dim item As CategoryInfo = CType(cbActiveCategory.Items(i), CategoryInfo)
+                If item.Id = ActiveCategoryId Then
+                    selectedIndex = i
+                    Exit For
+                End If
+            Next i
         End If
 
         If selectedIndex = -1 AndAlso mnucbActiveCategory.ComboBox.Items.Count > 0 Then selectedIndex = 0
+        If selectedIndex = -1 AndAlso cbActiveCategory.Items.Count > 0 Then selectedIndex = 0
 
         If selectedIndex >= 0 Then
             mnucbActiveCategory.ComboBox.SelectedIndex = selectedIndex
@@ -1267,16 +1312,22 @@ Partial Public Class Form1
             Dim sel = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, CategoryInfo)
             If sel IsNot Nothing Then
                 ActiveCategoryId = sel.Id
-                'lblActiveDog.Text = $"Aktivní pes: {sel.Name} ({sel.Id})"
             End If
-        Else
-            'lblActiveDog.Text = "Aktivní pes: (není)"
+        End If
+        If selectedIndex >= 0 Then
+            cbActiveCategory.SelectedIndex = selectedIndex
+            ' zajistí, že ActiveCategoryId drží hodnotu
+            Dim sel = TryCast(cbActiveCategory.SelectedItem, CategoryInfo)
+            If sel IsNot Nothing Then
+                ActiveCategoryId = sel.Id
+            End If
         End If
     End Sub
 
     ' ----- handler při změně výběru v ToolStripComboBoxu -----
-    Private Sub mnucbActiveCategory_SelectedIndexChanged(sender As Object, e As EventArgs) Handles mnucbActiveCategory.SelectedIndexChanged
+    Private Sub cbActiveCategory_SelectedIndexChanged(sender As Object, e As EventArgs) Handles mnucbActiveCategory.SelectedIndexChanged, cbActiveCategory.SelectedIndexChanged
         Dim selected = TryCast(mnucbActiveCategory.ComboBox.SelectedItem, CategoryInfo)
+        selected = TryCast(cbActiveCategory.SelectedItem, CategoryInfo)
         If selected Is Nothing Then Return
         SetScrollState(1, selected.Id) ' nastavíme scroll state pro aktivního psa
         ActiveCategoryId = selected.Id
@@ -1290,6 +1341,13 @@ Partial Public Class Form1
         lvGpxFiles.Items.Clear()
         Me.btnCharts.Visible = False
         Me.rtbOutput.Clear()
+        Me.TabControl1.SelectedIndex = 0
+        'Me.btnReadGpxFiles_Click(Nothing, Nothing) ' načteme gpx soubory pro nově vybranou kategorii
+
+        lblRemoteDirectory.Width = Me.Width - lblRemoteDirectory.Left - 20
+        lblRemoteDirectory.Text = ShortenPathToFit(lblRemoteDirectory, $"Source GPX folder: {ActiveCategoryInfo.RemoteDirectory}")
+        ToolTip1.SetToolTip(lblRemoteDirectory, ActiveCategoryInfo.RemoteDirectory)  ' tady jde celá cesta
+
     End Sub
 
     ' ----- příklad: přidání nového psa (mnuAddNewCategory click) -----
@@ -1335,6 +1393,10 @@ Partial Public Class Form1
         For i As Integer = 0 To mnucbActiveCategory.ComboBox.Items.Count - 1
             Dim d As CategoryInfo = CType(mnucbActiveCategory.ComboBox.Items(i), CategoryInfo)
             If d.Id = newId Then mnucbActiveCategory.ComboBox.SelectedIndex = i : Exit For
+        Next
+        For i As Integer = 0 To cbActiveCategory.Items.Count - 1
+            Dim d As CategoryInfo = CType(cbActiveCategory.Items(i), CategoryInfo)
+            If d.Id = newId Then cbActiveCategory.SelectedIndex = i : Exit For
         Next
 
         MessageBox.Show($"Category '{categoryName}' added with ID {newId}.", "Done", MessageBoxButtons.OK, MessageBoxIcon.Information)
@@ -1443,7 +1505,7 @@ Partial Public Class Form1
             ' Pro test: vypiš vybrané cesty
             Debug.WriteLine(record)
             Try
-                record.Description = record.BuildLocalisedDescription(record.Description) 'async kvůli počasí!
+                record.Description = record.BuildLocalisedDescAndReports(record.Description) 'async kvůli počasí!
                 record.WriteDescription() 'zapíše agregovaný popis do tracku Runner
                 record.BuildLocalisedPerformancePoints()
                 record.WriteLocalizedReports() 'zapíše popis do DogTracku
@@ -1724,7 +1786,7 @@ Partial Public Class Form1
 
     Private Sub RecalculateScoreAndSave()
 
-        Dim waitForm As New frmPleaseWait("I'm reading GPX files, please stand by...")
+        Dim waitForm As New frmPleaseWait("Please stand by...")
         waitForm.Show()
         waitForm.Refresh()
 
@@ -1754,7 +1816,19 @@ Partial Public Class Form1
         End If
     End Sub
 
+    Private Sub OpenLocalDirectoryWithGpxFilesToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles mnuOpenLocalFolder.Click
+        Dim localGPXDirectory = Me.ActiveCategoryInfo.ProcessedDirectory
+        'Process.Start("explorer.exe", folderPath)
+        Process.Start("explorer.exe", localGPXDirectory)
+    End Sub
 
+    Private Sub TabControl1_SelectedIndexChanged(sender As Object, e As EventArgs) Handles TabControl1.SelectedIndexChanged
+        If sender.selectedTab Is TabStats Then
+            rtbWarnings.Visible = True
+        Else
+            rtbWarnings.Visible = False
+        End If
+    End Sub
 End Class
 
 ''' <summary>
@@ -1789,7 +1863,7 @@ Public Class TrailStatsDisplay
     Private _dogSpeedPoints As Integer
     Private _dogAccuracyPoints As Integer
     Private _dogReadingPoints As Integer
-    Private _earlyPickupPoints As Integer
+    Private _TrailPickupPoints As Integer
     Private _totalPoints As Integer
     Private _DogName As String ' Přidáme i DogName, protože to je editovatelný sloupec
     Private _HandlerName As String
@@ -1854,7 +1928,7 @@ Public Class TrailStatsDisplay
     ' 1. VLASTNOSTI, KTERÉ MŮŽE UŽIVATEL EDITOVAT:
     ' U těchto vlastností přidáme logiku INotifyPropertyChanged a automatický přepočet
 
-    <DisplayName("Successful Find Points")>
+    <DisplayName("Subject Found Points")>
     Public Property RunnerFoundPoints As Integer
         Get
             Return _runnerFoundPoints
@@ -1902,28 +1976,28 @@ Public Class TrailStatsDisplay
     End Property
 
     <DisplayName("Dog Reading Points")>
-    Public Property dogReadingPoints As Integer
+    Public Property DogReadingPoints As Integer
         Get
             Return _dogReadingPoints
         End Get
         Set(value As Integer)
             If _dogReadingPoints <> value Then
                 _dogReadingPoints = value
-                OnPropertyChanged(NameOf(dogReadingPoints))
+                OnPropertyChanged(NameOf(DogReadingPoints))
                 CalculateTotalPoints()
             End If
         End Set
     End Property
 
-    <DisplayName("Early Pickup Points")>
-    Public Property earlyPickupPoints As Integer
+    <DisplayName("Trail Pick-up Points")>
+    Public Property TrailPickupPoints As Integer
         Get
-            Return _earlyPickupPoints
+            Return _TrailPickupPoints
         End Get
         Set(value As Integer)
-            If _earlyPickupPoints <> value Then
-                _earlyPickupPoints = value
-                OnPropertyChanged(NameOf(earlyPickupPoints))
+            If _TrailPickupPoints <> value Then
+                _TrailPickupPoints = value
+                OnPropertyChanged(NameOf(TrailPickupPoints))
                 CalculateTotalPoints()
             End If
         End Set
@@ -1987,7 +2061,7 @@ Public Class TrailStatsDisplay
     ' 3. METODA PRO PŘEPOČET
 
     Public Sub CalculateTotalPoints()
-        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.dogReadingPoints + Me.earlyPickupPoints
+        Dim newTotal As Integer = Me.RunnerFoundPoints + Me.DogSpeedPoints + Me.DogAccuracyPoints + Me.DogReadingPoints + Me.TrailPickupPoints
 
         ' Nastavíme novou hodnotu, ale pouze pokud se liší, abychom zamezili zbytečným notifikacím
         If _totalPoints <> newTotal Then
@@ -2050,8 +2124,8 @@ Public Class CategoryInfo
     <JsonPropertyName("PointsForDogReadingMax")>
     Public Property PointsForDogReadingMax As Integer = 100
 
-    <JsonPropertyName("PointsForEarlyPickUpMax")>
-    Public Property PointsForEarlyPickUpMax As Integer = 100
+    <JsonPropertyName("PointsForTrailPickupMax")>
+    Public Property PointsForTrailPickupMax As Integer = 100
 
 
     <JsonIgnore>

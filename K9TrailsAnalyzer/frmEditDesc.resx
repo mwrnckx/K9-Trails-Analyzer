@@ -132,7 +132,9 @@
     <value>0</value>
   </data>
   <data name="lblInfo.Text" xml:space="preserve">
-    <value>Edit the comments to the training sesion. These comments will be saved in the GPX file and displayed in applications such as gpxsee.org and overlay videos. If you are writing the comments in your GPS app, add 'g:' before the description of the goal, 't:' before the description of the trail and 'p:' before the evaluation of the team work. If you would like to add another translation, press the 'Add another language' button. Otherwise, click 'OK'.</value>
+    <value>Edit the comments to the training sesion.  
+If you are writing the comments in your GPS app, add 'g:' before the description of the goal, 't:' before the description of the trail and 'p:' before the evaluation of the team's performance. If you would like to add another translation, press the 'Add another language' button. 
+Otherwise, click 'OK'.</value>
   </data>
   <data name="lblInfo.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>BottomLeft</value>
@@ -147,7 +149,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblInfo.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>14</value>
   </data>
   <data name="lblPerformance.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -177,7 +179,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblPerformance.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>13</value>
   </data>
   <data name="lblTrail.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -207,7 +209,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblTrail.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>11</value>
   </data>
   <data name="lblGoal.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -237,7 +239,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblGoal.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>10</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -250,10 +252,10 @@
     <value>Segoe UI, 14pt, style=Bold</value>
   </data>
   <data name="btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>685, 439</value>
+    <value>739, 439</value>
   </data>
   <data name="btnOK.Size" type="System.Drawing.Size, System.Drawing">
-    <value>134, 60</value>
+    <value>80, 60</value>
   </data>
   <data name="btnOK.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -271,7 +273,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnOK.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>9</value>
   </data>
   <data name="btnAnotherLang.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -286,10 +288,10 @@
     <value>NoControl</value>
   </data>
   <data name="btnAnotherLang.Location" type="System.Drawing.Point, System.Drawing">
-    <value>512, 439</value>
+    <value>593, 439</value>
   </data>
   <data name="btnAnotherLang.Size" type="System.Drawing.Size, System.Drawing">
-    <value>167, 60</value>
+    <value>134, 60</value>
   </data>
   <data name="btnAnotherLang.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -307,7 +309,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;btnAnotherLang.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>8</value>
   </data>
   <data name="lblLanguage.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -319,7 +321,7 @@
     <value>NoControl</value>
   </data>
   <data name="lblLanguage.Location" type="System.Drawing.Point, System.Drawing">
-    <value>239, 478</value>
+    <value>485, 439</value>
   </data>
   <data name="lblLanguage.Size" type="System.Drawing.Size, System.Drawing">
     <value>91, 21</value>
@@ -340,13 +342,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;lblLanguage.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>12</value>
   </data>
   <data name="ComboBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>357, 470</value>
+    <value>507, 470</value>
   </data>
   <data name="ComboBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>121, 29</value>
+    <value>69, 29</value>
   </data>
   <data name="ComboBox1.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -361,7 +363,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;ComboBox1.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>7</value>
   </data>
   <data name="txtGoal.Location" type="System.Drawing.Point, System.Drawing">
     <value>34, 209</value>
@@ -388,7 +390,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtGoal.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>6</value>
   </data>
   <data name="txtPerformance.Location" type="System.Drawing.Point, System.Drawing">
     <value>34, 374</value>
@@ -415,7 +417,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtPerformance.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>5</value>
   </data>
   <data name="txtTrail.Location" type="System.Drawing.Point, System.Drawing">
     <value>34, 291</value>
@@ -442,6 +444,105 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;txtTrail.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="lblDogName.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblDogName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 439</value>
+  </data>
+  <data name="lblDogName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>91, 21</value>
+  </data>
+  <data name="lblDogName.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="lblDogName.Text" xml:space="preserve">
+    <value>Dog name:</value>
+  </data>
+  <data name="&gt;&gt;lblDogName.Name" xml:space="preserve">
+    <value>lblDogName</value>
+  </data>
+  <data name="&gt;&gt;lblDogName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblDogName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblDogName.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="lblHandlerName.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="lblHandlerName.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="lblHandlerName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>34, 478</value>
+  </data>
+  <data name="lblHandlerName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 21</value>
+  </data>
+  <data name="lblHandlerName.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="lblHandlerName.Text" xml:space="preserve">
+    <value>Handler name:</value>
+  </data>
+  <data name="&gt;&gt;lblHandlerName.Name" xml:space="preserve">
+    <value>lblHandlerName</value>
+  </data>
+  <data name="&gt;&gt;lblHandlerName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblHandlerName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;lblHandlerName.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="txtDogName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>176, 437</value>
+  </data>
+  <data name="txtDogName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 26</value>
+  </data>
+  <data name="txtDogName.TabIndex" type="System.Int32, mscorlib">
+    <value>17</value>
+  </data>
+  <data name="&gt;&gt;txtDogName.Name" xml:space="preserve">
+    <value>txtDogName</value>
+  </data>
+  <data name="&gt;&gt;txtDogName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtDogName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtDogName.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="txtHandlerName.Location" type="System.Drawing.Point, System.Drawing">
+    <value>176, 475</value>
+  </data>
+  <data name="txtHandlerName.Size" type="System.Drawing.Size, System.Drawing">
+    <value>218, 26</value>
+  </data>
+  <data name="txtHandlerName.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="&gt;&gt;txtHandlerName.Name" xml:space="preserve">
+    <value>txtHandlerName</value>
+  </data>
+  <data name="&gt;&gt;txtHandlerName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;txtHandlerName.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;txtHandlerName.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">

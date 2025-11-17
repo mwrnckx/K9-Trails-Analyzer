@@ -200,10 +200,10 @@
     <value>Русский</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Vyber adresář s gpx soubory</value>
+    <value>Vyber zdrojovou složku s GPX soubory</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>Vyber adresář ve kterém jsou gpx soubory aktuální kategorie</value>
+    <value>Vyber složku ze které se mají stáhnout gpx soubory aktuální kategorie</value>
   </data>
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Upravit název kategorie</value>
@@ -387,5 +387,11 @@
   </data>
   <data name="btnEditPoints.ToolTipText" xml:space="preserve">
     <value>Odstraní změny provedené uživatelem nebo přepočítá, když se změní pravidla hodnocení</value>
+  </data>
+  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
+    <value>Otevři místní složku s GPX soubory</value>
+  </data>
+  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
+    <value>Otevře místní složku v Průzkumníkovi</value>
   </data>
 </root>

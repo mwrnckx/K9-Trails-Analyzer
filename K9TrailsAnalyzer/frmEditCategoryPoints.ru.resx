@@ -135,4 +135,10 @@
   <data name="lblFind.Text" xml:space="preserve">
     <value>Найден бегун – максимальное количество очков:</value>
   </data>
+  <data name="btnOK.Text" xml:space="preserve">
+    <value>Сохранить и пересчитать</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
 </root>

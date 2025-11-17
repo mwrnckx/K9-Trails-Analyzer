@@ -135,4 +135,10 @@
   <data name="lblAcc.Text" xml:space="preserve">
     <value>Genauigkeit – Maximale Punktzahl:</value>
   </data>
+  <data name="btnOK.Text" xml:space="preserve">
+    <value>Speichern und neu berechnen</value>
+  </data>
+  <data name="btnCancel.Text" xml:space="preserve">
+    <value>Stornieren</value>
+  </data>
 </root>

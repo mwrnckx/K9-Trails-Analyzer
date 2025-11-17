@@ -38,7 +38,8 @@ From version **1.0.26**, the application also includes a **scoring system**, sui
   - Finding the trail layer  
   - Working speed  
   - Tracking accuracy  
-  - Reading the dog’s signals  
+  - Reading the dog’s signals 
+  - Trail pick-up (discrimination)
 
 - **📊 Data Export**  
   Exports results to **CSV**, **TXT**, or **RTF** formats – suitable for printing or further analysis in Excel.

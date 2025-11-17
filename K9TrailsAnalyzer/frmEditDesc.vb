@@ -4,13 +4,14 @@ Imports System.Windows.Forms.VisualStyles.VisualStyleElement
 Imports TrackVideoExporter
 
 Public Class frmEditComments
-    Public Property Category As String
+    'Public Property Category As String
     Public Property TrailDescription As TrailReport
     Public Property GoalPart As String
     Public Property TrailPart As String
     Public Property DogPart As String
     Public Property Language As String = CultureInfo.CurrentCulture.TwoLetterISOLanguageName.ToLowerInvariant()
     Public Property GpxFileName As String
+    Public Property HandlerName As String
 
 
     'Public ReadOnly Property AllPartsyy As TrailReport
@@ -65,6 +66,8 @@ Public Class frmEditComments
         txtGoal.Text = Me.TrailDescription.Goal.Text
         txtTrail.Text = Me.TrailDescription.Trail.Text
         txtPerformance.Text = Me.TrailDescription.Performance.Text
+        txtDogName.Text = Me.TrailDescription.DogName.Text
+        txtHandlerName.Text = Me.HandlerName
         If Language IsNot Nothing Then
             ' Pokud je jazyk nastaven, zablokujeme conmbo!
             Me.ComboBox1.Enabled = False
@@ -92,6 +95,10 @@ Public Class frmEditComments
         Me.TrailDescription.GoalText = txtGoal.Text
         Me.TrailDescription.TrailText = txtTrail.Text
         Me.TrailDescription.PerformanceText = txtPerformance.Text
+        Me.TrailDescription.DogNameText = txtDogName.Text ' 
+        Me.TrailDescription.HandlerNameText = txtHandlerName.Text '
+        Me.TrailDescription.DogName.Text = txtDogName.Text
+        Me.HandlerName = txtHandlerName.Text
         If Me.Language Is Nothing Then
             Me.Language = ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() ' Uloží vybraný jazyk
         ElseIf Me.Language <> ComboBox1.SelectedItem?.ToString()?.ToLowerInvariant() Then

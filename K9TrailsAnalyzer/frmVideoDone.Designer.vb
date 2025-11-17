@@ -84,7 +84,7 @@ Partial Class frmVideoDone
         ' 
         AutoScaleDimensions = New SizeF(12.0F, 28.0F)
         AutoScaleMode = AutoScaleMode.Font
-        BackColor = Color.Beige
+        BackColor = color.lightyellow
         BackgroundImageLayout = ImageLayout.Zoom
         ClientSize = New Size(731, 404)
         Controls.Add(btnClose)

@@ -34,10 +34,15 @@ Partial Class frmEditComments
         txtGoal = New TextBox()
         txtPerformance = New TextBox()
         txtTrail = New TextBox()
+        lblDogName = New Label()
+        lblHandlerName = New Label()
+        txtDogName = New TextBox()
+        txtHandlerName = New TextBox()
         SuspendLayout()
         ' 
         ' lblInfo
         ' 
+        lblInfo.BackColor = Color.LightYellow
         resources.ApplyResources(lblInfo, "lblInfo")
         lblInfo.Name = "lblInfo"
         ' 
@@ -99,11 +104,35 @@ Partial Class frmEditComments
         resources.ApplyResources(txtTrail, "txtTrail")
         txtTrail.Name = "txtTrail"
         ' 
+        ' lblDogName
+        ' 
+        resources.ApplyResources(lblDogName, "lblDogName")
+        lblDogName.Name = "lblDogName"
+        ' 
+        ' lblHandlerName
+        ' 
+        resources.ApplyResources(lblHandlerName, "lblHandlerName")
+        lblHandlerName.Name = "lblHandlerName"
+        ' 
+        ' txtDogName
+        ' 
+        resources.ApplyResources(txtDogName, "txtDogName")
+        txtDogName.Name = "txtDogName"
+        ' 
+        ' txtHandlerName
+        ' 
+        resources.ApplyResources(txtHandlerName, "txtHandlerName")
+        txtHandlerName.Name = "txtHandlerName"
+        ' 
         ' frmEditComments
         ' 
         resources.ApplyResources(Me, "$this")
         AutoScaleMode = AutoScaleMode.Font
-        BackColor = Color.Beige
+        BackColor = Color.LightYellow
+        Controls.Add(txtHandlerName)
+        Controls.Add(txtDogName)
+        Controls.Add(lblHandlerName)
+        Controls.Add(lblDogName)
         Controls.Add(txtTrail)
         Controls.Add(txtPerformance)
         Controls.Add(txtGoal)
@@ -132,4 +161,8 @@ Partial Class frmEditComments
     Friend WithEvents txtGoal As TextBox
     Friend WithEvents txtPerformance As TextBox
     Friend WithEvents txtTrail As TextBox
+    Friend WithEvents lblDogName As Label
+    Friend WithEvents lblHandlerName As Label
+    Friend WithEvents txtDogName As TextBox
+    Friend WithEvents txtHandlerName As TextBox
 End Class

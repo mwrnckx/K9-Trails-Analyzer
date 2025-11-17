@@ -43,3 +43,4 @@ This project is designed to assist dog handlers/trainers/competition organizers 
 # Scoring in mantrailing/practical tracking competitions: 
 <a href="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/Scoring.png"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/Scoring.png" width="350"></a>
 <a href="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/en-Points.png"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/en-Points.png" width="350"></a>
+<a href="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/EditScoringRules.png"><img src="https://github.com/mwrnckx/K9-Trails-Analyzer/blob/master/Docs/Screenshots/EditScoringRules.png" width="350"></a>

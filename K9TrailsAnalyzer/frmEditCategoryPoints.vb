@@ -11,7 +11,7 @@
         numSpeed.Value = CDec(_categoryInfo.PointsPerKmhGrossSpeed)
         numAcc.Value = _categoryInfo.PointsForAccuracyMax
         numRead.Value = _categoryInfo.PointsForDogReadingMax
-        numPick.Value = _categoryInfo.PointsForEarlyPickUpMax
+        numPick.Value = _categoryInfo.PointsForTrailPickupMax
     End Sub
 
     Private Sub btnOK_Click(sender As Object, e As EventArgs) Handles btnOK.Click
@@ -19,7 +19,7 @@
         _categoryInfo.PointsPerKmhGrossSpeed = CDbl(numSpeed.Value)
         _categoryInfo.PointsForAccuracyMax = CInt(numAcc.Value)
         _categoryInfo.PointsForDogReadingMax = CInt(numRead.Value)
-        _categoryInfo.PointsForEarlyPickUpMax = CInt(numPick.Value)
+        _categoryInfo.PointsForTrailPickupMax = CInt(numPick.Value)
 
         Me.DialogResult = DialogResult.OK
     End Sub

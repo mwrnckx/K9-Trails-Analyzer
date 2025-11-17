@@ -117,22 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="lblInfo.Text" xml:space="preserve">
-    <value>Upravte komentáře k tréninku. Tyto komentáře budou uloženy v souboru GPX a zobrazeny v overlay videu. Pokud píšete komentáře ve své aplikaci GPS, přidejte 'g:' před popisem cíle, 't:' před popisem trailu a 'p:' před popisem práce psa.  Pokud chcete přidat další překlad, stiskněte tlačítko "Přidat další jazyk". V opačném případě klikněte na tlačítko 'OK'.</value>
+  <data name="Accuracy" xml:space="preserve">
+    <value>Dokładność</value>
   </data>
-  <data name="lblGoal.Text" xml:space="preserve">
-    <value>Cíl tréninku:</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>Upravit komentáře</value>
-  </data>
-  <data name="lblPerformance.Text" xml:space="preserve">
-    <value>Práce týmu:</value>
-  </data>
-  <data name="btnAnotherLang.Text" xml:space="preserve">
-    <value>Přidejte další jazyk</value>
-  </data>
-  <data name="lblLanguage.Text" xml:space="preserve">
-    <value>Jazyk:</value>
+  <data name="Scoring" xml:space="preserve">
+    <value>Punktacja</value>
   </data>
 </root>

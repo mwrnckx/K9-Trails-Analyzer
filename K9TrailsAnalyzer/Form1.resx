@@ -120,62 +120,23 @@
   <metadata name="ToolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>202, 17</value>
   </metadata>
-  <metadata name="StatusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>478, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="StatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>54, 17</value>
-  </data>
-  <data name="StatusLabel1.Text" xml:space="preserve">
-    <value>ToolStrip</value>
-  </data>
-  <data name="StatusLabel1.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
-    <value>MiddleLeft</value>
-  </data>
-  <data name="StatusLabel1.ToolTipText" xml:space="preserve">
-    <value>Directories can be set in the "File" menu</value>
-  </data>
-  <data name="StatusStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 567</value>
-  </data>
-  <data name="StatusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 22</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="StatusStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>28</value>
-  </data>
-  <data name="StatusStrip1.ToolTip" xml:space="preserve">
-    <value>Directories can be set in the "File" menu</value>
-  </data>
-  <data name="&gt;&gt;StatusStrip1.Name" xml:space="preserve">
-    <value>StatusStrip1</value>
-  </data>
-  <data name="&gt;&gt;StatusStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;StatusStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;StatusStrip1.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCreateVideos.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCreateVideos.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="btnCreateVideos.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
     <value>Flat</value>
   </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="btnCreateVideos.Font" type="System.Drawing.Font, System.Drawing">
     <value>Cascadia Code, 10pt, style=Bold</value>
   </data>
   <data name="btnCreateVideos.Location" type="System.Drawing.Point, System.Drawing">
-    <value>780, 323</value>
+    <value>814, 334</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="btnCreateVideos.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
@@ -203,6 +164,33 @@
     <value>TabVideoExport</value>
   </data>
   <data name="&gt;&gt;btnCreateVideos.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="lblRemoteDirectory.Location" type="System.Drawing.Point, System.Drawing">
+    <value>4, 36</value>
+  </data>
+  <data name="lblRemoteDirectory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>163, 21</value>
+  </data>
+  <data name="lblRemoteDirectory.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="lblRemoteDirectory.Text" xml:space="preserve">
+    <value>Remote gpx folder</value>
+  </data>
+  <data name="lblRemoteDirectory.ToolTip" xml:space="preserve">
+    <value>RemoteFolderPath</value>
+  </data>
+  <data name="&gt;&gt;lblRemoteDirectory.Name" xml:space="preserve">
+    <value>lblRemoteDirectory</value>
+  </data>
+  <data name="&gt;&gt;lblRemoteDirectory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lblRemoteDirectory.Parent" xml:space="preserve">
+    <value>pnlCategory</value>
+  </data>
+  <data name="&gt;&gt;lblRemoteDirectory.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="MenuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -262,6 +250,9 @@
   <data name="mnucbActiveCategory.Size" type="System.Drawing.Size, System.Drawing">
     <value>360, 33</value>
   </data>
+  <data name="mnucbActiveCategory.Visible" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="mnuSelectADirectoryToSaveVideo.Size" type="System.Drawing.Size, System.Drawing">
     <value>388, 22</value>
   </data>
@@ -290,34 +281,43 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuFile.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 33</value>
+    <value>52, 22</value>
   </data>
   <data name="mnuFile.Text" xml:space="preserve">
     <value>File</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.Text" xml:space="preserve">
-    <value>Select directory with gpx files</value>
+    <value>Select source GPX folder</value>
   </data>
   <data name="mnuSelect_directory_gpx_files.ToolTipText" xml:space="preserve">
-    <value>Select the directory where the gpx files of the current category are</value>
+    <value>Select the folder from where download the gpx files of the current category</value>
+  </data>
+  <data name="mnuOpenLocalFolder.Size" type="System.Drawing.Size, System.Drawing">
+    <value>268, 22</value>
+  </data>
+  <data name="mnuOpenLocalFolder.Text" xml:space="preserve">
+    <value>Open local GPX folder</value>
+  </data>
+  <data name="mnuOpenLocalFolder.ToolTipText" xml:space="preserve">
+    <value>Opens the local folder in Explorer</value>
   </data>
   <data name="mnuRenameCurrentCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuRenameCurrentCategory.Text" xml:space="preserve">
     <value>Edit category name</value>
   </data>
   <data name="mnuAddNewCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuAddNewCategory.Text" xml:space="preserve">
     <value>Add another category</value>
   </data>
   <data name="mnuDeleteCurrentCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>324, 22</value>
+    <value>268, 22</value>
   </data>
   <data name="mnuDeleteCurrentCategory.Text" xml:space="preserve">
     <value>Delete current category</value>
@@ -326,7 +326,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuCategory.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 33</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuCategory.Text" xml:space="preserve">
     <value>Category Settings</value>
@@ -362,43 +362,43 @@
     <value>Factory reset</value>
   </data>
   <data name="mnuHelp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>52, 33</value>
+    <value>52, 22</value>
   </data>
   <data name="mnuHelp.Text" xml:space="preserve">
     <value>Help</value>
   </data>
   <data name="mnuEnglish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuEnglish.Text" xml:space="preserve">
     <value>English</value>
   </data>
   <data name="mnuGerman.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuGerman.Text" xml:space="preserve">
     <value>Deutch</value>
   </data>
   <data name="mnuCzech.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuCzech.Text" xml:space="preserve">
     <value>Česky</value>
   </data>
   <data name="mnuUkrainian.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuUkrainian.Text" xml:space="preserve">
     <value>Українська</value>
   </data>
   <data name="mnuPolish.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuPolish.Text" xml:space="preserve">
     <value>Polski</value>
   </data>
   <data name="mnuRussian.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>156, 22</value>
   </data>
   <data name="mnuRussian.Text" xml:space="preserve">
     <value>Русский</value>
@@ -407,7 +407,7 @@
     <value>Cascadia Code, 10pt</value>
   </data>
   <data name="mnuLanguage.Size" type="System.Drawing.Size, System.Drawing">
-    <value>84, 33</value>
+    <value>84, 22</value>
   </data>
   <data name="mnuLanguage.Text" xml:space="preserve">
     <value>Language</value>
@@ -419,7 +419,7 @@
     <value>5, 1, 0, 1</value>
   </data>
   <data name="MenuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 35</value>
+    <value>984, 24</value>
   </data>
   <data name="MenuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>27</value>
@@ -449,13 +449,13 @@
     <value>Cascadia Code SemiBold, 10pt, style=Bold</value>
   </data>
   <data name="rtbWarnings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 451</value>
+    <value>0, 497</value>
   </data>
   <data name="rtbWarnings.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>4, 4, 4, 4</value>
   </data>
   <data name="rtbWarnings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 116</value>
+    <value>984, 92</value>
   </data>
   <data name="rtbWarnings.TabIndex" type="System.Int32, mscorlib">
     <value>31</value>
@@ -473,7 +473,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;rtbWarnings.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <data name="rtbOutput.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -728,7 +728,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabStats.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 382</value>
+    <value>976, 472</value>
   </data>
   <data name="TabStats.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -747,9 +747,6 @@
   </data>
   <data name="&gt;&gt;TabStats.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="lvGpxFiles.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="clmFileName.Text" xml:space="preserve">
     <value>File</value>
@@ -770,7 +767,7 @@
     <value>80</value>
   </data>
   <data name="clmAge.Text" xml:space="preserve">
-    <value>Age </value>
+    <value>Age</value>
   </data>
   <data name="clmAge.Width" type="System.Int32, mscorlib">
     <value>80</value>
@@ -781,14 +778,17 @@
   <data name="clmTrkCount.Width" type="System.Int32, mscorlib">
     <value>180</value>
   </data>
+  <data name="lvGpxFiles.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Fill</value>
+  </data>
   <data name="lvGpxFiles.Location" type="System.Drawing.Point, System.Drawing">
-    <value>-3, 0</value>
+    <value>3, 2</value>
   </data>
   <data name="lvGpxFiles.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 2, 3, 2</value>
   </data>
   <data name="lvGpxFiles.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 388</value>
+    <value>970, 468</value>
   </data>
   <data name="lvGpxFiles.TabIndex" type="System.Int32, mscorlib">
     <value>33</value>
@@ -815,7 +815,7 @@
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabVideoExport.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 382</value>
+    <value>976, 472</value>
   </data>
   <data name="TabVideoExport.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -920,7 +920,7 @@
     <value>0, 0</value>
   </data>
   <data name="pnlForDgv.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 382</value>
+    <value>976, 472</value>
   </data>
   <data name="pnlForDgv.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -941,7 +941,7 @@
     <value>4, 30</value>
   </data>
   <data name="TabCompetition.Size" type="System.Drawing.Size, System.Drawing">
-    <value>976, 382</value>
+    <value>976, 472</value>
   </data>
   <data name="TabCompetition.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -965,13 +965,13 @@
     <value>Fill</value>
   </data>
   <data name="TabControl1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 35</value>
+    <value>0, 83</value>
   </data>
   <data name="TabControl1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>3, 2, 3, 2</value>
   </data>
   <data name="TabControl1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>984, 416</value>
+    <value>984, 506</value>
   </data>
   <data name="TabControl1.TabIndex" type="System.Int32, mscorlib">
     <value>32</value>
@@ -986,11 +986,65 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;TabControl1.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="bsCompetitions.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="cbActiveCategory.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="cbActiveCategory.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Flat</value>
+  </data>
+  <data name="cbActiveCategory.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Cascadia Code SemiBold, 14pt, style=Bold</value>
+  </data>
+  <data name="cbActiveCategory.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="cbActiveCategory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 33</value>
+  </data>
+  <data name="cbActiveCategory.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;cbActiveCategory.Name" xml:space="preserve">
+    <value>cbActiveCategory</value>
+  </data>
+  <data name="&gt;&gt;cbActiveCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cbActiveCategory.Parent" xml:space="preserve">
+    <value>pnlCategory</value>
+  </data>
+  <data name="&gt;&gt;cbActiveCategory.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="pnlCategory.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
+    <value>Top</value>
+  </data>
+  <data name="pnlCategory.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 24</value>
+  </data>
+  <data name="pnlCategory.Size" type="System.Drawing.Size, System.Drawing">
+    <value>984, 59</value>
+  </data>
+  <data name="pnlCategory.TabIndex" type="System.Int32, mscorlib">
+    <value>35</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.Name" xml:space="preserve">
+    <value>pnlCategory</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;pnlCategory.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -1018,11 +1072,35 @@
   <data name="&gt;&gt;ToolTip1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;StatusLabel1.Name" xml:space="preserve">
-    <value>StatusLabel1</value>
+  <data name="&gt;&gt;mnuGPXprocessing.Name" xml:space="preserve">
+    <value>mnuGPXprocessing</value>
   </data>
-  <data name="&gt;&gt;StatusLabel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;mnuGPXprocessing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuPrependDateToFileName.Name" xml:space="preserve">
+    <value>mnuPrependDateToFileName</value>
+  </data>
+  <data name="&gt;&gt;mnuPrependDateToFileName.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuTrimGPSNoise.Name" xml:space="preserve">
+    <value>mnuTrimGPSNoise</value>
+  </data>
+  <data name="&gt;&gt;mnuTrimGPSNoise.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuProcessProcessed.Name" xml:space="preserve">
+    <value>mnuProcessProcessed</value>
+  </data>
+  <data name="&gt;&gt;mnuProcessProcessed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
+    <value>mnucbActiveCategory</value>
+  </data>
+  <data name="&gt;&gt;mnucbActiveCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuFile.Name" xml:space="preserve">
     <value>mnuFile</value>
@@ -1054,28 +1132,82 @@
   <data name="&gt;&gt;mnuExit.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuGPXprocessing.Name" xml:space="preserve">
-    <value>mnuGPXprocessing</value>
+  <data name="&gt;&gt;mnuCategory.Name" xml:space="preserve">
+    <value>mnuCategory</value>
   </data>
-  <data name="&gt;&gt;mnuGPXprocessing.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuCategory.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuPrependDateToFileName.Name" xml:space="preserve">
-    <value>mnuPrependDateToFileName</value>
+  <data name="&gt;&gt;mnuSelect_directory_gpx_files.Name" xml:space="preserve">
+    <value>mnuSelect_directory_gpx_files</value>
   </data>
-  <data name="&gt;&gt;mnuPrependDateToFileName.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuSelect_directory_gpx_files.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuTrimGPSNoise.Name" xml:space="preserve">
-    <value>mnuTrimGPSNoise</value>
+  <data name="&gt;&gt;mnuOpenLocalFolder.Name" xml:space="preserve">
+    <value>mnuOpenLocalFolder</value>
   </data>
-  <data name="&gt;&gt;mnuTrimGPSNoise.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuOpenLocalFolder.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;mnuProcessProcessed.Name" xml:space="preserve">
-    <value>mnuProcessProcessed</value>
+  <data name="&gt;&gt;mnuRenameCurrentCategory.Name" xml:space="preserve">
+    <value>mnuRenameCurrentCategory</value>
   </data>
-  <data name="&gt;&gt;mnuProcessProcessed.Type" xml:space="preserve">
+  <data name="&gt;&gt;mnuRenameCurrentCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuAddNewCategory.Name" xml:space="preserve">
+    <value>mnuAddNewCategory</value>
+  </data>
+  <data name="&gt;&gt;mnuAddNewCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuDeleteCurrentCategory.Name" xml:space="preserve">
+    <value>mnuDeleteCurrentCategory</value>
+  </data>
+  <data name="&gt;&gt;mnuDeleteCurrentCategory.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">
+    <value>mnuHelp</value>
+  </data>
+  <data name="&gt;&gt;mnuHelp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuAbout.Name" xml:space="preserve">
+    <value>mnuAbout</value>
+  </data>
+  <data name="&gt;&gt;mnuAbout.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuCheckForUpdates1.Name" xml:space="preserve">
+    <value>mnuCheckForUpdates1</value>
+  </data>
+  <data name="&gt;&gt;mnuCheckForUpdates1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator1.Name" xml:space="preserve">
+    <value>ToolStripSeparator1</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuSetFFmpegPath.Name" xml:space="preserve">
+    <value>mnuSetFFmpegPath</value>
+  </data>
+  <data name="&gt;&gt;mnuSetFFmpegPath.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator2.Name" xml:space="preserve">
+    <value>ToolStripSeparator2</value>
+  </data>
+  <data name="&gt;&gt;ToolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;mnuFactoryReset.Name" xml:space="preserve">
+    <value>mnuFactoryReset</value>
+  </data>
+  <data name="&gt;&gt;mnuFactoryReset.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuLanguage.Name" xml:space="preserve">
@@ -1118,84 +1250,6 @@
     <value>mnuRussian</value>
   </data>
   <data name="&gt;&gt;mnuRussian.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuCategory.Name" xml:space="preserve">
-    <value>mnuCategory</value>
-  </data>
-  <data name="&gt;&gt;mnuCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuSelect_directory_gpx_files.Name" xml:space="preserve">
-    <value>mnuSelect_directory_gpx_files</value>
-  </data>
-  <data name="&gt;&gt;mnuSelect_directory_gpx_files.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuRenameCurrentCategory.Name" xml:space="preserve">
-    <value>mnuRenameCurrentCategory</value>
-  </data>
-  <data name="&gt;&gt;mnuRenameCurrentCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuAddNewCategory.Name" xml:space="preserve">
-    <value>mnuAddNewCategory</value>
-  </data>
-  <data name="&gt;&gt;mnuAddNewCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuDeleteCurrentCategory.Name" xml:space="preserve">
-    <value>mnuDeleteCurrentCategory</value>
-  </data>
-  <data name="&gt;&gt;mnuDeleteCurrentCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnucbActiveCategory.Name" xml:space="preserve">
-    <value>mnucbActiveCategory</value>
-  </data>
-  <data name="&gt;&gt;mnucbActiveCategory.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuHelp.Name" xml:space="preserve">
-    <value>mnuHelp</value>
-  </data>
-  <data name="&gt;&gt;mnuHelp.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuAbout.Name" xml:space="preserve">
-    <value>mnuAbout</value>
-  </data>
-  <data name="&gt;&gt;mnuAbout.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuCheckForUpdates1.Name" xml:space="preserve">
-    <value>mnuCheckForUpdates1</value>
-  </data>
-  <data name="&gt;&gt;mnuCheckForUpdates1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ToolStripSeparator1.Name" xml:space="preserve">
-    <value>ToolStripSeparator1</value>
-  </data>
-  <data name="&gt;&gt;ToolStripSeparator1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuSetFFmpegPath.Name" xml:space="preserve">
-    <value>mnuSetFFmpegPath</value>
-  </data>
-  <data name="&gt;&gt;mnuSetFFmpegPath.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ToolStripSeparator2.Name" xml:space="preserve">
-    <value>ToolStripSeparator2</value>
-  </data>
-  <data name="&gt;&gt;ToolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;mnuFactoryReset.Name" xml:space="preserve">
-    <value>mnuFactoryReset</value>
-  </data>
-  <data name="&gt;&gt;mnuFactoryReset.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mnuCheckUpdates.Name" xml:space="preserve">

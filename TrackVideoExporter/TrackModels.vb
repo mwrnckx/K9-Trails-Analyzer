@@ -328,7 +328,7 @@ Public Class TrailReport
 
     ' Soukromá pole pro String hodnoty
     Private _titleText As String = ""
-    Private _categoryText As String = ""
+    Private _dogNameText As String = ""
     Private _goalText As String = ""
     Private _trailText As String = ""
     Private _performanceText As String = ""
@@ -342,9 +342,9 @@ Public Class TrailReport
         End Get
     End Property
 
-    Public ReadOnly Property Category As StyledText
+    Public ReadOnly Property DogName As StyledText
         Get
-            Return New StyledText(_categoryText, Color.Maroon, mainFont, dogLabel)
+            Return New StyledText(_dogNameText, Color.Maroon, mainFont, dogLabel)
         End Get
     End Property
 
@@ -388,14 +388,19 @@ Public Class TrailReport
         End Set
     End Property
 
-    Public Property CategoryText As String
+    Public Property DogNameText As String
         Get
-            Return _categoryText
+            Return _dogNameText
         End Get
         Set(value As String)
-            _categoryText = value
+            _dogNameText = value
         End Set
     End Property
+
+
+
+    Public Property HandlerNameText As String
+
 
     Public Property GoalText As String
         Get
@@ -448,9 +453,9 @@ Public Class TrailReport
 
 
     ' Konstruktor pro snadné vytvoření a nastavení
-    Public Sub New(ByVal title As String, ByVal category As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ")
+    Public Sub New(ByVal title As String, ByVal dogName As String, ByVal goal As String, ByVal trail As String, ByVal performance As String, Optional points As String = "", Optional _weatherdata As WeatherData = Nothing, Optional weather As String = " ")
         Me.TitleText = title
-        Me.CategoryText = category
+        Me.DogNameText = dogName
         Me.GoalText = goal
         Me.TrailText = trail
         Me.PerformanceText = performance
@@ -468,7 +473,7 @@ Public Class TrailReport
         Me.TitleText = title ' Nastaví text do string vlastnosti, StyledText se vygeneruje v getteru
         Dim result As New List(Of StyledText) From {
             Me.Title,
-            Me.Category,
+            Me.DogName,
             Me.Goal,
             Me.Trail,
             Me.Performance,
@@ -509,7 +514,7 @@ Public Class TrailStats
     Public Property CheckpointsEval As List(Of CheckpointData) '(distanceAlongTrail As Double, deviationFromTrail As Double, dogGrossSpeed As Double)) ' evaluation of checkpoints: distance from start along the runner's route and distance from the route in meters
     Public Property MaxTeamDistance As Double ' maximum distance in metres reached by the team along the runners track (the whole track distance in case of found, the last waypoint near the track if not found)
     Public Property RunnerFound As Boolean ' whether dog found the runner or not
-    Public Property EarlyPickupFactor As Double 'whether dog found trail quickly
+    Public Property TrailPickupFactorPerCent As Double 'whether dog found trail quickly
 End Class
 
 ' Struktura pro data checkpointu
@@ -524,7 +529,7 @@ Public Class ScoringData
     Public Property DogSpeedPoints As Integer
     Public Property DogAccuracyPoints As Integer
     Public Property DogReadingPoints As Integer
-    Public Property EarlyPickupPoints As Integer
+    Public Property TrailPickupPoints As Integer
     Public Property dogName As String
     Public Property handlerName As String
 End Class

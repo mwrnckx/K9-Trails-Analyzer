@@ -127,7 +127,7 @@
     <value>Čtení psa – max bodů:</value>
   </data>
   <data name="lblPick.Text" xml:space="preserve">
-    <value>Trail pick – max bodů:</value>
+    <value>Start – max bodů:</value>
   </data>
   <data name="lblFind.Text" xml:space="preserve">
     <value>Nález kladeče - bodů:</value>
@@ -137,5 +137,8 @@
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Úprava bodování</value>
+  </data>
+  <data name="btnOK.Text" xml:space="preserve">
+    <value>Uložit a přepočítat</value>
   </data>
 </root>
